@@ -220,7 +220,34 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         if (!this.isActive()) return;
 
         // 闪避
-        if (this.modifiers.damageAvoidanceChance > 0 && Math.random() < this.modifiers.damageAvoidanceChance) {
+		enum curveType {
+			LINEAR,
+			SINE,
+			CBRT,
+		}
+
+		function curve(x: number, curve: curveType) {
+			let res: number = 0;
+			x = Math.max(0, Math.min(1, x));
+			switch (curve) {
+				case curveType.LINEAR:
+					res = x;
+					break;
+				case curveType.SINE:
+					res = x * Math.sin(2 * x) / Math.sin(2);
+					break;
+				case curveType.CBRT:
+					res = Math.cbrt(2) / 2 * Math.cbrt(x - 0.5) + 0.5;
+					break;
+				default:
+					res = x;
+			}
+			return Math.max(0, Math.min(1, res));
+		}
+
+		console.log(this.modifiers.damageAvoidanceByDamage);
+        if ( (this.modifiers.damageAvoidanceChance > 0 && Math.random() < this.modifiers.damageAvoidanceChance)
+			|| (this.modifiers.damageAvoidanceByDamage && Math.random() < curve(amount / 100, curveType.CBRT)) ) {
             //console.log(`Player ${this.name} avoided damage from ${source.type}`);
             return;
         }
@@ -479,6 +506,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         now.revolutionSpeed += extra.revolutionSpeed ?? 0;
         now.zoom += extra.zoom ?? 0;
         now.damageAvoidanceChance += extra.damageAvoidanceChance ?? 0;
+		now.damageAvoidanceByDamage = extra.damageAvoidanceByDamage ?? now.damageAvoidanceByDamage;
         now.selfPoison += extra.selfPoison ?? 0;
 
         return now;

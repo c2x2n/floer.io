@@ -41,6 +41,7 @@ export const GameConstants = {
             revolutionSpeed: 2.4,
             zoom: 45,
             damageAvoidanceChance: 0,
+			damageAvoidanceByDamage: false,
             selfPoison: 0
         }),
     },

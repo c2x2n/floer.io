@@ -6,6 +6,7 @@ export type PlayerModifiers = Modifiers & {
     revolutionSpeed: number;
     zoom: number;
     damageAvoidanceChance: number;
+	damageAvoidanceByDamage: boolean;
 }
 
 export interface Modifiers {
