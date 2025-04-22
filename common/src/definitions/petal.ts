@@ -143,8 +143,8 @@ export const Petals = new Definitions<PetalDefinition>([
         idString: "penta",
         displayName: "Penta",
         description: "FIVE.",
-        damage: 13,
-        health: 5,
+        damage: 25,
+        health: 10,
         extendable: true,
         reloadTime: 0.5,
         usable: false,
@@ -178,7 +178,7 @@ export const Petals = new Definitions<PetalDefinition>([
         idString: "tri_wing",
         displayName: "Wing",
         description: "They come and go.",
-        damage: 20,
+        damage: 35,
         health: 15,
         moreExtendDistance: 2.6,
         images:{
@@ -251,7 +251,7 @@ export const Petals = new Definitions<PetalDefinition>([
         idString: "tri_faster",
         displayName: "Faster",
         description: "Quickly.",
-        damage: 8,
+        damage: 15,
         health: 5,
         extendable: true,
         reloadTime: 0.5,
@@ -668,7 +668,7 @@ export const Petals = new Definitions<PetalDefinition>([
         idString: "myt_big_missile",
         displayName: "Missile",
         description: "You can actually shoot this quickly bigger one",
-        damage: 75,
+        damage: 100,
         health: 25,
         extendable: true,
         images: {
@@ -683,7 +683,7 @@ export const Petals = new Definitions<PetalDefinition>([
         attributes: {
             shoot: {
                 hitboxRadius: 0.6,
-                damage: 75,
+                damage: 100,
                 health: 20,
                 despawnTime: 3,
                 speed: 12,
@@ -826,14 +826,14 @@ export const Petals = new Definitions<PetalDefinition>([
         idString: "pinger",
         displayName: "Stinger",
         description: "It really hurts, but it's very fragile",
-        damage: 35,
+        damage: 75,
         health: 8,
         extendable: true,
         images: {
             slotRotation: 3.14,
             slotRevolution: 6.28 / 5
         },
-        reloadTime: 2,
+        reloadTime: 2.5,
         usable: false,
         hitboxRadius: 0.3,
         isDuplicate: true,
@@ -893,7 +893,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 35,
         },
         modifiers: {
-            speed: 1.118
+            speed: 1.128
         },
         reloadTime: 2,
         hitboxRadius: 0.5,
