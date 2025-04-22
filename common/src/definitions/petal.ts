@@ -434,7 +434,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 35
         },
         attributes: {
-            absorbing_heal: 4
+            absorbing_heal: 4.5
         },
         reloadTime: 0.4,
         hitboxRadius: 0.5,
@@ -665,7 +665,7 @@ export const Petals = new Definitions<PetalDefinition>([
         idString: "myt_big_missile",
         displayName: "Missile",
         description: "You can actually shoot this quickly bigger one",
-        damage: 50,
+        damage: 75,
         health: 25,
         extendable: true,
         images: {
@@ -680,10 +680,10 @@ export const Petals = new Definitions<PetalDefinition>([
         attributes: {
             shoot: {
                 hitboxRadius: 0.6,
-                damage: 50,
+                damage: 75,
                 health: 20,
                 despawnTime: 3,
-                speed: 11,
+                speed: 12,
                 definition: Projectile.fromString("missile")
             }
         },
@@ -725,7 +725,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 52,
         },
         modifiers: {
-            maxHealth: 25
+            maxHealth: 35
         },
         reloadTime: 1,
         hitboxRadius: 0.7,
@@ -754,7 +754,7 @@ export const Petals = new Definitions<PetalDefinition>([
             }
         },
         modifiers: {
-            maxHealth: 25
+            maxHealth: 35
         },
         reloadTime: 1,
         hitboxRadius: 0.7,
@@ -774,7 +774,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 52
         },
         modifiers: {
-            maxHealth: 20
+            maxHealth: 30
         },
         reloadTime: 1,
         hitboxRadius: 0.7,
@@ -795,7 +795,7 @@ export const Petals = new Definitions<PetalDefinition>([
         },
         usable: false,
         attributes:{
-            damage_reflection: 0.25
+            damage_reflection: 0.20
         },
         reloadTime: 2.5,
         hitboxRadius: 0.6,
@@ -830,7 +830,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotRotation: 3.14,
             slotRevolution: 6.28 / 5
         },
-        reloadTime: 4,
+        reloadTime: 2,
         usable: false,
         hitboxRadius: 0.3,
         isDuplicate: true,
@@ -1108,8 +1108,8 @@ export const Petals = new Definitions<PetalDefinition>([
                 despawnTime: 5
             },
             poison: {
-                damagePerSecond: 10,
-                duration: 2
+                damagePerSecond: 20,
+                duration: 3
             }
         },
         reloadTime: 0.3,
