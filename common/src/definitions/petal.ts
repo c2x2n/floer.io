@@ -1304,8 +1304,8 @@ export const Petals = new Definitions<PetalDefinition>([
             place_projectile: {
                 definition: Projectile.fromString("pollen"),
                 speed: 0,
-                damage: 11,
-                health: 5,
+                damage: 20,
+                health: 15,
                 hitboxRadius: 0.3,
                 despawnTime: 5,
                 velocityAtFirst: 20
