@@ -143,8 +143,8 @@ export const Petals = new Definitions<PetalDefinition>([
         idString: "penta",
         displayName: "Penta",
         description: "FIVE.",
-        damage: 25,
-        health: 10,
+        damage: 18,
+        health: 9,
         extendable: true,
         reloadTime: 0.5,
         usable: false,
@@ -178,7 +178,7 @@ export const Petals = new Definitions<PetalDefinition>([
         idString: "tri_wing",
         displayName: "Wing",
         description: "They come and go.",
-        damage: 35,
+        damage: 25,
         health: 15,
         moreExtendDistance: 2.6,
         images:{
@@ -251,8 +251,8 @@ export const Petals = new Definitions<PetalDefinition>([
         idString: "tri_faster",
         displayName: "Faster",
         description: "Quickly.",
-        damage: 15,
-        health: 5,
+        damage: 11,
+        health: 8,
         extendable: true,
         reloadTime: 0.5,
         modifiers: {
@@ -591,7 +591,7 @@ export const Petals = new Definitions<PetalDefinition>([
             }
         },
         useTime: 0.2,
-        reloadTime: 2,
+        reloadTime: 4.3,
         hitboxRadius: 0.6,
         isDuplicate: false,
         pieceAmount: 1,
@@ -683,7 +683,7 @@ export const Petals = new Definitions<PetalDefinition>([
         attributes: {
             shoot: {
                 hitboxRadius: 0.6,
-                damage: 100,
+                damage: 50,
                 health: 20,
                 despawnTime: 3,
                 speed: 12,
@@ -1111,8 +1111,8 @@ export const Petals = new Definitions<PetalDefinition>([
                 despawnTime: 5
             },
             poison: {
-                damagePerSecond: 20,
-                duration: 3
+                damagePerSecond: 15,
+                duration: 2.5
             }
         },
         reloadTime: 0.3,
@@ -1304,8 +1304,8 @@ export const Petals = new Definitions<PetalDefinition>([
             place_projectile: {
                 definition: Projectile.fromString("pollen"),
                 speed: 0,
-                damage: 20,
-                health: 15,
+                damage: 13,
+                health: 10,
                 hitboxRadius: 0.3,
                 despawnTime: 5,
                 velocityAtFirst: 20
