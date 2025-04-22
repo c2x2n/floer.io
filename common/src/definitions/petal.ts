@@ -121,7 +121,11 @@ export const Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.common,
-        usingAssets: "light"
+        usingAssets: "light",
+        moreExtendDistance: 0.52,
+        modifiers: {
+            speed: 1.01
+        },
     },
     {
         idString: "twin",
@@ -137,7 +141,11 @@ export const Petals = new Definitions<PetalDefinition>([
         pieceAmount: 2,
         isShowedInOne: false,
         rarity: RarityName.unusual,
-        usingAssets: "light"
+        usingAssets: "light",
+        moreExtendDistance: 0.52,
+        modifiers: {
+            speed: 1.01
+        },
     },
     {
         idString: "penta",
@@ -153,7 +161,11 @@ export const Petals = new Definitions<PetalDefinition>([
         pieceAmount: 5,
         isShowedInOne: false,
         rarity: RarityName.mythic,
-        usingAssets: "light"
+        usingAssets: "light",
+        moreExtendDistance: 0.52,
+        modifiers: {
+            speed: 1.01
+        },
     },
     {
         idString: "wing",
@@ -209,7 +221,11 @@ export const Petals = new Definitions<PetalDefinition>([
         pieceAmount: 3,
         isShowedInOne: false,
         rarity: RarityName.epic,
-        usingAssets: "light"
+        usingAssets: "light",
+        moreExtendDistance: 0.52,
+        modifiers: {
+            speed: 1.01
+        },
     },{
         idString: "faster",
         displayName: "Faster",
@@ -591,7 +607,7 @@ export const Petals = new Definitions<PetalDefinition>([
             }
         },
         useTime: 0.2,
-        reloadTime: 4.3,
+        reloadTime: 3.3,
         hitboxRadius: 0.6,
         isDuplicate: false,
         pieceAmount: 1,
@@ -1596,18 +1612,19 @@ export const Petals = new Definitions<PetalDefinition>([
         usable: false,
         images: {
             slotDisplaySize: 45,
-            selfGameRotation: 0.01
+            selfGameRotation: 0.01,
+            facingOut:true
         },
         modifiers: {
             conditionalHeal: {
                 healthPercent: 0.75,
-                healAmount: 2.5
+                healAmount: 7.5
             }
         },
         reloadTime: 2,
         hitboxRadius: 0.5,
         isDuplicate: false,
         pieceAmount: 1,
-        rarity: RarityName.rare
+        rarity: RarityName.legendary
     }
 ] satisfies PetalDefinition[]);
