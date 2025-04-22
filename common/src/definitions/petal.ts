@@ -84,6 +84,7 @@ export type AttributeParameters = {
     }
     health_percent_damage?: {
         percent: number
+        maxDamage?: number
     }
     damage_avoidance?: {
         chance: number
@@ -458,7 +459,8 @@ export const Petals = new Definitions<PetalDefinition>([
         },
         attributes: {
             health_percent_damage: {
-                percent: 0.3
+                percent: 0.3,
+                maxDamage: 200
             }
         },
         reloadTime: 2.5,
@@ -481,7 +483,8 @@ export const Petals = new Definitions<PetalDefinition>([
         },
         attributes: {
             health_percent_damage: {
-                percent: 0.5
+                percent: 0.5,
+                maxDamage: 1200
             }
         },
         reloadTime: 2.5,

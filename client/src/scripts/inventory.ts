@@ -124,7 +124,24 @@ const attributesShowingConfig: { [K in AttributeName] : AttributeShowingFunction
                 color: "#ffffff"
             }]
         },
-        boost: () => [],
+        boost: (data) => {
+            if (typeof data === 'number') {
+                if (data > 0) {
+                    return [{
+                        displayName: "Dynamic",
+                        value: data.toString(),
+                        color: "#58fd48"
+                    }];
+                } else {
+                    return [{
+                        displayName: "Knockback",
+                        value: Math.abs(data).toString(),
+                        color: "#ff9966"
+                    }];
+                }
+            }
+            return [];
+        },
         body_poison: (data) => {
             return [{
                 displayName: "Body Poison",
@@ -183,7 +200,13 @@ const attributesShowingConfig: { [K in AttributeName] : AttributeShowingFunction
                 displayName: "Current Health Damage",
                 value: `${data.percent * 100}%`,
                 color: "#ff3333"
-            }]
+            },
+            ...(data.maxDamage !== undefined ? [{
+                displayName: "Max Damage",
+                value: data.maxDamage.toString(),
+                color: "#ff6666"
+            }] : [])
+            ]
         },
         damage_avoidance: (data) => {
             return [{

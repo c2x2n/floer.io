@@ -299,7 +299,9 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
                     if (!entity || !data) return
                     if (isDamageableEntity(entity) && entity.health) {
                         const additionalDamage = entity.health * data.percent;
-                        entity.receiveDamage(additionalDamage, petal.owner);
+                        const limitedDamage = data.maxDamage !== undefined ? 
+                            Math.min(additionalDamage, data.maxDamage) : additionalDamage;
+                        entity.receiveDamage(limitedDamage, petal.owner);
                     }
                 }
             )
