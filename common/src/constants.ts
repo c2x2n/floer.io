@@ -27,7 +27,7 @@ export const GameConstants = {
         spawnMaxY: 50,
         defaultSlot: 10,
         defaultPrepareSlot: 10,
-        defaultEquippedPetals: ["jelly", "bubble", "triangle", "tri_triangle", "basic"],
+        defaultEquippedPetals: ["basic", "basic", "basic", "basic", "basic"],
         defaultPreparationPetals: [],
         defaultPetalDistance: 3.5,
         defaultPetalAttackingDistance: 6.5,
