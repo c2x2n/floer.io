@@ -1534,8 +1534,8 @@ export const Petals = new Definitions<PetalDefinition>([
         idString: "heaviest",
         displayName: "Heaviest",
         description: "This thing is so heavy that nothing gets in the way.",
-        damage: 20,
-        health: 100,
+        damage: 10,
+        health: 200,
         extendable: true,
         usable: false,
         images: {
@@ -1565,6 +1565,23 @@ export const Petals = new Definitions<PetalDefinition>([
         },
         reloadTime: 2.5,
         hitboxRadius: 0.55,
+        isDuplicate: false,
+        pieceAmount: 1,
+        rarity: RarityName.rare
+    },
+    {   
+        idString: "rock",
+        displayName: "Rock",
+        description: "Extremely durable, but takes a bit longer to recharge.",
+        damage: 15,
+        health: 50,
+        extendable: true,
+        usable: false,
+        images: {
+            slotDisplaySize: 55,
+        },
+        reloadTime: 2.5,
+        hitboxRadius: 0.7,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.rare
