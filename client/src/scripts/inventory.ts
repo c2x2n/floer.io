@@ -105,6 +105,11 @@ const showingConfig: { [key: string] : showingConfig } =
             displayName: "Self Poison",
             color: "#ce76db",
             endsWith: "/s"
+        },
+        conditionalHeal: {
+            displayName: "Emergency Heal",
+            color: "#58fd48",
+            noValue: true
         }
     }
 
@@ -955,6 +960,21 @@ export class Inventory{
                 let original = (definition.modifiers
                     [modifiersDefinitionKey as keyof PlayerModifiers]);
                 if (!showing) continue;
+                
+                // 特殊处理conditionalHeal
+                if (modifiersDefinitionKey === "conditionalHeal" && original) {
+                    const conditionalHeal = original as {healthPercent: number, healAmount: number};
+                    addAttribute(showing, "");
+                    addLine({
+                        startsWith: "HP < " + (conditionalHeal.healthPercent * 100).toFixed(0) + "%: ",
+                        value: "+" + conditionalHeal.healAmount.toFixed(1),
+                        endsWith: "/s",
+                        color: "#58fd48",
+                        fontSize: 12
+                    });
+                    continue;
+                }
+                
                 if (!original || typeof original != "number") {
                     addAttribute(showing,
                         ""

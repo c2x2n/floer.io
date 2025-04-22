@@ -1585,5 +1585,29 @@ export const Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.rare
+    },
+    {
+        idString: "starfish",
+        displayName: "Starfish",
+        description: "Increases health regen while below 75% health.",
+        damage: 5,
+        health: 7,
+        extendable: true,
+        usable: false,
+        images: {
+            slotDisplaySize: 45,
+            selfGameRotation: 0.01
+        },
+        modifiers: {
+            conditionalHeal: {
+                healthPercent: 0.75,
+                healAmount: 2.5
+            }
+        },
+        reloadTime: 2,
+        hitboxRadius: 0.5,
+        isDuplicate: false,
+        pieceAmount: 1,
+        rarity: RarityName.rare
     }
 ] satisfies PetalDefinition[]);

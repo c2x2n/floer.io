@@ -223,6 +223,10 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             this.sendEvent(AttributeEvents.HEALING, undefined)
 
         this.heal(this.modifiers.healPerSecond * this.game.dt);
+        
+        if (this.modifiers.conditionalHeal && this.health < this.modifiers.maxHealth * this.modifiers.conditionalHeal.healthPercent) {
+            this.heal(this.modifiers.conditionalHeal.healAmount * this.game.dt);
+        }
 
         if (this.modifiers.selfPoison > 0) {
             this.receiveDamage(this.modifiers.selfPoison * this.game.dt, this, true);
@@ -555,6 +559,9 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 		now.damageAvoidanceByDamage = extra.damageAvoidanceByDamage ?? now.damageAvoidanceByDamage;
         now.selfPoison += extra.selfPoison ?? 0;
         now.yinYangs += extra.yinYangs?? 0;
+        if (extra.conditionalHeal) {
+            now.conditionalHeal = extra.conditionalHeal;
+        }
 
         return now;
     }

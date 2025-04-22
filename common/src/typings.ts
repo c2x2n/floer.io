@@ -8,6 +8,10 @@ export type PlayerModifiers = Modifiers & {
     damageAvoidanceChance: number;
 	damageAvoidanceByDamage: boolean;
     yinYangs: number;
+    conditionalHeal?: {
+        healthPercent: number;
+        healAmount: number;
+    };
 }
 
 export interface Modifiers {

@@ -41,9 +41,10 @@ export const GameConstants = {
             revolutionSpeed: 2.4,
             zoom: 45,
             damageAvoidanceChance: 0,
-			damageAvoidanceByDamage: false,
+            damageAvoidanceByDamage: false,
             selfPoison: 0,
             yinYangs: 0,
+            conditionalHeal: undefined
         }),
     },
     petal: {
