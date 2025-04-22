@@ -1543,5 +1543,27 @@ export const Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.epic
+    },
+    {
+        idString: "jelly",
+        displayName: "Jelly",
+        description: "No one likes touching this.",
+        damage: 10,
+        health: 10,
+        extendable: true,
+        usable: false,
+        images: {
+            slotDisplaySize: 45,
+            selfGameRotation: 0.01,
+            slotRotation: 0.3,  
+        },
+        attributes: {
+            boost: -20
+        },
+        reloadTime: 2.5,
+        hitboxRadius: 0.55,
+        isDuplicate: false,
+        pieceAmount: 1,
+        rarity: RarityName.rare
     }
 ] satisfies PetalDefinition[]);

@@ -84,6 +84,36 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
                 }
             , PetalUsingAnimations.NORMAL);
 
+            on<AttributeEvents.PETAL_DEAL_DAMAGE>(
+                AttributeEvents.PETAL_DEAL_DAMAGE,
+                (entity) => {
+                    if (entity && data && data < 0 && isDamageableEntity(entity)) {
+                        // 击退效果，负值表示击退
+                        const entityToPlayerDirection =
+                            MathGraphics.directionBetweenPoints(entity.position, petal.owner.position);
+                        
+                        // 计算击退力度倍率
+                        let knockbackMultiplier = 1.0;
+                        
+                        // 对玩家固定为1倍
+                        if (entity.type === EntityType.Player) {
+                            knockbackMultiplier = 1.0;
+                        } 
+                        else {
+                            const entityRadius = entity.hitbox instanceof CircleHitbox ? 
+                                entity.hitbox.radius : 1;
+                            
+                            const baseRadius = 1;
+                            
+                            // 计算倍率: 基础半径/实体半径 (半径越大，倍率越小)
+                            knockbackMultiplier = Math.min(1.0, baseRadius / entityRadius);
+                        }
+                        entity.addVelocity(
+                            Vec2.mul(entityToPlayerDirection, Math.abs(data) * 10 * knockbackMultiplier)
+                        )
+                    }
+                }
+            )
         }
     },
 
