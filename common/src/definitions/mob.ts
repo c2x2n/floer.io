@@ -70,9 +70,10 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 3,
         lootTable: {
             "rose": 0.11,
-            "leaf": 0.52,
-            "twin": 0.24,
-            "triplet": 0.0012
+            "fast": 0.5,
+            "bubble": 0.04,
+            "twin": 0.1,
+            "wing": 0.02
         },
         rarity: RarityName.common,
         exp: 1
@@ -81,7 +82,7 @@ export const Mobs = new Definitions<MobDefinition>([
         idString: "massive_ladybug",
         displayName: "Ladybug",
         damage: 20,
-        health: 1000,
+        health: 2000,
         category: MobCategory.Unactive,
         hitboxRadius: 5,
         speed: 3,
@@ -89,15 +90,15 @@ export const Mobs = new Definitions<MobDefinition>([
         lootTable: {
             "rose": 1,
             "tri_rose": 1,
-            "triplet": 1,
+            "triplet": 0.25,
             "epic_rose": 1,
-            "bubble": 0.8,
+            "bubble": 1,
             "leg_bubble": 0.06,
             "penta": 0.000006,
             "myt_tri_rose": 0.000005
         },
         rarity: RarityName.legendary,
-        exp: 10
+        exp: 500
     },{
         idString: "shiny_ladybug",
         displayName: "Ladybug",
@@ -128,12 +129,12 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 3,
         lootTable: {
             "tri_rose": 0.36,
-            "epic_rose": 0.051,
-            "yinyang": 0.01,
-            "bubble": 0.08,
+            "epic_rose": 0.02,
+            "yinyang": 0.02,
+            "bubble": 0.1,
             "wing": 0.08,
             "leg_bubble": 0.00012,
-            "triplet": 0.0024,
+            "triplet": 0.002,
             "shell": 0.02
         },
         rarity: RarityName.epic,
@@ -147,13 +148,12 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 1,
         speed: 3,
         lootTable: {
-            "fast": 0.24,
-            "stinger": 0.14,
-            "twin": 0.06,
+            "fast": 0.12,
+            "stinger": 0.9,
+            "twin": 0.04,
             "triangle": 0.002,
             "bubble": 0.012,
-            "leg_bubble": 0.00012,
-            "wing": 0.006,
+            "wing": 0.003,
             "honey": 0.06
         },
         rarity: RarityName.common,
@@ -166,13 +166,13 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Fixed,
         hitboxRadius: 2,
         lootTable: {
-            "sand": 0.55,
-            "triangle": 0.002,
-            "tri_triangle": 0.000005,
+            "sand": 0.1,
+            "stinger": 0.1,
+            "triangle": 0.001,
             "missile": 0.092,
             "big_missile": 0.001,
             "cactus": 0.06,
-            "poison_cactus": 0.002,
+            "poison_cactus": 0.001,
             "tri_cactus": 0.00005,
         },
         rarity: RarityName.unusual,
@@ -185,14 +185,14 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Fixed,
         hitboxRadius: 6,
         lootTable: {
-            "sand": 0.55,
-            "triangle": 0.01,
-            "tri_triangle": 0.00001,
-            "missile": 0.18,
+            "sand": 0.8,
+            "triangle": 0.05,
+            "tri_triangle": 0.0000005,
+            "missile": 0.5,
             "big_missile": 0.01,
-            "cactus": 0.12,
-            "poison_cactus": 0.04,
-            "tri_cactus": 0.006,
+            "cactus": 0.5,
+            "poison_cactus": 0.06,
+            "tri_cactus": 0.0009,
         },
         rarity: RarityName.legendary,
         usingAssets: "cactus",
@@ -221,10 +221,8 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 4,
         lootTable: {
             "fast": 1,
-            "twin": 0.048,
-            "triplet": 0.004,
             "uranium": 0.00012,
-            "heaviest": 0.02
+            "heaviest": 0.03
         },
         rarity: RarityName.rare,
         exp: 20,
@@ -243,11 +241,11 @@ export const Mobs = new Definitions<MobDefinition>([
             mouthXPosition: 1.2
         },
         lootTable: {
-            "iris": 0.18,
-            "salt": 0.12,
-            "triplet": 0.006,
+            "iris": 0.09,
+            "salt": 0.06,
+            "triplet": 0.004,
             "wing": 0.006,
-            "powder": 0.0009,
+            "powder": 0.00009,
             "leg_egg": 0.0006,
         },
         rarity: RarityName.epic,
@@ -277,18 +275,18 @@ export const Mobs = new Definitions<MobDefinition>([
             "dandelion": 0.14,
             "bubble": 0.05,
             "missile": 0.09,
-            "big_missile": 0.01,
-            "leg_bubble": 0.006,
+            "big_missile": 0.005,
+            "leg_bubble": 0.00006,
             "wing": 0.03,
-            "antennae": 0.001,
+            "antennae": 0.0003,
         },
         rarity: RarityName.epic,
         exp: 10
     },{
         idString: "leg_hornet",
         displayName: "Hornet",
-        damage: 65,
-        health: 200,
+        damage: 75,
+        health: 500,
         category: MobCategory.Enemy,
         reachingAway: true,
         shootable: true,
@@ -306,17 +304,17 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 2 * 0.9 / 0.6,
         speed: 4,
         lootTable:  {
-            "dandelion": 0.28,
-            "bubble": 0.1,
-            "missile": 0.18,
+            "dandelion": 0.3,
+            "bubble": 0.2,
+            "missile": 0.75,
             "big_missile": 0.02,
-            "myt_big_missile": 0.00001,
-            "leg_bubble": 0.012,
-            "wing": 0.06,
+            "myt_big_missile": 0.00002,
+            "leg_bubble": 0.009,
+            "wing": 0.5,
             "tri_wing": 0.000005,
-            "myt_egg": 0.00005,
-            "antennae": 0.001,
-            "myt_antennae": 0.000005
+            "myt_egg": 0.000005,
+            "antennae": 0.005,
+            "myt_antennae": 0.00001
         },
         rarity: RarityName.legendary,
         exp: 200,
@@ -342,11 +340,11 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 2,
         speed: 3,
         lootTable: {
-            "peas": 0.12,
-            "poison_peas": 0.02,
+            "peas": 0.1,
+            "poison_peas": 0.05,
             "leg_poison_peas": 0.0001,
-            "leg_bubble": 0.0006,
-            "wing": 0.14,
+            "leg_bubble": 0.00006,
+            "wing": 0.12,
         },
         rarity: RarityName.rare,
         exp: 20,
@@ -364,13 +362,14 @@ export const Mobs = new Definitions<MobDefinition>([
             spiderLeg: true
         },
         lootTable: {
-            "iris": 0.22,
-            "stinger": 0.36,
-            "triangle": 0.024,
+            "iris": 0.2,
+            "stinger": 0.24,
+            "triangle": 0.0024,
             "web": 0.09,
-            "pincer": 0.09,
+            "pincer": 0.01,
             "faster": 0.04,
-            "dual_faster": 0.0001
+            "tri_web": 0.0002,
+            "faster_wing": 0.0001
         },
         rarity: RarityName.rare,
         exp: 5
@@ -387,15 +386,13 @@ export const Mobs = new Definitions<MobDefinition>([
             mouth: true
         },
         lootTable: {
-            "sand": 0.24,
-            "fast": 0.03,
+            "sand": 0.09,
             "iris": 0.12,
             "twin": 0.8,
-            "wing": 0.016,
-            "triplet": 0.0012,
+            "wing": 0.01.4,
+            "triplet": 0.0004,
             "faster": 0.04,
-            "dual_faster": 0.00005,
-            "egg": 0.006
+            "faster_wing": 0.0001
         },
         rarity: RarityName.unusual,
         exp: 4
@@ -414,11 +411,11 @@ export const Mobs = new Definitions<MobDefinition>([
             "sand": 0.06,
             "fast": 0.46,
             "leaf": 0.28,
-            "twin": 0.24,
-            "rice": 0.01,
-            "tri_leaf": 0.0004,
-            "triplet": 0.00012,
-            "corn": 0.0002
+            "twin": 0.15,
+            "rice": 0.006,
+            "tri_leaf": 0.0008,
+            "triplet": 0.0006,
+            "corn": 0.0006
         },
         rarity: RarityName.unusual,
         exp: 4
@@ -431,11 +428,12 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 3,
         speed: 3,
         lootTable: {
-            "sand": 0.6,
-            "fast": 0.6,
-            "leaf": 0.6,
-            "twin": 0.6,
-            "triplet": 0.002,
+            "sand": 0.8,
+            "fast": 1,
+            "twin": 1,
+            "wing": 0.31,
+            "egg": 0.06
+            "triplet": 0.01,
             "tri_stinger": 0.006
         },
         rarity: RarityName.epic,
@@ -456,6 +454,8 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 2,
         lootTable: {
             "iris": 1,
+            "wing": 0.5,
+            "egg": 0.07,
             "dice": 0.6
         },
         rarity: RarityName.rare,
@@ -472,13 +472,13 @@ export const Mobs = new Definitions<MobDefinition>([
             mouth: true,
         },
         lootTable: {
-            "sand": 0.06,
-            "fast": 0.88,
-            "leaf": 0.52,
-            "twin": 0.24,
-            "rice": 0.001,
-            "tri_leaf": 0.00004,
-            "triplet": 0.0012
+            "sand": 0.08,
+            "fast": 0.44,
+            "leaf": 0.26,
+            "twin": 0.18,
+            "rice": 0.005,
+            "tri_leaf": 0.0004,
+            "triplet": 0.0006
         },
         rarity: RarityName.unusual,
         exp: 4
@@ -496,10 +496,11 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         lootTable: {
             "fast": 0.09,
-            "leaf": 0.1,
-            "twin": 0.24,
-            "triplet": 0.00012,
-            "peas": 0.02
+            "leaf": 0.05,
+            "twin": 0.12,
+            "triplet": 0.0001,
+            "peas": 0.03,
+            "poison_peas": 0.0006
         },
         rarity: RarityName.unusual,
         exp: 4,
@@ -520,10 +521,11 @@ export const Mobs = new Definitions<MobDefinition>([
         hideInformation: true,
         lootTable:  {
             "fast": 0.09,
-            "leaf": 0.1,
-            "twin": 0.24,
-            "triplet": 0.00012,
-            "peas": 0.02
+            "leaf": 0.05,
+            "twin": 0.12,
+            "triplet": 0.0001,
+            "peas": 0.03,
+            "poison_peas": 0.0006
         },
         rarity: RarityName.unusual,
         exp: 4
@@ -541,10 +543,9 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         lootTable: {
             "fast": 0.08,
-            "twin": 0.04,
-            "triplet": 0.0012,
-            "penta": 0.003,
-            "powder": 0.0001,
+            "twin": 0.18,
+            "triplet": 0.005,
+            "powder": 0.00001,
             "talisman": 0.0056
         },
         rarity: RarityName.unusual,
@@ -566,9 +567,9 @@ export const Mobs = new Definitions<MobDefinition>([
         hideInformation: true,
         lootTable: {
             "fast": 0.08,
-            "twin": 0.04,
-            "triplet": 0.0012,
-            "powder": 0.0001,
+            "twin": 0.18,
+            "triplet": 0.005,
+            "powder": 0.00001,
             "talisman": 0.0056
         },
         rarity: RarityName.unusual,
@@ -588,10 +589,10 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         lootTable: {
             "iris": 0.82,
-            "peas": 0.028,
+            "peas": 0.18,
             "chip": 0.028,
             "poison_peas": 0.01,
-            "leg_poison_peas": 0.0004
+            "leg_poison_peas": 0.001
         },
         rarity: RarityName.rare,
         exp: 4,
@@ -614,10 +615,10 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         lootTable: {
             "iris": 0.82,
-            "peas": 0.028,
+            "peas": 0.18,
             "chip": 0.028,
             "poison_peas": 0.01,
-            "leg_poison_peas": 0.0004
+            "leg_poison_peas": 0.001
         },
         rarity: RarityName.rare,
         exp: 4
@@ -644,11 +645,11 @@ export const Mobs = new Definitions<MobDefinition>([
         lootTable: {
             "peas": 0.24,
             "poison_peas": 0.04,
-            "leg_poison_peas": 0.01,
+            "leg_poison_peas": 0.5,
             "leg_bubble": 0.024,
             "wing": 0.12,
-            "tri_wing": 0.02,
-            "myt_poison_peas": 0.01
+            "tri_wing": 0.004,
+            "myt_poison_peas": 0.2
         },
         rarity: RarityName.mythic,
         exp: 20,
@@ -656,22 +657,22 @@ export const Mobs = new Definitions<MobDefinition>([
     },{
         idString: "mega_hornet",
         displayName: "Hornet",
-        damage: 75,
-        health: 1500,
+        damage: 125,
+        health: 2000,
         category: MobCategory.Enemy,
         reachingAway: true,
         shootable: true,
         turningHead: true,
         shoot: {
             hitboxRadius: 3,
-            damage: 15,
+            damage: 20,
             health: 100,
             despawnTime: 3,
-            speed: 7,
+            speed: 9,
             definition: Projectile.fromString("missile")
         },
-        shootSpeed: 0.5,
-        aggroRadius: 30,
+        shootSpeed: 0.9,
+        aggroRadius: 60,
         hitboxRadius: 5 / 0.6,
         speed: 4,
         lootTable:  {
@@ -682,10 +683,10 @@ export const Mobs = new Definitions<MobDefinition>([
             "myt_big_missile": 0.5,
             "leg_bubble": 0.6,
             "wing": 0.3,
-            "tri_wing": 0.07,
-            "myt_egg": 0.08,
-            "antennae": 0.001,
-            "myt_antennae": 0.35
+            "tri_wing": 0.0002,
+            "myt_egg": 0.35,
+            "antennae": 0.1,
+            "myt_antennae": 0.035
         },
         rarity: RarityName.mythic,
         exp: 2000,
@@ -706,11 +707,11 @@ export const Mobs = new Definitions<MobDefinition>([
         lootTable: {
             "iris": 1,
             "salt": 0.24,
-            "triplet": 0.012,
-            "wing": 0.52,
-            "tri_wing": 0.2,
-            "powder": 0.18,
-            "leg_egg": 0.2,
+            "triplet": 1,
+            "wing": 1,
+            "tri_wing": 0.45,
+            "powder": 0.5,
+            "leg_egg": 0.25,
         },
         rarity: RarityName.mythic,
         exp: 50,
@@ -734,7 +735,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "epic_rose": 0.9,
             "triplet": 1,
             "penta": 0.5,
-            "myt_tri_rose": 0.5
+            "myt_tri_rose": 0.009
         },
         rarity: RarityName.mythic,
         exp: 10,
@@ -755,10 +756,10 @@ export const Mobs = new Definitions<MobDefinition>([
             "bubble": 0.16,
             "wing": 0.16,
             "yinyang": 0.4,
-            "leg_bubble": 0.0002,
-            "triplet": 0.0048,
-            "penta": 0.25,
-            "myt_tri_rose": 0.25,
+            "leg_bubble": 0.2,
+            "triplet": 0.8,
+            "penta": 0.002,
+            "myt_tri_rose": 0.45,
             "shell": 0.5
         },
         rarity: RarityName.mythic,
@@ -791,15 +792,13 @@ export const Mobs = new Definitions<MobDefinition>([
             "stinger": 0.36,
             "triangle": 0.024,
             "tri_triangle": 0.024,
-            "tri_stinger": 0.012,
             "web": 0.09,
             "pincer": 0.09,
             "tri_web": 0.004,
             "faster": 0.4,
-            "dual_faster": 0.01,
-            "pinger": 0.05,
-            "myt_tri_web": 0.5,
-            "tri_faster": 0.25
+            "faster_wing": 0.1,
+            "myt_tri_web": 0.25,
+            "tri_faster": 0.5
         },
         rarity: RarityName.mythic,
         exp: 5,
@@ -824,10 +823,10 @@ export const Mobs = new Definitions<MobDefinition>([
             "wing": 0.16,
             "tri_wing": 0.012,
             "triplet": 0.012,
-            "faster": 0.4,
-            "dual_faster": 0.01,
-            "penta": 0.01,
-            "tri_faster": 0.01,
+            "faster_wing": 0.4,
+            "faster": 0.01,
+            "penta": 0.001,
+            "tri_faster": 0.1,
             "egg": 0.6
         },
         rarity: RarityName.mythic,
