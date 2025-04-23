@@ -27,7 +27,11 @@ export const GameConstants = {
         spawnMaxY: 50,
         defaultSlot: 10,
         defaultPrepareSlot: 10,
-        defaultEquippedPetals: ["basic", "basic", "basic", "basic", "basic"],
+        defaultEquippedPetals: ["basic","basic","basic","basic","basic"],
+        mutateDefaultPetals: {
+            equippedPetals: ["yggdrasil","basic","basic","basic","basic"],
+            chance: 1 / 1000,
+        },
         defaultPreparationPetals: [],
         defaultPetalDistance: 3.5,
         defaultPetalAttackingDistance: 6.5,
@@ -40,11 +44,13 @@ export const GameConstants = {
             speed: 1,
             revolutionSpeed: 2.4,
             zoom: 45,
+            extraDistance: 0,
             damageAvoidanceChance: 0,
             damageAvoidanceByDamage: false,
             selfPoison: 0,
             yinYangs: 0,
-            conditionalHeal: undefined
+            conditionalHeal: undefined,
+            controlRotation: false,
         }),
     },
     petal: {
@@ -55,9 +61,9 @@ export const GameConstants = {
         height: 120
     },
     loot: {
-        radius: 0.5,
+        radius: 0.6,
         spawnRadius: 3,
-        despawnTime: 50
+        despawnTime: [30,30,30,50,90,120,180,1] // super is 1 so that if accidentally dev super petals are dropped, noone can pick it
     },
     mob: {
         maxHealth: 100000,
@@ -173,6 +179,7 @@ export const Zones:
             "mega_hornet": 0.000009,
             "spider": 15,
             "mega_spider": 0.000006,
+            "giant_spider": 0.00000000001,
             "beetle": 20,
             "mega_beetle": 0.000008,
             "boulder": 8,

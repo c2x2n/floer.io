@@ -113,7 +113,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "tri_rose": 0.34,
             "bubble": 0.16,
             "wing": 0.16,
-            "leg_bubble": 0.0006,
+            "leg_bubble": 0.00006,
             "epic_rose": 0.051,
             "triplet": 0.02
         },
@@ -132,8 +132,10 @@ export const Mobs = new Definitions<MobDefinition>([
             "epic_rose": 0.02,
             "yinyang": 0.02,
             "bubble": 0.1,
+            "jelly": 0.08,
             "wing": 0.08,
             "leg_bubble": 0.00012,
+            "starfish": 0.0001,
             "triplet": 0.002,
             "shell": 0.02
         },
@@ -309,7 +311,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "missile": 0.75,
             "big_missile": 0.02,
             "myt_big_missile": 0.00002,
-            "leg_bubble": 0.009,
+            "leg_bubble": 0.0009,
             "wing": 0.5,
             "tri_wing": 0.000005,
             "myt_egg": 0.000005,
@@ -344,7 +346,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "poison_peas": 0.05,
             "leg_poison_peas": 0.0001,
             "leg_bubble": 0.00006,
-            "wing": 0.12,
+            "wing": 0.14,
         },
         rarity: RarityName.rare,
         exp: 20,
@@ -389,7 +391,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "sand": 0.09,
             "iris": 0.12,
             "twin": 0.8,
-            "wing": 0.01.4,
+            "wing": 0.014,
             "triplet": 0.0004,
             "faster": 0.04,
             "faster_wing": 0.0001
@@ -432,7 +434,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "fast": 1,
             "twin": 1,
             "wing": 0.31,
-            "egg": 0.06
+            "egg": 0.06,
             "triplet": 0.01,
             "tri_stinger": 0.006
         },
@@ -646,14 +648,14 @@ export const Mobs = new Definitions<MobDefinition>([
             "peas": 0.24,
             "poison_peas": 0.04,
             "leg_poison_peas": 0.7,
-            "leg_bubble": 0.024,
+            "leg_bubble": 0.0024,
             "wing": 0.12,
             "tri_triangle": 0.5,
             "tri_wing": 0.004,
             "myt_poison_peas": 0.1
         },
         rarity: RarityName.mythic,
-        exp: 20,
+        exp: 14000,
         usingAssets: "mantis"
     },{
         idString: "mega_hornet",
@@ -682,7 +684,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "missile": 0.9,
             "big_missile": 0.75,
             "myt_big_missile": 0.5,
-            "leg_bubble": 0.6,
+            "leg_bubble": 0.06,
             "wing": 0.3,
             "tri_wing": 0.0002,
             "myt_egg": 0.35,
@@ -690,7 +692,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "myt_antennae": 0.035
         },
         rarity: RarityName.mythic,
-        exp: 2000,
+        exp: 20000,
         usingAssets: "hornet"
     },{
         idString: "mega_beetle",
@@ -715,7 +717,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "leg_egg": 0.8,
         },
         rarity: RarityName.mythic,
-        exp: 100000,
+        exp: 10000,
         usingAssets: "beetle"
     },{
         idString: "massive_shiny_ladybug",
@@ -732,7 +734,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "bubble": 1,
             "wing": 1,
             "tri_wing": 0.6,
-            "leg_bubble": 0.12,
+            "leg_bubble": 0.012,
             "epic_rose": 0.9,
             "triplet": 1,
             "penta": 0.5,
@@ -754,10 +756,12 @@ export const Mobs = new Definitions<MobDefinition>([
         lootTable: {
             "tri_rose": 0.7,
             "epic_rose": 0.1,
+            "jelly": 0.3,
             "bubble": 0.16,
             "wing": 0.16,
             "yinyang": 0.4,
             "leg_bubble": 0.2,
+            "starfish": 0.2,
             "triplet": 0.8,
             "penta": 0.002,
             "myt_tri_rose": 0.45,
@@ -804,6 +808,49 @@ export const Mobs = new Definitions<MobDefinition>([
         rarity: RarityName.mythic,
         exp: 10000,
         usingAssets: "spider"
+    },
+    {
+        idString: "giant_spider",
+        displayName: "Spider",
+        damage: 60,
+        health: 6000,
+        category: MobCategory.Enemy,
+        aggroRadius: 35,
+        hitboxRadius: 21,
+        shootable: true,
+        images: {
+            spiderLeg: true
+        },
+        shoot: {
+            hitboxRadius: 8,
+            despawnTime: 7,
+            speed: 0,
+            definition: Projectile.fromString("web"),
+            modifiers: {
+                speed: 0.6
+            }
+        },
+        shootSpeed: 0.7,
+        speed: 4.5,
+        lootTable: {
+            "iris": 0.15,
+            "stinger": 0.12,
+            "triangle": 0.08,
+            "tri_triangle": 0.12,
+            "tri_stinger": 0.18,
+            "web": 0.1,
+            "pincer": 0.3,
+            "tri_web": 0.4,
+            "faster": 0.1,
+            "faster_wing": 0.2,
+            "pinger": 0.6,
+            "myt_tri_web": 0.7,
+            "tri_faster": 0.7,
+            "thirdeye": 1,
+        },
+        rarity: RarityName.unique,
+        exp: 62000,
+        usingAssets: "spider"
     },{
         idString: "myt_soldier_ant",
         displayName: "Soldier Ant",
@@ -831,7 +878,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "egg": 0.6
         },
         rarity: RarityName.mythic,
-        exp: 400,
+        exp: 8000,
         usingAssets: "soldier_ant"
     },{
         idString: "myt_worker_ant",
@@ -856,7 +903,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "corn": 0.5
         },
         rarity: RarityName.mythic,
-        exp: 400,
+        exp: 7000,
         usingAssets: "worker_ant"
     },{
         idString: "myt_queen_ant",
@@ -898,7 +945,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "penta": 0.005
         },
         rarity: RarityName.mythic,
-        exp: 400,
+        exp: 6000,
         usingAssets: "baby_ant"
     },{
         idString: "myt_ant_hole",
@@ -929,7 +976,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "corn": 0.002
         },
         rarity: RarityName.mythic,
-        exp: 200,
+        exp: 25000,
         usingAssets: "ant_hole"
     },{
         idString: "passive_bee",
@@ -1020,7 +1067,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "heaviest": 1
         },
         rarity: RarityName.mythic,
-        exp: 20,
+        exp: 10000,
         usingAssets: "rock"
     }
 ] satisfies MobDefinition[]);

@@ -341,7 +341,8 @@ body {
     transform: translate(-50%, -50%);
     font-size: var(--x);
     top: 80%;
-    left: 50%;
+    left: var(--name-left, 50%);
+    white-space: nowrap;
     -webkit-text-stroke: 2px #000;
 }
 
@@ -352,7 +353,8 @@ body {
     font-size: var(--x);
     color: white;
     top: 80%;
-    left: 50%;
+    white-space: nowrap;
+    left: var(--name-left, 50%);
 }
 
 img {
@@ -512,6 +514,7 @@ input::placeholder {
 #chat-channel {
     color: white;
     font-size: 15px;
+    margin-right: 5px;
 }
 
 #chat-send {

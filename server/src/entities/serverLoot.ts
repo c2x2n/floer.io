@@ -35,7 +35,10 @@ export class ServerLoot extends ServerEntity<EntityType.Loot> {
 
     tick(): void{
         this.despawnTime += this.game.dt;
-        if (this.despawnTime >= GameConstants.loot.despawnTime) {
+        const rarityDef = Rarity.fromString(this.definition.rarity);
+        // rarityDef.level starts from 1
+        const corrDespawnTime = GameConstants.loot.despawnTime[rarityDef.level-1] || 45;
+        if (this.despawnTime >= corrDespawnTime) {
             this.destroy();
         }
     }

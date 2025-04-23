@@ -24,6 +24,18 @@ export type PetalDefinition = ObjectDefinition & {
         readonly centerXOffset?: number
         readonly centerYOffset?: number
         readonly facingOut?: boolean
+        readonly fontSizeMultiplier?: number
+        readonly equipmentStyles?: {
+            readonly noRender: boolean
+            readonly thirdEye?: boolean
+            readonly coordsToOwner?: {
+                x: number
+                y: number
+                scale?: number
+                rotation?: number
+                zIndex?: number
+            }
+        }
     }
 } & PetalEquipmentType;
 
@@ -589,7 +601,8 @@ export const Petals = new Definitions<PetalDefinition>([
             slotRotation: 0.8,
             centerXOffset: -1,
             centerYOffset: -1,
-            facingOut: true
+            facingOut: true,
+            fontSizeMultiplier: 0.8
         },
         usable: true,
         attributes: {
@@ -1258,7 +1271,15 @@ export const Petals = new Definitions<PetalDefinition>([
         description: "Allows your flower to sense foes farther away",
         equipment: true,
         images: {
-            slotDisplaySize: 60
+            slotDisplaySize: 60,
+            equipmentStyles:{
+                noRender: false,
+                coordsToOwner:{
+                    x: 0,
+                    y: 25,
+                    scale: 1
+                }
+            }
         },
         hitboxRadius: 0.9,
         modifiers: {
@@ -1279,6 +1300,146 @@ export const Petals = new Definitions<PetalDefinition>([
         },
         rarity: RarityName.mythic,
         usingAssets: "antennae"
+    },
+    {
+        idString: "thirdeye",
+        displayName: "Third Eye",
+        description: "Gives you the power to control your own petal.",
+        equipment: true,
+        images: {
+            slotDisplaySize: 39,
+            centerYOffset: -1.25,
+            fontSizeMultiplier: 0.8,
+            equipmentStyles: {
+                noRender: false,
+               // thirdEye: true,
+                coordsToOwner: {
+                    x: 0,
+                    y: 10.5,
+                    scale: 0.4
+                }
+            }
+        },
+        hitboxRadius: 0.6,
+        modifiers: {
+            controlRotation: true,
+        },
+        rarity: RarityName.unique
+    },
+    {
+        idString: "tentacles",
+        displayName: "Tentacles",
+        description: "Allows you to extend your petals farther away.",
+        equipment: true,
+        images: {
+            slotDisplaySize: 60,
+            fontSizeMultiplier: 0.85,
+            equipmentStyles: {
+                noRender: false,
+                coordsToOwner: {
+                    x: 0,
+                    y: -25,
+                    scale: 1.5,
+                    rotation: Math.PI,
+                    zIndex: -1,
+                }
+            }
+        },
+        hitboxRadius: 0.6,
+        unstackable: true,
+        modifiers: {
+            extraDistance: 1,
+        },
+        rarity: RarityName.legendary,
+        undroppable: true, // TEMPORARY: TOREMOVE: spawn in game for testing purposes, remove this when added to drops
+    },
+    {
+        idString: "stentacles",
+        displayName: "Tentacles",
+        description: "Slips into your ████ and █████ you.",
+        equipment: true,
+        images: {
+            slotDisplaySize: 60,
+          //  centerYOffset: -1.25,
+            fontSizeMultiplier: 0.85,
+            equipmentStyles: {
+                noRender: false,
+                coordsToOwner: {
+                    x: 0,
+                    y: -25,
+                    scale: 1.5,
+                    rotation: Math.PI,
+                    zIndex: -1,
+                }
+            }
+        },
+        hitboxRadius: 0.6,
+        modifiers: {
+            extraDistance: 10,
+        },
+        rarity: RarityName.super,
+        undroppable: true,
+        usingAssets: "tentacles"
+    },
+    {
+        idString: "yggdrasil",
+        displayName: "Yggdrasil",
+        description: "A dried leaf from the yggdrasil tree, rumored to be able to bring dead flowers back alive.",
+        damage: 10,
+        health: 10,
+        extendable: false,
+        usable: false,
+        images: {
+            slotDisplaySize: 50,
+            fontSizeMultiplier: 0.87
+
+     //       selfGameRotation: 0.02
+        },
+        modifiers: {
+            revive: {
+                healthPercent: 30,
+                shieldPercent: 50,
+                destroyAfterUse: true
+            }
+        },
+        reloadTime: 2.5,
+        hitboxRadius: 0.55,
+        isDuplicate: false,
+        pieceAmount: 1,
+        effectiveFirstReload: true,
+        undroppable: true,
+        rarity: RarityName.unique,
+    },
+    {
+        idString: "sygg",
+        displayName: "Yggdrasil",
+        description: "A whole Yggdrasil tree here. Never runs out.",
+        damage: 0.01,
+        health: 24,
+        extendable: false,
+        usable: false,
+        images: {
+            slotDisplaySize: 50,
+            fontSizeMultiplier: 0.9
+
+     //       selfGameRotation: 0.02
+        },
+        modifiers: {
+            revive: {
+                healthPercent: 100,
+                shieldPercent: 70,
+                destroyAfterUse: false
+            }
+        },
+        reloadTime: 0.5,
+        hitboxRadius: 0.55,
+        isDuplicate: true,
+        pieceAmount: 15,
+        isShowedInOne: true,
+        effectiveFirstReload: true,
+        undroppable: true,
+        rarity: RarityName.super,
+        usingAssets: 'yggdrasil'
     },
     {
         idString: "pollen",
@@ -1310,7 +1471,7 @@ export const Petals = new Definitions<PetalDefinition>([
     {
         idString: "myt_pollen",
         displayName: "Pollen",
-        description: "Asthmatics beware. ",
+        description: "Asthmatics beware.",
         damage: 8,
         health: 5,
         extendable: false,
@@ -1404,24 +1565,22 @@ export const Petals = new Definitions<PetalDefinition>([
     {
         idString: "segg",
         displayName: "Egg",
-        // 真有大爆炸 可以用来压测 不信你试试
-        description: "Causes ant explosion. Handle with care.",
+        description: "Something dangerous might pop out of this.",
         damage: 1,
         health: 500,
         extendable: false,
         usable: true,
         images: {
-            slotDisplaySize: 45
+            slotDisplaySize: 60
         },
         useTime: 1,
         attributes: {
-            spawner: Mobs.fromString("myt_ant_hole")
+            spawner: Mobs.fromString("mega_beetle")
         },
         reloadTime: 1,
-        hitboxRadius: 1.375,
-        isDuplicate: true,
-        pieceAmount: 5,
-        isShowedInOne: false,
+        hitboxRadius: 1.5,
+        isDuplicate: false,
+        pieceAmount: 1,
         rarity: RarityName.super,
         usingAssets: "egg",
         undroppable: true
@@ -1451,8 +1610,7 @@ export const Petals = new Definitions<PetalDefinition>([
     },
     {
         idString: "yinyang",
-        // TODO: TEMPORARY: should be Yin Yang but petalContainer will show it in 2 lines
-        displayName: "YinYang",
+        displayName: "Yin Yang",
         description: "A mysterious petal with mighty power coming from the East.\nReverses your petal rotation direction.",
         damage: 10,
         health: 10,
@@ -1461,6 +1619,7 @@ export const Petals = new Definitions<PetalDefinition>([
         images: {
             slotDisplaySize: 40,
             selfGameRotation: 0.01,
+            fontSizeMultiplier: 0.9
         },
         modifiers: {
             yinYangs: 1
@@ -1584,6 +1743,30 @@ export const Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.rare
+    },
+    {
+        idString: "sjelly",
+        displayName: "Jelly",
+        description: "I like eating this.",
+        damage: 1,
+        health: 100,
+        extendable: true,
+        usable: false,
+        images: {
+            slotDisplaySize: 45,
+            selfGameRotation: 0.01,
+            slotRotation: 0.3,  
+        },
+        attributes: {
+            boost: -300
+        },
+        reloadTime: 0.5,
+        hitboxRadius: 0.55,
+        isDuplicate: false,
+        pieceAmount: 1,
+        rarity: RarityName.super,
+        usingAssets: "jelly",
+        undroppable: true
     },
     {   
         idString: "rock",

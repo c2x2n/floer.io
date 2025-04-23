@@ -8,6 +8,7 @@ import { RarityName, Rarity } from "@common/definitions/rarity.ts";
 import { getGameAssetsFile } from "@/scripts/utils/pixi.ts";
 import { PlayerModifiers } from "@common/typings.ts";
 import { AttributeName } from "@common/definitions/attribute.ts";
+import { GameConstants } from "@common/constants";
 
 const defaultCenter = Vec2.new(25, 21);
 
@@ -95,6 +96,11 @@ const showingConfig: { [key: string] : showingConfig } =
             color: "#656548",
             noValue: true
         },
+        consumesOnUse: {
+            displayName: "Consumes once used",
+            color: "#d41518",
+            noValue: true
+        },
         damageAvoidanceChance: {
             displayName: "Flower Evasion",
             color: "#3399ff",
@@ -126,7 +132,7 @@ const attributesShowingConfig: { [K in AttributeName] : AttributeShowingFunction
             return [{
                 displayName: "Shield",
                 value: data.toString(),
-                color: "#ffffff"
+                color: "#d2eb34"
             }]
         },
         boost: (data) => {
@@ -245,7 +251,20 @@ const attributesShowingConfig: { [K in AttributeName] : AttributeShowingFunction
                 value: `${data.damagePerSecond}/s`,
                 color: "#32CD32"
             }]
-        }
+        },
+        /*revive: (data) => {
+            return [...(data.reviveHpMulti !== undefined ? [{
+                displayName: "Revive HP",
+                value: data.reviveHpMulti.toString()+"%",
+                color: "#58fd48"
+            }]:[]),
+            ...(data.reviveShieldMulti !== undefined ? [{
+                displayName: "Revive Shield",
+                value: data.reviveShieldMulti.toString()+"%",
+                color: "#d2eb34"
+            }] : []),
+            ]
+        }*/
     }
 
 export function renderPetalPiece(
@@ -271,10 +290,14 @@ export function renderPetalPiece(
     return piece;
 }
 
-export function renderPetal(petal: PetalDefinition) {
+export function renderPetal(petal: PetalDefinition, baseFs: number = 12) {
     const petal_box = $<HTMLDivElement>(
         `<div class="petal" petalName="${petal.displayName}"></div>`
     );
+    if (petal.images?.fontSizeMultiplier) {
+        const fsApplied = baseFs * petal.images.fontSizeMultiplier;
+        petal_box.css("--x", `${fsApplied}px`);
+    };
 
     const rarity = Rarity.fromString(petal.rarity);
     const displaySize = petal.images?.slotDisplaySize ?? 25;
@@ -325,6 +348,8 @@ export class Inventory{
     switchedPetalIndex: number = -1;
     switchedToPetalIndex: number = -1;
 
+    isReturningToSlot: boolean = false;
+
     swingAngle: number = 0;
     swingAnimationId: number | null = null;
     swingProgress: number = 0; // Track animation progress from 0 to 1
@@ -336,23 +361,26 @@ export class Inventory{
         let targetY = 0;
         let currentX = 0;
         let currentY = 0;
-        const followSpeed = 0.125;
+        const followSpeed = 0.12;
         let followAnimationId: number | null = null;
         
         const updateFollowAnimation = () => {
-            if (draggingData.item) {
-                // Smoothly interpolate between current position and target position
-                currentX += (targetX - currentX) * followSpeed;
-                currentY += (targetY - currentY) * followSpeed;
-                
-                draggingData.item.css("transform", `translate(${currentX}px, ${currentY}px)`);
-                
-                followAnimationId = window.requestAnimationFrame(updateFollowAnimation);
+            if (!draggingData.item || this.isReturningToSlot) { 
+                followAnimationId = null; // Ensure ID is cleared if stopped this way
+                return; 
             }
+            
+            // Smoothly interpolate between current position and target position
+            currentX += (targetX - currentX) * followSpeed;
+            currentY += (targetY - currentY) * followSpeed;
+            
+            draggingData.item.css("transform", `translate(${currentX}px, ${currentY}px)`);
+            
+            followAnimationId = window.requestAnimationFrame(updateFollowAnimation);
         };
 
         $(document).on("mousemove", (ev) => {
-            if (draggingData.item) {
+            if (draggingData.item && !this.isReturningToSlot) { 
                 const { clientX, clientY } = ev;
                 
                 targetX = clientX;
@@ -373,6 +401,11 @@ export class Inventory{
         $(document).on("mousedown", (ev) => {
             this.swingAngle = 0;
             this.swingProgress = 0;
+            // DO NOT let users swap petals if a swap anim is in progress... need a lot more effort if you want two animations and swaps
+            // happen simultaneously AND not break the animation WHEN not fucking up the logics
+            if (this.isReturningToSlot || followAnimationId) {
+                return;
+            }
             
             // Reset position tracking when starting a new drag
             if (draggingData.item) {
@@ -393,7 +426,7 @@ export class Inventory{
                 if (petalElement.length) {
                 
                     let originalSize = 50; 
-                    // find the width of original slot... should be 50 anyways
+                    // find the width of original slot... should be 50 // 35 anyways
                     if (draggingData.container?.ui_slot) {
                         originalSize = draggingData.container?.ui_slot.width() || 50;
                     }
@@ -413,6 +446,8 @@ export class Inventory{
                     let startTime = performance.now();
                     const growthDuration = 250; // ms
                     let initialSwingSpeed = 0.005; // Start slower
+                    const scale = targetSize / originalSize;
+                    const finalFontSize = parseFloat(petalElement.css('--x'))*scale || parseFloat(petalElement.css('font-size')); // px
                     
                     const animateCombined = (currentTime: number) => {
                         const elapsed = currentTime - startTime;
@@ -423,10 +458,9 @@ export class Inventory{
                         const currentSize = originalSize + ((targetSize - originalSize) * easeOutCubic);
                         
                         // Scale font size proportionally by updating the CSS variable
-                        const fontScale = currentSize / originalSize;
-                        const baseFontSize = 0.8; // Default font size in em
-                        const newFontSize = baseFontSize * fontScale;
-                        petalElement.css('--x', `${newFontSize}em`);
+                        const fontScale = currentSize / targetSize;
+                        const newFontSize = finalFontSize * fontScale;
+                        petalElement.css('--x', `${newFontSize}px`);
                         
                         // Gradually increase swing speed as growth progresses
                         const targetSwingSpeed = 0.015;
@@ -488,6 +522,11 @@ export class Inventory{
         });
 
         $(document).on("mouseup", (ev) => {
+            // DO NOT let users swap petals if a swap anim is in progress... need a lot more effort if you want two animations and swaps
+            // happen simultaneously AND not break the animation WHEN not fucking up the logics
+            if (this.isReturningToSlot) {
+                return;
+            }
             if (draggingData.item && draggingData.container) {
                 // Stop the swing animation
                 if (this.swingAnimationId) {
@@ -506,35 +545,124 @@ export class Inventory{
                 currentY = 0;
                 targetX = 0;
                 targetY = 0;
-                
-                draggingData.item.remove();
-                draggingData.item = null;
 
-                if (mouseSelectingPetal && mouseSelectingPetal != draggingData.container) {
-                    const trans = mouseSelectingPetal.petalDefinition;
-                    mouseSelectingPetal.petalDefinition = draggingData.container.petalDefinition;
-                    draggingData.container.petalDefinition = trans;
-                    this.switchedPetalIndex = this.inventory.indexOf(draggingData.container);
-                    this.switchedToPetalIndex = this.inventory.indexOf(mouseSelectingPetal);
-                } else if (mouseDeletingPetal) {
-                    draggingData.container.petalDefinition = null;
-                    this.deletedPetalIndex = this.inventory.indexOf(draggingData.container);
-                } else {
-                    const index = this.inventory.indexOf(draggingData.container);
-                    if (index >= this.equippedPetals.length) {
-                        this.switchSlot(index - this.equippedPetals.length);
-                    } else {
-                        this.switchSlot(index)
-                    }
-                }
-
-                this.keyboardSelectingPetal = undefined;
-                this.updatePetalRows();
-
+                this.processInventoryChanges(draggingData);
             }
         })
     }
+
+    /**
+     * Animate the petal element when its going from one place to another.
+     * position, size, opacity, angle and font size are handled in the process.
+     * @param petalEl The petal element to animate
+     * @param destination An object containing the destination position, size, opacity, angle. Ideally font size and border size should follow the size scaling so it does not need to be included
+     * @param runWhenFinished A function to run once the animation is finished
+     * @param fromIfAny [OPTIONAL] An object containing the starting position, size, opacity, angle. These will be parsed from petalEl if this param is not passed
+     */
+    animatePetalToPosition(petalEl: JQuery<HTMLElement>,destination: object = {
+        x: 0, // x and y cant be 0 under normal circumstances...
+        y: 0,
+        w: 50, // 50 for main, 35 for secondary
+        opac: 0.85, // should be consistent
+        angle: 0, 
+        fontSz: 12, // 12 for main, 8 for secondary
+    }, runWhenFinished?: () => void, fromIfAny?: object) {
+        const currentOffset = petalEl.offset();
+        //const {clientX, clientY} = ev;
+        if (!currentOffset) {
+            // If offset fails, cleanup and run callback
+            petalEl.remove();
+            runWhenFinished?.();
+            return false; 
+       }
+       const actPetalEl = petalEl.find('.petal');
+        let from = fromIfAny 
+            // if an fromIfAny OBJECT is passed, use it
+            ? fromIfAny as {x: number, y: number, w: number, opac: number, angle: number, fontSz: number} 
+            // otherwise, parse it from petalEl
+            : {
+                x: currentOffset.left,
+                y: currentOffset.top,
+                w: petalEl.width() || 70,
+                opac: parseFloat(petalEl.css('opacity')) || 1,
+                angle: this.swingAngle || 0,
+                fontSz: parseFloat(petalEl.css('--x')) || 12*1.4,
+            };
+        if (actPetalEl.length && !fromIfAny) {
+            from.fontSz = parseFloat(actPetalEl.css('--x')) || 999;
+        }
+        const dest = destination as {x: number, y: number, w: number, opac: number, angle: number, fontSz: number};
+
+        const duration = 250; // ms
+        let st = performance.now();
+
+        // stop swing
+        if (this.swingAnimationId) {
+            window.cancelAnimationFrame(this.swingAnimationId);
+            this.swingAnimationId = null;
+        }
+
+        const animate = (ct: number) => {
+            // is this really needed? idk but ill leave this
+            if (!petalEl || !petalEl.parent().length) {
+                runWhenFinished?.(); // Still run callback if element disappears
+                return;
+            }
+            const elapsed = ct - st;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // ease-out-quint for position
+            const easeOutQuint = 1 - Math.pow(1 - progress, 5);
+            const curX = from.x + (dest.x - from.x) * easeOutQuint;
+            const curY = from.y + (dest.y - from.y) * easeOutQuint;
+            
+            // ease-out-cubic for angle, size, opac
+            const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+            const currentAngle = from.angle * (1 - easeOutCubic);
+            const currentW = from.w - ((from.w - dest.w) * easeOutCubic);
+            const currentOpacity = from.opac - ((from.opac - dest.opac) * easeOutCubic);
+
+            const SCALE = currentW / dest.w;
+            
+            // scale font
+            const updateFontSz = dest.fontSz * (SCALE);
+            const petalElement = petalEl.find('.petal');
+            if (petalElement.length) {
+                petalElement.css('--x', `${updateFontSz}px`);
+            }
+                            
+            
+            petalEl.css("opacity", currentOpacity);
+            petalEl.css("transform", `translate(${curX}px, ${curY}px)`);
+            
+            petalEl.css("width", `${currentW}px`);
+            petalEl.css("height", `${currentW}px`);
+            
+            if (petalElement.length) {
+                petalElement.css('transform', `translate(-50%, -50%) rotate(${currentAngle}deg)`);
+                petalElement.css('border-width', '4px'); // prevent changing, dunno why it was scaled
+            }
+            
+            if (progress < 1) {
+                window.requestAnimationFrame(animate);
+            } else {
+                // animation complete
+                petalEl.remove();
+                runWhenFinished?.();
+                this.isReturningToSlot = false;
+            }
+        };
+        
+        window.requestAnimationFrame(animate);
+        this.isReturningToSlot = true;
+    }
+
     updateSwingAnimation = () => {
+        if (!draggingData.item || this.isReturningToSlot) {
+            this.swingAnimationId = null; // Clear ID if stopped
+            return;
+        }
+        // duplicated check but lazy to remove L
         if (draggingData.item) {
             // Update swing progress
             let swingProgress = this.swingProgress;
@@ -557,34 +685,249 @@ export class Inventory{
         }
     };
 
-    // TODO: make it process swap petal before animation is finished
-    // and a fter animation is finished, update petal deck to show the changes
-    processInventoryChanges = (animationFinished: boolean = false) => {
-        // Swapping to diff slots
-        if (mouseSelectingPetal && mouseSelectingPetal != draggingData.container && draggingData.container) {
+    processInventoryChanges = (draggingData: any) => {
+        // Ensure container exists before processing
+        if (!draggingData.container) {
+            console.warn("[ProcessInventoryChanges] No draggingData.container found. Aborting.");
+            // Reset interaction state variables even if aborting
+            mouseSelectingPetal = undefined; 
+            mouseDeletingPetal = false; 
+            this.keyboardSelectingPetal = undefined;
+            this.updatePetalRows(); // Update UI to clear any hover states etc.
+            return; 
+        }
+
+        const originalIndex = this.inventory.indexOf(draggingData.container);
+        // Case 1: Swapping to a different slot
+        if (mouseSelectingPetal && mouseSelectingPetal != draggingData.container) {
+            const targetIndex = this.inventory.indexOf(mouseSelectingPetal);
+
             const trans = mouseSelectingPetal.petalDefinition;
             mouseSelectingPetal.petalDefinition = draggingData.container.petalDefinition;
             draggingData.container.petalDefinition = trans;
-            this.switchedPetalIndex = this.inventory.indexOf(draggingData.container);
-            this.switchedToPetalIndex = this.inventory.indexOf(mouseSelectingPetal);
-        // delete petal
-        } else if (mouseDeletingPetal && draggingData.container) {
-            draggingData.container.petalDefinition = null;
-            this.deletedPetalIndex = this.inventory.indexOf(draggingData.container);
-        // dropping the petal
-        // logic here needs to be changed
-        } else if (draggingData.container) {
-            const index = this.inventory.indexOf(draggingData.container);
-            if (index >= this.equippedPetals.length) {
-                this.switchSlot(index - this.equippedPetals.length);
-            } else {
-                this.switchSlot(index);
+            
+            this.switchedPetalIndex = originalIndex;
+            this.switchedToPetalIndex = targetIndex;
+            this.deletedPetalIndex = -1; // Ensure delete index is reset
+
+            let dest1 = this.findDestinationSlot(this.switchedToPetalIndex);
+            let dest2 = this.findDestinationSlot(this.switchedPetalIndex);
+            
+            // Create a clone of the target petal for the second animation
+            let targetPetalEl: JQuery<HTMLElement> | null = null;
+            let targetPetalClone: JQuery<HTMLElement> | null = null;
+            let fromSlotDetails = undefined;
+            if (mouseSelectingPetal.ui_slot) {
+                targetPetalEl = mouseSelectingPetal.ui_slot.find('.petal');
+                if (targetPetalEl.length) {
+                    // Create a dragging-petal container for the clone
+                    targetPetalClone = $('<div class="dragging-petal"></div>');
+                    const innerPetalClone = targetPetalEl.clone();
+                    targetPetalClone.append(innerPetalClone);
+
+                    targetPetalEl.css('opacity', 0); // Hide the original petal
+                    
+                    // Position the clone at the original target slot
+                    const targetOffset = mouseSelectingPetal.ui_slot.offset();
+                    if (targetOffset) {
+                        targetPetalClone.css({
+                            position: 'fixed',
+                            //left: targetOffset.left + 'px',
+                           // top: targetOffset.top + 'px',
+                            width: (mouseSelectingPetal.ui_slot.width() || 50) + 'px',
+                            height: (mouseSelectingPetal.ui_slot.height() || 50) + 'px',
+                            zIndex: parseInt(draggingData.item.css('z-index'))-1, // Below the main dragged item
+                            opacity: 1,
+                            pointerEvents: 'none'
+                        });
+                        
+                        // Set initial font size on the inner clone
+                        const targetFontSize = parseFloat(targetPetalEl.css('--x')) || 12;
+                        innerPetalClone.css('--x', `${targetFontSize}px`);
+                        
+                        // Add to body
+                        $('body').append(targetPetalClone);
+
+                        fromSlotDetails = {
+                            x: targetOffset.left + (mouseSelectingPetal.ui_slot.width() || 0) / 2,
+                            y: targetOffset.top + (mouseSelectingPetal.ui_slot.height() || 0) / 2,
+                            w: (mouseSelectingPetal.ui_slot.width() || 50),
+                            opac: mouseSelectingPetal.ui_slot.css('opacity') || 0.85,
+                            angle: mouseSelectingPetal.ui_slot.css('opacity') || 0,
+                            fontSz: parseFloat(targetPetalEl.css('--x')) || (12) 
+                        }
+                        
+                        // Hide the original petal in the target slot
+                       // targetPetalEl.css('opacity', 0);
+                    }
+                }
+            }
+            
+            let i = 0;
+            const toEmpty = targetPetalClone ? 2 : 1;
+            let animationsRemaining = !toEmpty ? 2 : 1;
+            
+            const onAnimationComplete = () => {
+                animationsRemaining--;                
+                if (animationsRemaining === 0) {
+                    // All animations complete, clean up
+                    if (targetPetalClone) targetPetalClone.remove();
+                    draggingData.item = null;
+                    
+                    // Reset interaction state variables
+                    mouseSelectingPetal = undefined; 
+                    mouseDeletingPetal = false; 
+                    this.keyboardSelectingPetal = undefined;
+                    
+                    // Update UI to show the swapped petals
+                    this.updatePetalRows();
+                }
+            };
+            
+            for (let dest of [dest1, dest2]) {
+                if (dest) {
+                    let destOffset = dest.offset();
+                    if(destOffset) {
+                        // DO NOT run if swapping to emptyslot to prevent callback running
+                        if (i === 1 && toEmpty < 2) return;
+                        // For first iteration, animate the dragged item
+                        // For second iteration, animate the target clone
+                        let petalToAnimate = i === 0 ? draggingData.item : targetPetalClone;
+                        let fromObj = i === 1? fromSlotDetails : undefined;
+                        // on iteration 1, fromObj is undefined, method will parse from draggingData.item
+                        // on iteration 2, method uses provided obj parsed earlier from targetPetalEl
+                        const scale = petalToAnimate.width() / (dest.width() || 50); // 35
+                        const innerPetal = petalToAnimate.find('.petal');
+                        let rnFontSz = 12*scale;
+                        if  (innerPetal) {
+                            rnFontSz = parseFloat(innerPetal.css('--x'));
+                        }
+                        const FINALFONTSZ = rnFontSz / scale;
+                        
+                        if (petalToAnimate) {
+                            this.animatePetalToPosition(petalToAnimate, {
+                                x: (destOffset.left + (dest.width() || 0) / 2)+1,
+                                y: (destOffset.top + (dest.height() || 0) / 2)+1,
+                                w: dest.width() || 50, // 35 if secondary
+                                opac: 0.92, // value chosen to best blend petal colour and slot colour... 
+                                angle: 0, // should always be 0
+                                fontSz: FINALFONTSZ || 12, // 8 for secondary
+                            }, onAnimationComplete, fromObj);
+                        } else {
+                            // If we don't have a petal to animate for this iteration, still decrement
+                            console.warn(`[ProcessInventoryChanges] No petal to animate for destination ${i+1}. Skipping.`);
+                            onAnimationComplete();
+                        }
+                    } else {
+                        console.warn(`[ProcessInventoryChanges] No offset found for dest${i+1}. Skipping animation.`);
+                        onAnimationComplete();
+                    }
+                } else {
+                    console.warn(`[ProcessInventoryChanges] No destination slot ${i+1} found. Skipping animation.`);
+                    onAnimationComplete();
+                }
+                i++;
+            }
+            
+            // Return early to prevent the final updatePetalRows call
+            // We'll call it in the onAnimationComplete callback instead
+            return;
+    } else if (mouseDeletingPetal) {
+        
+        draggingData.container.petalDefinition = null;
+        this.deletedPetalIndex = originalIndex;
+        this.switchedPetalIndex = -1; // Ensure swap indices are reset
+        this.switchedToPetalIndex = -1;
+        
+        // Animate deletion - shrink to 0 size and fade opacity to 0.5
+        if (draggingData.item && this.ui.deletePetal) {
+            const deleteOffset = this.ui.deletePetal.offset();
+            if (deleteOffset) {
+                this.animatePetalToPosition(draggingData.item, {
+                    x: (deleteOffset.left + (this.ui.deletePetal.width() || 0) / 2)+1,
+                    y: (deleteOffset.top + (this.ui.deletePetal.height() || 0) / 2)+1,
+                    w: 0.1, // shrink to almost nothing
+                    opac: 0.2, // fade to almost nothing
+                    angle: 0,
+                    fontSz: 0.025, // starts at like 17. something, close enough to 16.8 (dragging petal fsz)
+                }, () => {
+                    draggingData.item = null; // It is already removed by the animation method
+                });
+                return; // Skip the immediate removal below
             }
         }
+        // Fallback if animation can't be performed
+        draggingData.item.remove();
+        draggingData.item = null;
 
-        this.keyboardSelectingPetal = undefined;
+    // Case 3: Dropping back to original slot OR onto empty space (No data change needed)
+    } else {
+        // Reset switch/delete indices as no action occurred
+        this.switchedPetalIndex = -1;
+        this.switchedToPetalIndex = -1;
+        this.deletedPetalIndex = -1;
+        
+        // Animate return to original slot
+        if (draggingData.item && draggingData.container && draggingData.container.ui_slot) {
+            const originalSlot = draggingData.container.ui_slot;
+            const slotOffset = originalSlot.offset();
+            
+            if (slotOffset) {
+                const scale = draggingData.item.width() / (originalSlot.width() || 50); // 35
+                const innerPetal = draggingData.item.find('.petal');
+                let rnFontSz = 12*scale;
+                if  (innerPetal) {
+                    rnFontSz = parseFloat(innerPetal.css('--x'));
+                }
+                const FINALFONTSZ = rnFontSz / scale;
+                this.animatePetalToPosition(draggingData.item, {
+                    x: (slotOffset.left + (originalSlot.width() || 0) / 2)+1,
+                    y: (slotOffset.top + (originalSlot.height() || 0) / 2)+1,
+                    w: originalSlot.width() || 50,
+                    opac: 0.92,
+                    angle: 0,
+                    fontSz: FINALFONTSZ || 12,
+                }, () => {
+                    draggingData.item = null; // It is already removed by the animation method
+                    
+                    // Call updatePetalRows AFTER the animation completes to redraw the petal in its slot
+                    this.updatePetalRows();
+                });
+                return; // Skip the immediate removal below
+            }
+        }
+        // Fallback if animation can't be performed
+        draggingData.item.remove();
+        draggingData.item = null;
+        
+        // Update UI immediately if we didn't animate
+        this.updatePetalRows();
+        return; // Skip the updatePetalRows call at the end of processInventoryChanges
+    }
+
+        // Reset interaction state variables AFTER processing
+        mouseSelectingPetal = undefined; 
+        mouseDeletingPetal = false; 
+        this.keyboardSelectingPetal = undefined; // Reset keyboard selection as well
+
+        // Update UI based on the changes (or lack thereof)
         this.updatePetalRows();
     };
+
+    findDestinationSlot(targetIndex: number) {
+        let destinationElement: JQuery<HTMLElement> | null = null;
+        if (targetIndex < 0) {
+            console.warn(`Invalid targetIndex: ${targetIndex}`);
+            return null;
+        }
+        if (targetIndex >= GameConstants.player.defaultSlot) {
+            // is a secondary slot , >= : 10 is also a secondary slot
+            destinationElement = this.preparationPetals[targetIndex-GameConstants.player.defaultSlot]?.ui_slot || null;
+        } else {
+            destinationElement = this.equippedPetals[targetIndex]?.ui_slot || null;
+        }        
+        return destinationElement;
+    }
 
     moveSelectSlot(offset: number) {
         const allActiveSlot = this.preparationPetals.filter((v) => v.petalDefinition);
@@ -716,6 +1059,9 @@ export class Inventory{
             index ++;
         }
 
+        // we dont want this method to update the petal UI display yet
+        if (this.isReturningToSlot) return;
+
         this.updatePetalRows();
     }
 
@@ -766,8 +1112,9 @@ export class Inventory{
 
             if (petalContainer.petalDefinition) {
                 if (draggingData.item && draggingData.container == petalContainer) return;
+                const FONTSZ = parseFloat(petalContainer.ui_slot.css('--x'));
                 const petal =
-                    renderPetal(petalContainer.petalDefinition);
+                    renderPetal(petalContainer.petalDefinition, FONTSZ);
 
                 petal_slot.append(petal);
 

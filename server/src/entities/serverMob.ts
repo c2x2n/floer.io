@@ -306,7 +306,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         };
     };
 
-    destroy() {
+    destroy(noDrops: boolean = false) {
         super.destroy();
 
         const lootTable = this.definition.lootTable;
@@ -323,7 +323,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
             }
         }
 
-        spawnLoot(this.game, loots, this.position);
+        if (!noDrops) spawnLoot(this.game, loots, this.position);
 
         const rarity = Rarity.fromString(this.definition.rarity);
         if (rarity.globalMessage) {
@@ -331,7 +331,12 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                 Array.from(this.damageFrom).sort(
                     (a, b) => b[1] - a[1])[0]
             let content = `The ${rarity.displayName} ${this.definition.displayName} has been defeated`
-            content += ` by ${highestPlayer[0].name}`;
+            let plus = 'nobody';
+            if (highestPlayer) {
+                if (highestPlayer[0])
+                    plus=highestPlayer[0].name 
+            }
+            content += ` by ${plus}`;
             this.game.sendGlobalMessage({
                 content: content +"!",
                 color: parseInt(rarity.color.substring(1), 16)

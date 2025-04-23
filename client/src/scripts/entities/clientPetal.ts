@@ -47,13 +47,26 @@ export class ClientPetal extends ClientEntity {
             const owner = this.game.entityPool.get(this.ownerId);
 
             if (this.definition.equipment) {
+                if (this.definition.images?.equipmentStyles?.noRender) {
+                    return;
+                }
                 if (owner) {
+                    const x = this.definition.images?.equipmentStyles?.coordsToOwner?.x ?? 0;
+                    const y = this.definition.images?.equipmentStyles?.coordsToOwner?.y ?? 25;
+                    const scale = this.definition.images?.equipmentStyles?.coordsToOwner?.scale ?? 1;
+                    const rotation = this.definition.images?.equipmentStyles?.coordsToOwner?.rotation ?? 0;
+                    const ZI =  this.definition.images?.equipmentStyles?.coordsToOwner?.zIndex ?? 3;
                     this.container.position = Vec2.sub(
                         owner.container.position,
-                        Vec2.new(0, 25)
+                        Vec2.new(x, y)
                     );
+                    
+                    // Apply the scale to the container
+                    this.container.scale.set(scale);
+                    this.container.rotation = rotation; 
+                    this.container.zIndex = ZI;
                 }
-                this.container.zIndex = 3;
+
                 return;
             }
 

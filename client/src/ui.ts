@@ -133,6 +133,11 @@ export class UI {
                 }
             });
         });
+        window.addEventListener("beforeunload", (ev) => {
+            if (this.game.running) {
+                ev.preventDefault();
+            }
+        });
 
         this.gameOverScreen.css("display", "none");
 
@@ -180,6 +185,10 @@ export class UI {
     }
 
     spawnRandomEntity(): void {
+        if (this.game.running) {
+            // stop spawning if in game
+            return;
+        }
         // Decide whether to spawn a mob or petal (30% petal 70% mob)
         const isMob = Math.random() > 0.3;
 
@@ -282,7 +291,7 @@ export class UI {
             `<div
                 class="chat-message"
                 textStroke="${msg.content}"
-                style="color: #${msg.color.toString(16)};"
+                style="color: #${msg.color.toString(16)}; transform: translateX(-150%);"
             >
                 ${msg.content}
             </div>`
@@ -290,10 +299,22 @@ export class UI {
 
         this.chatMessagesBox.append(jq)
 
+        setTimeout(() => {
+            jq.css({
+                "transition": "transform 0.5s cubic-bezier(0,.65,0,1)",
+                "transform": "translateX(0px)"
+            });
+        }, 10);
+
         this.chatMessages.push(new ChatMessage(msg, jq, Date.now()));
 
         if (this.chatMessages.length > 20) {
-            this.chatMessages.shift()?.jq.remove();
+            const oldestMessage = this.chatMessages.shift();
+            if (oldestMessage?.jq) {
+                oldestMessage.jq.animate({ opacity: 0 }, 150, () => {
+                    $(this).remove();
+                });
+            }
         }
 
         this.scrollToEnd(this.chatMessagesBox);
@@ -327,6 +348,7 @@ export class UI {
         this.chattingChannel = this.changeableChannel[index];
 
         this.chatChannel.text(`[${ChatChannel[this.changeableChannel[index]]}]`);
+        this.chatChannel.attr("textStroke", `[${ChatChannel[this.changeableChannel[index]]}]`);
     }
 
     scrollToEnd(jq: JQuery<HTMLDivElement>) {
@@ -349,7 +371,6 @@ export class UI {
         }
         
         if (!this.inGameScreen || !this.transitionRing) return;
-        console.log('THIS IS THE POINT OF NO RETURN')
         this.transitionRing.css("opacity", "1"); // this need to show up nomatter what
     
         this.transitionRunning = true;
@@ -458,8 +479,16 @@ class ChatMessage {
 
     updateOpacity(force?: number) {
         if (!force) {
-            this.jq.css("opacity", this.getOpacity());
-            return
+            const opacity = this.getOpacity();
+            
+            if (opacity === 0 && this.jq.parent().length) {
+                this.jq.animate({ opacity: 0 }, 150, () => {
+                    $(this).remove();
+                });
+            } else {
+                this.jq.css("opacity", opacity);
+            }
+            return;
         }
         this.jq.css("opacity", force);
     }

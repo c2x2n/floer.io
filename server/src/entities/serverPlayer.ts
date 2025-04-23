@@ -6,14 +6,14 @@ import { type Game } from "../game";
 import { ChatData, type EntitiesNetData, PlayerState, UpdatePacket } from "../../../common/src/packets/updatePacket";
 import { CircleHitbox, RectHitbox } from "../../../common/src/utils/hitbox";
 import { Random } from "../../../common/src/utils/random";
-import { MathNumeric } from "../../../common/src/utils/math";
+import { MathNumeric, P2 } from "../../../common/src/utils/math";
 import { InputPacket } from "../../../common/src/packets/inputPacket";
 import { JoinPacket } from "../../../common/src/packets/joinPacket";
 import { EntityType, GameConstants } from "../../../common/src/constants";
 import { GameOverPacket } from "../../../common/src/packets/gameOverPacket";
 import { Inventory } from "../inventory/inventory";
 import { ServerPetal } from "./serverPetal";
-import { PetalDefinition, SavedPetalDefinitionData } from "../../../common/src/definitions/petal";
+import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../../../common/src/definitions/petal";
 import { spawnLoot } from "../utils/loot";
 import { AttributeEvents } from "../utils/attribute";
 import { PlayerModifiers } from "../../../common/src/typings";
@@ -21,10 +21,12 @@ import { EventFunctionArguments } from "../utils/eventManager";
 import { getLevelExpCost, getLevelInformation } from "../../../common/src/utils/levels";
 import { damageableEntity, damageSource } from "../typings";
 import { LoggedInPacket } from "../../../common/src/packets/loggedInPacket";
-import { ServerFriendlyMob } from "./serverMob";
+import { ServerFriendlyMob, ServerMob } from "./serverMob";
 import { Config } from "../config";
 import { ChatChannel, ChatPacket } from "../../../common/src/packets/chatPacket";
 import { PoisonEffect } from "../utils/effects";
+import { Rarity, RarityName } from "../../../common/src/definitions/rarity";
+import { Mobs } from "../../../common/src/definitions/mob";
 
 // 闪避
 enum curveType {
@@ -213,8 +215,12 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         }
 
         if (this.isAttacking) {
+            let defDist = GameConstants.player.defaultPetalAttackingDistance
+            if (isFinite(this.modifiers.extraDistance)) {
+                defDist += this.modifiers.extraDistance
+            }
             this.sendEvent(AttributeEvents.ATTACK, undefined)
-            this.inventory.range = GameConstants.player.defaultPetalAttackingDistance;
+            this.inventory.range = defDist;
         }
 
         this.inventory.tick();
@@ -319,6 +325,24 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         if (amount > 0) this.gotDamage = true;
 
         if (this.health <= 0) {
+            if (this.modifiers.revive) {
+                const revHealthP = this.modifiers.revive.healthPercent || 100;
+                const shieldP = this.modifiers.revive.shieldPercent || 0;
+                this.health = this.maxHealth * revHealthP/100
+                this.shield = this.maxHealth * shieldP/100;
+                this.dirty.shield = true;
+                if (this.modifiers.revive.destroyAfterUse) {
+                    for (let i = 0; i < this.inventory.inventory.length; i++) {
+                        const petalData = this.inventory.inventory[i];
+                        if (petalData?.modifiers?.revive?.destroyAfterUse) {
+                            this.inventory.delete(i);
+                            this.dirty.inventory = true; 
+                            break; 
+                        }
+                    }
+                }
+                return; // I REFUSE TO DIE
+            }
             if (source instanceof ServerPlayer) {
                 source.kills++;
                 this.killedBy = source;
@@ -437,7 +461,20 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             console.error("Error sending data:", error);
         }
     }
-
+    /**
+         * Sends a chat message directly to this player instance.
+         * The message will appear in their chat box, typically formatted as a system message.
+         * @param message The content of the message to send.
+         * @param color Optional color for the message text (default: 0xffcc00 - yellow).
+         */
+    sendDirectMessage(message: string, color: number = 0xffcc00): void {
+        const chatData: ChatData = {
+            content: `[System] ${message}`, // Prefix to identify as system message
+            color: color
+        };
+        this.chatMessagesToSend.push(chatData);
+        // The message will be sent during the next call to sendPackets()
+    }
     processMessage(packet: Packet): void {
         switch (true) {
             case packet instanceof JoinPacket: {
@@ -450,9 +487,151 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             }
             case packet instanceof ChatPacket: {
                 const content = packet.chat.trim();
+                if (this.isAdmin && content.startsWith('/')) return this.processCommand(content); // we do not want admin commands to show up for everyone else
                 if (content) this.sendChatMessage(content, packet.channel);
                 break;
             }
+        }
+    }
+
+    processCommand(content: string): void {
+        const rest = content.substring(1); // remove command prefix /
+        if (!this.isAdmin) return; // double check
+        if (rest.startsWith('name')) {
+            this.name = rest.substring('name'.length)
+        } else if (rest.startsWith('xp')) {
+            const plusXp = parseFloat(rest.substring('xp'.length)) || 0;
+            if (!isFinite(plusXp)) return this.sendDirectMessage('xp is not valid!')
+            this.addExp(plusXp);
+            this.dirty.exp = true;
+        } else if (rest.startsWith('drop')) {
+            const params = rest.substring('drop'.length).trim(); 
+            const args = params.split(' ').filter(arg => arg.length > 0); 
+            if (args.length < 2) {
+                return this.sendDirectMessage('insufficient params', 0xff0000);
+            }
+            const pn = args[0]; // id string
+            const validatePString = Petals.hasString(pn);
+            const count = parseInt(args[1]) ?? null;
+            const pVec = {x: this.position.x,y: this.position.y};
+            if (!validatePString || !isFinite(count)) {
+                this.sendDirectMessage(`!validatePString: ${!validatePString}, !isFinite(count): ${!isFinite(count)}`)
+                this.sendDirectMessage(`pn: ${pn}, count: ${count}, pVec: ${pVec.x} ${pVec.y}`)
+                return this.sendDirectMessage('something went wrong!')
+            } else {
+                const pDef = Petals.fromString(pn); // petal string verified
+                const pVec = { x: this.position.x, y: this.position.y };
+                const rarityDefinition = Rarity.fromString(pDef.rarity);
+
+                if (rarityDefinition.isUnique && this.game.gameHas(pDef)) {
+                    this.sendDirectMessage(`'${pn}' is a isUnique petal and is already in game!`, 0xffcc00);
+                }
+                let pArr: PetalDefinition[] = [];
+                for (let i=0; i<count; i++) {
+                    pArr.push(pDef)
+                }
+                spawnLoot(this.game,pArr,pVec, true); // pass array, true to make it bypass room limitations
+                this.sendDirectMessage(`Dropped ${count} of ${pDef.idString}.`);
+            }
+        } else if (rest.startsWith('spawn')) {
+            const params = rest.substring('spawn'.length).trim(); 
+            const args = params.split(' ').filter(arg => arg.length > 0); 
+            if (args.length < 2) {
+                return this.sendDirectMessage('insufficient params', 0xff0000);
+            }
+            const mn = args[0]; // id string
+            const validatePString = Mobs.hasString(mn);
+            const count = parseInt(args[1]) ?? null;
+            const pVec = {x: this.position.x,y: this.position.y};
+            if (!validatePString || !isFinite(count)) {
+                this.sendDirectMessage(`!validatePString: ${!validatePString}, !isFinite(count): ${!isFinite(count)}`)
+                this.sendDirectMessage(`pn: ${mn}, count: ${count}, pVec: ${pVec.x} ${pVec.y}`)
+                return this.sendDirectMessage('something went wrong!')
+            } else {
+                if (count>1) {
+                    this.sendDirectMessage('rn they spawn at the exact same place.')
+                    this.sendDirectMessage('u will regret spawning more than 1')
+                }
+                const mDef = Mobs.fromString(mn); // petal string verified
+                let pVec = { x: this.position.x, y: this.position.y };
+                for (let i=0; i<count; i++) {
+                    new ServerMob(this.game,
+                        pVec,
+                        Vec2.radiansToDirection(Random.float(-P2, P2)),
+                        mDef
+                    );
+                }
+                this.sendDirectMessage(`Spawned ${count} of ${mDef.idString}.`);
+            }
+        } else if (rest.startsWith('cleanup')) {
+            let dropCount = 0;
+            let mobCount = 0;
+            let petalCount = 0;
+
+            // Clean up drops
+            for (const [id, entity] of this.game.grid.entities) {
+                if (entity.type === EntityType.Loot) {
+                    entity.destroy();
+                    dropCount++;
+                }
+            }
+
+            // Clean up mobs
+            for (const [id, entity] of this.game.grid.entities) {
+                if (entity.type === EntityType.Mob) {
+                    entity.destroy(true);
+                    mobCount++;
+                }
+            }
+
+            // Clean up invalid petals from players
+            for (const player of this.game.players) {
+                const inventory = player.inventory.inventory;
+                const toRemove: number[] = [];
+                
+                // Track mythic and unique counts
+                const mythicCounts = new Map<string, number>();
+                const uniqueCounts = new Map<string, number>();
+                
+                for (let i = 0; i < inventory.length; i++) {
+                    const petal = inventory[i];
+                    if (!petal) continue;
+                    
+                    const def = Petals.fromString(petal.idString);
+                    const rarity = Rarity.fromString(def.rarity);
+                    
+                    // Check for mythics (max 3 per player)
+                    if (rarity.idString === 'mythic') {
+                        const count = (mythicCounts.get('mythic') || 0) + 1;
+                        mythicCounts.set('mythic', count);
+                        if (count > 3 && !player.isAdmin) {
+                            toRemove.push(i);
+                        }
+                    }
+                    
+                    // Check for uniques (max 1 per player)
+                    if (def.rarity === RarityName.unique) {
+                        const count = (uniqueCounts.get(def.idString) || 0) + 1;
+                        uniqueCounts.set(def.idString, count);
+                        if (count > 1 && !player.isAdmin) {
+                            toRemove.push(i);
+                        }
+                    }
+                    
+                    // Remove super petals from non-dev players
+                    if (def.rarity === RarityName.super && !player.isAdmin) {
+                        toRemove.push(i);
+                    }
+                }
+                
+                // Remove flagged petals in reverse order to maintain correct indices
+                toRemove.sort((a, b) => b - a).forEach(index => {
+                    player.inventory.delete(index);
+                    petalCount++;
+                });
+            }
+
+            this.sendDirectMessage(`Cleanup complete: Removed ${dropCount} drops, ${mobCount} mobs, and ${petalCount} invalid petals.`);
         }
     }
 
@@ -558,7 +737,10 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         now.damageAvoidanceChance += extra.damageAvoidanceChance ?? 0;
 		now.damageAvoidanceByDamage = extra.damageAvoidanceByDamage ?? now.damageAvoidanceByDamage;
         now.selfPoison += extra.selfPoison ?? 0;
-        now.yinYangs += extra.yinYangs?? 0;
+        now.yinYangs += extra.yinYangs ?? 0;
+        now.extraDistance += extra.extraDistance ?? 0;
+        now.controlRotation = extra.controlRotation ?? now.controlRotation;
+        now.revive = extra.revive ?? now.revive;
         if (extra.conditionalHeal) {
             now.conditionalHeal = extra.conditionalHeal;
         }

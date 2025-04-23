@@ -82,8 +82,16 @@ export class Inventory {
         this.petalBunches = []
         this.inventory = []
 
+        let equippedPetals = GameConstants.player.defaultEquippedPetals;
+        if (GameConstants.player.mutateDefaultPetals) {
+            let rand = Math.random();
+            if (rand<GameConstants.player.mutateDefaultPetals.chance) {
+                equippedPetals = GameConstants.player.mutateDefaultPetals.equippedPetals;
+                this.player.dirty.inventory = true;
+            }
+        }
         this.loadConfigByString(
-            GameConstants.player.defaultEquippedPetals,
+            equippedPetals,
             GameConstants.player.defaultPreparationPetals
         )
     }
@@ -251,18 +259,30 @@ export class Inventory {
 
         let finalRevSpeed = this.player.modifiers.revolutionSpeed;
 
-        const yyEffects = this.getYinYangEffects(this.player.modifiers.yinYangs);
+        if (this.player.modifiers.controlRotation) {
+            // Use player's direction to determine the angle
+            // Keyboard movement -> still works but uhh does not work good
+            // TODO: client send mouse position so that te works
+            const directionAngle = Math.atan2(
+                this.player.direction.y,
+                this.player.direction.x
+            );
+            
+            this.revolutionRadians = directionAngle;
+        } else {
+            const yyEffects = this.getYinYangEffects(this.player.modifiers.yinYangs);
 
-        if (yyEffects==='rev') {
-            finalRevSpeed = -finalRevSpeed;
-        } else if (yyEffects==='stop') {
-            finalRevSpeed = 0;
-        } else if (typeof yyEffects === 'number') {
-            // this will be either 8 or 9 or 10
-            finalRevSpeed *= (yyEffects/4)**2
-        } // no else: default return def = normal rotation, no actions taken
+            if (yyEffects==='rev') {
+                finalRevSpeed = -finalRevSpeed;
+            } else if (yyEffects==='stop') {
+                finalRevSpeed = 0;
+            } else if (typeof yyEffects === 'number') {
+                // this will be either 8 or 9 or 10
+                finalRevSpeed *= (yyEffects/4)**2
+            } // no else: default return def = normal rotation, no actions taken
 
-        this.revolutionRadians += finalRevSpeed * this.game.dt;
+            this.revolutionRadians += finalRevSpeed * this.game.dt;
+        }
 
         let revolutionRadians = this.revolutionRadians;
         const singleOccupiedRadians = P2 / this.totalDisplayedPetals;

@@ -6,20 +6,20 @@ import { Game } from "../game";
 import { GameConstants } from "../../../common/src/constants";
 import { Rarity } from "../../../common/src/definitions/rarity";
 
-export function spawnLoot(game: Game, loots: PetalDefinition[], position: Vector): void {
+export function spawnLoot(game: Game, loots: PetalDefinition[], position: Vector, bypassLimitations: boolean = false): void {
     let spawnedLoots = loots.concat([]);
 
     loots.forEach(loot => {
         const rarityDefinition = Rarity.fromString(loot.rarity);
-        if (rarityDefinition.isUnique && game.gameHas(loot)) {
+        if ((rarityDefinition.isUnique && game.gameHas(loot)) && !bypassLimitations) {
             spawnedLoots.splice(spawnedLoots.indexOf(loot), 1);
         }
 
-        if (rarityDefinition.petalMaxCount
+        if ((rarityDefinition.petalMaxCount
             && (
                 game.rarityPetalCount(rarityDefinition.idString) +
                 spawnedLoots.filter(e => e.rarity === loot.rarity).length - 1)
-            >= rarityDefinition.petalMaxCount) {
+            >= rarityDefinition.petalMaxCount) && !bypassLimitations) {
             spawnedLoots.splice(spawnedLoots.indexOf(loot), 1);
         }
     });

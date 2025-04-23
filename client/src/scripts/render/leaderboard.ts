@@ -14,7 +14,7 @@ class LeaderboardContent {
             fontFamily: 'Ubuntu',
             fontSize: 13.5,
             fill: "#fff",
-            stroke: {color: "#000", width: 1.5}
+            stroke: {color: "#000", width: 1.2}
         }
     });
 
@@ -151,8 +151,8 @@ export class Leaderboard {
         const screenWidth = this.game.pixi.screen.width;
         const screenHeight = this.game.pixi.screen.height;
 
-        const positionX = screenWidth - this.width - 15;
-        const positionY = 15;
+        const positionX = screenWidth - this.width - 18;
+        const positionY = 17;
 
         this.container.position.set(positionX, positionY);
 

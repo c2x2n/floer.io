@@ -251,7 +251,7 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
 
     abstract get data(): Required<EntitiesNetData[EntityType]>;
 
-    destroy(): void {
+    destroy(noDrops: boolean = false): void {
         this.destroyed = true;
         this.game.grid.remove(this);
     }

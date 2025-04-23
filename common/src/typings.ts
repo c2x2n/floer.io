@@ -12,6 +12,13 @@ export type PlayerModifiers = Modifiers & {
         healthPercent: number;
         healAmount: number;
     };
+    revive?: {
+        healthPercent?: number;
+        shieldPercent?: number;
+        destroyAfterUse: boolean;
+    }
+    extraDistance: number;
+    controlRotation: boolean;
 }
 
 export interface Modifiers {

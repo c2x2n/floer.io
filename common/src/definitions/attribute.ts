@@ -66,7 +66,7 @@ const AttributeDefinitions = [
     {
         idString: "absorbing_shield",
         displayName: "Shield"
-    }
+    },
 ] as const;
 
 export const Attributes = new Definitions<AttributeDefinition>(
