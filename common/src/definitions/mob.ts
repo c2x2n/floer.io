@@ -868,9 +868,9 @@ export const Mobs = new Definitions<MobDefinition>([
         lootTable: {
             "twin": 1,
             "triplet": 0.2,
-            "penta": 0.1,
-            "tri_stinger": 0.6,
-            "pinger": 0.5
+            "penta": 0.01,
+            "tri_stinger": 0.9,
+            "pinger": 0.7
         },
         rarity: RarityName.mythic,
         exp: 7000,
@@ -894,7 +894,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "rice": 0.6,
             "tri_leaf": 0.03,
             "triplet": 0.12,
-            "penta": 0.01
+            "penta": 0.005
         },
         rarity: RarityName.mythic,
         exp: 40,
@@ -922,9 +922,9 @@ export const Mobs = new Definitions<MobDefinition>([
             "leaf": 0.56,
             "twin": 0.24,
             "rice": 0.01,
-            "tri_leaf": 0.004,
+            "tri_leaf": 0.4,
             "triplet": 0.0012,
-            "penta": 0.001,
+            "penta": 1,
             "corn": 0.002
         },
         rarity: RarityName.mythic,
@@ -939,19 +939,14 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 8,
         speed: 4,
         lootTable: {
-            "fast": 0.96,
-            "stinger": 0.56,
-            "twin": 0.24,
-            "triangle": 0.08,
-            "tri_triangle": 0.008,
-            "bubble": 0.048,
+            "stinger": 0.9,
+            "bubble": 0.48,
             "leg_bubble": 0.0048,
-            "wing": 0.024,
-            "tri_wing": 0.02,
-            "pinger": 0.32,
-            "penta": 0.15,
-            "pollen": 0.5,
-            "myt_pollen": 0.22,
+            "wing": 0.24,
+            "pinger": 0.12,
+            "tri_triangle": 0.24,
+            "pollen": 0.22,
+            "myt_pollen": 0.1,
             "honey": 1
         },
         rarity: RarityName.mythic,
@@ -960,8 +955,8 @@ export const Mobs = new Definitions<MobDefinition>([
     },{
         idString: "myt_evil_centipede",
         displayName: "Centipede",
-        damage: 10,
-        health: 50,
+        damage: 50,
+        health: 1700,
         category: MobCategory.Enemy,
         aggroRadius: 25,
         speed: 3,
@@ -971,15 +966,15 @@ export const Mobs = new Definitions<MobDefinition>([
             height: 226
         },
         lootTable: {
-            "iris": 0.82,
-            "peas": 0.028,
-            "chip": 0.028,
+            "iris": 1,
+            "peas": 0.2,
+            "chip": 0.8,
             "poison_peas": 0.9,
             "leg_poison_peas": 0.04,
             "myt_poison_peas": 0.01
         },
         rarity: RarityName.mythic,
-        exp: 40,
+        exp: 1000,
         hasSegments: true,
         segmentAmount: 10,
         segmentDefinitionIdString: "myt_evil_centipede_body",
@@ -987,8 +982,8 @@ export const Mobs = new Definitions<MobDefinition>([
     }, {
         idString: "myt_evil_centipede_body",
         displayName: "Centipede",
-        damage: 10,
-        health: 50,
+        damage: 50,
+        health: 1700,
         category: MobCategory.Enemy,
         aggroRadius: 25,
         speed: 3,
@@ -1007,7 +1002,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "myt_poison_peas": 0.01
         },
         rarity: RarityName.mythic,
-        exp: 40,
+        exp: 1000,
         usingAssets: "evil_centipede_body"
     },{
         idString: "myt_boulder",
