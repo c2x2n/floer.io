@@ -659,7 +659,7 @@ export const Mobs = new Definitions<MobDefinition>([
         idString: "mega_hornet",
         displayName: "Hornet",
         damage: 125,
-        health: 2000,
+        health: 2500,
         category: MobCategory.Enemy,
         reachingAway: true,
         shootable: true,
@@ -695,8 +695,8 @@ export const Mobs = new Definitions<MobDefinition>([
     },{
         idString: "mega_beetle",
         displayName: "Beetle",
-        damage: 50,
-        health: 2800,
+        damage: 90,
+        health: 3800,
         category: MobCategory.Enemy,
         aggroRadius: 20,
         hitboxRadius: 8,
@@ -712,10 +712,10 @@ export const Mobs = new Definitions<MobDefinition>([
             "wing": 1,
             "tri_wing": 0.45,
             "powder": 0.5,
-            "leg_egg": 0.25,
+            "leg_egg": 0.8,
         },
         rarity: RarityName.mythic,
-        exp: 50,
+        exp: 100000,
         usingAssets: "beetle"
     },{
         idString: "massive_shiny_ladybug",
@@ -739,7 +739,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "myt_tri_rose": 0.009
         },
         rarity: RarityName.mythic,
-        exp: 10,
+        exp: 100000,
         usingAssets: "shiny_ladybug"
     },
     {
@@ -764,12 +764,12 @@ export const Mobs = new Definitions<MobDefinition>([
             "shell": 0.5
         },
         rarity: RarityName.mythic,
-        exp: 20
+        exp: 10000
     },{
         idString: "mega_spider",
         displayName: "Spider",
-        damage: 25,
-        health: 1550,
+        damage: 65,
+        health: 2550,
         category: MobCategory.Enemy,
         aggroRadius: 20,
         hitboxRadius: 7,
@@ -787,7 +787,7 @@ export const Mobs = new Definitions<MobDefinition>([
             }
         },
         shootSpeed: 0.7,
-        speed: 4.5,
+        speed: 7,
         lootTable: {
             "iris": 0.22,
             "stinger": 0.36,
@@ -795,20 +795,20 @@ export const Mobs = new Definitions<MobDefinition>([
             "tri_triangle": 0.024,
             "web": 0.09,
             "pincer": 0.09,
-            "tri_web": 0.004,
+            "tri_web": 0.4,
             "faster": 0.4,
-            "faster_wing": 0.1,
+            "faster_wing": 0.7,
             "myt_tri_web": 0.25,
             "tri_faster": 0.5
         },
         rarity: RarityName.mythic,
-        exp: 5,
+        exp: 10000,
         usingAssets: "spider"
     },{
         idString: "myt_soldier_ant",
         displayName: "Soldier Ant",
-        damage: 25,
-        health: 800,
+        damage: 60,
+        health: 1800,
         category: MobCategory.Enemy,
         aggroRadius: 20,
         hitboxRadius: 5,
@@ -831,13 +831,13 @@ export const Mobs = new Definitions<MobDefinition>([
             "egg": 0.6
         },
         rarity: RarityName.mythic,
-        exp: 40,
+        exp: 400,
         usingAssets: "soldier_ant"
     },{
         idString: "myt_worker_ant",
         displayName: "Worker Ant",
-        damage: 25,
-        health: 450,
+        damage: 40,
+        health: 1000,
         category: MobCategory.Passive,
         hitboxRadius: 3,
         speed: 3,
@@ -862,7 +862,7 @@ export const Mobs = new Definitions<MobDefinition>([
         idString: "myt_queen_ant",
         displayName: "Queen Ant",
         damage: 60,
-        health: 3850,
+        health: 5000,
         category: MobCategory.Passive,
         hitboxRadius: 8,
         speed: 3,
@@ -874,7 +874,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "pinger": 0.7
         },
         rarity: RarityName.mythic,
-        exp: 7000,
+        exp: 15000,
         usingAssets: "queen_ant"
     },{
         idString: "myt_baby_ant",
@@ -898,13 +898,13 @@ export const Mobs = new Definitions<MobDefinition>([
             "penta": 0.005
         },
         rarity: RarityName.mythic,
-        exp: 40,
+        exp: 400,
         usingAssets: "baby_ant"
     },{
         idString: "myt_ant_hole",
         displayName: "Ant Hole",
         damage: 20,
-        health: 5000,
+        health: 10000,
         category: MobCategory.Fixed,
         pop: {
             "worker_ant": [1, 1, 0.9, 0.9, 0.9, 0.8, 0.8, 0, 0, 0, 0],
@@ -934,11 +934,11 @@ export const Mobs = new Definitions<MobDefinition>([
     },{
         idString: "passive_bee",
         displayName: "Bee",
-        damage: 80,
+        damage: 100,
         health: 1000,
         category: MobCategory.Passive,
         hitboxRadius: 8,
-        speed: 4,
+        speed: 5,
         lootTable: {
             "stinger": 0.9,
             "bubble": 0.48,
@@ -951,7 +951,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "honey": 1
         },
         rarity: RarityName.mythic,
-        exp: 40,
+        exp: 10000,
         usingAssets: "bee"
     },{
         idString: "myt_evil_centipede",
@@ -1009,7 +1009,7 @@ export const Mobs = new Definitions<MobDefinition>([
         idString: "myt_boulder",
         displayName: "Boulder",
         damage: 40,
-        health: 1600,
+        health: 10000,
         category: MobCategory.Fixed,
         hitboxRadius: 8,
         lootTable: {
