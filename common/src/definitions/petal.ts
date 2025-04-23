@@ -164,7 +164,7 @@ export const Petals = new Definitions<PetalDefinition>([
         usingAssets: "light",
         moreExtendDistance: 0.52,
         modifiers: {
-            speed: 1.01
+            speed: 1.02
         },
     },
     {
@@ -267,8 +267,8 @@ export const Petals = new Definitions<PetalDefinition>([
         idString: "tri_faster",
         displayName: "Faster",
         description: "Quickly.",
-        damage: 11,
-        health: 8,
+        damage: 13,
+        health: 12,
         extendable: true,
         reloadTime: 0.5,
         modifiers: {
@@ -684,7 +684,7 @@ export const Petals = new Definitions<PetalDefinition>([
         idString: "myt_big_missile",
         displayName: "Missile",
         description: "You can actually shoot this quickly bigger one",
-        damage: 100,
+        damage: 50,
         health: 25,
         extendable: true,
         images: {
@@ -1121,14 +1121,14 @@ export const Petals = new Definitions<PetalDefinition>([
             peas_shoot: {
                 definition: Projectile.fromString("poison_peas"),
                 speed: 6.25,
-                damage: 10,
-                health: 5,
+                damage: 15,
+                health: 10,
                 hitboxRadius: 0.46,
                 despawnTime: 5
             },
             poison: {
                 damagePerSecond: 15,
-                duration: 2.5
+                duration: 2
             }
         },
         reloadTime: 0.3,
