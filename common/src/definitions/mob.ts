@@ -645,11 +645,12 @@ export const Mobs = new Definitions<MobDefinition>([
         lootTable: {
             "peas": 0.24,
             "poison_peas": 0.04,
-            "leg_poison_peas": 0.5,
+            "leg_poison_peas": 0.7,
             "leg_bubble": 0.024,
             "wing": 0.12,
+            "tri_triangle": 0.5,
             "tri_wing": 0.004,
-            "myt_poison_peas": 0.2
+            "myt_poison_peas": 0.1
         },
         rarity: RarityName.mythic,
         exp: 20,
@@ -943,10 +944,10 @@ export const Mobs = new Definitions<MobDefinition>([
             "bubble": 0.48,
             "leg_bubble": 0.0048,
             "wing": 0.24,
-            "pinger": 0.12,
-            "tri_triangle": 0.24,
+            "pinger": 0.24,
+            "tri_triangle": 0.17,
             "pollen": 0.22,
-            "myt_pollen": 0.1,
+            "myt_pollen": 0.11,
             "honey": 1
         },
         rarity: RarityName.mythic,
