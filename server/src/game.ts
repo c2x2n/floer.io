@@ -25,7 +25,7 @@ import { spawnSegmentMobs } from "./utils/mob";
 import { Rarity, RarityName } from "../../common/src/definitions/rarity";
 import { ChatData } from "../../common/src/packets/updatePacket";
 import { ChatPacket } from "../../common/src/packets/chatPacket";
-import { MobSpawner, SpecialSpawn, Zone, Zones } from "../../common/src/zones";
+import { MobSpawner, SpecialSpawn, Zone, ZoneName, Zones } from "../../common/src/definitions/zones";
 
 export class Game {
     players = new EntityPool<ServerPlayer>();
@@ -135,7 +135,7 @@ export class Game {
     }
 
     specialSpawnTimer = new Map<
-        Zone, Map<SpecialSpawn, number>
+        ZoneName, Map<SpecialSpawn, number>
     >();
 
     tick(): void {
@@ -220,26 +220,27 @@ export class Game {
         this.fullDirtyEntities.clear();
         this.mapDirty = false;
 
-        for (const zonesKey in Zones) {
-            const zone = Zones[zonesKey];
+        for (const zoneKey in Zones) {
+            const zone = Zones[zoneKey as ZoneName];
 
             this.mobSpawnerInZone(zone.normalSpawning, zone)
 
             if (zone.specialSpawning) {
-                let zoneTimers = this.specialSpawnTimer.get(zone);
+                let zoneTimers =
+                    this.specialSpawnTimer.get(zoneKey as ZoneName);
                 if (!zoneTimers){
                     zoneTimers = new Map<SpecialSpawn, number>();
                 }
 
                 for (const specialSpawn of zone.specialSpawning) {
                     zoneTimers.set(specialSpawn, (zoneTimers.get(specialSpawn) ?? 0) + this.dt);
-                    if (zoneTimers.get(specialSpawn) ?? 0 >= specialSpawn.timer) {
+                    if ((zoneTimers.get(specialSpawn) ?? 0) >= specialSpawn.timer) {
                         this.mobSpawnerInZone(specialSpawn.spawn, zone)
                         zoneTimers.set(specialSpawn, 0)
                     }
                 }
 
-                this.specialSpawnTimer.set(zone, zoneTimers);
+                this.specialSpawnTimer.set(zoneKey as ZoneName, zoneTimers);
             }
         }
     }
@@ -315,7 +316,7 @@ export class Game {
 
     inWhichZone(entity: ServerEntity): Zone{
         for (const zonesKey in Zones) {
-            const data = Zones[zonesKey];
+            const data = Zones[zonesKey as ZoneName];
             const zoneHitbox = new RectHitbox(
                 Vec2.new(data.x, 0), Vec2.new(data.x + data.width, this.height)
             );

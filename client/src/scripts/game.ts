@@ -28,7 +28,8 @@ import { ParticleManager } from "@/scripts/render/particle.ts";
 import { Vec2, Vector } from "@common/utils/vector.ts";
 import { Petals, SavedPetalDefinitionData } from "@common/definitions/petal.ts";
 import { ChatChannel, ChatPacket } from "@common/packets/chatPacket.ts";
-import { Zones } from "@common/zones.ts";
+
+import { ZoneName, Zones } from "@common/definitions/zones.ts";
 
 const typeToEntity = {
     [EntityType.Player]: ClientPlayer,
@@ -289,7 +290,7 @@ export class Game {
             ).fill(values[values.length - 1].borderColor);
 
             for (const zonesKey in Zones) {
-                const data = Zones[zonesKey];
+                const data = Zones[zonesKey as ZoneName];
                 ctx.rect(
                     Camera.unitToScreen(data.x),
                     0,

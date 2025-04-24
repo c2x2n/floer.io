@@ -3,7 +3,8 @@ import { Graphics, Container, Text } from "pixi.js";
 import { MathNumeric } from "@common/utils/math.ts";
 import { Vec2 } from "@common/utils/vector.ts";
 import { GameConstants } from "@common/constants.ts";
-import { Zones } from "@common/zones.ts";
+
+import { Zone, ZoneName, Zones } from "@common/definitions/zones.ts";
 
 const widthDiv = 12;
 const heightDiv = 3;
@@ -97,7 +98,7 @@ export class Minimap {
             });
 
         for (const x in Zones) {
-            const data = Zones[x];
+            const data = Zones[x as ZoneName];
             this.mapBackground
                 .rect(data.x / widthDiv, 0, data.width / widthDiv, this.minimapHeight)
                 .fill(data.displayColor)
@@ -105,7 +106,7 @@ export class Minimap {
 
         let index = 0;
         for (const x in Zones) {
-            const data = Zones[x];
+            const data = Zones[x as ZoneName];
             if (!this.mapNames[index]) {
                 this.mapNames[index] = new Text({
                     text: x,

@@ -25,7 +25,7 @@ export const GameConstants = {
         maxNameLength: 20,
         spawnMaxX: 100,
         spawnMaxY: 50,
-        defaultSlot: 10,
+        defaultSlot: 5,
         defaultPrepareSlot: 10,
         defaultEquippedPetals: ["basic","basic","basic","basic","basic"],
         mutateDefaultPetals: {
@@ -51,6 +51,7 @@ export const GameConstants = {
             yinYangs: 0,
             conditionalHeal: undefined,
             controlRotation: false,
+            extraSlot: 0
         }),
     },
     petal: {

@@ -8,7 +8,8 @@ import { ServerPetal } from "./entities/serverPetal";
 import { ServerMob } from "./entities/serverMob";
 import { ServerLoot } from "./entities/serverLoot";
 import { ServerProjectile } from "./entities/serverProjectile";
-import { Zones } from "../../common/src/zones";
+
+import { Zones } from "../../common/src/definitions/zones";
 
 /**
  * A Grid to filter collision detection of game entities
