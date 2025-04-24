@@ -11,7 +11,7 @@ import { type ServerConfig } from "./config";
 import { IDAllocator } from "./idAllocator";
 import { Vec2, type Vector } from "../../common/src/utils/vector";
 import { ServerMob } from "./entities/serverMob";
-import { Mobs } from "../../common/src/definitions/mob";
+import { MobDefinition, Mobs } from "../../common/src/definitions/mob";
 import { CollisionResponse } from "../../common/src/utils/collision";
 import { Random } from "../../common/src/utils/random";
 import { CircleHitbox, type Hitbox, RectHitbox } from "../../common/src/utils/hitbox";
@@ -25,7 +25,7 @@ import { spawnSegmentMobs } from "./utils/mob";
 import { Rarity, RarityName } from "../../common/src/definitions/rarity";
 import { ChatData } from "../../common/src/packets/updatePacket";
 import { ChatPacket } from "../../common/src/packets/chatPacket";
-import { Zones } from "../../common/src/zones";
+import { MobSpawner, SpecialSpawn, Zone, Zones } from "../../common/src/zones";
 
 export class Game {
     players = new EntityPool<ServerPlayer>();
@@ -115,7 +115,7 @@ export class Game {
                 newPlayer.addExp(exp);
 
                 const spawnZones =
-                    Object.values(Zones).filter(e => newPlayer.level >= e.levelAtLowest)
+                    Object.values(Zones).filter(e => newPlayer.level >= e.spawningLevel)
 
                 const spawnZone = spawnZones[spawnZones.length - 1];
 
@@ -133,6 +133,10 @@ export class Game {
         }
         return;
     }
+
+    specialSpawnTimer = new Map<
+        Zone, Map<SpecialSpawn, number>
+    >();
 
     tick(): void {
         this.dt = (Date.now() - this.now) / 1000;
@@ -217,69 +221,99 @@ export class Game {
         this.mapDirty = false;
 
         for (const zonesKey in Zones) {
-            const data = Zones[zonesKey];
+            const zone = Zones[zonesKey];
 
-            const definitionIdString = Random.weightedRandom(
-                Object.keys(data.spawning),
-                Object.values(data.spawning)
-            )
+            this.mobSpawnerInZone(zone.normalSpawning, zone)
 
-            const definition = Mobs.fromString(definitionIdString);
-
-            let collidedNumber = 0;
-            let position = Random.vector(data.x, data.x + data.width, 0, this.height);
-            do {
-                collidedNumber = 0;
-                const hitbox = new CircleHitbox(definition.hitboxRadius + 2, position);
-                const collided =
-                    this.grid.intersectsHitbox(hitbox);
-                for (const collidedElement of collided) {
-                    if (collidedElement.hitbox.collidesWith(hitbox)) collidedNumber++;
+            if (zone.specialSpawning) {
+                let zoneTimers = this.specialSpawnTimer.get(zone);
+                if (!zoneTimers){
+                    zoneTimers = new Map<SpecialSpawn, number>();
                 }
-                position = Random.vector(data.x, data.x + data.width, 0, this.height);
-            } while (collidedNumber != 0);
 
-
-
-            const collided = this.grid.intersectsHitbox(new RectHitbox(
-                Vec2.new(data.x, 0), Vec2.new(data.x + data.width, this.height)
-            ));
-
-            let mobCount = 0;
-
-            for (const collidedElement of collided) {
-                if (collidedElement instanceof ServerMob) mobCount++;
-            }
-
-            const maxMobCount = data.density / 15 * data.width * this.height / 20;
-
-            if (mobCount < maxMobCount){
-                if (definition.hasSegments) {
-                    spawnSegmentMobs(
-                        this,
-                        definition,
-                        position,
-                    )
-                } else {
-                    new ServerMob(this,
-                        position,
-                        Vec2.radiansToDirection(Random.float(-P2, P2)),
-                        definition
-                    );
+                for (const specialSpawn of zone.specialSpawning) {
+                    zoneTimers.set(specialSpawn, (zoneTimers.get(specialSpawn) ?? 0) + this.dt);
+                    if (zoneTimers.get(specialSpawn) ?? 0 >= specialSpawn.timer) {
+                        this.mobSpawnerInZone(specialSpawn.spawn, zone)
+                        zoneTimers.set(specialSpawn, 0)
+                    }
                 }
-                const rarity = Rarity.fromString(definition.rarity);
-                if (rarity.globalMessage) {
-                    let content = `A ${rarity.displayName} ${definition.displayName} has spawned somewhere`
-                    this.sendGlobalMessage({
-                        content: content +"!",
-                        color: parseInt(rarity.color.substring(1), 16)
-                    })
-                }
+
+                this.specialSpawnTimer.set(zone, zoneTimers);
             }
         }
     }
 
-    inWhichZone(entity: ServerEntity): typeof Zones[string]{
+    mobSpawnerInZone(mobSpawner: MobSpawner, zone: Zone): void {
+        const definitionIdString = Random.weightedRandom(
+            Object.keys(mobSpawner),
+            Object.values(mobSpawner)
+        )
+
+        const definition = Mobs.fromString(definitionIdString);
+
+        const maxMobCount = zone.density / 15 * zone.width * this.height / 20;
+        const mobCount = this.mobCountsInZone(zone);
+
+        if (mobCount < maxMobCount) this.spawnMobInZone(definition, zone)
+    }
+
+    mobCountsInZone(zone: Zone): number {
+        const collided = this.grid.intersectsHitbox(new RectHitbox(
+            Vec2.new(zone.x, 0), Vec2.new(zone.x + zone.width, this.height)
+        ));
+
+        let mobCount = 0;
+
+        for (const collidedElement of collided) {
+            if (collidedElement instanceof ServerMob) mobCount++;
+        }
+
+        return mobCount;
+    }
+
+    spawnMobInZone(definition: MobDefinition, zone: Zone) {
+        let collidedNumber = 0;
+        let position = Random.vector(zone.x, zone.x + zone.width, 0, this.height);
+        do {
+            collidedNumber = 0;
+            const hitbox = new CircleHitbox(definition.hitboxRadius + 2, position);
+            const collided =
+                this.grid.intersectsHitbox(hitbox);
+            for (const collidedElement of collided) {
+                if (collidedElement.hitbox.collidesWith(hitbox)) collidedNumber++;
+            }
+            position = Random.vector(zone.x, zone.x + zone.width, 0, this.height);
+        } while (collidedNumber != 0);
+
+        this.spawnMob(definition, position);
+    }
+
+    spawnMob(definition: MobDefinition, position: Vector) {
+        if (definition.hasSegments) {
+            spawnSegmentMobs(
+                this,
+                definition,
+                position,
+            )
+        } else {
+            new ServerMob(this,
+                position,
+                Vec2.radiansToDirection(Random.float(-P2, P2)),
+                definition
+            );
+        }
+        const rarity = Rarity.fromString(definition.rarity);
+        if (rarity.globalMessage) {
+            let content = `A ${rarity.displayName} ${definition.displayName} has spawned somewhere`
+            this.sendGlobalMessage({
+                content: content +"!",
+                color: parseInt(rarity.color.substring(1), 16)
+            })
+        }
+    }
+
+    inWhichZone(entity: ServerEntity): Zone{
         for (const zonesKey in Zones) {
             const data = Zones[zonesKey];
             const zoneHitbox = new RectHitbox(
