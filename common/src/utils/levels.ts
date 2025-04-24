@@ -1,10 +1,12 @@
-interface LevelInformation {
+import { Zone, ZoneName, Zones } from "../definitions/zones";
+
+interface CurrentLevelInformation {
     level: number;
     remainsExp: number;
     toNextLevelExp: number;
 }
 
-export function getLevelInformation(exp: number): LevelInformation {
+export function getLevelInformation(exp: number): CurrentLevelInformation {
     let levelNow: number = 0;
 
     let expRemains: number = exp;
@@ -39,3 +41,35 @@ export function getLevelExpCost(level: number): number {
 
     return levelExpCost;
 }
+
+export interface LevelStat {
+    level: number;
+    spawnAt?: Zone;
+    extraSlot: number;
+}
+
+export const levelStats : LevelStat[] = [
+    {
+        level: 1,
+        spawnAt: Zones[ZoneName.Easy],
+        extraSlot: 0
+    },{
+        level: 15,
+        spawnAt: Zones[ZoneName.Medium],
+        extraSlot: 1
+    },{
+        level: 30,
+        spawnAt: Zones[ZoneName.Hard],
+        extraSlot: 1
+    },{
+        level: 45,
+        spawnAt: Zones[ZoneName.Nightmare],
+        extraSlot: 1
+    },{
+        level: 60,
+        extraSlot: 1
+    },{
+        level: 75,
+        extraSlot: 1
+    }
+]
