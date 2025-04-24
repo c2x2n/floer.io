@@ -1,11 +1,18 @@
 export type MobSpawner = Record<string, number>
 
+export enum ZoneName {
+    Easy = "Easy",
+    Medium = "Medium",
+    Hard = "Hard",
+    Nightmare = "Nightmare"
+}
+
 export type SpecialSpawn = {
     timer: number
     spawn: MobSpawner
 }
-
 export type Zone = {
+    displayName: string
     x: number
     width: number
     displayColor: string
@@ -17,12 +24,12 @@ export type Zone = {
     normalSpawning: MobSpawner
     specialSpawning?: SpecialSpawn[]
 };
-
 export const Zones:
     {
-        [key: string]: Zone
+        [K in ZoneName]: Zone
     } = {
-    "Easy": {
+    [ZoneName.Easy]: {
+        displayName: "Easy",
         x: 0,
         width: 600,
         displayColor: "#1da25e",
@@ -42,7 +49,8 @@ export const Zones:
             "centipede": 1,
         }
     },
-    "Medium": {
+    [ZoneName.Medium]: {
+        displayName: "Medium",
         x: 600,
         width: 600,
         displayColor: "#92a728",
@@ -67,7 +75,8 @@ export const Zones:
             "desert_centipede": 1
         }
     },
-    "Hard": {
+    [ZoneName.Hard]: {
+        displayName: "Hard",
         x: 1200,
         width: 800,
         displayColor: "#923a28",
@@ -96,7 +105,8 @@ export const Zones:
             "evil_centipede": 1
         }
     },
-    "???": {
+    [ZoneName.Nightmare]: {
+        displayName: "???",
         x: 2000,
         width: 2566 - 2000,
         displayColor: "#a4aaa6",
