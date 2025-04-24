@@ -81,7 +81,8 @@ export class UI {
         'basic', 'faster', 'stinger', 'bubble', 'yinyang', 'rose',
         'wing', 'heavy', 'iris', 'web', 'antennae', 'pollen',
         'leaf', 'cactus', 'rock', 'honey', 'dandelion', 'egg', 'chip', 'dice',
-        'rice', 'salt', 'sand', 'talisman', 'uranium', 'shell'
+        'rice', 'salt', 'sand', 'talisman', 'uranium', 'shell', 'starfish',
+        'jelly'
     ];
 
     constructor(app: ClientApplication) {

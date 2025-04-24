@@ -1794,7 +1794,7 @@ export const Petals = new Definitions<PetalDefinition>([
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 45,
+            slotDisplaySize: 65,
             selfGameRotation: 0.01,
             facingOut:true
         },
@@ -1805,7 +1805,7 @@ export const Petals = new Definitions<PetalDefinition>([
             }
         },
         reloadTime: 2,
-        hitboxRadius: 0.5,
+        hitboxRadius: 0.8,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.legendary
