@@ -132,7 +132,7 @@ export const Zones:
         },
         specialSpawning: [
             {
-                timer: 3,
+                timer: 30 * 60,
                 spawn: {
                     "myt_worker_ant": 3,
                     "myt_baby_ant": 3,
