@@ -1805,7 +1805,7 @@ export const Petals = new Definitions<PetalDefinition>([
             }
         },
         reloadTime: 2,
-        hitboxRadius: 1,
+        hitboxRadius: 0.8,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.legendary
