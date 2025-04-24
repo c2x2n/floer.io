@@ -72,7 +72,8 @@ export const Zones:
             "baby_ant": 5,
             "soldier_ant": 5,
             "centipede": 1,
-            "desert_centipede": 1
+            "desert_centipede": 1,
+            "sandstorm": 3
         }
     },
     [ZoneName.Hard]: {

@@ -27,6 +27,7 @@ export type MobDefinition = ObjectDefinition & {
     }
     readonly reachingAway?: boolean
     readonly hideInformation?: boolean
+    readonly despawnTime?: number
 } & MobSegmentType & MobCategoryType & MobShootType;
 
 export type MobCategoryType =  {
@@ -1069,5 +1070,28 @@ export const Mobs = new Definitions<MobDefinition>([
         rarity: RarityName.mythic,
         exp: 10000,
         usingAssets: "rock"
+    },{
+        idString: "sandstorm",
+        displayName: "Sandstorm",
+        damage: 15,
+        health: 100,
+        category: MobCategory.Unactive,
+        hitboxRadius: 5,
+        speed: 9,
+        images: {
+            width: 200,
+            height: 200
+        },
+        lootTable: {
+            "sand": 0.5,
+            "fast": 0.2,
+            "triangle": 0.08,
+            "powder": 0.05,
+            "talisman": 0.01,
+            "stick": 0.01
+        },
+        rarity: RarityName.rare,
+        exp: 15,
+        usingAssets: "sandstorm"
     }
 ] satisfies MobDefinition[]);

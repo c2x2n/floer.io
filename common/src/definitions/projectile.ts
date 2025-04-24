@@ -43,4 +43,7 @@ export interface ProjectileParameters {
     hitboxRadius: number
     modifiers?: Partial<Modifiers>
     velocityAtFirst?: number
+    spawnDelay?: number
+    spawner?: boolean
+    customDefinition?: any
 }

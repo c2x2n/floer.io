@@ -22,7 +22,7 @@ export function spawnSegmentMobs(game: Game, definition: MobDefinition, head_pos
             direction + Random.float(-0.1, 0.1),
             hitboxRadius * 2,
             positionNow
-        )
+        );
 
         positionNow = game.clampPosition(positionNow, hitboxRadius, hitboxRadius);
 

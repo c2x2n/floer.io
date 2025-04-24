@@ -4,6 +4,7 @@ import { RarityName } from "./rarity";
 import { PlayerModifiers } from "../typings";
 import { Projectile, ProjectileDefinition, ProjectileParameters } from "./projectile";
 import { MobDefinition, Mobs } from "./mob";
+import { MobCategory } from "./mob";
 
 export type SavedPetalDefinitionData = PetalDefinition | null
 
@@ -1440,6 +1441,46 @@ export const Petals = new Definitions<PetalDefinition>([
         undroppable: true,
         rarity: RarityName.super,
         usingAssets: 'yggdrasil'
+    },
+    {
+        idString: "stick",
+        displayName: "Stick",
+        description: "A mysterious stick that summons the forces of the wind.",
+        damage: 0,
+        health: 0,
+        extendable: true,
+        usable: true,
+        useTime: 7.5,
+        images: {
+            slotDisplaySize: 55,
+            fontSizeMultiplier: 0.9
+        },
+        attributes: {
+            spawner: {
+                idString: "sandstorm",
+                displayName: "Sandstorm",
+                damage: 40,
+                health: 35,
+                category: MobCategory.Unactive,
+                hitboxRadius: 4,
+                speed: 7,
+                images: {
+                    width: 200,
+                    height: 200
+                },
+                lootTable: {},
+                rarity: RarityName.rare,
+                exp: 0,
+                usingAssets: "sandstorm",
+                despawnTime: 15
+            }
+        },
+        reloadTime: 0.1,
+        hitboxRadius: 0.55,
+        isDuplicate: false,
+        pieceAmount: 1,
+        effectiveFirstReload: true,
+        rarity: RarityName.epic,
     },
     {
         idString: "pollen",
