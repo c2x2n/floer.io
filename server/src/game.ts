@@ -108,7 +108,14 @@ export class Game {
         if (packet instanceof JoinPacket) {
             const newPlayer = this.newPlayer(wssocket);
             if (oldPlayer) {
-                const inventory = oldPlayer.inventory.inventory;
+                const inventory =
+                    oldPlayer.inventory.inventory.sort(
+                        (a, b) => {
+                            if (a === b) return 0;
+                            if (a === null) return 1;
+                            if (b === null) return -1;
+                            return 0;
+                        });
                 const exp = oldPlayer.exp;
 
                 newPlayer.inventory.inventory = inventory;
@@ -235,7 +242,7 @@ export class Game {
                 for (const specialSpawn of zone.specialSpawning) {
                     zoneTimers.set(specialSpawn, (zoneTimers.get(specialSpawn) ?? 0) + this.dt);
                     if ((zoneTimers.get(specialSpawn) ?? 0) >= specialSpawn.timer) {
-                        this.mobSpawnerInZone(specialSpawn.spawn, zone)
+                        this.mobSpawnerInZone(specialSpawn.spawn, zone, true)
                         zoneTimers.set(specialSpawn, 0)
                     }
                 }
@@ -245,7 +252,7 @@ export class Game {
         }
     }
 
-    mobSpawnerInZone(mobSpawner: MobSpawner, zone: Zone): void {
+    mobSpawnerInZone(mobSpawner: MobSpawner, zone: Zone, force?: boolean): void {
         const definitionIdString = Random.weightedRandom(
             Object.keys(mobSpawner),
             Object.values(mobSpawner)
@@ -256,7 +263,8 @@ export class Game {
         const maxMobCount = zone.density / 15 * zone.width * this.height / 20;
         const mobCount = this.mobCountsInZone(zone);
 
-        if (mobCount < maxMobCount) this.spawnMobInZone(definition, zone)
+        if (!force && mobCount >= maxMobCount) return;
+        this.spawnMobInZone(definition, zone)
     }
 
     mobCountsInZone(zone: Zone): number {

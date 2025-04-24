@@ -18,7 +18,7 @@ import { spawnLoot } from "../utils/loot";
 import { AttributeEvents } from "../utils/attribute";
 import { PlayerModifiers } from "../../../common/src/typings";
 import { EventFunctionArguments } from "../utils/eventManager";
-import { getLevelExpCost, getLevelInformation } from "../../../common/src/utils/levels";
+import { getLevelExpCost, getLevelInformation, levelStats } from "../../../common/src/utils/levels";
 import { damageableEntity, damageSource } from "../typings";
 import { LoggedInPacket } from "../../../common/src/packets/loggedInPacket";
 import { ServerFriendlyMob, ServerMob } from "./serverMob";
@@ -229,7 +229,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             this.sendEvent(AttributeEvents.HEALING, undefined)
 
         this.heal(this.modifiers.healPerSecond * this.game.dt);
-        
+
         if (this.modifiers.conditionalHeal && this.health < this.modifiers.maxHealth * this.modifiers.conditionalHeal.healthPercent) {
             this.heal(this.modifiers.conditionalHeal.healAmount * this.game.dt);
         }
@@ -246,7 +246,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
         this.updateModifiers();
 
-        if (this.level >= this.game.inWhichZone(this).levelAtHighest) {
+        if (this.level >= this.game.inWhichZone(this).highestLevel) {
             this.dirty.overleveled = true;
             this.overleveledTimeRemains -= this.game.dt;
             this.overleveled = this.overleveledTimeRemains <= 0;
@@ -282,9 +282,9 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         }
 
         // 检查是否为毒素伤害
-        const isPoisonDamage = 
+        const isPoisonDamage =
             // 玩家自身处于中毒状态
-            this.state.poison || 
+            this.state.poison ||
             // 来源是PoisonEffect实例
             (source && source instanceof PoisonEffect) ||
             // 来源是中毒的玩家
@@ -336,8 +336,8 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                         const petalData = this.inventory.inventory[i];
                         if (petalData?.modifiers?.revive?.destroyAfterUse) {
                             this.inventory.delete(i);
-                            this.dirty.inventory = true; 
-                            break; 
+                            this.dirty.inventory = true;
+                            break;
                         }
                     }
                 }
@@ -505,8 +505,8 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             this.addExp(plusXp);
             this.dirty.exp = true;
         } else if (rest.startsWith('drop')) {
-            const params = rest.substring('drop'.length).trim(); 
-            const args = params.split(' ').filter(arg => arg.length > 0); 
+            const params = rest.substring('drop'.length).trim();
+            const args = params.split(' ').filter(arg => arg.length > 0);
             if (args.length < 2) {
                 return this.sendDirectMessage('insufficient params', 0xff0000);
             }
@@ -534,8 +534,8 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                 this.sendDirectMessage(`Dropped ${count} of ${pDef.idString}.`);
             }
         } else if (rest.startsWith('spawn')) {
-            const params = rest.substring('spawn'.length).trim(); 
-            const args = params.split(' ').filter(arg => arg.length > 0); 
+            const params = rest.substring('spawn'.length).trim();
+            const args = params.split(' ').filter(arg => arg.length > 0);
             if (args.length < 2) {
                 return this.sendDirectMessage('insufficient params', 0xff0000);
             }
@@ -588,18 +588,18 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             for (const player of this.game.players) {
                 const inventory = player.inventory.inventory;
                 const toRemove: number[] = [];
-                
+
                 // Track mythic and unique counts
                 const mythicCounts = new Map<string, number>();
                 const uniqueCounts = new Map<string, number>();
-                
+
                 for (let i = 0; i < inventory.length; i++) {
                     const petal = inventory[i];
                     if (!petal) continue;
-                    
+
                     const def = Petals.fromString(petal.idString);
                     const rarity = Rarity.fromString(def.rarity);
-                    
+
                     // Check for mythics (max 3 per player)
                     if (rarity.idString === 'mythic') {
                         const count = (mythicCounts.get('mythic') || 0) + 1;
@@ -608,7 +608,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                             toRemove.push(i);
                         }
                     }
-                    
+
                     // Check for uniques (max 1 per player)
                     if (def.rarity === RarityName.unique) {
                         const count = (uniqueCounts.get(def.idString) || 0) + 1;
@@ -617,13 +617,13 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                             toRemove.push(i);
                         }
                     }
-                    
+
                     // Remove super petals from non-dev players
                     if (def.rarity === RarityName.super && !player.isAdmin) {
                         toRemove.push(i);
                     }
                 }
-                
+
                 // Remove flagged petals in reverse order to maintain correct indices
                 toRemove.sort((a, b) => b - a).forEach(index => {
                     player.inventory.delete(index);
@@ -744,6 +744,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         if (extra.conditionalHeal) {
             now.conditionalHeal = extra.conditionalHeal;
         }
+        now.extraSlot += extra.extraSlot ?? 0;
 
         return now;
     }
@@ -755,6 +756,14 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
         // 闪避
         let avoidanceFailureChance = 1;
+
+        for (const levelStat of levelStats){
+            if (this.level >= levelStat.level){
+                modifiersNow = this.calcModifiers(modifiersNow, {
+                    extraSlot: levelStat.extraSlot
+                });
+            }
+        }
 
         for (const petal of this.petalEntities) {
             const modifier = petal.definition.modifiers;
@@ -808,6 +817,10 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
         this.maxHealth = this.modifiers.maxHealth;
         this.zoom = this.modifiers.zoom;
+
+        this.inventory.changeSlotAmountTo(
+            GameConstants.player.defaultSlot + this.modifiers.extraSlot
+        )
     }
 
     destroy() {

@@ -331,12 +331,11 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                 Array.from(this.damageFrom).sort(
                     (a, b) => b[1] - a[1])[0]
             let content = `The ${rarity.displayName} ${this.definition.displayName} has been defeated`
-            let plus = 'nobody';
-            if (highestPlayer) {
-                if (highestPlayer[0])
-                    plus=highestPlayer[0].name 
+
+            if (highestPlayer.length) {
+               content += ` by ${highestPlayer[0].name}`;
             }
-            content += ` by ${plus}`;
+
             this.game.sendGlobalMessage({
                 content: content +"!",
                 color: parseInt(rarity.color.substring(1), 16)
