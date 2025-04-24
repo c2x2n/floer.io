@@ -1,6 +1,6 @@
 import { type WebSocket } from "ws";
 import { ServerEntity } from "./serverEntity";
-import { Vec2 } from "../../../common/src/utils/vector";
+import { Vec2, Vector } from "../../../common/src/utils/vector";
 import { GameBitStream, type Packet, PacketStream } from "../../../common/src/net";
 import { type Game } from "../game";
 import { ChatData, type EntitiesNetData, PlayerState, UpdatePacket } from "../../../common/src/packets/updatePacket";
@@ -61,7 +61,13 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     hitbox = new CircleHitbox(GameConstants.player.radius);
 
     name = "";
-    direction = Vec2.new(0, 0);
+    direction: {
+        direction: Vector,
+        mouseDir: Vector
+    } = {
+        direction: Vec2.new(0, 0),
+        mouseDir: Vec2.new(0, 0)
+    };
     distance: number = 0;
     isAttacking = false;
     isDefending = false;
@@ -204,7 +210,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         super.tick();
 
         this.setAcceleration(Vec2.mul(
-            this.direction,
+            this.direction.direction,
             MathNumeric.remap(this.distance, 0, 150, 0, GameConstants.player.maxSpeed) * this.modifiers.speed
         ));
 
@@ -685,10 +691,13 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         if (!this.isActive()) return;
 
         // if the direction changed set to dirty
-        if (!Vec2.equals(this.direction, Vec2.radiansToDirection(packet.direction))) {
+        if (!Vec2.equals(this.direction.direction, Vec2.radiansToDirection(packet.direction.direction))) {
             this.setDirty();
         }
-        this.direction = Vec2.radiansToDirection(packet.direction);
+        this.direction = {
+            direction: Vec2.radiansToDirection(packet.direction.direction),
+            mouseDir: Vec2.radiansToDirection(packet.direction.mouseDir)
+        };
         this.distance = packet.mouseDistance;
         this.isAttacking = packet.isAttacking;
         this.isDefending = packet.isDefending;
@@ -718,7 +727,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     get data(): Required<EntitiesNetData[EntityType.Player]> {
         const data = {
             position: this.position,
-            direction: this.direction,
+            direction: this.direction.direction,
             state: this.playerState,
             gotDamage: this.gotDamage,
             isAdmin: this.isAdmin,

@@ -67,6 +67,14 @@ const AttributeDefinitions = [
         idString: "absorbing_shield",
         displayName: "Shield"
     },
+    {
+        idString: "self_damage",
+        displayName: "Self Damage"
+    },
+    {
+        idString: "damage_heal",
+        displayName: "Damage Heal"
+    },
 ] as const;
 
 export const Attributes = new Definitions<AttributeDefinition>(

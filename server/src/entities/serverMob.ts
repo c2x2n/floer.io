@@ -227,7 +227,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                         const randomSpeedMultiplier = 0.6 + Math.random() * 1.2;
                         
                         if (this instanceof ServerFriendlyMob && this.isSummoned && nearestPlayer && Math.random() < 0.7) {
-                            moveDirection = Vec2.new(nearestPlayer.direction.x, nearestPlayer.direction.y);
+                            moveDirection = Vec2.new(nearestPlayer.direction.direction.x, nearestPlayer.direction.direction.y);
                             moveDirection.x += (Math.random() * 0.6 - 0.3);
                             moveDirection.y += (Math.random() * 0.6 - 0.3);
                             moveDirection = Vec2.normalize(moveDirection);
@@ -427,7 +427,7 @@ export class ServerFriendlyMob extends ServerMob {
         , public owner: ServerPlayer
         , definition: MobDefinition
         , isSummoned: boolean = true) {
-        super(game, Random.pointInsideCircle(owner.position, 6), owner.direction, definition);
+        super(game, Random.pointInsideCircle(owner.position, 6), owner.direction.direction, definition);
         this.isSummoned = isSummoned;
     }
 

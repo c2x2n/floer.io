@@ -28,6 +28,7 @@ export type MobDefinition = ObjectDefinition & {
     readonly reachingAway?: boolean
     readonly hideInformation?: boolean
     readonly despawnTime?: number
+    readonly noSpawnMessage?: boolean
 } & MobSegmentType & MobCategoryType & MobShootType;
 
 export type MobCategoryType =  {
@@ -215,6 +216,21 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         rarity: RarityName.common,
         exp: 2
+    },
+    {
+        idString: "square",
+        displayName: "Square",
+        damage: 10,
+        health: 50,
+        category: MobCategory.Unactive,
+        speed: 0.2,
+        hitboxRadius: 1.5,
+        lootTable: {
+            "square": 1,
+        },
+        rarity: RarityName.unique,
+        noSpawnMessage: true,
+        exp: 5
     },{
         idString: "boulder",
         displayName: "Boulder",
@@ -804,7 +820,8 @@ export const Mobs = new Definitions<MobDefinition>([
             "faster": 0.4,
             "faster_wing": 0.7,
             "myt_tri_web": 0.25,
-            "tri_faster": 0.5
+            "tri_faster": 0.5,
+            "thirdeye": 0.03/100
         },
         rarity: RarityName.mythic,
         exp: 10000,

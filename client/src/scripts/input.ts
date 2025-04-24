@@ -28,7 +28,7 @@ export class Input {
         return this._inputsDown[input] ?? false;
     }
 
-    get moveDirection(): number | undefined {
+    get moveDirection(): {direction: number,mouseDir: number} | undefined {
         if (this.game.app.settings.data.keyboardMovement) {
             let hMove = 0;
             let vMove = 0;
@@ -44,16 +44,28 @@ export class Input {
             const vDir = Vec2.radiansToDirection(vRad);
 
             if (hMove != 0 && vMove != 0) {
-                return Vec2.directionToRadians(Vec2.add(vDir, hDir));
+                return {
+                    direction: Vec2.directionToRadians(Vec2.add(vDir, hDir)),
+                    mouseDir: this.mouseDirection
+                };
             } else if (hMove != 0) {
-                return hRad;
+                return {
+                    direction: hRad,
+                    mouseDir: this.mouseDirection
+                };
             } else if (vMove != 0) {
-                return vRad;
+                return {
+                    direction: vRad,
+                    mouseDir: this.mouseDirection
+                };
             }
 
             return;
         }else {
-            return this.mouseDirection;
+            return {
+                direction: this.mouseDirection,
+                mouseDir: this.mouseDirection
+            };
         }
     }
 

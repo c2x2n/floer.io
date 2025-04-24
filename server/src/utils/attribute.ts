@@ -292,7 +292,7 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
                             const mob = new ServerMob(
                                 this.game,
                                 spawnPosition,
-                                this.owner.direction,
+                                this.owner.direction.direction,
                                 mobDefinition
                             );
                         }
@@ -483,4 +483,36 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
             };
         }
     },
+    self_damage: {
+        callback: (on, petal, data) => {
+            on<AttributeEvents.PETAL_DEAL_DAMAGE>(
+                AttributeEvents.PETAL_DEAL_DAMAGE,
+                (entity) => {
+                    if (!entity || !data) return;
+                    const owner = petal.owner;
+                    const selfDamage = data;
+                    if (selfDamage && owner) {
+                        owner.receiveDamage(Number(selfDamage), owner);
+                    }
+                }
+            );
+        }
+    },
+    damage_heal: {
+        callback: (on, petal, data) => {
+            on<AttributeEvents.PETAL_DEAL_DAMAGE>(
+                AttributeEvents.PETAL_DEAL_DAMAGE,
+                (entity) => {
+                    if (!entity || !data) return;
+                    const owner = petal.owner;
+                    let selfHealPercent = data.healPercent/100;
+                    let selfHeal = (petal.damage ?? 15) * selfHealPercent;
+                    if (selfHeal && owner) {
+                        if (data.maximumHeal) selfHeal = Math.min(selfHeal, data.maximumHeal);
+                        owner.heal(Number(selfHeal));
+                    }
+                }
+            );
+        }
+    }
 } as const;
