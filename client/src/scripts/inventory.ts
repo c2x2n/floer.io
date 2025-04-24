@@ -920,9 +920,10 @@ export class Inventory{
             console.warn(`Invalid targetIndex: ${targetIndex}`);
             return null;
         }
-        if (targetIndex >= GameConstants.player.defaultSlot) {
+        if (targetIndex >= this.equippedPetals.length) {
             // is a secondary slot , >= : 10 is also a secondary slot
-            destinationElement = this.preparationPetals[targetIndex-GameConstants.player.defaultSlot]?.ui_slot || null;
+            destinationElement = this.preparationPetals[
+                targetIndex - this.equippedPetals.length]?.ui_slot || null;
         } else {
             destinationElement = this.equippedPetals[targetIndex]?.ui_slot || null;
         }
