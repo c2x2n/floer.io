@@ -19,6 +19,7 @@ export type PlayerModifiers = Modifiers & {
     }
     extraDistance: number;
     controlRotation: boolean;
+    extraSlot: number;
 }
 
 export interface Modifiers {
