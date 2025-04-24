@@ -156,6 +156,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
     exp: number = 0;
     level: number = 1;
+    levelInformation = getLevelInformation(0);
 
     overleveled: boolean = false;
     overleveledTimeRemains: number = GameConstants.player.overleveledTime;
@@ -261,7 +262,12 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     addExp(exp: number) {
         this.exp += exp;
         this.dirty.exp = true;
-        this.level = getLevelInformation(this.exp).level;
+        this.levelInformation = getLevelInformation(this.exp);
+        this.level = this.levelInformation.level;
+
+        this.inventory.changeSlotAmountTo(
+            GameConstants.player.defaultSlot + this.levelInformation.extraSlot
+        )
     }
 
     dealDamageTo(to: damageableEntity): void{
@@ -757,14 +763,6 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         // 闪避
         let avoidanceFailureChance = 1;
 
-        for (const levelStat of levelStats){
-            if (this.level >= levelStat.level){
-                modifiersNow = this.calcModifiers(modifiersNow, {
-                    extraSlot: levelStat.extraSlot
-                });
-            }
-        }
-
         for (const petal of this.petalEntities) {
             const modifier = petal.definition.modifiers;
             // has modifier AND (EITHER not first time reloading OR petal effects work on first reload)
@@ -813,14 +811,14 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
         modifiersNow.damageAvoidanceChance = 1 - avoidanceFailureChance;
 
+        modifiersNow = this.calcModifiers(modifiersNow, {
+            maxHealth: this.levelInformation.extraMaxHealth
+        });
+
         this.modifiers = modifiersNow;
 
         this.maxHealth = this.modifiers.maxHealth;
         this.zoom = this.modifiers.zoom;
-
-        this.inventory.changeSlotAmountTo(
-            GameConstants.player.defaultSlot + this.modifiers.extraSlot
-        )
     }
 
     destroy() {

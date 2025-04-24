@@ -332,7 +332,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                     (a, b) => b[1] - a[1])[0]
             let content = `The ${rarity.displayName} ${this.definition.displayName} has been defeated`
 
-            if (highestPlayer.length) {
+            if (highestPlayer && highestPlayer.length) {
                content += ` by ${highestPlayer[0].name}`;
             }
 
