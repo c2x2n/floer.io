@@ -313,7 +313,7 @@ export class UI {
             const oldestMessage = this.chatMessages.shift();
             if (oldestMessage?.jq) {
                 oldestMessage.jq.animate({ opacity: 0 }, 150, () => {
-                    $(this).remove();
+                    oldestMessage.jq.remove();
                 });
             }
         }
