@@ -6,6 +6,7 @@ import { SettingsData } from "@/settings.ts";
 import { ChatData } from "@common/packets/updatePacket.ts";
 import { ChatChannel } from "@common/packets/chatPacket.ts";
 import { Rarity, RarityName } from "@common/definitions/rarity.ts";
+import { MathNumeric } from "@common/utils/math.ts";
 
 export class UI {
     readonly app: ClientApplication;
@@ -308,7 +309,7 @@ export class UI {
 
         this.chatMessages.push(new ChatMessage(msg, jq, Date.now()));
 
-        if (this.chatMessages.length > 20) {
+        if (this.chatMessages.length > 30) {
             const oldestMessage = this.chatMessages.shift();
             if (oldestMessage?.jq) {
                 oldestMessage.jq.animate({ opacity: 0 }, 150, () => {
@@ -369,19 +370,19 @@ export class UI {
         if (this.transitionRunning) {
             return;
         }
-        
+
         if (!this.inGameScreen || !this.transitionRing) return;
         this.transitionRing.css("opacity", "1"); // this need to show up nomatter what
-    
+
         this.transitionRunning = true;
-    
+
         // Common animation setup
         let radius = expanding ? 0 : window.innerWidth * 1; // Start from 0 or maxRadius
-    
+
         const maxRadius = window.innerWidth * 1;
         const duration = expanding ? 1500 : 1200; // Slightly faster for collapsing
         const startTime = performance.now();
-    
+
         // both needs in game screen be displayed
         this.inGameScreen.css("visibility", "visible");
         this.inGameScreen.css("opacity", "1");
@@ -404,11 +405,11 @@ export class UI {
                 });
             });
         }
-    
+
         const animate = (currentTime: number) => {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
-    
+
             // Custom easing for collapsing to make it faster at the beginning
             let eased;
             if (expanding) {
@@ -421,21 +422,21 @@ export class UI {
                 // Use a cubic curve that drops quickly at the start
                 eased = 1 - Math.pow(1 - progress, 3);
             }
-    
+
             if (expanding) {
                 radius = eased * maxRadius;
             } else {
                 radius = maxRadius * (1 - eased);
             }
-    
+
             this.inGameScreen.css("clip-path", `circle(${radius}px at center)`);
-    
+
             const diameter = radius * 2;
             this.transitionRing.css({
                 "width": `${diameter}px`,
                 "height": `${diameter}px`
             });
-    
+
             if (progress < 1) {
                 requestAnimationFrame(animate);
             } else if (!expanding) {
@@ -463,32 +464,34 @@ export class UI {
                 this.transitionRunning = false;
             }
         };
-    
-    
+
+
         requestAnimationFrame(animate);
     }
 }
+
+const messageExistTime = 10;
+const messageHidingTime = 6;
 
 class ChatMessage {
     constructor(public content: ChatData, public jq: JQuery, public createdTime: number) {}
 
     getOpacity() {
-        if ((Date.now() - this.createdTime) / 1000 > 10) return 0;
-        return 1;
+        const timePassed = (Date.now() - this.createdTime) / 1000;
+        if (timePassed > messageHidingTime) {
+            return MathNumeric.clamp(
+                (1 -
+                    (timePassed - messageHidingTime) / (messageExistTime - messageHidingTime)
+                ), 0, 1
+            )
+        }
+        return 1
     }
 
     updateOpacity(force?: number) {
         if (!force) {
             const opacity = this.getOpacity();
-            
-            if (opacity === 0 && this.jq.parent().length) {
-                this.jq.animate({ opacity: 0 }, 150, () => {
-                    $(this).remove();
-                });
-            } else {
-                this.jq.css("opacity", opacity);
-            }
-            return;
+            return this.jq.css("opacity", opacity);
         }
         this.jq.css("opacity", force);
     }
