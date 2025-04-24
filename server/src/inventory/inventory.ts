@@ -97,6 +97,7 @@ export class Inventory {
     }
 
     changeSlotAmountTo(slot: number): void {
+        if (this.slot === slot) return;
         if (this.slot > slot) {
             const offset = this.slot - slot;
             this.equipped_petals.splice(-offset, offset);
@@ -267,7 +268,7 @@ export class Inventory {
                 this.player.direction.y,
                 this.player.direction.x
             );
-            
+
             this.revolutionRadians = directionAngle;
         } else {
             const yyEffects = this.getYinYangEffects(this.player.modifiers.yinYangs);
@@ -293,7 +294,7 @@ export class Inventory {
         });
     }
 
-    getYinYangEffects(n: number) {        
+    getYinYangEffects(n: number) {
         if ([1,4,7].includes(n)) {
             return "rev";
         } else if ([2,5].includes(n)) {
