@@ -601,9 +601,8 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                 const inventory = player.inventory.inventory;
                 const toRemove: number[] = [];
 
-                // Track mythic and unique counts
+                // Track mythic counts
                 const mythicCounts = new Map<string, number>();
-                const uniqueCounts = new Map<string, number>();
 
                 for (let i = 0; i < inventory.length; i++) {
                     const petal = inventory[i];
@@ -613,19 +612,12 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                     const rarity = Rarity.fromString(def.rarity);
 
                     // Check for mythics (max 3 per player)
+                    // TODO: FIX: this logic is WRONG, max 3 mythics in server
+                    // but still useful sometimes maybe so im keeping
                     if (rarity.idString === 'mythic') {
                         const count = (mythicCounts.get('mythic') || 0) + 1;
                         mythicCounts.set('mythic', count);
                         if (count > 3 && !player.isAdmin) {
-                            toRemove.push(i);
-                        }
-                    }
-
-                    // Check for uniques (max 1 per player)
-                    if (def.rarity === RarityName.unique) {
-                        const count = (uniqueCounts.get(def.idString) || 0) + 1;
-                        uniqueCounts.set(def.idString, count);
-                        if (count > 1 && !player.isAdmin) {
                             toRemove.push(i);
                         }
                     }
@@ -636,7 +628,6 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                     }
                 }
 
-                // Remove flagged petals in reverse order to maintain correct indices
                 toRemove.sort((a, b) => b - a).forEach(index => {
                     player.inventory.delete(index);
                     petalCount++;
@@ -644,7 +635,53 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             }
 
             this.sendDirectMessage(`Cleanup complete: Removed ${dropCount} drops, ${mobCount} mobs, and ${petalCount} invalid petals.`);
-        }
+        } else if (rest.startsWith('givexp')) { 
+            const params = rest.substring('givexp'.length).trim();
+            const args = params.split(' ').filter(arg => arg.length > 0);
+            if (args.length < 2) {
+                return this.sendDirectMessage('Usage: insufficient params', 0xffcc00);
+            }
+
+            const targetIdentifier = args[0];
+            const amount = parseFloat(args[1]);
+
+            if (!isFinite(amount) || amount <= 0) {
+                return this.sendDirectMessage('Invalid XP amount.', 0xff0000);
+            }
+
+            let targetPlayer: ServerPlayer | undefined = undefined;
+
+            // Try finding by ID first, then by name
+            // usually dev wont know the ID tho
+            // maybe list command later
+            const targetId = parseInt(targetIdentifier);
+            if (!isNaN(targetId)) {
+                targetPlayer = this.game.players.get(targetId);
+            }
+
+            if (!targetPlayer) {
+                for (const player of this.game.players) {
+                    if (player.name.toLowerCase() === targetIdentifier.toLowerCase()) {
+                        targetPlayer = player;
+                        break;
+                    }
+                }
+            }
+
+            if (!targetPlayer) {
+                return this.sendDirectMessage(`Player "${targetIdentifier}" not found.`, 0xff0000);
+            }
+
+            if (targetPlayer === this) {
+                 return this.sendDirectMessage(`Use /xp to give yourself XP.`, 0xffcc00);
+            }
+
+            targetPlayer.addExp(amount);
+            targetPlayer.dirty.exp = true;
+            this.sendDirectMessage(`Gave ${amount} XP to ${targetPlayer.name} (ID: ${targetPlayer.id}).`);
+            targetPlayer.sendDirectMessage(`You received ${amount} XP from an admin.`);
+
+        } 
     }
 
     join(packet: JoinPacket): void {
