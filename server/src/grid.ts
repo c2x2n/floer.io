@@ -1,4 +1,4 @@
-import { EntityType, Zones } from "../../common/src/constants";
+import { EntityType } from "../../common/src/constants";
 import { type Hitbox, RectHitbox } from "../../common/src/utils/hitbox";
 import { MathNumeric } from "../../common/src/utils/math";
 import { Vec2, type Vector } from "../../common/src/utils/vector";
@@ -8,6 +8,7 @@ import { ServerPetal } from "./entities/serverPetal";
 import { ServerMob } from "./entities/serverMob";
 import { ServerLoot } from "./entities/serverLoot";
 import { ServerProjectile } from "./entities/serverProjectile";
+import { Zones } from "../../common/src/zones";
 
 /**
  * A Grid to filter collision detection of game entities

@@ -5,7 +5,7 @@ import { ClientPlayer } from "@/scripts/entities/clientPlayer.ts";
 import { loadAssets } from "@/scripts/utils/pixi";
 import { Camera } from "@/scripts/render/camera";
 import { ClientEntity } from "@/scripts/entities/clientEntity.ts";
-import { EntityType, GameConstants, Zones } from "@common/constants.ts";
+import { EntityType, GameConstants } from "@common/constants.ts";
 import { Inventory, PetalContainer } from "@/scripts/inventory.ts";
 import { ClientApplication } from "../main.ts";
 import { JoinPacket } from "@common/packets/joinPacket.ts";
@@ -28,6 +28,7 @@ import { ParticleManager } from "@/scripts/render/particle.ts";
 import { Vec2, Vector } from "@common/utils/vector.ts";
 import { Petals, SavedPetalDefinitionData } from "@common/definitions/petal.ts";
 import { ChatChannel, ChatPacket } from "@common/packets/chatPacket.ts";
+import { Zones } from "@common/zones.ts";
 
 const typeToEntity = {
     [EntityType.Player]: ClientPlayer,

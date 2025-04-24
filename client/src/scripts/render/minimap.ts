@@ -2,7 +2,8 @@ import { Game } from "@/scripts/game.ts";
 import { Graphics, Container, Text } from "pixi.js";
 import { MathNumeric } from "@common/utils/math.ts";
 import { Vec2 } from "@common/utils/vector.ts";
-import { GameConstants, Zones } from "@common/constants.ts";
+import { GameConstants } from "@common/constants.ts";
+import { Zones } from "@common/zones.ts";
 
 const widthDiv = 12;
 const heightDiv = 3;

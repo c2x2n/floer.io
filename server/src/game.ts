@@ -5,7 +5,7 @@ import {
 } from "./entities/serverEntity";
 import { Grid } from "./grid";
 import { EntityPool } from "../../common/src/utils/entityPool";
-import { EntityType, GameConstants, Zones } from "../../common/src/constants";
+import { EntityType, GameConstants } from "../../common/src/constants";
 import NanoTimer from "nanotimer";
 import { type ServerConfig } from "./config";
 import { IDAllocator } from "./idAllocator";
@@ -25,6 +25,7 @@ import { spawnSegmentMobs } from "./utils/mob";
 import { Rarity, RarityName } from "../../common/src/definitions/rarity";
 import { ChatData } from "../../common/src/packets/updatePacket";
 import { ChatPacket } from "../../common/src/packets/chatPacket";
+import { Zones } from "../../common/src/zones";
 
 export class Game {
     players = new EntityPool<ServerPlayer>();
