@@ -7,7 +7,7 @@ import { ChatData } from "@common/packets/updatePacket.ts";
 import { ChatChannel } from "@common/packets/chatPacket.ts";
 import { Rarity, RarityName } from "@common/definitions/rarity.ts";
 import { MathNumeric } from "@common/utils/math.ts";
-import { GameConstants } from "@common/constants.ts";
+import { EntityType, GameConstants } from "@common/constants.ts";
 import { Petals } from "@common/definitions/petal.ts";
 import { Random } from "@common/utils/random.ts";
 import { getGameAssetsFile, getGameAssetsPath } from "@/scripts/utils/pixi.ts";
@@ -33,6 +33,9 @@ export class UI {
     readonly preparationPetalRow= $<HTMLDivElement>(".preparation-petals-row");
 
     readonly nameInput = $<HTMLInputElement>("#name");
+
+    readonly gameInfo = $<HTMLDivElement>("#game-info");
+    readonly debugInfo = $<HTMLDivElement>("#debug-info");
 
     readonly gameOverScreen = $<HTMLDivElement>("#game-over-screen");
 
@@ -190,7 +193,7 @@ export class UI {
 
         this.animationInterval = window.setInterval(() => {
             this.spawnRandomEntity();
-        }, 750);
+        }, 700);
     }
 
     stopRandomEntityAnimation(): void {
@@ -213,8 +216,6 @@ export class UI {
             // stop spawning if in game
             return;
         }
-        // Decide whether to spawn a mob or petal (30% petal 70% mob)
-        // const isMob = Math.random() > 0.3;
 
         // Select a random entity from the appropriate array
         const petalType =
@@ -226,7 +227,7 @@ export class UI {
         const topPosition = Math.random() * 90 + 5;
 
         // Set random size (between 50px and 70px) mob is 1.5x
-        const size = Random.int(10, 50);
+        const size = Random.int(25, 50);
 
         // Set random speed in seconds (between 8 and 12 seconds to cross the screen)
         const speed = Math.random() * 4 + 8;
@@ -266,6 +267,22 @@ export class UI {
             // Remove element when animation completes
             entity.animate({opacity: 0}, 200, ()=>{$(this).remove()});
         });
+    }
+
+    renderDebug(): void {
+        this.game.debug.particles = this.game.particleManager.particlesCount();
+        this.game.debug.entities.loot = this.game.entityPool.countType(EntityType.Loot);
+        this.game.debug.entities.mobs = this.game.entityPool.countType(EntityType.Mob);
+        this.game.debug.entities.petals = this.game.entityPool.countType(EntityType.Petal);
+        this.game.debug.entities.projectiles = this.game.entityPool.countType(EntityType.Projectile);
+        this.game.debug.entities.players = this.game.entityPool.countType(EntityType.Player);
+        const debug = this.game.debug;
+        const t = `floer.io BETA 0.2.6`;
+        this.gameInfo.attr("textStroke", t);
+        this.gameInfo.text(t);
+        const text = `${debug.fps} FPS / ${debug.particles} Particles / ${debug.entities.loot} Loot / ${debug.entities.mobs} Mobs / ${debug.entities.petals} Petals / ${debug.entities.projectiles} Projectiles / ${debug.entities.players} Players`;
+        this.debugInfo.text(text)
+        this.debugInfo.attr("textStroke", text);
     }
 
     toggleDialog(dialog: JQuery<HTMLDivElement>): void {

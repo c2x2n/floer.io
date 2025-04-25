@@ -6,7 +6,7 @@ import { GameConstants } from "@common/constants.ts";
 
 import { Zone, ZoneName, Zones } from "@common/definitions/zones.ts";
 
-const widthDiv = 12;
+const widthDiv = 10;
 const heightDiv = 3;
 
 export class Minimap {
@@ -72,8 +72,8 @@ export class Minimap {
         const screenWidth = this.game.pixi.screen.width;
         const screenHeight = this.game.pixi.screen.height;
 
-        this.minimapPositionX = screenWidth - this.minimapWidth - 8;
-        this.minimapPositionY = screenHeight - this.minimapHeight - 8;
+        this.minimapPositionX = screenWidth - this.minimapWidth - 45;
+        this.minimapPositionY = screenHeight - this.minimapHeight - 75;
 
         this.container.position.set(this.minimapPositionX, this.minimapPositionY);
 
@@ -90,11 +90,11 @@ export class Minimap {
             )
             .fill({
                 color: 0x000,
-                alpha: 0.9
+                alpha: 0.8
             })
             .stroke({
-                color: 0x000,
-                width: 3,
+                color: 0x454545,
+                width: 10,
             });
 
         for (const x in Zones) {
@@ -102,7 +102,26 @@ export class Minimap {
             this.mapBackground
                 .rect(data.x / widthDiv, 0, data.width / widthDiv, this.minimapHeight)
                 .fill(data.displayColor)
+
+            this.mapBackground.alpha = 0.9;
         }
+
+        // TODO: fix mysterious bug
+        // attachment sent in #moderator-only
+        const mapText = new Text({
+            text: 'Map',
+            alpha: 0.8,
+            style: {
+                fontFamily: 'Ubuntu',
+                fontSize: 25,
+                fill: "#fff",
+                stroke: {color: "#000", width: 2}
+            }
+        });
+        mapText.anchor.set(0.5);
+        this.container.addChild(mapText);
+        mapText.zIndex = 4;
+        mapText.position.set(this.minimapWidth / 2, -this.minimapHeight / 2.3)
 
         let index = 0;
         for (const x in Zones) {
@@ -112,9 +131,9 @@ export class Minimap {
                     text: x,
                     style: {
                         fontFamily: 'Ubuntu',
-                        fontSize: 11,
+                        fontSize: 15,
                         fill: "#fff",
-                        stroke: {color: "#000", width: 2}
+                        stroke: {color: "#000", width: 1}
                     }
                 });
                 this.mapNames[index].anchor.set(0.5);

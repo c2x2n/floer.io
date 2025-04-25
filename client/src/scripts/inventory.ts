@@ -315,7 +315,7 @@ export function renderPetalPiece(
     return piece;
 }
 
-export function renderPetal(petal: PetalDefinition, baseFs: number = 12) {
+export function renderPetal(petal: PetalDefinition, baseFs: number = 13.2) {
     const petal_box = $<HTMLDivElement>(
         `<div class="petal" petalName="${petal.displayName}"></div>`
     );
@@ -584,13 +584,16 @@ export class Inventory{
      * @param runWhenFinished A function to run once the animation is finished
      * @param fromIfAny [OPTIONAL] An object containing the starting position, size, opacity, angle. These will be parsed from petalEl if this param is not passed
      */
+    // TODO: Font size is still incorrect sometimes
+    // Make sure all of them are successfully obtained from the correct petal  element
+    // some need to use find('.petal') some do not
     animatePetalToPosition(petalEl: JQuery<HTMLElement>,destination: object = {
         x: 0, // x and y cant be 0 under normal circumstances...
         y: 0,
         w: 50, // 50 for main, 35 for secondary
         opac: 0.85, // should be consistent
         angle: 0,
-        fontSz: 12, // 12 for main, 8 for secondary
+        fontSz: 13.2, // 12 for main, 8 for secondary
     }, runWhenFinished?: () => void, fromIfAny?: object) {
         const currentOffset = petalEl.offset();
         //const {clientX, clientY} = ev;
@@ -611,7 +614,7 @@ export class Inventory{
                 w: petalEl.width() || 70,
                 opac: parseFloat(petalEl.css('opacity')) || 1,
                 angle: this.swingAngle || 0,
-                fontSz: parseFloat(petalEl.css('--x')) || 12*1.4,
+                fontSz: parseFloat(petalEl.css('--x')) || 13.2*1.4,
             };
         if (actPetalEl.length && !fromIfAny) {
             from.fontSz = parseFloat(actPetalEl.css('--x')) || 999;
@@ -767,7 +770,7 @@ export class Inventory{
                         });
 
                         // Set initial font size on the inner clone
-                        const targetFontSize = parseFloat(targetPetalEl.css('--x')) || 12;
+                        const targetFontSize = parseFloat(targetPetalEl.css('--x')) || 13.2;
                         innerPetalClone.css('--x', `${targetFontSize}px`);
 
                         // Add to body
@@ -779,7 +782,7 @@ export class Inventory{
                             w: (mouseSelectingPetal.ui_slot.width() || 50),
                             opac: mouseSelectingPetal.ui_slot.css('opacity') || 0.85,
                             angle: mouseSelectingPetal.ui_slot.css('opacity') || 0,
-                            fontSz: parseFloat(targetPetalEl.css('--x')) || (12)
+                            fontSz: parseFloat(targetPetalEl.css('--x')) || (13.2)
                         }
 
                         // Hide the original petal in the target slot
@@ -823,7 +826,7 @@ export class Inventory{
                         // on iteration 2, method uses provided obj parsed earlier from targetPetalEl
                         const scale = petalToAnimate.width() / (dest.width() || 50); // 35
                         const innerPetal = petalToAnimate.find('.petal');
-                        let rnFontSz = 12*scale;
+                        let rnFontSz = 13.2*scale;
                         if  (innerPetal) {
                             rnFontSz = parseFloat(innerPetal.css('--x'));
                         }
@@ -836,7 +839,7 @@ export class Inventory{
                                 w: dest.width() || 50, // 35 if secondary
                                 opac: 0.92, // value chosen to best blend petal colour and slot colour...
                                 angle: 0, // should always be 0
-                                fontSz: FINALFONTSZ || 12, // 8 for secondary
+                                fontSz: FINALFONTSZ || 13.2, // 8 for secondary
                             }, onAnimationComplete, fromObj);
                         } else {
                             // If we don't have a petal to animate for this iteration, still decrement
@@ -900,7 +903,7 @@ export class Inventory{
             if (slotOffset) {
                 const scale = draggingData.item.width() / (originalSlot.width() || 50); // 35
                 const innerPetal = draggingData.item.find('.petal');
-                let rnFontSz = 12*scale;
+                let rnFontSz = 13.2*scale;
                 if  (innerPetal) {
                     rnFontSz = parseFloat(innerPetal.css('--x'));
                 }
@@ -911,7 +914,7 @@ export class Inventory{
                     w: originalSlot.width() || 50,
                     opac: 0.92,
                     angle: 0,
-                    fontSz: FINALFONTSZ || 12,
+                    fontSz: FINALFONTSZ || 13.2,
                 }, () => {
                     draggingData.item = null; // It is already removed by the animation method
 

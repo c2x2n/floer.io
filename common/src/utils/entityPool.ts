@@ -11,6 +11,14 @@ export class EntityPool<T extends GameEntity> {
         this.entities.clear();
     }
 
+    countType(type: EntityType): number {
+        let count = 0;
+        for (const entity of this.entities.values()) {
+            if (entity.type === type) count++;
+        }
+        return count;
+    }
+
     add(entity: T): boolean {
         if (this.entities.has(entity.id)) return false;
         this.entities.set(entity.id, entity);

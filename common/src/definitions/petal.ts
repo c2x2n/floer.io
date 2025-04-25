@@ -958,6 +958,7 @@ export const Petals = new Definitions<PetalDefinition>([
         isShowedInOne: true,
         pieceAmount: 7,
         rarity: RarityName.super,
+        undroppable: true,
         usingAssets: "blood_stinger"
     },
     {

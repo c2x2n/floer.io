@@ -6,6 +6,7 @@ interface CurrentLevelInformation {
     toNextLevelExp: number;
     extraMaxHealth: number;
     extraSlot: number;
+    nextExtraSlot: number;
 }
 
 export function getLevelInformation(exp: number): CurrentLevelInformation {
@@ -25,10 +26,17 @@ export function getLevelInformation(exp: number): CurrentLevelInformation {
 
     let extraSlot = 0;
 
+    let currentPassedThreshold = 0;
+    let nextExtraSlotLevel = 0;
+
+    let i = 0;
     for (const levelStat of levelStats){
         if (levelNow >= levelStat.level){
             extraSlot += levelStat.extraSlot;
+            currentPassedThreshold = levelStat.level;
+            if (!levelStats[i + 1]) nextExtraSlotLevel = 0; else nextExtraSlotLevel = levelStats[i + 1].level ?? 0;
         }
+        i++
     }
 
     return {
@@ -36,7 +44,8 @@ export function getLevelInformation(exp: number): CurrentLevelInformation {
         remainsExp: expRemains,
         toNextLevelExp: levelExpCost,
         extraMaxHealth: levelNow * ( 200 - 100 ) / 59,
-        extraSlot: extraSlot
+        extraSlot: extraSlot,
+        nextExtraSlot: nextExtraSlotLevel
     };
 }
 

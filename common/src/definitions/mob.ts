@@ -875,7 +875,7 @@ export const Mobs = new Definitions<MobDefinition>([
             }
         },
         shootSpeed: 0.7,
-        speed: 7,
+        speed: 5,
         lootTable: {
             "iris": 0.22,
             "stinger": 0.36,
@@ -971,7 +971,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 40,
         health: 1000,
         category: MobCategory.Passive,
-        hitboxRadius: 3,
+        hitboxRadius: 4,
         speed: 3,
         images: {
             mouth: true,

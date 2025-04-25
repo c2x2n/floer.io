@@ -17,6 +17,10 @@ export class ParticleManager {
         return particle;
     }
 
+    particlesCount() {
+        return this.particles.length;
+    }
+
     spawnParticles(amount: number, options: () => ParticleOptions) {
         for (let i = 0; i < amount; i++) {
             this.spawnParticle(options());

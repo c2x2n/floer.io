@@ -54,6 +54,32 @@ export class Game {
     width: number = 0;
     height: number = 0;
 
+    debug: {
+        fps: number,
+        ping: number,
+        particles: number,
+        entities: {
+            mobs: number,
+            loot: number,
+            projectiles: number,
+            players: number,
+            petals: number,
+        }
+    } = {
+        fps: 0,
+        ping: 0,
+        particles: 0,
+        entities: {
+            mobs: 0,
+            loot: 0,
+            projectiles: 0,
+            players: 0,
+            petals: 0,
+        }
+    }
+    private lastPingTime: number = 0;
+    private pingSentTime: number = 0;
+
     tweens = new Set<Tween>;
     private lastUpdateTime: number = 0;
 
@@ -401,8 +427,10 @@ export class Game {
     lastRenderTime = Date.now();
 
     render() {
+        this.ui.renderDebug();
         if (!this.running) return;
         const dt = (Date.now() - this.lastRenderTime) / 1000;
+        this.debug.fps = Math.round(this.pixi.ticker.FPS);
         this.lastRenderTime = Date.now();
 
         for (const needUpdateEntity of this.needUpdateEntities) {

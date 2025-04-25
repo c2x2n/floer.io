@@ -503,6 +503,15 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         }
     }
 
+    findTarget(identifier: string): ServerPlayer | undefined {
+        for (const player of this.game.players) {
+            if (player.name === identifier || player.id.toString() === identifier) {
+                return player;
+            }
+        }
+        return undefined;
+    };
+
     processCommand(content: string): void {
         const rest = content.substring(1); // remove command prefix /
         if (!this.isAdmin) return; // double check
@@ -542,6 +551,51 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                 spawnLoot(this.game,pArr,pVec, true); // pass array, true to make it bypass room limitations
                 this.sendDirectMessage(`Dropped ${count} of ${pDef.idString}.`);
             }
+        } else if (rest.startsWith('give')) {
+            const params = rest.substring('give'.length).trim();
+            const args = params.split(' ').filter(arg => arg.length > 0);
+            if (args.length < 3) {
+                return this.sendDirectMessage('insufficient params', 0xff0000);
+            }
+
+            const targetIdentifier = args[0];
+            const petalName = args[1];
+            const count = parseInt(args[2]);
+
+            // Find the target player
+            let targetPlayer: ServerPlayer | undefined = this.findTarget(targetIdentifier);
+
+            if (!targetPlayer) {
+                return this.sendDirectMessage(`Player '${targetIdentifier}' not found.`, 0xff0000);
+            }
+
+            const validatePetalString = Petals.hasString(petalName);
+
+            if (!validatePetalString || !isFinite(count) || count <= 0) {
+                this.sendDirectMessage(`Invalid petal name ('${petalName}') or count ('${args[2]}').`, 0xff0000);
+                return;
+            }
+
+            const petalDef = Petals.fromString(petalName);
+            const rarityDefinition = Rarity.fromString(petalDef.rarity);
+
+            if (rarityDefinition.isUnique && this.game.gameHas(petalDef)) {
+                this.sendDirectMessage(`'${petalName}' is a unique petal and is already in the game!`, 0xffcc00);
+                // Optionally, you might still allow dropping it if needed for testing
+            }
+
+            let petalArr: PetalDefinition[] = [];
+            for (let i = 0; i < count; i++) {
+                petalArr.push(petalDef);
+            }
+
+            // Use target player's position
+            const targetPosition = { x: targetPlayer.position.x, y: targetPlayer.position.y };
+
+            spawnLoot(this.game, petalArr, targetPosition, true); // bypass room limitations
+            this.sendDirectMessage(`Dropped ${count} of ${petalDef.idString} for ${targetPlayer.name} (ID: ${targetPlayer.id}).`);
+            targetPlayer.sendDirectMessage(`Admin dropped ${count} of ${petalDef.idString} for you.`); // Notify the target player
+
         } else if (rest.startsWith('spawn')) {
             const params = rest.substring('spawn'.length).trim();
             const args = params.split(' ').filter(arg => arg.length > 0);
@@ -642,28 +696,11 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             const targetIdentifier = args[0];
             const amount = parseFloat(args[1]);
 
-            if (!isFinite(amount) || amount <= 0) {
+            if (!isFinite(amount)) {
                 return this.sendDirectMessage('Invalid XP amount.', 0xff0000);
             }
 
-            let targetPlayer: ServerPlayer | undefined = undefined;
-
-            // Try finding by ID first, then by name
-            // usually dev wont know the ID tho
-            // maybe list command later
-            const targetId = parseInt(targetIdentifier);
-            if (!isNaN(targetId)) {
-                targetPlayer = this.game.players.get(targetId);
-            }
-
-            if (!targetPlayer) {
-                for (const player of this.game.players) {
-                    if (player.name.toLowerCase() === targetIdentifier.toLowerCase()) {
-                        targetPlayer = player;
-                        break;
-                    }
-                }
-            }
+            let targetPlayer: ServerPlayer | undefined = this.findTarget(targetIdentifier);
 
             if (!targetPlayer) {
                 return this.sendDirectMessage(`Player "${targetIdentifier}" not found.`, 0xff0000);
@@ -678,6 +715,93 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             this.sendDirectMessage(`Gave ${amount} XP to ${targetPlayer.name} (ID: ${targetPlayer.id}).`);
             targetPlayer.sendDirectMessage(`You received ${amount} XP from an admin.`);
 
+        } else if (rest.startsWith('list')) {
+            this.sendDirectMessage('--- Player List ---');
+            for (const player of this.game.players) {
+                this.sendDirectMessage(`ID: ${player.id}, Name: ${player.name}, XP: ${player.exp}`);
+            }
+            this.sendDirectMessage('-------------------');
+        } else if (rest.startsWith('whisper ') || rest.startsWith('w ')) {
+            const commandPrefix = rest.startsWith('whisper ') ? 'whisper ' : 'w ';
+            const params = rest.substring(commandPrefix.length).trim();
+            const firstSpaceIndex = params.indexOf(' ');
+            if (firstSpaceIndex === -1) {
+                return this.sendDirectMessage('insufficient params', 0xff0000);
+            }
+            const targetIdentifier = params.substring(0, firstSpaceIndex);
+            const message = params.substring(firstSpaceIndex + 1).trim();
+            if (!message) {
+                return this.sendDirectMessage('insufficient params', 0xff0000);
+            }
+            const targetPlayer = this.findTarget(targetIdentifier);
+            if (!targetPlayer) {
+                return this.sendDirectMessage(`Player '${targetIdentifier}' not found.`, 0xff0000);
+            }
+            targetPlayer.sendDirectMessage(`[Whisper from ${this.name}]: ${message}`, 0xffaaff); // different from reg dms
+
+            this.sendDirectMessage(`[Whisper to ${targetPlayer.name}]: ${message}`, 0xffaaff);
+        } else if (rest.startsWith('kill ')) {
+            const targetIdentifier = rest.substring('kill '.length).trim();
+
+            if (!targetIdentifier) {
+                return this.sendDirectMessage('provide player identifier pls', 0xff0000);
+            }
+
+            const targetPlayer = this.findTarget(targetIdentifier);
+
+            if (!targetPlayer) {
+                return this.sendDirectMessage(`Player '${targetIdentifier}' not found.`, 0xff0000);
+            }
+
+            if (targetPlayer === this) {
+                this.sendDirectMessage('hi why do you want to kill yourself', 0xffcc00);
+            }
+
+            // Deal enough damage to ensure the player is killed, bypassing potential shields/revives if needed
+            // Using a large damage value is simpler than checking all conditions
+            targetPlayer.receiveDamage(targetPlayer.maxHealth ** 2 + targetPlayer.shield * 2, this); // Deal damage from the admin
+
+            if (targetPlayer.isActive()) {
+                // This check is needed in case the player had a revive mechanic that worked
+                // ygg...
+                this.sendDirectMessage(`Attempted to kill ${targetPlayer.name} (ID: ${targetPlayer.id}), but they might have survived (e.g., revive).`, 0xffcc00);
+            } else {
+                this.sendDirectMessage(`Successfully killed ${targetPlayer.name} (ID: ${targetPlayer.id}).`, 0xFFA500);
+                // The GameOverPacket is sent within receiveDamage/destroy logic
+            }
+
+        } else if (rest.startsWith('forcekill ')) {
+            const targetIdentifier = rest.substring('forcekill '.length).trim();
+            if (!targetIdentifier) {
+                return this.sendDirectMessage('provide player identifier pls', 0xff0000);
+            }
+            const targetPlayer = this.findTarget(targetIdentifier);
+            if (!targetPlayer) {
+                return this.sendDirectMessage(`Player '${targetIdentifier}' not found.`, 0xff0000);
+            }
+            if (targetPlayer === this) {
+                this.sendDirectMessage('dont kill yourself pls', 0xffcc00);
+                return this.sendDirectMessage('if you want to kill urself with command, unequip ygg and use /kill', 0xffcc00);
+            }
+            if (!targetPlayer.isActive()) {
+                 return this.sendDirectMessage(`Player ${targetPlayer.name} (ID: ${targetPlayer.id}) is already inactive.`, 0xffcc00);
+            }
+
+            targetPlayer.destroy();
+            targetPlayer.killedBy = this;
+
+            // Send game over packet manually since destroy() might not do it in all cases
+            // (though it should if called when active)
+            const gameOverPacket = new GameOverPacket();
+            gameOverPacket.kills = targetPlayer.kills; // Send the target's kill count
+            gameOverPacket.murderer = this.name; // Admin is the murderer
+            targetPlayer.addPacketToSend(gameOverPacket); // Send it to the killed player
+            targetPlayer.send(); // Ensure the packet is sent immediately if possible
+
+            this.sendDirectMessage(`Forcefully killed ${targetPlayer.name} (ID: ${targetPlayer.id}).`, 0xFFA500);
+
+        } else {
+             this.sendDirectMessage(`Unknown command: /${rest.split(' ')[0]}`, 0xff0000);
         }
     }
 
