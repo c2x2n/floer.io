@@ -5,8 +5,7 @@ import { Random } from "../../../common/src/utils/random";
 import { MathGraphics, P2 } from "../../../common/src/utils/math";
 import { ServerMob } from "../entities/serverMob";
 
-export function spawnSegmentMobs(game: Game, definition: MobDefinition, head_position: Vector){
-    if (!definition.hasSegments) return ;
+export function spawnSegmentMobs(game: Game, definition: MobDefinition, head_position: Vector): ServerMob{
     const hitboxRadius = definition.hitboxRadius;
     let direction = Random.float(-P2, P2);
     let positionNow = head_position;
@@ -16,6 +15,10 @@ export function spawnSegmentMobs(game: Game, definition: MobDefinition, head_pos
         Vec2.radiansToDirection(-direction),
         definition
     );
+
+    if (!definition.hasSegments) return last;
+
+    const head = last;
 
     for (let i = 0; i < definition.segmentAmount - 1; i++) {
         positionNow = MathGraphics.getPositionOnCircle(
@@ -33,4 +36,6 @@ export function spawnSegmentMobs(game: Game, definition: MobDefinition, head_pos
             last
         );
     }
+
+    return head;
 }

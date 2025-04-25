@@ -16,7 +16,7 @@ export const GameConstants = {
     }),
     maxPosition: 4096,
     player: {
-        maxChatLength: 40,
+        maxChatLength: 80,
         radius: 1.2,
         defaultBodyDamage: 25,
         defaultHealth: 175,

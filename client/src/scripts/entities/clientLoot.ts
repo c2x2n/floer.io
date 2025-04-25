@@ -169,6 +169,7 @@ export class ClientLoot extends ClientEntity {
         )
         this.animations.forEach(t => {
             this.game.removeTween(t);
+            t.stop();
         });
     }
 }

@@ -34,10 +34,6 @@ export class Game {
 
     activePlayers = new EntityPool<ServerPlayer>();
 
-    adminSecret =
-        jwt.sign({ now: Date.now() }, "mhmm", { expiresIn: '1h' })
-            .substring(0, Random.int(8, 10));
-
     partialDirtyEntities = new Set<ServerEntity>();
     fullDirtyEntities = new Set<ServerEntity>();
 
@@ -45,6 +41,8 @@ export class Game {
 
     width = GameConstants.game.width;
     height = GameConstants.game.height;
+
+    adminSecret: string;
 
     minVector = Vec2.new(0, 0);
     maxVector = Vec2.new(GameConstants.game.width, GameConstants.game.height);
@@ -67,6 +65,10 @@ export class Game {
     constructor(config: ServerConfig) {
         this.deltaMs = 1000 / config.tps;
         this.timer.setInterval(this.tick.bind(this), "", `${this.deltaMs}m`);
+        const token = jwt.sign({ now: Date.now() }, "mhmm", { expiresIn: '1h' });
+        const where = Random.int(0, token.length);
+        this.adminSecret = token
+            .substring(where, where + Random.int(8, 15));
         console.log(`Game | SECRET GENERATED: ${this.adminSecret}`);
     }
 
@@ -147,7 +149,7 @@ export class Game {
     }
 
     specialSpawnTimer = new Map<
-        ZoneName, Map<SpecialSpawn, number>
+        ZoneName, Map<SpecialSpawn, { timer: number, spawned?: ServerMob }>
     >();
 
     tick(): void {
@@ -241,15 +243,26 @@ export class Game {
                 let zoneTimers =
                     this.specialSpawnTimer.get(zoneKey as ZoneName);
                 if (!zoneTimers){
-                    zoneTimers = new Map<SpecialSpawn, number>();
+                    zoneTimers = new Map<SpecialSpawn, { timer: number, spawned?: ServerMob }>();
                 }
 
                 for (const specialSpawn of zone.specialSpawning) {
-                    zoneTimers.set(specialSpawn, (zoneTimers.get(specialSpawn) ?? 0) + this.dt);
-                    if ((zoneTimers.get(specialSpawn) ?? 0) >= specialSpawn.timer) {
-                        this.mobSpawnerInZone(specialSpawn.spawn, zone, true)
-                        zoneTimers.set(specialSpawn, 0)
+                    let spawned = zoneTimers.get(specialSpawn)?.spawned;
+
+                    if (spawned && spawned.isActive()) return;
+
+                    let timerNow
+                        = (zoneTimers.get(specialSpawn)?.timer ?? 0) + this.dt;
+
+                    if (timerNow >= specialSpawn.timer) {
+                        spawned = this.mobSpawnerInZone(specialSpawn.spawn, zone, true)
+                        timerNow = 0;
                     }
+
+                    zoneTimers.set(specialSpawn, {
+                        timer: timerNow,
+                        spawned: spawned
+                    });
                 }
 
                 this.specialSpawnTimer.set(zoneKey as ZoneName, zoneTimers);
@@ -257,7 +270,7 @@ export class Game {
         }
     }
 
-    mobSpawnerInZone(mobSpawner: MobSpawner, zone: Zone, force?: boolean): void {
+    mobSpawnerInZone(mobSpawner: MobSpawner, zone: Zone, force?: boolean): ServerMob | undefined {
         const definitionIdString = Random.weightedRandom(
             Object.keys(mobSpawner),
             Object.values(mobSpawner)
@@ -269,7 +282,7 @@ export class Game {
         const mobCount = this.mobCountsInZone(zone);
 
         if (!force && mobCount >= maxMobCount) return;
-        this.spawnMobInZone(definition, zone)
+        return this.spawnMobInZone(definition, zone)
     }
 
     mobCountsInZone(zone: Zone): number {
@@ -286,7 +299,7 @@ export class Game {
         return mobCount;
     }
 
-    spawnMobInZone(definition: MobDefinition, zone: Zone) {
+    spawnMobInZone(definition: MobDefinition, zone: Zone): ServerMob {
         let collidedNumber = 0;
         let position = Random.vector(zone.x, zone.x + zone.width, 0, this.height);
         do {
@@ -300,44 +313,39 @@ export class Game {
             position = Random.vector(zone.x, zone.x + zone.width, 0, this.height);
         } while (collidedNumber != 0);
 
-        this.spawnMob(definition, position);
+        return this.spawnMob(definition, position);
     }
 
-    spawnMob(definition: MobDefinition, position: Vector) {
+    spawnMob(definition: MobDefinition, position: Vector): ServerMob {
         // 1/1.5m chance to spawn as a square
         if (Math.random() < (1 / 1500000)) {
             definition = Mobs.fromString("square");
         }
+
+        let mob: ServerMob;
         if (definition.hasSegments) {
-            spawnSegmentMobs(
+            mob = spawnSegmentMobs(
                 this,
                 definition,
                 position,
             )
-            const rarity = Rarity.fromString(definition.rarity);
-            if (rarity.globalMessage && !definition.noSpawnMessage) {
-                let content = `A ${rarity.displayName} ${definition.displayName} has spawned somewhere`
-                this.sendGlobalMessage({
-                    content: content +"!",
-                    color: parseInt(rarity.color.substring(1), 16)
-                })
-            }
         } else {
-            const mob = new ServerMob(this,
+            mob = new ServerMob(this,
                 position,
                 Vec2.radiansToDirection(Random.float(-P2, P2)),
                 definition
             );
-            const rarity = Rarity.fromString(definition.rarity);
-            if (rarity.globalMessage && !definition.noSpawnMessage) {
-                let content = `A ${rarity.displayName} ${definition.displayName} has spawned somewhere`
-                this.sendGlobalMessage({
-                    content: content +"!",
-                    color: parseInt(rarity.color.substring(1), 16)
-                })
-            }
-            return mob;
         }
+
+        const rarity = Rarity.fromString(definition.rarity);
+        if (rarity.globalMessage && !definition.noSpawnMessage) {
+            let content = `A ${rarity.displayName} ${definition.displayName} has spawned somewhere`
+            this.sendGlobalMessage({
+                content: content +"!",
+                color: parseInt(rarity.color.substring(1), 16)
+            })
+        }
+        return mob;
     }
 
     inWhichZone(entity: ServerEntity): Zone{

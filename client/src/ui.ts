@@ -7,6 +7,7 @@ import { ChatData } from "@common/packets/updatePacket.ts";
 import { ChatChannel } from "@common/packets/chatPacket.ts";
 import { Rarity, RarityName } from "@common/definitions/rarity.ts";
 import { MathNumeric } from "@common/utils/math.ts";
+import { GameConstants } from "@common/constants.ts";
 
 export class UI {
     readonly app: ClientApplication;
@@ -114,6 +115,21 @@ export class UI {
             this.chatMessagesBox.addClass("opened")
             for (const chatMessage of this.chatMessages) {
                 chatMessage.updateOpacity(1)
+            }
+        })
+
+        this.chatInput.on("input", (e: Event) => {
+            const content = this.chatInput.val();
+            if (!content) return;
+            let charsCount = 0;
+            let bytesCount = 0;
+            for (let i = 0; i < content.length; i++) {
+                charsCount ++;
+                bytesCount += new Blob([content.charAt(i)]).size;
+                if (bytesCount > GameConstants.player.maxChatLength) {
+                    this.chatInput.val(content.substring(0, i));
+                    return;
+                }
             }
         })
 
