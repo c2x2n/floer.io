@@ -129,6 +129,7 @@ export class Input {
 
         const input = document.querySelector("input.focused");
 
+
         if (upperCaseKey === "Enter" && down) {
             if (this.game.ui.chatInput.hasClass("focused")) {
                 this.game.ui.sendChat();
