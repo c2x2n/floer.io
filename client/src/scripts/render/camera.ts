@@ -90,6 +90,8 @@ export class Camera {
     }
 
     screenShake(): void {
+        if (!this.game.app.settings.data.screenShake) return;
+
         const tick = 50;
         const force = 4;
 

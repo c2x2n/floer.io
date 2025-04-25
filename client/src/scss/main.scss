@@ -163,29 +163,6 @@ body {
     align-items: center;
 }
 
-#bottom-left-buttons {
-  position: absolute;
-  left: 5px;
-  bottom: 5px;
-  display: flex;
-  flex-direction: column;
-}
-
-#btn-inventory {
-  background-image: url('../../public/img/ui/inventory.svg');
-  margin-bottom: 5px;
-}
-
-#btn-craft {
-  background-image: url('../../public/img/ui/craft.svg');
-  margin-bottom: 5px;
-}
-
-#btn-settings {
-    background-image: url('../../public/img/ui/settings.svg');
-    margin-bottom: 5px;
-}
-
 #in-game-screen {
     visibility: hidden;
     opacity: 0;
@@ -444,7 +421,7 @@ img {
 
 #floer-version {
     position: absolute;
-    top: 5px;
+    bottom: 5px;
     left: 5px;
     font-size: 25px;
     color: white;
@@ -452,34 +429,14 @@ img {
     z-index: 999;
 }
 
-#qq-box {
+#floer-logo {
     position: absolute;
-    padding: 2px;
-    top: 35px;
-    left: 5px;
-    width: 250px;
-    text-align: center;
-    height: 30px;
-    border-radius: 5px;
-    background: rgb(0, 202, 252);
-    border: rgb(0, 164, 204) 5px solid;
-    text-decoration: none;
+    top: 10px;
+    left: 10px;
+    font-size: 30px;
     color: white;
-}
-
-#discord-box {
-    position: absolute;
-    padding: 2px;
-    top: 90px;
-    left: 5px;
-    width: 250px;
-    text-align: center;
-    height: 30px;
-    border-radius: 5px;
-    background: #5c68f1;
-    border: #4a55cc 5px solid;
-    text-decoration: none;
-    color: white;
+    opacity: 0.5;
+    z-index: 999;
 }
 
 #chat-box {
@@ -558,3 +515,17 @@ input::placeholder {
     background-clip: padding-box;
 }
 
+#qq-btn {
+    background-image: url("../../public/img/ui/qq.svg");
+    background-size: 35px 35px;
+}
+
+#dis-btn {
+    background-image: url("../../public/img/ui/discord.svg");
+    background-size: 35px 35px;
+}
+
+#gth-btn {
+    background-image: url("../../public/img/ui/github.svg");
+    background-size: 35px 35px;
+}

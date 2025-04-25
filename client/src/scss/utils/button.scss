@@ -8,6 +8,16 @@
   }
 }
 
+@keyframes brighter {
+    from {
+        filter: brightness(100%);
+    }
+
+    to {
+        filter: brightness(160%);
+    }
+}
+
 .btn {
   border-radius: 5px;
   font-family: 'Ubuntu', sans-serif;
@@ -35,6 +45,29 @@
   border: #487faf solid 4px;
 }
 
+.qq-color {
+    background: rgb(0, 202, 252);
+    border: rgb(0, 164, 204) 4px solid;
+    color: white;
+}
+
+.discord-color {
+    background: #5c68f1;
+    border: #4a55cc 4px solid;
+    color: white;
+}
+
+.gth-color {
+    background: #1e1e1e;
+    border: #0e0e0e 4px solid;
+    color: white;
+}
+
+.gth-color:hover{
+    filter: brightness(160%);
+    animation: brighter 0.2s normal;
+}
+
 .btn-gray {
     color: white;
     background-color: #aaaaaa;
@@ -48,9 +81,48 @@
 }
 
 .btn-big-block {
-    width: 70px;
-    height: 70px;
+    width: 45px;
+    height: 45px;
     background-repeat: no-repeat;
-    background-position: 58% 50%;
+    background-position: 50% 50%;
     background-size: 50px 50px;
+}
+
+#bottom-left-buttons {
+    position: absolute;
+    left: 5px;
+    bottom: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+#bottom-left-buttons>.btn {
+    margin-bottom: 5px;
+}
+
+#top-left-buttons {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    display: flex;
+}
+
+#top-left-buttons>.btn {
+    margin-right: 5px;
+}
+
+#btn-inventory {
+    background-image: url('../../public/img/ui/inventory.svg');
+}
+
+#btn-craft {
+    background-image: url('../../public/img/ui/craft.svg');
+}
+
+#btn-settings {
+    background-image: url('../../public/img/ui/settings.svg');
+}
+
+#btn-credit {
+    background-image: url('../../public/img/ui/wooden-sign.svg');
 }

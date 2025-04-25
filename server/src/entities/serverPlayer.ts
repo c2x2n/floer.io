@@ -78,7 +78,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
     damage: number = GameConstants.player.defaultBodyDamage;
 
-    private _health = GameConstants.player.defaultHealth;
+    private _health = GameConstants.player.defaultModifiers().maxHealth;
 
     get health(): number {
         return this._health;
@@ -90,7 +90,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         this.setFullDirty();
     }
 
-    private _maxHealth = GameConstants.player.defaultHealth;
+    private _maxHealth = GameConstants.player.defaultModifiers().maxHealth;
 
     get maxHealth(): number {
         return this._maxHealth;
@@ -632,7 +632,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             }
 
             this.sendDirectMessage(`Cleanup complete: Removed ${dropCount} drops, ${mobCount} mobs, and ${petalCount} invalid petals.`);
-        } else if (rest.startsWith('givexp')) { 
+        } else if (rest.startsWith('givexp')) {
             const params = rest.substring('givexp'.length).trim();
             const args = params.split(' ').filter(arg => arg.length > 0);
             if (args.length < 2) {
@@ -678,7 +678,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             this.sendDirectMessage(`Gave ${amount} XP to ${targetPlayer.name} (ID: ${targetPlayer.id}).`);
             targetPlayer.sendDirectMessage(`You received ${amount} XP from an admin.`);
 
-        } 
+        }
     }
 
     join(packet: JoinPacket): void {

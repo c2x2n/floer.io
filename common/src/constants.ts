@@ -19,7 +19,6 @@ export const GameConstants = {
         maxChatLength: 80,
         radius: 1.2,
         defaultBodyDamage: 25,
-        defaultHealth: 175,
         maxSpeed: 3.5,
         defaultName: "Player",
         maxNameLength: 20,
@@ -39,7 +38,7 @@ export const GameConstants = {
         overleveledTime: 30,
         defaultModifiers: (): PlayerModifiers => ({
             healing: 1,
-            maxHealth: 150,
+            maxHealth: 100,
             healPerSecond: 0.1,
             speed: 1,
             revolutionSpeed: 2.4,

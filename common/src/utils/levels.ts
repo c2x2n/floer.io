@@ -35,7 +35,7 @@ export function getLevelInformation(exp: number): CurrentLevelInformation {
         level: levelNow,
         remainsExp: expRemains,
         toNextLevelExp: levelExpCost,
-        extraMaxHealth: levelNow * ( 200 - 100 ) / 59 - 100,
+        extraMaxHealth: levelNow * ( 200 - 100 ) / 59,
         extraSlot: extraSlot
     };
 }

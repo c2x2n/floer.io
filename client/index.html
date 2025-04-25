@@ -9,10 +9,10 @@
   <body>
     <div id="loader" style="width: 100%; height: 100%; position: fixed; top: 0; left: 0; background-color: #333333; color: #FFFFFF; font-family: sans-serif; font-size: 100px; z-index: 1000; display: grid; place-content: center;">Loading...</div>
     <div id="transition-ring" class=""></div>
-    <div id="floer-version" textStroke="floer.io v0.2.4">floer.io v0.2.4</div>
     <div id="in-game-screen">
         <canvas id="canvas"></canvas>
         <div id="hud">
+            <div id="floer-logo" textStroke="floer.io">floer.io</div>
             <div id="move-right" style="display: none">
                 <div style="font-size: 25px" textStroke="MOVE RIGHT!">MOVE RIGHT!</div>
                 <div style="font-size: 15px" textStroke="You are overleveled for this zone.">You are overleveled for this zone.</div>
@@ -38,12 +38,7 @@
         <div id="btn-continue" class="btn btn-green" textStroke="Continue">Continue</div>
     </div>
     <div id="out-game-screen">
-        <a id="qq-box" target="_blank" class="btn" href="https://qm.qq.com/q/qbtteJj1Ly" textStroke="加入我们的QQ群！">
-            加入我们的QQ群！
-        </a>
-        <a id="discord-box" target="_blank" class="btn" href="https://discord.gg/bFFfkAUZxQ" textStroke="Join our Discord community!">
-            Join our Discord community!
-        </a>
+        <div id="floer-version" textStroke="floer.io v0.2.5">floer.io v0.2.5</div>
         <div id="main">
             <span id="title" textStroke="floer.io">floer.io</span>
             <div class="line-container">
@@ -56,7 +51,7 @@
             </div>
         </div>
         <div id="dialog-container">
-            <div class="dialog" id="settings-dialog">
+            <div class="dialog top-left-dialog" id="settings-dialog">
                 <div class="dialog-content">
                     <input type="checkbox" id="keyboard-movement"/>
                     <div textStroke="Keyboard Movement">Keyboard Movement</div>
@@ -76,12 +71,41 @@
                     <input type="checkbox" id="block-myt-ann"/>
                     <div textStroke="Block Mythic Announcement">Block Mythic Announcement</div>
                 </div>
+
+                <div class="dialog-content">
+                    <input type="checkbox" id="screen-shake"/>
+                    <div textStroke="Screen Shake">Screen Shake</div>
+                </div>
+            </div>
+
+            <div class="dialog top-left-dialog" id="credit-dialog">
+                <div textStroke="Credits">Credits</div>
+                <div textStroke="Game made by c2x2n, aragami070, Camvanaa and Nyar_7">
+                    Game made by c2x2n, aragami070, Camvanaa and Nyar_7
+                </div>
+                <div></div>
+                <div textStroke="Special thanks">Special thanks</div>
+                <div textStroke="The Floer.io Community">The Floer.io Community</div>
+                <div></div>
+                <div textStroke="Some Icons from game-icons.net">Some Icons from game-icons.net</div>
+                <div textStroke="Some Svgs from florr.io">Some Svgs from florr.io</div>
             </div>
         </div>
+        <!-- Save for the future.
         <div id="bottom-left-buttons">
-            <button id="btn-craft" class="btn btn-craft-color btn-big-block"></button>
-            <button id="btn-inventory" class="btn btn-blue btn-big-block"></button>
-            <button id="btn-settings" class="btn btn-gray btn-big-block"></button>
+            <div id="btn-craft" class="btn btn-craft-color btn-big-block"></button>
+            <div id="btn-inventory" class="btn btn-blue btn-big-block"></button>
+        </div>
+        -->
+        <div id="top-left-buttons">
+            <div id="btn-settings" class="btn btn-gray btn-big-block"></div>
+            <div id="btn-credit" class="btn btn-gray btn-big-block"></div>
+            <div id="qq-btn" class="qq-color btn btn-big-block"
+            onclick='window.open("https://qm.qq.com/q/qbtteJj1Ly", "_blank");'></div>
+            <div id="dis-btn" class="discord-color btn btn-big-block"
+            onclick='window.open("https://discord.gg/bFFfkAUZxQ", "_blank");'></div>
+            <div id="gth-btn" class="gth-color btn btn-big-block"
+                 onclick='window.open("https://github.com/c2x2n/floer.io", "_blank");'></div>
         </div>
     </div>
     <script type="module" src="/src/main.ts"></script>

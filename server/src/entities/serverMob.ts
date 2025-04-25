@@ -212,7 +212,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                         const entities = this.game.grid.intersectsHitbox(new CircleHitbox(30, this.position));
                         let nearestPlayer: ServerPlayer | null = null;
                         let nearestDistance = Infinity;
-                        
+
                         for (const entity of entities) {
                             if (entity instanceof ServerPlayer) {
                                 const distance = Vec2.distance(this.position, entity.position);
@@ -222,10 +222,10 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                                 }
                             }
                         }
-                        
+
                         let moveDirection;
                         const randomSpeedMultiplier = 0.6 + Math.random() * 1.2;
-                        
+
                         if (this instanceof ServerFriendlyMob && this.isSummoned && nearestPlayer && Math.random() < 0.7) {
                             moveDirection = Vec2.new(nearestPlayer.direction.direction.x, nearestPlayer.direction.direction.y);
                             moveDirection.x += (Math.random() * 0.6 - 0.3);
@@ -240,10 +240,10 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                                 moveDirection, this.speed * randomSpeedMultiplier
                             ));
                         }
-                        
+
                         this.walkingReload = 0;
                     }
-                    
+
                     if ((this.definition as any).despawnTime) {
                         const despawnTime = (this.definition as any).despawnTime;
                         const aliveTime = (Date.now() - this.spawnTime) / 1000;
@@ -336,10 +336,6 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
         if (this.health <= 0) {
             this.destroy();
-
-            if (source instanceof ServerPlayer){
-                source.addExp(this.definition.exp)
-            }
         }
     }
 
@@ -373,29 +369,32 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
         if (!noDrops) spawnLoot(this.game, loots, this.position);
 
+        const highestPlayer =
+            Array.from(this.damageFrom).sort(
+                (a, b) => b[1] - a[1])[0]
+
+        if (!(highestPlayer && highestPlayer.length && highestPlayer[0].isActive())) return;
+
         const rarity = Rarity.fromString(this.definition.rarity);
         if (rarity.globalMessage) {
-            const highestPlayer =
-                Array.from(this.damageFrom).sort(
-                    (a, b) => b[1] - a[1])[0]
-            let content = `The ${rarity.displayName} ${this.definition.displayName} has been defeated`
 
-            if (highestPlayer && highestPlayer.length) {
-               content += ` by ${highestPlayer[0].name}`;
-            }
+            let content = `The ${rarity.displayName} ${this.definition.displayName} has been defeated`
+            content += ` by ${highestPlayer[0].name}`;
 
             this.game.sendGlobalMessage({
                 content: content +"!",
                 color: parseInt(rarity.color.substring(1), 16)
             })
         }
+
+        highestPlayer[0].addExp(this.definition.exp)
     }
 }
 
 export class ServerFriendlyMob extends ServerMob {
     // 表示是否是被玩家召唤的生物（true）还是自然生成的（false）
     isSummoned: boolean = true;
-    
+
     canReceiveDamageFrom(source: damageableEntity): boolean {
         switch (source.type) {
             case EntityType.Player:

@@ -8,6 +8,9 @@ import { ChatChannel } from "@common/packets/chatPacket.ts";
 import { Rarity, RarityName } from "@common/definitions/rarity.ts";
 import { MathNumeric } from "@common/utils/math.ts";
 import { GameConstants } from "@common/constants.ts";
+import { Petals } from "@common/definitions/petal.ts";
+import { Random } from "@common/utils/random.ts";
+import { getGameAssetsFile, getGameAssetsPath } from "@/scripts/utils/pixi.ts";
 
 export class UI {
     readonly app: ClientApplication;
@@ -51,10 +54,14 @@ export class UI {
     readonly settingsButton = $<HTMLDivElement>("#btn-settings");
     readonly settingsDialog = $<HTMLDivElement>("#settings-dialog");
 
+    readonly creditButton = $<HTMLDivElement>("#btn-credit");
+    readonly creditDialog = $<HTMLDivElement>("#credit-dialog");
+
     readonly keyboardMovement = $<HTMLDivElement>("#keyboard-movement");
     readonly newControl = $<HTMLDivElement>("#new-control");
     readonly lowResolution = $<HTMLDivElement>("#low-resolution");
     readonly blockMytAnn = $<HTMLDivElement>("#block-myt-ann");
+    readonly screenShake = $<HTMLDivElement>("#screen-shake");
 
     readonly chatInput = $<HTMLInputElement>("#chat-input");
     readonly chatMessagesBox = $<HTMLDivElement>("#chat-messages");
@@ -70,21 +77,6 @@ export class UI {
     private transitionRunning: boolean = false;
 
     private animationInterval: number | null = null;
-
-    //TODO: TEMPORARY: these needs to be automatically obtained through some method.
-    // them being put in a default array ia just a temp solution
-    private availableMobs: string[] = [
-        'ant_hole', 'bee', 'cactus', 'centipede', 'dark_ladybug',
-        'dandelion', 'hornet', 'ladybug', '21',
-        'shiny_ladybug', 'rock', 'mantis'
-    ];
-    private availablePetals: string[] = [
-        'basic', 'faster', 'stinger', 'bubble', 'yinyang', 'rose',
-        'wing', 'heavy', 'iris', 'web', 'antennae', 'pollen',
-        'leaf', 'cactus', 'rock', 'honey', 'dandelion', 'egg', 'chip', 'dice',
-        'rice', 'salt', 'sand', 'talisman', 'uranium', 'shell', 'starfish',
-        'jelly'
-    ];
 
     constructor(app: ClientApplication) {
         this.app = app;
@@ -102,7 +94,11 @@ export class UI {
         });
 
         this.settingsButton.on("click", (e: Event) => {
-            this.toggleSettingsDialog();
+            this.toggleDialog(this.settingsDialog);
+        })
+
+        this.creditButton.on("click", (e: Event) => {
+            this.toggleDialog(this.creditDialog);
         })
 
         this.nameInput.val(this.app.settings.data.playerName);
@@ -151,6 +147,7 @@ export class UI {
                 }
             });
         });
+
         window.addEventListener("beforeunload", (ev) => {
             if (this.game.running) {
                 ev.preventDefault();
@@ -171,6 +168,7 @@ export class UI {
         this.initCheckbox(this.newControl, "newControl");
         this.initCheckbox(this.lowResolution, "lowResolution");
         this.initCheckbox(this.blockMytAnn, "blockMytAnn");
+        this.initCheckbox(this.screenShake, "screenShake");
     }
 
     initCheckbox(jq: JQuery, key: keyof SettingsData) {
@@ -202,26 +200,33 @@ export class UI {
         }
     }
 
+    private availablePetals: string[] = [
+        'basic', 'faster', 'stinger', 'bubble', 'yinyang', 'rose',
+        'wing', 'heavy', 'iris', 'web', 'antennae', 'pollen',
+        'leaf', 'cactus', 'rock', 'honey', 'dandelion', 'egg', 'chip', 'dice',
+        'rice', 'salt', 'sand', 'talisman', 'uranium', 'shell', 'starfish',
+        'jelly'
+    ];
+
     spawnRandomEntity(): void {
         if (this.game.running) {
             // stop spawning if in game
             return;
         }
         // Decide whether to spawn a mob or petal (30% petal 70% mob)
-        const isMob = Math.random() > 0.3;
+        // const isMob = Math.random() > 0.3;
 
         // Select a random entity from the appropriate array
-        const entityType = isMob ?
-            this.availableMobs[Math.floor(Math.random() * this.availableMobs.length)] :
-            this.availablePetals[Math.floor(Math.random() * this.availablePetals.length)];
+        const petalType =
+            this.availablePetals[Random.int(0, this.availablePetals.length - 1)]
 
-        const entity = $(`<div class="floating-entity ${isMob ? 'mob' : 'petal'}" data-type="${entityType}"></div>`);
+        const entity = $(`<div class="floating-entity"></div>`);
 
         // Set random vertical position (between 5% and 95% of screen height)
         const topPosition = Math.random() * 90 + 5;
 
         // Set random size (between 50px and 70px) mob is 1.5x
-        const size = isMob ? Math.random() * 30 + 75 : Math.random() * 20 + 50;
+        const size = Random.int(10, 50);
 
         // Set random speed in seconds (between 8 and 12 seconds to cross the screen)
         const speed = Math.random() * 4 + 8;
@@ -230,9 +235,7 @@ export class UI {
         const rotation = Math.random() * 360;
 
         // Set random spin duration (between 8s and 20s for mobs, 5s and 15s for petals)
-        const spinDuration = isMob ?
-            Math.random() * 12 + 8 :
-            Math.random() * 10 + 5;
+        const spinDuration = Math.random() * 10 + 5;
 
         // Apply styles
         entity.css({
@@ -241,7 +244,7 @@ export class UI {
             'left': '-100px',
             'width': `${size}px`,
             'height': `${size}px`,
-            'background-image': `url('./img/game/${isMob ? 'mob' : 'petal'}/${entityType}.svg')`,
+            'background-image': `url(./img/game/petal/${petalType}.svg)`,
             'background-size': 'contain',
             'background-repeat': 'no-repeat',
             'background-position': 'center',
@@ -265,13 +268,17 @@ export class UI {
         });
     }
 
-    toggleSettingsDialog(): void {
-        if (this.openedDialog === this.settingsDialog) {
-            this.settingsDialog.css("animation", "close_dialog 0.5s cubic-bezier(0,0,.2,1) forwards");
-        } else {
-            this.settingsDialog.css("animation", "open_dialog 0.5s cubic-bezier(0,.85,0,1) forwards");
+    toggleDialog(dialog: JQuery<HTMLDivElement>): void {
+        if (this.openedDialog === dialog) {
+            dialog.css("animation", "close_dialog 0.5s cubic-bezier(0,0,.2,1) forwards");
+        } else if (!this.openedDialog) {
+            dialog.css("animation", "open_dialog 0.5s cubic-bezier(0,.85,0,1) forwards");
+        } else if (this.openedDialog) {
+            this.openedDialog.css("animation", "close_dialog 0.5s cubic-bezier(0,0,.2,1) forwards");
+            dialog.css("animation", "open_dialog 0.5s cubic-bezier(0,.85,0,1) forwards");
         }
-        this.openedDialog = this.openedDialog === this.settingsDialog ? undefined : this.settingsDialog
+        this.openedDialog =
+            this.openedDialog === dialog ? undefined : dialog;
     }
 
     showGameOverScreen(packet: GameOverPacket) {

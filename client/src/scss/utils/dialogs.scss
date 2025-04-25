@@ -1,13 +1,19 @@
 .dialog {
     position: absolute;
-    left: 90px;
-    bottom: 10px;
     padding: 10px;
     color: white;
     display: flex;
     flex-direction: column;
     gap: 10px;
     transform: translate(-300%, 0);
+}
+
+.top-left-dialog {
+    width: max-content;
+    height: max-content;
+    left: 10px;
+    top: 70px;
+    border-radius: 9px;
 }
 
 input[type="checkbox"] {
@@ -37,11 +43,16 @@ input[type="checkbox"]:checked {
 }
 
 #settings-dialog {
-    width: max-content;
-    height: max-content;
     background-color: #aaaaaa;
-    border-radius: 9px;
     border: #8a8a8a 6px solid;
+}
+
+#credit-dialog {
+    border: #8a8a8a 6px solid;
+    background-color: #aaaaaa;
+    display: flex;
+    align-items: center;
+    min-width: 300px;
 }
 
 @keyframes open_dialog {

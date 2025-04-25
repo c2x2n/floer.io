@@ -7,6 +7,7 @@ export interface SettingsData {
     lowResolution: boolean
     blockMytAnn: boolean
     playerName: string
+    screenShake: boolean
 }
 
 export class Settings {
@@ -15,6 +16,7 @@ export class Settings {
         newControl : false,
         lowResolution : false,
         blockMytAnn: false,
+        screenShake: true,
         playerName : ""
     };
 
