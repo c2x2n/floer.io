@@ -98,7 +98,7 @@ export class ClientPetal extends ClientEntity {
         if (this.reloadAnimation) {
             this.reloadAnimation.update();
         } else {
-            // this.updateContainerPosition(10);
+            this.updateContainerPosition(10);
         }
     }
 
@@ -131,10 +131,10 @@ export class ClientPetal extends ClientEntity {
     updateFromData(data: EntitiesNetData[EntityType.Petal], isNew: boolean): void {
         this.position = data.position;
 
-        const offset =
-            Camera.vecToScreen(
-                Vec2.div(Vec2.sub(this.oldPosition, this.position), 1)
-            );
+        // const offset =
+        //     Camera.vecToScreen(
+        //         Vec2.div(Vec2.sub(this.oldPosition, this.position), 1)
+        //     );
 
         if (data.full) {
             this.definition = data.full.definition;

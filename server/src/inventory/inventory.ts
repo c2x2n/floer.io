@@ -261,12 +261,10 @@ export class Inventory {
         let finalRevSpeed = this.player.modifiers.revolutionSpeed;
 
         if (this.player.modifiers.controlRotation) {
-            // Use player's direction to determine the angle
-            // Keyboard movement -> still works but uhh does not work good
-            // TODO: client send mouse position so that te works
+            // Use player's MOUSE direction to determine the angle
             const directionAngle = Math.atan2(
-                this.player.direction.y,
-                this.player.direction.x
+                this.player.direction.mouseDir.y,
+                this.player.direction.mouseDir.x
             );
 
             this.revolutionRadians = directionAngle;

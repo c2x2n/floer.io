@@ -86,7 +86,6 @@ export const Rarity = new Definitions<RarityDefinition>([
         level: 7,
         showParticle: true,
         isUnique: true,
-        petalMaxCount: 1,
         globalMessage: true
     },
     {

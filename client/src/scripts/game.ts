@@ -438,7 +438,10 @@ export class Game {
         this.needUpdateEntities.clear();
     }
 
-    lastDirection: number = 0;
+    lastDirection: {
+        direction: number;
+        mouseDir: number
+    } = {direction:0,mouseDir:0};
 
     sendInput() {
         const inputPacket = new InputPacket();

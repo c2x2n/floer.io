@@ -27,6 +27,8 @@ export type MobDefinition = ObjectDefinition & {
     }
     readonly reachingAway?: boolean
     readonly hideInformation?: boolean
+    readonly despawnTime?: number
+    readonly noSpawnMessage?: boolean
 } & MobSegmentType & MobCategoryType & MobShootType;
 
 export type MobCategoryType =  {
@@ -182,14 +184,13 @@ export const Mobs = new Definitions<MobDefinition>([
     },{
         idString: "mega_cactus",
         displayName: "Cactus",
-        damage: 70,
-        health: 100,
+        damage: 75,
+        health: 1500,
         category: MobCategory.Fixed,
         hitboxRadius: 6,
         lootTable: {
             "sand": 0.8,
             "triangle": 0.05,
-            "tri_triangle": 0.0000005,
             "missile": 0.5,
             "big_missile": 0.01,
             "cactus": 0.5,
@@ -214,6 +215,21 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         rarity: RarityName.common,
         exp: 2
+    },
+    {
+        idString: "square",
+        displayName: "Square",
+        damage: 10,
+        health: 50,
+        category: MobCategory.Unactive,
+        speed: 0.2,
+        hitboxRadius: 1.5,
+        lootTable: {
+            "square": 1,
+        },
+        rarity: RarityName.unique,
+        noSpawnMessage: true,
+        exp: 5
     },{
         idString: "boulder",
         displayName: "Boulder",
@@ -226,7 +242,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "uranium": 0.00012,
             "heaviest": 0.03
         },
-        rarity: RarityName.rare,
+        rarity: RarityName.unusual,
         exp: 20,
         usingAssets: "rock"
     },{
@@ -247,11 +263,32 @@ export const Mobs = new Definitions<MobDefinition>([
             "salt": 0.06,
             "triplet": 0.004,
             "wing": 0.006,
-            "powder": 0.00009,
-            "leg_egg": 0.0006,
         },
-        rarity: RarityName.epic,
+        rarity: RarityName.unusual,
         exp: 5
+    },{
+        idString: "leg_beetle",
+        displayName: "Beetle",
+        damage: 50,
+        health: 1200,
+        category: MobCategory.Enemy,
+        aggroRadius: 20,
+        hitboxRadius: 5,
+        speed: 4,
+        images: {
+            mouth: true,
+            mouthXPosition: 1.2
+        },
+        lootTable: {
+            "iris": 0.09,
+            "salt": 0.06,
+            "triplet": 0.1,
+            "wing": 0.6,
+            "powder": 0.00009,
+            "leg_egg": 0.006,
+        },
+        rarity: RarityName.legendary,
+        exp: 500
     },{
         idString: "hornet",
         displayName: "Hornet",
@@ -282,44 +319,41 @@ export const Mobs = new Definitions<MobDefinition>([
             "wing": 0.03,
             "antennae": 0.0003,
         },
-        rarity: RarityName.epic,
+        rarity: RarityName.rare,
         exp: 10
     },{
         idString: "leg_hornet",
         displayName: "Hornet",
         damage: 75,
-        health: 500,
+        health: 900,
         category: MobCategory.Enemy,
         reachingAway: true,
         shootable: true,
         turningHead: true,
         shoot: {
-            hitboxRadius: 0.9,
-            damage: 15,
-            health: 40,
+            hitboxRadius: 1.2,
+            damage: 20,
+            health: 100,
             despawnTime: 3,
-            speed: 6,
+            speed: 7,
             definition: Projectile.fromString("missile")
         },
         shootSpeed: 1.25,
         aggroRadius: 30,
-        hitboxRadius: 2 * 0.9 / 0.6,
+        hitboxRadius: 5,
         speed: 4,
         lootTable:  {
             "dandelion": 0.3,
             "bubble": 0.2,
             "missile": 0.75,
             "big_missile": 0.02,
-            "myt_big_missile": 0.00002,
             "leg_bubble": 0.0009,
             "wing": 0.5,
             "tri_wing": 0.000005,
-            "myt_egg": 0.000005,
             "antennae": 0.005,
-            "myt_antennae": 0.00001
         },
         rarity: RarityName.legendary,
-        exp: 200,
+        exp: 500,
         usingAssets: "hornet"
     },{
         idString: "mantis",
@@ -343,13 +377,41 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 3,
         lootTable: {
             "peas": 0.1,
-            "poison_peas": 0.05,
-            "leg_poison_peas": 0.0001,
-            "leg_bubble": 0.00006,
+            "poison_peas": 0.01,
             "wing": 0.14,
         },
         rarity: RarityName.rare,
         exp: 20,
+        usingAssets: "mantis"
+    },{
+        idString: "leg_mantis",
+        displayName: "Mantis",
+        damage: 30,
+        health: 70,
+        category: MobCategory.Enemy,
+        reachingAway: true,
+        shootable: true,
+        shoot: {
+            hitboxRadius: 0.7,
+            damage: 15,
+            health: 30,
+            despawnTime: 3,
+            speed: 10,
+            definition: Projectile.fromString("peas")
+        },
+        shootSpeed: 1.3,
+        aggroRadius: 30,
+        hitboxRadius: 2,
+        speed: 3,
+        lootTable: {
+            "peas": 0.1,
+            "poison_peas": 0.05,
+            "leg_poison_peas": 0.01,
+            "leg_bubble": 0.00006,
+            "wing": 0.14,
+        },
+        rarity: RarityName.legendary,
+        exp: 500,
         usingAssets: "mantis"
     },{
         idString: "spider",
@@ -370,11 +432,34 @@ export const Mobs = new Definitions<MobDefinition>([
             "web": 0.09,
             "pincer": 0.01,
             "faster": 0.04,
-            "tri_web": 0.0002,
-            "faster_wing": 0.0001
+            "tri_web": 0.0002
         },
         rarity: RarityName.rare,
         exp: 5
+    },{
+        idString: "leg_spider",
+        displayName: "Spider",
+        damage: 25,
+        health: 675,
+        category: MobCategory.Enemy,
+        aggroRadius: 20,
+        hitboxRadius: 1.5,
+        speed: 5,
+        images: {
+            spiderLeg: true
+        },
+        lootTable: {
+            "iris": 0.2,
+            "stinger": 0.8,
+            "triangle": 0.12,
+            "web": 0.9,
+            "pincer": 0.1,
+            "faster": 1,
+            "tri_web": 0.02,
+            "faster_wing": 0.01
+        },
+        rarity: RarityName.legendary,
+        exp: 500
     },{
         idString: "soldier_ant",
         displayName: "Soldier Ant",
@@ -415,7 +500,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "leaf": 0.28,
             "twin": 0.15,
             "rice": 0.006,
-            "tri_leaf": 0.0008,
+            "tri_leaf": 0.00008,
             "triplet": 0.0006,
             "corn": 0.0006
         },
@@ -479,7 +564,6 @@ export const Mobs = new Definitions<MobDefinition>([
             "leaf": 0.26,
             "twin": 0.18,
             "rice": 0.005,
-            "tri_leaf": 0.0004,
             "triplet": 0.0006
         },
         rarity: RarityName.unusual,
@@ -803,7 +887,8 @@ export const Mobs = new Definitions<MobDefinition>([
             "faster": 0.4,
             "faster_wing": 0.7,
             "myt_tri_web": 0.25,
-            "tri_faster": 0.5
+            "tri_faster": 0.5,
+            "thirdeye": 0.03/100
         },
         rarity: RarityName.mythic,
         exp: 10000,
@@ -1069,5 +1154,28 @@ export const Mobs = new Definitions<MobDefinition>([
         rarity: RarityName.mythic,
         exp: 10000,
         usingAssets: "rock"
+    },{
+        idString: "sandstorm",
+        displayName: "Sandstorm",
+        damage: 15,
+        health: 100,
+        category: MobCategory.Unactive,
+        hitboxRadius: 5,
+        speed: 9,
+        images: {
+            width: 200,
+            height: 200
+        },
+        lootTable: {
+            "sand": 0.5,
+            "fast": 0.2,
+            "triangle": 0.08,
+            "powder": 0.05,
+            "talisman": 0.01,
+            "stick": 0.01
+        },
+        rarity: RarityName.rare,
+        exp: 15,
+        usingAssets: "sandstorm"
     }
 ] satisfies MobDefinition[]);

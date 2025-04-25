@@ -88,6 +88,8 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
     damageFrom = new Map<ServerPlayer, number>;
 
+    spawnTime: number = Date.now();
+
     constructor(game: Game
                 , position: Vector
                 , direction: Vector
@@ -109,6 +111,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         this.position = position;
 
         this.direction = direction;
+        this.spawnTime = Date.now();
     }
 
     changeAggroTo(entity?: damageSource): void {
@@ -203,7 +206,52 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                 }
             } else {
                 this.walkingReload += this.game.dt;
-                if (this.walkingReload >= GameConstants.mob.walkingReload) {
+                if (this.definition.idString === "sandstorm") {
+                    const changeDirectionInterval = 0.05;
+                    if (this.walkingReload >= changeDirectionInterval) {
+                        const entities = this.game.grid.intersectsHitbox(new CircleHitbox(30, this.position));
+                        let nearestPlayer: ServerPlayer | null = null;
+                        let nearestDistance = Infinity;
+                        
+                        for (const entity of entities) {
+                            if (entity instanceof ServerPlayer) {
+                                const distance = Vec2.distance(this.position, entity.position);
+                                if (distance < nearestDistance) {
+                                    nearestDistance = distance;
+                                    nearestPlayer = entity;
+                                }
+                            }
+                        }
+                        
+                        let moveDirection;
+                        const randomSpeedMultiplier = 0.6 + Math.random() * 1.2;
+                        
+                        if (this instanceof ServerFriendlyMob && this.isSummoned && nearestPlayer && Math.random() < 0.7) {
+                            moveDirection = Vec2.new(nearestPlayer.direction.direction.x, nearestPlayer.direction.direction.y);
+                            moveDirection.x += (Math.random() * 0.6 - 0.3);
+                            moveDirection.y += (Math.random() * 0.6 - 0.3);
+                            moveDirection = Vec2.normalize(moveDirection);
+                            this.setAcceleration(Vec2.mul(
+                                moveDirection, 2 * this.speed * randomSpeedMultiplier
+                            ));
+                        } else {
+                            moveDirection = Random.vector(-1, 1, -1, 1);
+                            this.setAcceleration(Vec2.mul(
+                                moveDirection, this.speed * randomSpeedMultiplier
+                            ));
+                        }
+                        
+                        this.walkingReload = 0;
+                    }
+                    
+                    if ((this.definition as any).despawnTime) {
+                        const despawnTime = (this.definition as any).despawnTime;
+                        const aliveTime = (Date.now() - this.spawnTime) / 1000;
+                        if (aliveTime >= despawnTime) {
+                            this.destroy(true);
+                        }
+                    }
+                } else if (this.walkingReload >= GameConstants.mob.walkingReload) {
                     if (this.walkingTime === 0) this.direction = Random.vector(-1, 1, -1, 1)
                     this.setAcceleration(Vec2.mul(
                         this.direction, this.speed * GameConstants.mob.walkingTime
@@ -345,6 +393,9 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 }
 
 export class ServerFriendlyMob extends ServerMob {
+    // 表示是否是被玩家召唤的生物（true）还是自然生成的（false）
+    isSummoned: boolean = true;
+    
     canReceiveDamageFrom(source: damageableEntity): boolean {
         switch (source.type) {
             case EntityType.Player:
@@ -374,8 +425,10 @@ export class ServerFriendlyMob extends ServerMob {
 
     constructor(game: Game
         , public owner: ServerPlayer
-        , definition: MobDefinition) {
-        super(game, Random.pointInsideCircle(owner.position, 6), owner.direction, definition);
+        , definition: MobDefinition
+        , isSummoned: boolean = true) {
+        super(game, Random.pointInsideCircle(owner.position, 6), owner.direction.direction, definition);
+        this.isSummoned = isSummoned;
     }
 
     tick() {

@@ -5,7 +5,10 @@ import { P2 } from "../utils/math";
 import { GameConstants } from "../constants";
 
 export class InputPacket implements Packet {
-    direction = 0;
+    direction = {
+        direction: 0,
+        mouseDir: 0 
+    };
     mouseDistance: number = 0;
     isAttacking = false;
     isDefending = false;
@@ -16,7 +19,8 @@ export class InputPacket implements Packet {
     serialize(stream: GameBitStream): void {
         stream.writeBoolean(this.isAttacking);
         stream.writeBoolean(this.isDefending);
-        stream.writeFloat(this.direction, -P2, P2, 8);
+        stream.writeFloat(this.direction.direction, -P2, P2, 8);
+        stream.writeFloat(this.direction.mouseDir, -P2, P2, 8);
         stream.writeUint8(this.mouseDistance);
 
         stream.writeUint8(this.switchedPetalIndex);
@@ -27,7 +31,8 @@ export class InputPacket implements Packet {
     deserialize(stream: GameBitStream): void {
         this.isAttacking = stream.readBoolean();
         this.isDefending = stream.readBoolean();
-        this.direction = stream.readFloat(-P2, P2, 8);
+        this.direction.direction = stream.readFloat(-P2, P2, 8);
+        this.direction.mouseDir = stream.readFloat(-P2, P2, 8);
         this.mouseDistance = stream.readUint8();
 
         this.switchedPetalIndex = stream.readUint8();

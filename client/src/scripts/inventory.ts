@@ -252,6 +252,24 @@ const attributesShowingConfig: { [K in AttributeName] : AttributeShowingFunction
                 color: "#32CD32"
             }]
         },
+        self_damage: (data) => {
+            return [{
+                displayName: "Self Damage",
+                value: `${data}`,
+                color: "#ff6666"
+            }]
+        },
+        damage_heal: (data) => {
+            return [{
+                displayName: "Damage Heal",
+                value: `${data.healPercent}%`,
+                color: "#58fd48"
+            }, ...(data.maximumHeal !== undefined ? [{
+                displayName: "Max Damage",
+                value: data.maximumHeal.toString(),
+                color: "#58fd48"
+            }] : [])]
+        },
         /*revive: (data) => {
             return [...(data.reviveHpMulti !== undefined ? [{
                 displayName: "Revive HP",

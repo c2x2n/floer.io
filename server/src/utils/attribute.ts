@@ -264,6 +264,40 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
                 const projectile = new ServerProjectile(
                     petal.owner, position, direction, data, petal);
             }, PetalUsingAnimations.NORMAL)
+            
+            if (data && (data as any).spawnDelay && (data as any).spawner) {
+                const spawnDelay = (data as any).spawnDelay;
+                const originalTick = petal.tick;
+                let timeUntilNextSpawn = 0;
+                
+                petal.tick = function() {
+                    originalTick.call(this);
+                    
+                    if (this.isReloading || this.destroyed) return;
+                    
+                    timeUntilNextSpawn += this.game.dt;
+                    
+                    if (timeUntilNextSpawn >= spawnDelay) {
+                        timeUntilNextSpawn = 0;
+                        
+                        const randomOffset = Vec2.new(
+                            (Math.random() * 10 - 5), 
+                            (Math.random() * 10 - 5)
+                        );
+                        const spawnPosition = Vec2.add(this.owner.position, randomOffset);
+                        
+                        const mobDefinition = data.customDefinition;
+                        if (mobDefinition) {
+                            const mob = new ServerMob(
+                                this.game,
+                                spawnPosition,
+                                this.owner.direction.direction,
+                                mobDefinition
+                            );
+                        }
+                    }
+                };
+            }
         }
     },
 
@@ -271,7 +305,24 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
         callback: (on, petal, data) => {
             on(AttributeEvents.CAN_USE,() => {
                 if (!data) return;
-                petal.spawned = new ServerFriendlyMob(petal.game, petal.owner, data);
+                
+                const isSandstorm = data.idString === "sandstorm";
+                
+                let spawnedMob: ServerFriendlyMob;
+                
+                if (isSandstorm) {
+                    spawnedMob = new ServerFriendlyMob(petal.game, petal.owner, data, true);
+                    if (data.despawnTime) {
+                        const despawnTime = data.despawnTime * 1000;
+                        setTimeout(() => {
+                            if (!spawnedMob.destroyed) {
+                                spawnedMob.destroy();
+                            }
+                        }, despawnTime);
+                    }
+                } else {
+                    petal.spawned = new ServerFriendlyMob(petal.game, petal.owner, data, true);
+                }
             }, PetalUsingAnimations.HATCH);
         }
     },
@@ -431,4 +482,36 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
             };
         }
     },
+    self_damage: {
+        callback: (on, petal, data) => {
+            on<AttributeEvents.PETAL_DEAL_DAMAGE>(
+                AttributeEvents.PETAL_DEAL_DAMAGE,
+                (entity) => {
+                    if (!entity || !data) return;
+                    const owner = petal.owner;
+                    const selfDamage = data;
+                    if (selfDamage && owner) {
+                        owner.receiveDamage(Number(selfDamage), owner);
+                    }
+                }
+            );
+        }
+    },
+    damage_heal: {
+        callback: (on, petal, data) => {
+            on<AttributeEvents.PETAL_DEAL_DAMAGE>(
+                AttributeEvents.PETAL_DEAL_DAMAGE,
+                (entity) => {
+                    if (!entity || !data) return;
+                    const owner = petal.owner;
+                    let selfHealPercent = data.healPercent/100;
+                    let selfHeal = (petal.damage ?? 15) * selfHealPercent;
+                    if (selfHeal && owner) {
+                        if (data.maximumHeal) selfHeal = Math.min(selfHeal, data.maximumHeal);
+                        owner.heal(Number(selfHeal));
+                    }
+                }
+            );
+        }
+    }
 } as const;

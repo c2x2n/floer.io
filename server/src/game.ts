@@ -304,26 +304,39 @@ export class Game {
     }
 
     spawnMob(definition: MobDefinition, position: Vector) {
+        // 1/1.5m chance to spawn as a square
+        if (Math.random() < (1 / 1500000)) {
+            definition = Mobs.fromString("square");
+        }
         if (definition.hasSegments) {
             spawnSegmentMobs(
                 this,
                 definition,
                 position,
             )
+            const rarity = Rarity.fromString(definition.rarity);
+            if (rarity.globalMessage && !definition.noSpawnMessage) {
+                let content = `A ${rarity.displayName} ${definition.displayName} has spawned somewhere`
+                this.sendGlobalMessage({
+                    content: content +"!",
+                    color: parseInt(rarity.color.substring(1), 16)
+                })
+            }
         } else {
-            new ServerMob(this,
+            const mob = new ServerMob(this,
                 position,
                 Vec2.radiansToDirection(Random.float(-P2, P2)),
                 definition
             );
-        }
-        const rarity = Rarity.fromString(definition.rarity);
-        if (rarity.globalMessage) {
-            let content = `A ${rarity.displayName} ${definition.displayName} has spawned somewhere`
-            this.sendGlobalMessage({
-                content: content +"!",
-                color: parseInt(rarity.color.substring(1), 16)
-            })
+            const rarity = Rarity.fromString(definition.rarity);
+            if (rarity.globalMessage && !definition.noSpawnMessage) {
+                let content = `A ${rarity.displayName} ${definition.displayName} has spawned somewhere`
+                this.sendGlobalMessage({
+                    content: content +"!",
+                    color: parseInt(rarity.color.substring(1), 16)
+                })
+            }
+            return mob;
         }
     }
 

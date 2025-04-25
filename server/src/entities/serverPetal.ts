@@ -125,7 +125,13 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
                 if (this.isUsing === PetalUsingAnimations.ABSORB) {
                     this.position = this.owner.position;
                 } else if (this.isUsing === PetalUsingAnimations.HATCH) {
-                    if (!this.spawned || this.spawned.destroyed) {
+                    const isSandstorm = this.definition.attributes?.spawner?.idString === "sandstorm";
+                    
+                    if (isSandstorm) {
+                        this.isUsing = undefined;
+                        this.useReload = 0;
+                        this.hidden = false;
+                    } else if (!this.spawned || this.spawned.destroyed) {
                         this.isReloading = true;
                         this.isUsing = undefined;
                         this.useReload = 0;
@@ -153,7 +159,17 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
         this.isUsing = animation;
 
         if (this.isUsing === PetalUsingAnimations.HATCH) {
-            this.hidden = true;
+            const isSandstorm = this.definition.attributes?.spawner?.idString === "sandstorm";
+            
+            if (isSandstorm) {
+                setTimeout(() => {
+                    this.isUsing = undefined;
+                    this.useReload = 0;
+                }, 10);
+                return;
+            } else {
+                this.hidden = true;
+            }
             return;
         }
 

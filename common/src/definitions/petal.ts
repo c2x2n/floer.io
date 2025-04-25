@@ -4,6 +4,7 @@ import { RarityName } from "./rarity";
 import { PlayerModifiers } from "../typings";
 import { Projectile, ProjectileDefinition, ProjectileParameters } from "./projectile";
 import { MobDefinition, Mobs } from "./mob";
+import { MobCategory } from "./mob";
 
 export type SavedPetalDefinitionData = PetalDefinition | null
 
@@ -16,6 +17,7 @@ export type PetalDefinition = ObjectDefinition & {
     readonly unstackable?: boolean
     readonly hitboxRadius: number
     readonly effectiveFirstReload?: boolean;
+    readonly noAnnouncement?: boolean;
     readonly images?: {
         readonly slotDisplaySize?: number
         readonly slotRotation?: number
@@ -86,6 +88,7 @@ export type AttributeParameters = {
         duration: number
     }
     damage_reflection?: number
+    self_damage?: number
     shoot?: ProjectileParameters
     peas_shoot?: ProjectileParameters
     place_projectile?: ProjectileParameters
@@ -110,6 +113,10 @@ export type AttributeParameters = {
         radius: number
         damagePerSecond: number
         tickInterval?: number
+    }
+    damage_heal?: {
+        healPercent: number
+        maximumHeal?: number // meaningless, because now it uses petal.damage to calculate not damage dealt
     }
 })
 
@@ -356,6 +363,27 @@ export const Petals = new Definitions<PetalDefinition>([
         rarity: RarityName.unusual
     },
     {
+        idString: "blood_stinger",
+        displayName: "Stinger",
+        description: "It hurts so much that it also damages you when broken. Very fragile.",
+        damage: 50,
+        health: 8,
+        extendable: true,
+        reloadTime: 4,
+        attributes: {
+            self_damage: 9
+        },
+        images: {
+            selfGameRotation: 0.1,
+            slotDisplaySize: 25,
+        },
+        usable: false,
+        hitboxRadius: 0.3,
+        isDuplicate: false,
+        pieceAmount: 1,
+        rarity: RarityName.rare
+    },
+    {
         idString: "dev_stinger",
         displayName: "Stinger",
         description: "I think it hurts?",
@@ -587,6 +615,24 @@ export const Petals = new Definitions<PetalDefinition>([
         pieceAmount: 1,
         undroppable: true,
         rarity: RarityName.common
+    },
+    {
+        idString: "square",
+        displayName: "Square",
+        description: "Something incredibly rare and useless... does not belong to this game as well.",
+        damage: 10,
+        health: 10,
+        extendable: true,
+        usable: false,
+        images: {
+            slotDisplaySize: 60,
+            selfGameRotation: 0.25,
+        },
+        reloadTime: 2.5,
+        hitboxRadius: 0.93,
+        isDuplicate: false,
+        pieceAmount: 1,
+        rarity: RarityName.unique,
     },
     {
         idString: "dandelion",
@@ -852,6 +898,25 @@ export const Petals = new Definitions<PetalDefinition>([
         usingAssets: "stinger"
     },
     {
+        idString: "blood_tringer",
+        displayName: "Stinger",
+        description: "It hurts so much that it also damages you when broken. Very fragile",
+        damage: 65,
+        health: 8,
+        extendable: true,
+        reloadTime: 4,
+        attributes: {
+            self_damage: 4
+        },
+        usable: false,
+        hitboxRadius: 0.3,
+        isDuplicate: true,
+        isShowedInOne: true,
+        pieceAmount: 3,
+        rarity: RarityName.mythic,
+        usingAssets: "blood_stinger"
+    },
+    {
         idString: "pinger",
         displayName: "Stinger",
         description: "It really hurts, but it's very fragile",
@@ -870,6 +935,29 @@ export const Petals = new Definitions<PetalDefinition>([
         pieceAmount: 5,
         rarity: RarityName.mythic,
         usingAssets: "stinger"
+    },
+    {
+        idString: "blood_sepinger",
+        displayName: "Stinger",
+        description: "i think it hurts a lot",
+        damage: 25,
+        health: 8,
+        extendable: true,
+        attributes: {
+            self_damage: 1,
+        },
+        images: {
+            slotRotation: 3.14,
+            slotRevolution: 6.28 / 7
+        },
+        reloadTime: 0.5,
+        usable: false,
+        hitboxRadius: 0.3,
+        isDuplicate: true,
+        isShowedInOne: true,
+        pieceAmount: 7,
+        rarity: RarityName.super,
+        usingAssets: "blood_stinger"
     },
     {
         idString: "rice",
@@ -1018,7 +1106,7 @@ export const Petals = new Definitions<PetalDefinition>([
         hitboxRadius: 0.5,
         isDuplicate: true,
         pieceAmount: 3,
-        isShowedInOne: true,
+        isShowedInOne: false,
         rarity: RarityName.mythic,
         usingAssets: "web",
     },
@@ -1407,6 +1495,7 @@ export const Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         effectiveFirstReload: true,
+        noAnnouncement: true,
         undroppable: true,
         rarity: RarityName.unique,
     },
@@ -1440,6 +1529,47 @@ export const Petals = new Definitions<PetalDefinition>([
         undroppable: true,
         rarity: RarityName.super,
         usingAssets: 'yggdrasil'
+    },
+    {
+        idString: "stick",
+        displayName: "Stick",
+        description: "A mysterious stick that summons the forces of the wind.",
+        damage: 5,
+        health: 15,
+        extendable: true,
+        usable: true,
+        useTime: 0.2,
+        images: {
+            slotDisplaySize: 50,
+            centerYOffset: 0.05,
+        },
+        attributes: {
+            spawner: {
+                idString: "sandstorm",
+                displayName: "Sandstorm",
+                damage: 15,
+                health: 20,
+                category: MobCategory.Unactive,
+                hitboxRadius: 4,
+                speed: 7,
+                images: {
+                    width: 200,
+                    height: 200
+                },
+                lootTable: {},
+                rarity: RarityName.rare,
+                exp: 0,
+                usingAssets: "sandstorm",
+                despawnTime: 2
+            }
+        },
+        reloadTime: 4,
+        hitboxRadius: 0.55,
+        isDuplicate: false,
+        pieceAmount: 1,
+        effectiveFirstReload: true,
+        undroppable: true, // TEMPORARY: TOREMOVE: spawn in game for testing purposes, remove this when added to drops
+        rarity: RarityName.epic,
     },
     {
         idString: "pollen",
@@ -1567,20 +1697,45 @@ export const Petals = new Definitions<PetalDefinition>([
         displayName: "Egg",
         description: "Something dangerous might pop out of this.",
         damage: 1,
-        health: 500,
+        health: 2500,
         extendable: false,
         usable: true,
         images: {
-            slotDisplaySize: 60
+            slotDisplaySize: 75
         },
         useTime: 1,
         attributes: {
-            spawner: Mobs.fromString("mega_beetle")
+            spawner: Mobs.fromString("mega_hornet")
         },
         reloadTime: 1,
-        hitboxRadius: 1.5,
-        isDuplicate: false,
-        pieceAmount: 1,
+        hitboxRadius: 1,
+        isShowedInOne: false,
+        isDuplicate: true,
+        pieceAmount: 2,
+        rarity: RarityName.super,
+        usingAssets: "egg",
+        undroppable: true
+    },
+    {
+        idString: "segg2",
+        displayName: "Egg",
+        description: "An army might pop out of this.",
+        damage: 1,
+        health: 2500,
+        extendable: false,
+        usable: true,
+        images: {
+            slotDisplaySize: 40
+        },
+        useTime: 1,
+        attributes: {
+            spawner: Mobs.fromString("spider")
+        },
+        reloadTime: 1,
+        hitboxRadius: 0.6,
+        isShowedInOne: false,
+        isDuplicate: true,
+        pieceAmount: 25,
         rarity: RarityName.super,
         usingAssets: "egg",
         undroppable: true
@@ -1794,9 +1949,10 @@ export const Petals = new Definitions<PetalDefinition>([
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 65,
-            selfGameRotation: 0.01,
-            facingOut:true
+            slotDisplaySize: 65/0.94,
+            slotRotation: -(90-32.5)*(Math.PI/180),
+            facingOut:true,
+            
         },
         modifiers: {
             conditionalHeal: {
@@ -1805,9 +1961,33 @@ export const Petals = new Definitions<PetalDefinition>([
             }
         },
         reloadTime: 2,
-        hitboxRadius: 0.8,
+        hitboxRadius: 0.92,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.legendary
+    },
+    {
+        idString: "fang",
+        displayName: "Fang",
+        description: "Heals you by a part of it's damage.",
+        damage: 15,
+        health: 10,
+        extendable: true,
+        usable: false,
+        images: {
+            slotDisplaySize: 43,
+            selfGameRotation: 0.25,
+            
+        },
+        attributes: {
+            damage_heal: {
+                healPercent: 28
+            }
+        },
+        reloadTime: 1.25,
+        hitboxRadius: 0.55,
+        isDuplicate: false,
+        pieceAmount: 1,
+        rarity: RarityName.epic
     }
 ] satisfies PetalDefinition[]);

@@ -10,6 +10,7 @@ import { MobDefinition } from "@common/definitions/mob.ts";
 import { Vec2 } from "@common/utils/vector.ts";
 import { Rarity } from "@common/definitions/rarity.ts";
 import { Tween } from '@tweenjs/tween.js';
+import { Easing } from '@tweenjs/tween.js';
 
 const defaultImageSize = 200;
 
@@ -84,8 +85,15 @@ export class ClientMob extends ClientEntity {
             this.playMovementAnimation(movementDistance)
         }
 
-        this.container.rotation =
-            Vec2.directionToRadians(Vec2.targetEasing(Vec2.radiansToDirection(this.container.rotation), this.direction, 6));
+        // 特殊处理沙尘暴的旋转，其他实体正常旋转跟随方向
+        if (this.definition && this.definition.idString === "sandstorm") {
+            // 沙尘暴不跟随速度方向，而是随机自转
+            // 不做任何处理，让之前的随机自转效果生效
+        } else {
+            // 其他实体正常跟随速度方向
+            this.container.rotation =
+                Vec2.directionToRadians(Vec2.targetEasing(Vec2.radiansToDirection(this.container.rotation), this.direction, 6));
+        }
     }
 
     updateFromData(data: EntitiesNetData[EntityType.Mob], isNew: boolean): void {
@@ -116,6 +124,12 @@ export class ClientMob extends ClientEntity {
                     this.images.body.anchor.y = 0.5 + (
                         (defaultImageSize - this.definition.images.height) / defaultImageSize
                     ) / 2;
+                }
+
+                if (this.definition.idString === "sandstorm") {
+                    this.container.rotation = Math.random() * Math.PI * 2; // 完全随机的旋转角度
+                } else {
+                    this.container.rotation = Vec2.directionToRadians(data.direction);
                 }
 
                 this.init();
@@ -204,6 +218,58 @@ export class ClientMob extends ClientEntity {
 
     playMovementAnimation(size: number): void {
         if (!this.definition) return;
+
+        // 为沙尘暴添加特殊的移动和旋转效果
+        if (this.definition.idString === "sandstorm") {
+            // 沙尘暴移动效果几乎没有冷却时间
+            if (Date.now() - this.lastMovementAnimation < 20) return;
+
+            // 极短的动画时间，随机变化
+            let time = Math.random() * 60 + 40;
+
+            this.lastMovementAnimation = Date.now();
+
+            // 添加明显但自然的随机自转效果
+            const currentRotation = this.container.rotation;
+            // 创建更明显的自转效果，但仍然自然
+            const rotationAmount = (Math.random() * 0.6 - 0.3) * Math.PI; // -54度到+54度之间的随机旋转
+            const randomRotation = currentRotation + rotationAmount;
+
+            // 使用贝塞尔缓动效果使旋转看起来更自然
+            this.game.addTween(new Tween({rotation: currentRotation})
+                .to({rotation: randomRotation}, time)
+                .easing(Easing.Sinusoidal.InOut) // 添加缓动效果
+                .onUpdate((d) => {
+                    this.container.rotation = d.rotation;
+                })
+            );
+
+            // 仅保留轻微的位置偏移，模拟沙尘效果
+            const offsetX = (Math.random() * 8 - 4);
+            const offsetY = (Math.random() * 8 - 4);
+
+            this.game.addTween(new Tween({x: 0, y: 0})
+                .to({x: offsetX, y: offsetY}, time / 2)
+                .onUpdate((d) => {
+                    this.container.position.x = Camera.vecToScreen(this.position).x + d.x;
+                    this.container.position.y = Camera.vecToScreen(this.position).y + d.y;
+                })
+            );
+
+            this.game.addTween(new Tween({x: offsetX, y: offsetY})
+                .delay(time / 2)
+                .to({x: 0, y: 0}, time / 2)
+                .onUpdate((d) => {
+                    this.container.position.x = Camera.vecToScreen(this.position).x + d.x;
+                    this.container.position.y = Camera.vecToScreen(this.position).y + d.y;
+                })
+            );
+
+            this.lastMovementAnimationTime = time;
+            return;
+        }
+
+        // 原有的动画逻辑
         if (Date.now() - this.lastMovementAnimation < this.lastMovementAnimationTime * 2) return;
         let time = 150;
 
