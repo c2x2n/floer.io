@@ -277,6 +277,21 @@ const attributesShowingConfig: { [K in AttributeName] : AttributeShowingFunction
                 color: "#58fd48"
             }] : [])]
         },
+        lightning: (data) => {
+            return [{
+                displayName: "Attenuation",
+                value: `${data.attenuation * 100}%`,
+                color: "#33ccff"
+            }, {
+                displayName: "Range",
+                value: `${data.range}`,
+                color: "#0099ff"
+            }, {
+                displayName: "Bounces",
+                value: `${data.bounces}`,
+                color: "#66ffff"
+            }]
+        },
         /*revive: (data) => {
             return [...(data.reviveHpMulti !== undefined ? [{
                 displayName: "Revive HP",
@@ -730,9 +745,9 @@ export class Inventory{
         if (mouseSelectingPetal && mouseSelectingPetal != draggingData.container) {
             const targetIndex = this.inventory.indexOf(mouseSelectingPetal);
 
-            const trans = mouseSelectingPetal.petalDefinition;
-            mouseSelectingPetal.petalDefinition = draggingData.container.petalDefinition;
-            draggingData.container.petalDefinition = trans;
+                    const trans = mouseSelectingPetal.petalDefinition;
+                    mouseSelectingPetal.petalDefinition = draggingData.container.petalDefinition;
+                    draggingData.container.petalDefinition = trans;
 
             this.switchedPetalIndex = originalIndex;
             this.switchedToPetalIndex = targetIndex;
@@ -805,10 +820,10 @@ export class Inventory{
                     // Reset interaction state variables
                     mouseSelectingPetal = undefined;
                     mouseDeletingPetal = false;
-                    this.keyboardSelectingPetal = undefined;
+                this.keyboardSelectingPetal = undefined;
 
                     // Update UI to show the swapped petals
-                    this.updatePetalRows();
+                this.updatePetalRows();
                 }
             };
 

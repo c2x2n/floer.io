@@ -119,6 +119,11 @@ export type AttributeParameters = {
         maximumHeal?: number // meaningless, because now it uses petal.damage to calculate not damage dealt
     }
     armor?: number
+    lightning?: {
+        attenuation: number
+        range: number
+        bounces: number
+    }
 })
 
 export function getDisplayedPieces(petal: PetalDefinition): number {
@@ -2012,5 +2017,56 @@ export const Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.rare
+    },
+    {
+        idString: "lightning",
+        displayName: "Lightning",
+        description: "Strikes several nearby enemies.",
+        damage: 20,
+        health: 1,
+        extendable: true,
+        usable: false,
+        images: {
+            slotDisplaySize: 45,
+            selfGameRotation: 0.15
+        },
+        attributes: {
+            lightning: {
+                attenuation: 0.9,
+                range: 10,
+                bounces: 8
+            }
+        },
+        reloadTime: 1.25,
+        hitboxRadius: 0.6,
+        isDuplicate: false,
+        pieceAmount: 1,
+        rarity: RarityName.rare,
+    },
+    {
+        idString: "slightning",
+        displayName: "Slightning",
+        description: "Strikes several nearby enemies.",
+        damage: 20,
+        health: 1,
+        extendable: true,
+        usable: false,
+        images: {
+            slotDisplaySize: 45,
+            selfGameRotation: 0.15
+        },
+        attributes: {
+            lightning: {
+                attenuation: 1,
+                range: 100,
+                bounces: 100
+            }
+        },
+        reloadTime: 1.25,
+        hitboxRadius: 0.6,
+        isDuplicate: false,
+        pieceAmount: 1,
+        rarity: RarityName.super,
+        usingAssets: "lightning"
     }
 ] satisfies PetalDefinition[]);

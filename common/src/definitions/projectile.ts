@@ -22,7 +22,12 @@ export const Projectile = new Definitions<ProjectileDefinition>([
     },{
         idString: "poison_peas",
         displayName: "Peas",
-    },{
+    },
+    {
+        idString: "blueberries",
+        displayName: "Blueberries",
+    },
+    {
         idString: "pollen",
         displayName: "Pollen",
         onGround: true

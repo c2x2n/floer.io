@@ -12,6 +12,7 @@ import { ServerProjectile } from "../entities/serverProjectile";
 import { Projectile } from "../../../common/src/definitions/projectile";
 import { isDamageableEntity } from "../typings";
 import { CircleHitbox } from "../../../common/src/utils/hitbox";
+import { ServerEntity } from "../entities/serverEntity";
 
 export enum AttributeEvents {
     HEALING = "HEALING",
@@ -516,18 +517,82 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
     },
     armor: {
         callback: (on, petal, data) => {
-            // 保存原始的receiveDamage方法
             const originalReceiveDamage = petal.receiveDamage;
             
-            // 重写receiveDamage方法以实现护甲效果
             petal.receiveDamage = function(amount: number, source: any) {
                 if (data && typeof data === 'number') {
-                    // 减少受到的伤害，但不能小于0
                     amount = Math.max(0, amount - data);
                 }
-                // 调用原始方法处理实际伤害
                 originalReceiveDamage.call(this, amount, source);
             };
+        }
+    },
+    lightning: {
+        callback: (on, petal, data) => {
+            if (!data) return;
+            
+            on<AttributeEvents.PETAL_DEAL_DAMAGE>(
+                AttributeEvents.PETAL_DEAL_DAMAGE,
+                (entity) => {
+                    if (!entity || !data) return;
+                    
+                    const hitEntities = new Set([entity]);
+                    let currentTarget = entity;
+                    let remainingBounces = data.bounces;
+                    let currentDamage = petal.damage || 0;
+                    
+                    while (remainingBounces > 0 && currentDamage > 1) {
+                        
+                        currentDamage *= data.attenuation;
+                        
+                        const rangeHitbox = new CircleHitbox(data.range, currentTarget.position);
+                        
+                        const nearbyEntities = petal.game.grid.intersectsHitbox(rangeHitbox)
+                        const validTargets = Array.from(nearbyEntities).filter((e: ServerEntity) => 
+                            !hitEntities.has(e) && 
+                            e.type !== EntityType.Petal && 
+                            e.type !== EntityType.Projectile &&
+                            e !== petal.owner &&
+                            isDamageableEntity(e) &&
+                            e.canReceiveDamageFrom(petal.owner)
+                        );
+                        
+                        if (validTargets.length === 0) break;
+                        
+                        let nextTarget = validTargets[0];
+                        let minDistance = Vec2.distance(currentTarget.position, nextTarget.position);
+                        
+                        for (let i = 1; i < validTargets.length; i++) {
+                            const distance = Vec2.distance(currentTarget.position, validTargets[i].position);
+                            if (distance < minDistance) {
+                                minDistance = distance;
+                                nextTarget = validTargets[i];
+                            }
+                        }
+                        
+                        if (minDistance > data.range) break;
+                        
+                        if (isDamageableEntity(nextTarget)) {
+                            nextTarget.receiveDamage(currentDamage, petal.owner);
+                            
+                            hitEntities.add(nextTarget);
+
+                            currentTarget = nextTarget;
+                            remainingBounces--;
+                            
+                            // 闪电特效谁帮我写一下
+                            petal.owner.sendEvent(
+                                'lightning_effect' as any,
+                                {
+                                    sourceId: currentTarget.id,
+                                    targetId: nextTarget.id,
+                                    duration: 0.3
+                                }
+                            );
+                        }
+                    }
+                }
+            );
         }
     }
 } as const;
