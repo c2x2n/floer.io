@@ -6,8 +6,6 @@ import { EntitiesNetData } from "@common/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
 import { Vec2 } from "@common/utils/vector.ts";
 import { Tween } from '@tweenjs/tween.js';
-import { PetalDefinition } from "@common/definitions/petal.ts";
-import { EasingFunctions } from "@common/utils/math.ts";
 import { ProjectileDefinition } from "@common/definitions/projectile.ts";
 
 export class ClientProjectile extends ClientEntity {
@@ -42,27 +40,30 @@ export class ClientProjectile extends ClientEntity {
     updateFromData(data: EntitiesNetData[EntityType.Projectile], isNew: boolean): void {
         this.position = data.position;
 
-        if (isNew){
-            this.definition = data.definition;
+        if (data.full){
+            if (isNew) {
+                this.definition = data.full.definition;
 
-            this.container.position = Camera.vecToScreen(this.position);
+                this.container.position = Camera.vecToScreen(this.position);
 
-            this.images.body
-                .setFrame(getGameAssetsPath("projectile", this.definition))
-                .setScaleByUnitRadius(data.hitboxRadius)
+                this.images.body
+                    .setFrame(getGameAssetsPath("projectile", this.definition))
+                    .setScaleByUnitRadius(data.full.hitboxRadius)
 
-            if (data.definition.onGround) {
-                this.container.zIndex = -2;
+                if (data.full.definition.onGround) {
+                    this.container.zIndex = -2;
+                }
+
+                this.images.body.setRotation(Vec2.directionToRadians(data.direction));
             }
-
-            this.images.body.setRotation(Vec2.directionToRadians(data.direction));
         }
 
         super.updateFromData(data, isNew);
     }
 
     destroy() {
-        this.game.addTween(new Tween({ scale: this.images.body.scale.x, alpha: 1 },)
+        this.game.addTween(
+            new Tween({ scale: this.images.body.scale.x, alpha: 1 },)
                 .to({ scale: this.images.body.scale.x * 3, alpha: 0 }, 150 )
                 .onUpdate(d => {
                     this.images.body.setScale(d.scale);

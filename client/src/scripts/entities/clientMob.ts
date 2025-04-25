@@ -1,13 +1,13 @@
 import { ClientEntity } from "./clientEntity";
-import { EntityType, GameConstants } from "@common/constants";
+import { EntityType } from "@common/constants";
 import { GameSprite, getGameAssetsPath } from "@/scripts/utils/pixi";
 import { Game } from "@/scripts/game";
 import { EntitiesNetData } from "@common/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
-import { Text, Graphics, ColorMatrixFilter, Container } from "pixi.js";
-import { EasingFunctions, MathGraphics, MathNumeric } from "@common/utils/math.ts";
+import { Text, Graphics } from "pixi.js";
+import { MathNumeric } from "@common/utils/math.ts";
 import { MobDefinition } from "@common/definitions/mob.ts";
-import { Vec2, Vector } from "@common/utils/vector.ts";
+import { Vec2 } from "@common/utils/vector.ts";
 import { Rarity } from "@common/definitions/rarity.ts";
 import { Tween } from '@tweenjs/tween.js';
 
@@ -23,13 +23,29 @@ export class ClientMob extends ClientEntity {
         leg1: new GameSprite(),
         leg2: new GameSprite(),
         leg3: new GameSprite(),
-        leg4: new GameSprite(),
+        leg4: new GameSprite()
     };
 
     healthPercent = 1;
     healthBar = new Graphics();
-    name: Text;
-    rarity: Text;
+    name: Text = new Text({
+        text: "",
+        style: {
+            fontFamily: 'Ubuntu',
+            fontSize: 11,
+            fill: "#fff",
+            stroke: {color: "#000", width: 2}
+        }
+    });
+    rarity: Text = new Text({
+        text: "",
+        style: {
+            fontFamily: 'Ubuntu',
+            fontSize: 11,
+            fill: "#fff",
+            stroke: {color: "#000", width: 2}
+        }
+    });
 
     definition?: MobDefinition;
 
@@ -44,29 +60,8 @@ export class ClientMob extends ClientEntity {
 
         this.healthBar.position.set(0, 50);
 
-        this.name = new Text({
-            text: "",
-            style: {
-                fontFamily: 'Ubuntu',
-                fontSize: 11,
-                fill: "#fff",
-                stroke: {color: "#000", width: 2}
-            }
-        });
-
-        this.rarity = new Text({
-            text: "",
-            style: {
-                fontFamily: 'Ubuntu',
-                fontSize: 11,
-                fill: "#fff",
-                stroke: {color: "#000", width: 2}
-            }
-        });
-
         this.name.anchor.y = 0.5;
         this.rarity.anchor.x = 1;
-
 
         this.staticContainer.addChild(
             this.name,
@@ -96,52 +91,42 @@ export class ClientMob extends ClientEntity {
     updateFromData(data: EntitiesNetData[EntityType.Mob], isNew: boolean): void {
         this.position = data.position;
         this.direction = data.direction;
-        this.definition = data.definition;
 
-        const radius = MathNumeric.clamp(
-            Camera.unitToScreen(this.definition.hitboxRadius) * 2,
-            80,
-            Infinity
-        );
+        if (data.full) {
+            this.definition = data.full.definition;
 
-        if (isNew) {
-            this.container.position = Camera.vecToScreen(this.position);
+            if (isNew) {
+                this.container.position = Camera.vecToScreen(this.position);
+                this.images.body
+                    .setFrame(getGameAssetsPath("mob", this.definition));
+                this.container.rotation = Vec2.directionToRadians(data.direction);
 
-            this.images.body
-                .setFrame(getGameAssetsPath("mob", this.definition));
+                const healthBarY = Camera.unitToScreen(this.definition.hitboxRadius + 5 / 20);
+                this.healthBar.position.set(0, healthBarY);
+                this.name.position.y = healthBarY - 7;
+                this.rarity.position.y = healthBarY + 7;
 
-            this.container.rotation = Vec2.directionToRadians(data.direction);
-
-            const healthBarY = Camera.unitToScreen(this.definition.hitboxRadius + 5 / 20);
-            this.healthBar.position.set(0, healthBarY);
-            this.name.position.y = healthBarY - 7;
-            this.rarity.position.y = healthBarY + 7;
-
-            if (this.definition.images?.width) {
-                this.images.body.anchor.x = 0.5 + (
-                    (defaultImageSize - this.definition.images.width) / defaultImageSize
-                ) / 2;
-            }
-
-            if (this.definition.images?.height) {
-                this.images.body.anchor.y = 0.5 + (
-                    (defaultImageSize - this.definition.images.height) / defaultImageSize
-                ) / 2;
-            }
-
-            this.init();
-        } else {
-            if (data.full) {
-                if (this.healthPercent > data.full.healthPercent) {
-                    this.getDamageAnimation()
+                if (this.definition.images?.width) {
+                    this.images.body.anchor.x = 0.5 + (
+                        (defaultImageSize - this.definition.images.width) / defaultImageSize
+                    ) / 2;
                 }
+
+                if (this.definition.images?.height) {
+                    this.images.body.anchor.y = 0.5 + (
+                        (defaultImageSize - this.definition.images.height) / defaultImageSize
+                    ) / 2;
+                }
+
+                this.init();
             }
-        }
 
-        if (data.full){
-            this.healthPercent = data.full.healthPercent;
-
-            this.drawHealthBar(radius)
+            if (isNew || this.healthPercent != data.full.healthPercent) {
+                if (!isNew && this.healthPercent > data.full.healthPercent)
+                    this.getDamageAnimation()
+                this.healthPercent = data.full.healthPercent;
+                this.reddrawHealthBar();
+            }
         }
 
         super.updateFromData(data, isNew);
@@ -226,7 +211,8 @@ export class ClientMob extends ClientEntity {
         if (this.definition.images?.mouth) {
             time =
                 MathNumeric.remap(size, 0, 0.3, 500, 150);
-            this.game.addTween(new Tween({angle: 0})
+            this.game.addTween(
+                new Tween({angle: 0})
                 .to({angle: 8}, time)
                 .onUpdate((d) => {
                     this.images.left_mouth.angle = d.angle;
@@ -234,7 +220,8 @@ export class ClientMob extends ClientEntity {
                 })
             )
 
-            this.game.addTween(new Tween({angle: 8})
+            this.game.addTween(
+                new Tween({angle: 8})
                 .delay(time)
                 .to({angle: 0}, time)
                 .onUpdate((d) => {
@@ -247,7 +234,8 @@ export class ClientMob extends ClientEntity {
         if (this.definition.images?.spiderLeg) {
             time =
                 MathNumeric.remap(size, 0, 0.3, 600, 160);
-            this.game.addTween(new Tween({angle: 0})
+            this.game.addTween(
+                new Tween({angle: 0})
                 .to({ angle: 20 }, time)
                 .onUpdate((d) => {
                     this.images.leg1.angle = -d.angle / 1.8;
@@ -257,7 +245,8 @@ export class ClientMob extends ClientEntity {
                 })
             )
 
-            this.game.addTween(new Tween({angle: 20 })
+            this.game.addTween(
+                new Tween({angle: 20 })
                 .delay(time)
                 .to({angle: 0}, time)
                 .onUpdate((d) => {
@@ -272,35 +261,44 @@ export class ClientMob extends ClientEntity {
         this.lastMovementAnimationTime = time;
     }
 
-    drawHealthBar(width: number): void {
-        const healthbarWidth = width;
-        const fillWidth = healthbarWidth * this.healthPercent;
+    reddrawHealthBar(): void {
+        if (!this.definition) return;
 
-        if (this.definition && this.definition.hideInformation) this.healthBar.visible = this.healthPercent < 0.999;
+        const healthBarWidth = MathNumeric.clamp(
+            Camera.unitToScreen(this.definition.hitboxRadius) * 2,
+            80,
+            Infinity
+        );
+        const fillWidth = healthBarWidth * this.healthPercent;
+
+        if (
+            this.definition.hideInformation
+        ) this.healthBar.visible = this.healthPercent < 0.999;
 
         this.healthBar.clear()
-            .roundRect((-healthbarWidth - 5) / 2, 0, healthbarWidth + 5, 10)
+            .roundRect((-healthBarWidth - 5) / 2, 0, healthBarWidth + 5, 10)
             .fill({
                 color: 0x000000,
                 alpha: 0.3
             })
-            .roundRect(-healthbarWidth / 2, 3 / 2, fillWidth, 7)
+            .roundRect(-healthBarWidth / 2, 3 / 2, fillWidth, 7)
             .fill({
                 color: 0x87e63e
             });
 
-        this.name.position.x = -healthbarWidth / 2;
-        this.rarity.position.x = (healthbarWidth + 5) / 2;
+        this.name.position.x = -healthBarWidth / 2;
+        this.rarity.position.x = (healthBarWidth + 5) / 2;
     }
 
     destroy() {
-        this.game.addTween(new Tween({ scale: this.container.scale.x, alpha: 1 },)
+        this.game.addTween(
+            new Tween({ scale: this.container.scale.x, alpha: 1 },)
             .to({ scale: this.container.scale.x * 3, alpha: 0 }, 100 )
             .onUpdate(d => {
                 this.container.scale.set(d.scale);
                 this.container.alpha = d.alpha;
-            })
-            , super.destroy.bind(this)
+            }),
+            super.destroy.bind(this)
         )
     }
 }

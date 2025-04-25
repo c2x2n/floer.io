@@ -1,9 +1,9 @@
 import { type BLEND_MODES, Sprite, type TextureSourceLike, type ColorSource } from "pixi.js";
-import { EasingFunctions, MathNumeric } from "@common/utils/math";
-import { Random } from "@common/utils/random";
-import { Vec2, type Vector } from "@common/utils/vector";
-import { type Game } from "../game";
-import { Camera } from "./camera";
+import { EasingFunctions, MathNumeric } from "@common/utils/math.ts";
+import { Random } from "@common/utils/random.ts";
+import { Vec2, type Vector } from "@common/utils/vector.ts";
+import { type Game } from "../game.ts";
+import { Camera } from "../render/camera.ts";
 
 export class ParticleManager {
     particles: Particle[] = [];

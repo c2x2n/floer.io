@@ -4,13 +4,11 @@ import { GameSprite, getGameAssetsPath } from "@/scripts/utils/pixi";
 import { Game } from "@/scripts/game";
 import { EntitiesNetData } from "@common/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
-import { Vec2 } from "@common/utils/vector.ts";
+import { Vec2, Vector } from "@common/utils/vector.ts";
 import { Tween } from '@tweenjs/tween.js';
 import { PetalDefinition } from "@common/definitions/petal.ts";
 import { EasingFunctions, MathGraphics } from "@common/utils/math.ts";
 import { Rarity } from "@common/definitions/rarity.ts";
-import { Color } from "pixi.js";
-import { Random } from "@common/utils/random.ts";
 
 export class ClientPetal extends ClientEntity {
     type = EntityType.Petal;
@@ -60,10 +58,10 @@ export class ClientPetal extends ClientEntity {
                         owner.container.position,
                         Vec2.new(x, y)
                     );
-                    
+
                     // Apply the scale to the container
                     this.container.scale.set(scale);
-                    this.container.rotation = rotation; 
+                    this.container.rotation = rotation;
                     this.container.zIndex = ZI;
                 }
 
@@ -100,7 +98,7 @@ export class ClientPetal extends ClientEntity {
         if (this.reloadAnimation) {
             this.reloadAnimation.update();
         } else {
-            this.updateContainerPosition(10);
+            // this.updateContainerPosition(10);
         }
     }
 
@@ -133,22 +131,27 @@ export class ClientPetal extends ClientEntity {
     updateFromData(data: EntitiesNetData[EntityType.Petal], isNew: boolean): void {
         this.position = data.position;
 
-        this.definition = data.definition;
+        const offset =
+            Camera.vecToScreen(
+                Vec2.div(Vec2.sub(this.oldPosition, this.position), 1)
+            );
 
-        if (isNew){
-            this.container.position = Camera.vecToScreen(this.position);
+        if (data.full) {
+            this.definition = data.full.definition;
 
-            this.images.body
-                .setFrame(getGameAssetsPath("petal", this.definition))
-                .setScaleByUnitRadius(data.definition.hitboxRadius)
-                .setVisible(!data.isReloading);
+            if (isNew){
+                this.container.position = Camera.vecToScreen(this.position);
+
+                this.images.body
+                    .setFrame(getGameAssetsPath("petal", this.definition))
+                    .setScaleByUnitRadius(this.definition.hitboxRadius)
+                    .setVisible(!data.isReloading);
+            }
+
+            this.ownerId = data.full.ownerId;
         }
 
-        if (data.gotDamage) {
-            this.getDamageAnimation(true);
-        }
-
-        this.ownerId = data.ownerId;
+        if (data.gotDamage) this.getDamageAnimation(true);
 
         this.changeVisibleTo(!data.isReloading);
 

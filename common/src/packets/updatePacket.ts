@@ -19,50 +19,46 @@ export interface EntitiesNetData {
         direction: Vector
         state: PlayerState
         gotDamage: boolean
-        isAdmin: boolean
 
         full?: {
             healthPercent: number
-            shield?: number
-            maxShield?: number
+            shieldPercent?: number
+            isAdmin: boolean
         }
     }
     [EntityType.Petal]: {
         position: Vector
-        definition: PetalDefinition
         isReloading: boolean
-        ownerId: number
         gotDamage: boolean
 
         full?: {
-
+            definition: PetalDefinition
+            ownerId: number
         }
     }
     [EntityType.Mob]: {
         position: Vector
         direction: Vector
-        definition: MobDefinition
 
         full?: {
             healthPercent: number
+            definition: MobDefinition
         }
     }
     [EntityType.Loot]: {
         position: Vector
-        definition: PetalDefinition
 
         full?: {
-
+            definition: PetalDefinition
         }
     }
     [EntityType.Projectile]: {
         position: Vector
-        hitboxRadius: number
-        definition: ProjectileDefinition
         direction: Vector
 
         full?: {
-
+            definition: ProjectileDefinition
+            hitboxRadius: number
         }
     }
 }
@@ -86,20 +82,15 @@ export const EntitySerializations: { [K in EntityType]: EntitySerialization<K> }
             stream.writeUnit(data.direction, 16);
             stream.writeUint8(data.state);
             stream.writeBoolean(data.gotDamage);
-            stream.writeBoolean(data.isAdmin)
         },
         serializeFull(stream, data): void {
             stream.writeFloat(data.healthPercent, 0.0, 1.0, 16);
-            stream.writeAlignToNextByte();
-            const hasShield = data.shield !== undefined && data.maxShield !== undefined;
-            stream.writeBoolean(hasShield);
-            if (hasShield && typeof data.shield === 'number' && typeof data.maxShield === 'number') {
-                const limitedMaxShield = Math.min(data.maxShield, 100);
-                const limitedShield = Math.min(data.shield, limitedMaxShield);
-                stream.writeFloat(limitedMaxShield, 0.0, 100.0, 16);
-                stream.writeFloat(limitedShield, 0.0, limitedMaxShield, 16);
+            stream.writeBoolean(data.isAdmin);
+            // Shield check
+            stream.writeBoolean(!!data.shieldPercent);
+            if (data.shieldPercent) {
+                stream.writeFloat(data.shieldPercent, 0.0, 1.0, 8);
             }
-            stream.writeAlignToNextByte(); 
         },
         deserializePartial(stream) {
             return {
@@ -107,118 +98,108 @@ export const EntitySerializations: { [K in EntityType]: EntitySerialization<K> }
                 direction: stream.readUnit(16),
                 state: stream.readUint8(),
                 gotDamage: stream.readBoolean(),
-                isAdmin: stream.readBoolean()
             };
         },
         deserializeFull(stream) {
-            const healthPercent = stream.readFloat(0.0, 1.0, 16);
-            const result: any = { healthPercent };
-            
-            stream.readAlignToNextByte();
-            const hasShieldData = stream.readBoolean();
-            if (hasShieldData) {
-                const maxShield = stream.readFloat(0.0, 100.0, 16);
-                const shield = stream.readFloat(0.0, maxShield, 16);
-                result.shield = shield;
-                result.maxShield = maxShield;
-            }
-            stream.readAlignToNextByte();
-            
-            return result;
+            return {
+                healthPercent: stream.readFloat(0.0, 1.0, 16),
+                isAdmin: stream.readBoolean(),
+                shieldPercent: stream.readBoolean() ? stream.readFloat(0.0, 1.0, 8) : undefined
+            };
         }
     },
     [EntityType.Petal]: {
         partialSize: 8,
-        fullSize: 0,
+        fullSize: 4,
         serializePartial(stream, data): void {
-            Petals.writeToStream(stream, data.definition);
             stream.writePosition(data.position);
             stream.writeBoolean(data.isReloading);
             stream.writeBoolean(data.gotDamage);
-            stream.writeUint16(data.ownerId);
         },
         serializeFull(stream, data): void {
-
+            Petals.writeToStream(stream, data.definition);
+            stream.writeUint16(data.ownerId);
         },
         deserializePartial(stream) {
             return {
-                definition: Petals.readFromStream(stream),
                 position: stream.readPosition(),
                 isReloading: stream.readBoolean(),
                 gotDamage: stream.readBoolean(),
-                ownerId: stream.readUint16()
             };
         },
         deserializeFull(stream) {
-            return {};
+            return {
+                definition: Petals.readFromStream(stream),
+                ownerId: stream.readUint16()
+            };
         }
     },
     [EntityType.Mob]: {
         partialSize: 12,
-        fullSize: 2,
+        fullSize: 4,
         serializePartial(stream, data): void {
-            Mobs.writeToStream(stream, data.definition);
             stream.writePosition(data.position);
             stream.writeUnit(data.direction, 16)
         },
         serializeFull(stream, data): void {
+            Mobs.writeToStream(stream, data.definition);
             stream.writeFloat(data.healthPercent, 0.0, 1.0, 16);
         },
         deserializePartial(stream) {
             return {
-                definition: Mobs.readFromStream(stream),
                 position: stream.readPosition(),
                 direction: stream.readUnit(16)
             };
         },
         deserializeFull(stream) {
             return {
+                definition: Mobs.readFromStream(stream),
                 healthPercent: stream.readFloat(0.0, 1.0, 16)
             };
         }
     },
     [EntityType.Loot]: {
         partialSize: 8,
-        fullSize: 0,
+        fullSize: 4,
         serializePartial(stream, data): void {
-            Petals.writeToStream(stream, data.definition);
             stream.writePosition(data.position);
         },
         serializeFull(stream, data): void {
-
+            Petals.writeToStream(stream, data.definition);
         },
         deserializePartial(stream) {
             return {
-                definition: Petals.readFromStream(stream),
                 position: stream.readPosition(),
             };
         },
         deserializeFull(stream) {
-            return {};
+            return {
+                definition: Petals.readFromStream(stream),
+            };
         }
     },
     [EntityType.Projectile]: {
         partialSize: 12,
-        fullSize: 0,
+        fullSize: 4,
         serializePartial(stream, data): void {
-            Projectile.writeToStream(stream, data.definition);
-            stream.writeFloat(data.hitboxRadius, 0, 10, 8);
             stream.writePosition(data.position);
             stream.writeUnit(data.direction, 8);
         },
         serializeFull(stream, data): void {
-
+            Projectile.writeToStream(stream, data.definition);
+            stream.writeFloat(data.hitboxRadius, 0, 10, 8);
         },
         deserializePartial(stream) {
             return {
-                definition: Projectile.readFromStream(stream),
-                hitboxRadius: stream.readFloat(0, 10, 8),
                 position: stream.readPosition(),
                 direction: stream.readUnit(8)
             };
         },
         deserializeFull(stream) {
-            return {};
+            return {
+                definition: Projectile.readFromStream(stream),
+                hitboxRadius: stream.readFloat(0, 10, 8)
+            };
         }
     }
 };
@@ -229,14 +210,18 @@ interface Entity {
     data: EntitiesNetData[Entity["type"]]
 }
 
-export interface Explosion {
-    position: Vector
-    radius: number
-}
-
 export interface ChatData {
     content: string
     color: number
+}
+
+export interface PlayerData {
+    id: number,
+    zoom: number,
+    inventory: SavedPetalDefinitionData[],
+    slot: number,
+    exp: number,
+    overleveled: number
 }
 
 enum UpdateFlags {
@@ -260,7 +245,7 @@ export class UpdatePacket implements Packet {
         exp: number
     }> = [];
 
-    playerDataDirty = {
+    playerDataDirty: { [K in keyof PlayerData]: boolean } = {
         id: false,
         zoom: false,
         inventory: false,
@@ -269,14 +254,7 @@ export class UpdatePacket implements Packet {
         overleveled: false
     };
 
-    playerData: {
-        id: number,
-        zoom: number,
-        inventory: SavedPetalDefinitionData[],
-        slot: number,
-        exp: number,
-        overleveled: number
-    } = {
+    playerData: PlayerData = {
         id: 0,
         zoom: 0,
         inventory: [],

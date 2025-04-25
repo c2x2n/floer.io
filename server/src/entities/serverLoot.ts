@@ -61,12 +61,11 @@ export class ServerLoot extends ServerEntity<EntityType.Loot> {
         }
     }
 
-    get data(): Required<EntitiesNetData[EntityType]>{
+    get data(): Required<EntitiesNetData[EntityType.Loot]>{
         return {
             position: this.position,
-            definition: this.definition,
             full: {
-
+                definition: this.definition,
             }
         };
     };

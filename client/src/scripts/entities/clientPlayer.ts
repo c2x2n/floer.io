@@ -14,15 +14,22 @@ export class ClientPlayer extends ClientEntity {
 
     body: Graphics = new Graphics();
 
-    name: Text;
+    name: Text = new Text({
+        text: "",
+        style: {
+            fontFamily: 'Ubuntu',
+            fontSize: 14,
+            fill: "#fff",
+            stroke: {color: "#000", width: 2}
+        },
+        resolution: 1.5,
+    });
 
     healthPercent = 1.0;
     healthBar = new Graphics();
 
     // 添加护盾相关属性
     shieldPercent = 0.0;
-    shieldValue = 0;
-    maxShieldValue = 0;
     shieldBar = new Graphics();
 
     lastGettingDamage: number = 0;
@@ -31,17 +38,6 @@ export class ClientPlayer extends ClientEntity {
         super(game, id)
 
         this.container.zIndex = 2;
-
-        this.name = new Text({
-            text: this.game.playerData.get(id)?.name,
-            style: {
-                fontFamily: 'Ubuntu',
-                fontSize: 14,
-                fill: "#fff",
-                stroke: {color: "#000", width: 2}
-            },
-            resolution: 1.5,
-        });
 
         this.name.anchor.set(0.5);
         this.name.position.set(0, -50);
@@ -202,12 +198,14 @@ export class ClientPlayer extends ClientEntity {
             .fill(bodyColor);
     }
 
-    drawHealthBar(): void {
+    reddrawHealthBar(): void {
         const healthbarWidth = 80;
         const fillWidth = this.healthPercent * healthbarWidth;
 
         // 有护盾时总是显示血条
-        this.healthBar.visible = this.healthPercent < 1.0 || this.shieldPercent > 0;
+        this.healthBar.visible =
+            this.healthPercent < 1.0 || this.shieldPercent > 0;
+
         this.healthBar.clear()
             .roundRect((-healthbarWidth - 5) / 2, 0, healthbarWidth + 5, 10)
             .fill({
@@ -218,9 +216,9 @@ export class ClientPlayer extends ClientEntity {
             .fill({
                 color: 0x87e63e
             });
-            
+
         // 绘制护盾条
-        if (this.shieldValue > 0) {
+        if (this.shieldPercent > 0) {
             const shieldWidth = this.shieldPercent * healthbarWidth;
             this.shieldBar.visible = true;
             this.shieldBar.position.set(0, 43);
@@ -246,11 +244,6 @@ export class ClientPlayer extends ClientEntity {
         this.position = data.position;
         this.direction = data.direction;
 
-        if (isNew){
-            this.container.position = Camera.vecToScreen(this.position);
-            if (data.isAdmin) this.name.style.fill = "#FF0000"
-        }
-
         if (data.gotDamage) {
             this.getDamageAnimation(true)
 
@@ -260,18 +253,17 @@ export class ClientPlayer extends ClientEntity {
         }
 
         if (data.full) {
-            this.healthPercent = data.full.healthPercent;
-            
-            if (data.full.shield !== undefined && data.full.maxShield !== undefined) {
-                this.shieldValue = data.full.shield;
-                this.maxShieldValue = data.full.maxShield;
-                this.shieldPercent = this.shieldValue / this.maxShieldValue;
-            } else {
-                this.shieldValue = 0;
-                this.shieldPercent = 0;
+            if (isNew){
+                this.container.position = Camera.vecToScreen(this.position);
+                if (data.full.isAdmin) this.name.style.fill = "#FF0000"
             }
-            
-            this.drawHealthBar();
+
+            if (data.full.healthPercent != this.healthPercent
+                || data.full.shieldPercent != this.shieldPercent) {
+                this.healthPercent = data.full.healthPercent;
+                this.shieldPercent = data.full.shieldPercent ?? 0;
+                this.reddrawHealthBar();
+            }
         }
 
         this.state = data.state;

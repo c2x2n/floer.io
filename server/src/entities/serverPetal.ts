@@ -193,15 +193,14 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
 
     collideWith(collision: CollisionResponse, entity: collideableEntity): void{}
 
-    get data(): Required<EntitiesNetData[EntityType]>{
+    get data(): Required<EntitiesNetData[EntityType.Petal]>{
         const data = {
             position: this.position,
-            definition: this.definition,
             isReloading: this.isReloading || this.hidden,
             gotDamage: this.gotDamage,
-            ownerId: this.owner.id,
             full: {
-
+                definition: this.definition,
+                ownerId: this.owner.id,
             }
         };
         this.gotDamage = false

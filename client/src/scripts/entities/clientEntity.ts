@@ -4,12 +4,11 @@ import { Vec2, Vector } from "@common/utils/vector";
 import { Game } from "@/scripts/game";
 import { Container, ColorMatrixFilter } from "pixi.js";
 import { EntitiesNetData } from "@common/packets/updatePacket.ts";
-import { GameSprite } from "@/scripts/utils/pixi.ts";
 import { Tween } from "@tweenjs/tween.js";
 import { MathNumeric } from "@common/utils/math.ts";
 import { Camera } from "@/scripts/render/camera.ts";
 
-export abstract class ClientEntity implements GameEntity {
+export abstract class ClientEntity<T extends EntityType = EntityType> implements GameEntity{
     readonly game: Game;
 
     readonly id: number;
@@ -53,7 +52,7 @@ export abstract class ClientEntity implements GameEntity {
         this.game.camera.addObject(this.staticContainer);
     }
 
-    updateFromData(_data: EntitiesNetData[EntityType], _isNew: boolean): void {
+    updateFromData(_data: EntitiesNetData[T], _isNew: boolean): void {
         this.interpolationTick = 0;
         if (_isNew) {
             this.oldPosition = _data.position;

@@ -131,11 +131,10 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
     get data(): Required<EntitiesNetData[EntityType]>{
         return {
             position: this.position,
-            hitboxRadius: this.parameters.hitboxRadius,
-            definition: this.definition,
             direction: this.direction,
             full: {
-
+                hitboxRadius: this.parameters.hitboxRadius,
+                definition: this.definition,
             }
         };
     };

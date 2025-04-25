@@ -107,7 +107,6 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     set shield(shield: number) {
         const maxShield = this.maxHealth * 0.75; // 最大护盾值为最大生命值的75%
         this._shield = MathNumeric.clamp(shield, 0, maxShield);
-        this.dirty.shield = true;
     }
 
     kills = 0;
@@ -126,8 +125,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         inventory: false,
         slot: false,
         exp: false,
-        overleveled: false,
-        shield: false
+        overleveled: false
     };
 
     private _zoom = 45;
@@ -336,7 +334,6 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                 const shieldP = this.modifiers.revive.shieldPercent || 0;
                 this.health = this.maxHealth * revHealthP/100
                 this.shield = this.maxHealth * shieldP/100;
-                this.dirty.shield = true;
                 if (this.modifiers.revive.destroyAfterUse) {
                     for (let i = 0; i < this.inventory.inventory.length; i++) {
                         const petalData = this.inventory.inventory[i];
@@ -652,7 +649,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
         console.log(`Game | "${this.name}" joined the game`);
 
-        if (packet.secret && packet.secret === Config.adminSecret) {
+        if (packet.secret && packet.secret === this.game.adminSecret) {
             this.isAdmin = true;
         }
 
@@ -721,11 +718,10 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             direction: this.direction,
             state: this.playerState,
             gotDamage: this.gotDamage,
-            isAdmin: this.isAdmin,
             full: {
                 healthPercent: this.health / this.maxHealth,
-                shield: this._shield,
-                maxShield: this.maxHealth * 0.75 // 最大护盾为最大生命值的75%
+                shieldPercent: this._shield / this.maxHealth * 0.75, // 最大护盾为最大生命值的75%
+                isAdmin: this.isAdmin
             }
         };
 

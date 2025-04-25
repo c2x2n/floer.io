@@ -58,11 +58,10 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
                     if (data && petal.owner instanceof ServerPlayer) {
                         const maxShield = petal.owner.modifiers.maxHealth * 0.75;
                         const newShield = Math.min(
-                            (petal.owner.shield || 0) + Number(data), 
+                            (petal.owner.shield || 0) + Number(data),
                             maxShield
                         );
                         petal.owner.shield = newShield;
-                        petal.owner.dirty.shield = true;
                     }
                 }
             , PetalUsingAnimations.SHIELD);
@@ -91,20 +90,20 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
                         // 击退效果，负值表示击退
                         const entityToPlayerDirection =
                             MathGraphics.directionBetweenPoints(entity.position, petal.owner.position);
-                        
+
                         // 计算击退力度倍率
                         let knockbackMultiplier = 1.0;
-                        
+
                         // 对玩家固定为1倍
                         if (entity.type === EntityType.Player) {
                             knockbackMultiplier = 1.0;
-                        } 
+                        }
                         else {
-                            const entityRadius = entity.hitbox instanceof CircleHitbox ? 
+                            const entityRadius = entity.hitbox instanceof CircleHitbox ?
                                 entity.hitbox.radius : 1;
-                            
+
                             const baseRadius = 1;
-                            
+
                             // 计算倍率: 基础半径/实体半径 (半径越大，倍率越小)
                             knockbackMultiplier = Math.min(1.0, baseRadius / entityRadius);
                         }
@@ -299,7 +298,7 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
                     if (!entity || !data) return
                     if (isDamageableEntity(entity) && entity.health) {
                         const additionalDamage = entity.health * data.percent;
-                        const limitedDamage = data.maxDamage !== undefined ? 
+                        const limitedDamage = data.maxDamage !== undefined ?
                             Math.min(additionalDamage, data.maxDamage) : additionalDamage;
                         entity.receiveDamage(limitedDamage, petal.owner);
                     }
@@ -311,7 +310,7 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
     damage_avoidance: {
         callback: (on, petal, data) => {
             const originalReceiveDamage = petal.receiveDamage;
-            
+
             petal.receiveDamage = function(amount: number, source: any) {
                 if (data && Math.random() < data.chance) {
                     return;
@@ -320,7 +319,7 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
             };
         }
     },
-    
+
     paralyze: {
         callback: (on, petal, data) => {
             on<AttributeEvents.PETAL_DEAL_DAMAGE>(
@@ -328,11 +327,11 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
                 (entity) => {
                     if (!entity || !data) return;
                     const existingEffects = Array.from(entity.effects.effects);
-                    const existingParalyze = existingEffects.find(e => 
-                        e.source === petal.owner && 
-                        e.modifier && 
+                    const existingParalyze = existingEffects.find(e =>
+                        e.source === petal.owner &&
+                        e.modifier &&
                         e.modifier.speed !== undefined);
-                    
+
                     let newSpeedMod = 1 - data.speedReduction;
                     let revolutionReduction = data.revolutionReduction || 0;
                     if (existingParalyze) {
@@ -359,17 +358,17 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
                     }).start();
                 }
             );
-            
+
             on<AttributeEvents.PROJECTILE_DEAL_DAMAGE>(
                 AttributeEvents.PROJECTILE_DEAL_DAMAGE,
                 (entity) => {
                     if (!entity || !data) return;
                     const existingEffects = Array.from(entity.effects.effects);
-                    const existingParalyze = existingEffects.find(e => 
-                        e.source === petal.owner && 
-                        e.modifier && 
+                    const existingParalyze = existingEffects.find(e =>
+                        e.source === petal.owner &&
+                        e.modifier &&
                         e.modifier.speed !== undefined);
-                    
+
                     let newSpeedMod = 1 - data.speedReduction;
                     let revolutionReduction = data.revolutionReduction || 0;
                     if (existingParalyze) {
@@ -398,29 +397,29 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
             );
         }
     },
-    
+
     area_poison: {
         callback: (on, petal, data) => {
             if (!data) return;
             const originalTick = petal.tick;
             let timeSinceLastTick = 0;
             const tickInterval = data.tickInterval || 1;
-            
+
             petal.tick = function() {
                 originalTick.call(this);
-                
+
                 if (this.isReloading || this.destroyed) return;
-                
+
                 timeSinceLastTick += this.game.dt;
-                
+
                 if (timeSinceLastTick >= tickInterval) {
                     timeSinceLastTick = 0;
-                    
+
                     const circleHitbox = new CircleHitbox(data.radius);
                     circleHitbox.position = this.position;
-                    
+
                     const nearbyEntities = this.game.grid.intersectsHitbox(circleHitbox);
-                    
+
                     for (const entity of nearbyEntities) {
                         if (entity === this || entity === this.owner) continue;
                         if (entity.type === EntityType.Petal || entity.type === EntityType.Projectile) continue;

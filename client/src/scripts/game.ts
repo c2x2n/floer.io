@@ -24,7 +24,7 @@ import { ExpUI } from "@/scripts/render/expUI.ts";
 import { Leaderboard } from "@/scripts/render/leaderboard.ts";
 import { Config } from "@/config.ts";
 import { LoggedInPacket } from "@common/packets/loggedInPacket.ts";
-import { ParticleManager } from "@/scripts/render/particle.ts";
+import { ParticleManager } from "@/scripts/utils/particle.ts";
 import { Vec2, Vector } from "@common/utils/vector.ts";
 import { Petals, SavedPetalDefinitionData } from "@common/definitions/petal.ts";
 import { ChatChannel, ChatPacket } from "@common/packets/chatPacket.ts";
@@ -89,13 +89,18 @@ export class Game {
 
     serverDt: number = 0;
 
-    addTween(tween: Tween, doFunc?: Function): void {
+    addTween(tween: Tween, doFunc?: Function): Tween {
         this.tweens.add(tween);
         tween.start();
         tween.onComplete(() => {
-            this.tweens.delete(tween);
+            this.removeTween(tween);
             if(doFunc) doFunc();
         })
+        return tween
+    }
+
+    removeTween(tween: Tween): void {
+        this.tweens.delete(tween);
     }
 
     async init() {
@@ -235,8 +240,8 @@ export class Game {
 
         for (const entityData of packet.fullEntities) {
             let entity = this.entityPool.get(entityData.id);
-            let isNew = false;
 
+            let isNew = false;
             if (!entity) {
                 isNew = true;
                 entity = new typeToEntity[entityData.type](this, entityData.id);

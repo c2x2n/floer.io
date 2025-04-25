@@ -295,12 +295,12 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         }
     }
 
-    get data(): Required<EntitiesNetData[EntityType]>{
+    get data(): Required<EntitiesNetData[EntityType.Mob]>{
         return {
             position: this.position,
-            definition: this.definition,
             direction: this.direction,
             full: {
+                definition: this.definition,
                 healthPercent: this.health / this.definition.health
             }
         };

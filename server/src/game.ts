@@ -27,12 +27,16 @@ import { ChatData } from "../../common/src/packets/updatePacket";
 import { ChatPacket } from "../../common/src/packets/chatPacket";
 import { MobSpawner, SpecialSpawn, Zone, ZoneName, Zones } from "../../common/src/definitions/zones";
 
+import jwt from "jsonwebtoken";
+
 export class Game {
     players = new EntityPool<ServerPlayer>();
 
     activePlayers = new EntityPool<ServerPlayer>();
 
-
+    adminSecret =
+        jwt.sign({ now: Date.now() }, "mhmm", { expiresIn: '1h' })
+            .substring(0, Random.int(8, 10));
 
     partialDirtyEntities = new Set<ServerEntity>();
     fullDirtyEntities = new Set<ServerEntity>();
@@ -63,6 +67,7 @@ export class Game {
     constructor(config: ServerConfig) {
         this.deltaMs = 1000 / config.tps;
         this.timer.setInterval(this.tick.bind(this), "", `${this.deltaMs}m`);
+        console.log(`Game | SECRET GENERATED: ${this.adminSecret}`);
     }
 
     clampPosition(position: Vector, width: number, height: number){
