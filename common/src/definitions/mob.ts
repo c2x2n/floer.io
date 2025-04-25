@@ -1157,14 +1157,15 @@ export const Mobs = new Definitions<MobDefinition>([
     },{
         idString: "sandstorm",
         displayName: "Sandstorm",
-        damage: 15,
-        health: 100,
+        damage: 40,
+        health: 140,
         category: MobCategory.Unactive,
         hitboxRadius: 5,
-        speed: 9,
+        speed: 15,
         images: {
-            width: 200,
-            height: 200
+            width: 150,
+            height: 150,
+            spiderLeg: true
         },
         lootTable: {
             "sand": 0.5,
@@ -1172,7 +1173,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "triangle": 0.08,
             "powder": 0.05,
             "talisman": 0.01,
-            "stick": 0.01
+            "stick": 0.001
         },
         rarity: RarityName.rare,
         exp: 15,

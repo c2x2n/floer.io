@@ -513,5 +513,21 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
                 }
             );
         }
+    },
+    armor: {
+        callback: (on, petal, data) => {
+            // 保存原始的receiveDamage方法
+            const originalReceiveDamage = petal.receiveDamage;
+            
+            // 重写receiveDamage方法以实现护甲效果
+            petal.receiveDamage = function(amount: number, source: any) {
+                if (data && typeof data === 'number') {
+                    // 减少受到的伤害，但不能小于0
+                    amount = Math.max(0, amount - data);
+                }
+                // 调用原始方法处理实际伤害
+                originalReceiveDamage.call(this, amount, source);
+            };
+        }
     }
 } as const;

@@ -84,13 +84,13 @@ export class ClientMob extends ClientEntity {
         if (movementDistance) {
             this.playMovementAnimation(movementDistance)
         }
-
-        // 特殊处理沙尘暴的旋转，其他实体正常旋转跟随方向
         if (this.definition && this.definition.idString === "sandstorm") {
-            // 沙尘暴不跟随速度方向，而是随机自转
-            // 不做任何处理，让之前的随机自转效果生效
+            if (this.definition.images?.spiderLeg) {
+                this.images.leg1.angle += 5;
+                this.images.leg2.angle -= 4;
+                this.images.leg3.angle += 3;
+            }
         } else {
-            // 其他实体正常跟随速度方向
             this.container.rotation =
                 Vec2.directionToRadians(Vec2.targetEasing(Vec2.radiansToDirection(this.container.rotation), this.direction, 6));
         }
@@ -127,7 +127,7 @@ export class ClientMob extends ClientEntity {
                 }
 
                 if (this.definition.idString === "sandstorm") {
-                    this.container.rotation = Math.random() * Math.PI * 2; // 完全随机的旋转角度
+                    this.container.rotation = Math.random() * Math.PI * 2;
                 } else {
                     this.container.rotation = Vec2.directionToRadians(data.direction);
                 }
@@ -182,22 +182,40 @@ export class ClientMob extends ClientEntity {
                 this.images.leg4
             )
 
-            this.images.leg1
-                .setFrame(getGameAssetsPath("animation", "spider_leg1"))
-                .setZIndex(-1)
-                .setAnchor(Vec2.new(0.5, 0.5));
-            this.images.leg2
-                .setFrame(getGameAssetsPath("animation", "spider_leg2"))
-                .setZIndex(-1)
-                .setAnchor(Vec2.new(0.5, 0.5));
-            this.images.leg3
-                .setFrame(getGameAssetsPath("animation", "spider_leg3"))
-                .setZIndex(-1)
-                .setAnchor(Vec2.new(0.5, 0.5));
-            this.images.leg4
-                .setFrame(getGameAssetsPath("animation", "spider_leg4"))
-                .setZIndex(-1)
-                .setAnchor(Vec2.new(0.5, 0.5));
+            if (this.definition.idString === "sandstorm") {
+                this.images.leg1
+                    .setFrame(getGameAssetsPath("mob", "sandstorm_inner"))
+                    .setZIndex(-1)
+                    .setAnchor(Vec2.new(0.5, 0.5));
+                this.images.leg2
+                    .setFrame(getGameAssetsPath("mob", "sandstorm_middle"))
+                    .setZIndex(-2)
+                    .setAnchor(Vec2.new(0.5, 0.5));
+                this.images.leg3
+                    .setFrame(getGameAssetsPath("mob", "sandstorm_outer"))
+                    .setZIndex(-3)
+                    .setAnchor(Vec2.new(0.5, 0.5));
+                this.images.leg1.angle = Math.random() * 360;
+                this.images.leg2.angle = Math.random() * 360;
+                this.images.leg3.angle = Math.random() * 360;
+            } else {
+                this.images.leg1
+                    .setFrame(getGameAssetsPath("animation", "spider_leg1"))
+                    .setZIndex(-1)
+                    .setAnchor(Vec2.new(0.5, 0.5));
+                this.images.leg2
+                    .setFrame(getGameAssetsPath("animation", "spider_leg2"))
+                    .setZIndex(-1)
+                    .setAnchor(Vec2.new(0.5, 0.5));
+                this.images.leg3
+                    .setFrame(getGameAssetsPath("animation", "spider_leg3"))
+                    .setZIndex(-1)
+                    .setAnchor(Vec2.new(0.5, 0.5));
+                this.images.leg4
+                    .setFrame(getGameAssetsPath("animation", "spider_leg4"))
+                    .setZIndex(-1)
+                    .setAnchor(Vec2.new(0.5, 0.5));
+            }
         }
 
         this.container.scale = GameSprite.getScaleByUnitRadius(hitboxRadius);
@@ -215,53 +233,41 @@ export class ClientMob extends ClientEntity {
 
     lastMovementAnimation: number = 0;
     lastMovementAnimationTime: number = 0;
+    lastScale: number = 1;
 
     playMovementAnimation(size: number): void {
         if (!this.definition) return;
 
-        // 为沙尘暴添加特殊的移动和旋转效果
         if (this.definition.idString === "sandstorm") {
-            // 沙尘暴移动效果几乎没有冷却时间
-            if (Date.now() - this.lastMovementAnimation < 20) return;
-
-            // 极短的动画时间，随机变化
-            let time = Math.random() * 60 + 40;
-
+            if (Date.now() - this.lastMovementAnimation < 1200) return;
+            let time = 800 + Math.random() * 400;
             this.lastMovementAnimation = Date.now();
-
-            // 添加明显但自然的随机自转效果
-            const currentRotation = this.container.rotation;
-            // 创建更明显的自转效果，但仍然自然
-            const rotationAmount = (Math.random() * 0.6 - 0.3) * Math.PI; // -54度到+54度之间的随机旋转
-            const randomRotation = currentRotation + rotationAmount;
-
-            // 使用贝塞尔缓动效果使旋转看起来更自然
-            this.game.addTween(new Tween({rotation: currentRotation})
-                .to({rotation: randomRotation}, time)
-                .easing(Easing.Sinusoidal.InOut) // 添加缓动效果
-                .onUpdate((d) => {
-                    this.container.rotation = d.rotation;
-                })
-            );
-
-            // 仅保留轻微的位置偏移，模拟沙尘效果
-            const offsetX = (Math.random() * 8 - 4);
-            const offsetY = (Math.random() * 8 - 4);
-
+            const offsetX = (Math.random() * 20 - 10);
+            const offsetY = (Math.random() * 20 - 10);
             this.game.addTween(new Tween({x: 0, y: 0})
-                .to({x: offsetX, y: offsetY}, time / 2)
+                .to({x: offsetX, y: offsetY}, time)
+                .easing(Easing.Cubic.InOut)
                 .onUpdate((d) => {
                     this.container.position.x = Camera.vecToScreen(this.position).x + d.x;
                     this.container.position.y = Camera.vecToScreen(this.position).y + d.y;
                 })
             );
-
-            this.game.addTween(new Tween({x: offsetX, y: offsetY})
-                .delay(time / 2)
-                .to({x: 0, y: 0}, time / 2)
+            this.game.addTween(new Tween({scale: 1, alpha: 1})
+                .to({scale: 1.08, alpha: 0.85}, time / 2)
+                .easing(Easing.Quadratic.Out)
                 .onUpdate((d) => {
-                    this.container.position.x = Camera.vecToScreen(this.position).x + d.x;
-                    this.container.position.y = Camera.vecToScreen(this.position).y + d.y;
+                    this.container.scale.set(this.container.scale.x * d.scale / this.lastScale);
+                    this.lastScale = d.scale;
+                })
+            );
+
+            this.game.addTween(new Tween({scale: 1.08, alpha: 0.85})
+                .delay(time / 2)
+                .to({scale: 1, alpha: 1}, time / 2)
+                .easing(Easing.Quadratic.In)
+                .onUpdate((d) => {
+                    this.container.scale.set(this.container.scale.x * d.scale / this.lastScale);
+                    this.lastScale = d.scale;
                 })
             );
 
@@ -269,7 +275,6 @@ export class ClientMob extends ClientEntity {
             return;
         }
 
-        // 原有的动画逻辑
         if (Date.now() - this.lastMovementAnimation < this.lastMovementAnimationTime * 2) return;
         let time = 150;
 

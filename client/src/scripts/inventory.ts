@@ -252,6 +252,13 @@ const attributesShowingConfig: { [K in AttributeName] : AttributeShowingFunction
                 color: "#32CD32"
             }]
         },
+        armor: (data) => {
+            return [{
+                displayName: "Armor",
+                value: data.toString(),
+                color: "#989898"
+            }]
+        },
         self_damage: (data) => {
             return [{
                 displayName: "Self Damage",

@@ -118,6 +118,7 @@ export type AttributeParameters = {
         healPercent: number
         maximumHeal?: number // meaningless, because now it uses petal.damage to calculate not damage dealt
     }
+    armor?: number
 })
 
 export function getDisplayedPieces(petal: PetalDefinition): number {
@@ -1538,7 +1539,7 @@ export const Petals = new Definitions<PetalDefinition>([
         health: 15,
         extendable: true,
         usable: true,
-        useTime: 0.2,
+        useTime: 5,
         images: {
             slotDisplaySize: 50,
             centerYOffset: 0.05,
@@ -1547,29 +1548,29 @@ export const Petals = new Definitions<PetalDefinition>([
             spawner: {
                 idString: "sandstorm",
                 displayName: "Sandstorm",
-                damage: 15,
-                health: 20,
+                damage: 40,
+                health: 35,
                 category: MobCategory.Unactive,
                 hitboxRadius: 4,
                 speed: 7,
                 images: {
-                    width: 200,
-                    height: 200
+                    width: 100,
+                    height: 100
                 },
                 lootTable: {},
                 rarity: RarityName.rare,
                 exp: 0,
                 usingAssets: "sandstorm",
-                despawnTime: 2
+                despawnTime: 10
             }
         },
-        reloadTime: 4,
+        reloadTime: 2,
         hitboxRadius: 0.55,
         isDuplicate: false,
         pieceAmount: 1,
         effectiveFirstReload: true,
         undroppable: true, // TEMPORARY: TOREMOVE: spawn in game for testing purposes, remove this when added to drops
-        rarity: RarityName.epic,
+        rarity: RarityName.legendary,
     },
     {
         idString: "pollen",
@@ -1989,5 +1990,26 @@ export const Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.epic
+    },
+    {
+        idString: "bone",
+        displayName: "Bone",
+        description: "Sturdy.",
+        damage: 12,
+        health: 10,
+        extendable: true,
+        usable: false,
+        images: {
+            slotDisplaySize: 45,
+            selfGameRotation: 0.15
+        },
+        attributes: {
+            armor: 8
+        },
+        reloadTime: 1.25,
+        hitboxRadius: 0.6,
+        isDuplicate: false,
+        pieceAmount: 1,
+        rarity: RarityName.rare
     }
 ] satisfies PetalDefinition[]);
