@@ -45,9 +45,9 @@ export class UI {
 
     readonly continueButton = $<HTMLDivElement>("#btn-continue");
 
-    readonly moveRight = $<HTMLDivElement>("#move-right");
+    readonly moveHigh = $<HTMLDivElement>("#move-high");
 
-    readonly moveRightTime = $<HTMLDivElement>("#move-right-time");
+    readonly moveHighTime = $<HTMLDivElement>("#move-high-time");
 
     readonly deletePetal = $<HTMLDivElement>("<div id='delete-petal'></div>");
 
@@ -193,7 +193,7 @@ export class UI {
 
         this.animationInterval = window.setInterval(() => {
             this.spawnRandomEntity();
-        }, 700);
+        }, 200);
     }
 
     stopRandomEntityAnimation(): void {
@@ -303,22 +303,22 @@ export class UI {
 
         this.gameOverMurderer.attr("textStroke", packet.murderer);
         this.gameOverMurderer.text(packet.murderer);
-        const kills = `You killed ${packet.kills} flower${packet.kills > 1 ? "s" : ""} this run.`
+        const kills = `You killed ${packet.kills} flower${packet.kills != 1 ? "s" : ""} this run.`
         this.gameOverKills.attr("textStroke", kills);
         this.gameOverKills.text(kills);
     }
 
     showOverleveled(time?: number) {
         if (!time && time !== 0) {
-            this.moveRight.css("display", "none");
+            this.moveHigh.css("display", "none");
             return;
         }
 
         let content = `${time}s`;
-        if (time <= 0) content = "MOVE RIGHT NOW";
-        this.moveRight.css("display", "block");
-        this.moveRightTime.attr("textStroke", content);
-        this.moveRightTime.text(content);
+        if (time <= 0) content = "MOVE NOW";
+        this.moveHigh.css("display", "block");
+        this.moveHighTime.attr("textStroke", content);
+        this.moveHighTime.text(content);
     }
 
     chatMessages: ChatMessage[] = [];

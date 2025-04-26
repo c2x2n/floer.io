@@ -1,42 +1,81 @@
 import { type GameBitStream, type Packet } from "../net";
-import { Vec2 } from "../utils/vector";
-import { Petals, SavedPetalDefinitionData } from "../definitions/petal";
 import { P2 } from "../utils/math";
-import { GameConstants } from "../constants";
+import { ActionType } from "../constants";
+
+export type InputAction = {
+    type: ActionType;
+} & ({
+    type: ActionType.SwitchPetal;
+    petalIndex: number;
+    petalToIndex: number;
+} | {
+    type: ActionType.DeletePetal;
+    petalIndex: number;
+} | {
+    type: ActionType.TransformLoadout;
+})
 
 export class InputPacket implements Packet {
     direction = {
         direction: 0,
-        mouseDir: 0 
+        mouseDirection: 0
     };
-    mouseDistance: number = 0;
+    movementDistance: number = 0;
     isAttacking = false;
     isDefending = false;
-    switchedPetalIndex = -1;
-    switchedToPetalIndex = -1;
-    deletedPetalIndex: number = -1;
+    actions: InputAction[] = []
 
     serialize(stream: GameBitStream): void {
         stream.writeBoolean(this.isAttacking);
         stream.writeBoolean(this.isDefending);
         stream.writeFloat(this.direction.direction, -P2, P2, 8);
-        stream.writeFloat(this.direction.mouseDir, -P2, P2, 8);
-        stream.writeUint8(this.mouseDistance);
+        stream.writeFloat(this.direction.mouseDirection, -P2, P2, 8);
+        stream.writeUint8(this.movementDistance);
 
-        stream.writeUint8(this.switchedPetalIndex);
-        stream.writeUint8(this.switchedToPetalIndex);
-        stream.writeUint8(this.deletedPetalIndex);
+        stream.writeArray(this.actions, 4, (action) => {
+            stream.writeUint8(action.type);
+
+            switch (action.type) {
+                case ActionType.SwitchPetal:
+                    stream.writeUint8(action.petalIndex);
+                    stream.writeUint8(action.petalToIndex);
+                    break;
+                case ActionType.DeletePetal:
+                    stream.writeUint8(action.petalIndex);
+                    break;
+                case ActionType.TransformLoadout:
+                    break
+            }
+        })
     }
 
     deserialize(stream: GameBitStream): void {
         this.isAttacking = stream.readBoolean();
         this.isDefending = stream.readBoolean();
         this.direction.direction = stream.readFloat(-P2, P2, 8);
-        this.direction.mouseDir = stream.readFloat(-P2, P2, 8);
-        this.mouseDistance = stream.readUint8();
+        this.direction.mouseDirection = stream.readFloat(-P2, P2, 8);
+        this.movementDistance = stream.readUint8();
 
-        this.switchedPetalIndex = stream.readUint8();
-        this.switchedToPetalIndex = stream.readUint8();
-        this.deletedPetalIndex = stream.readUint8();
+        stream.readArray(this.actions, 4, () => {
+            const type = stream.readUint8();
+
+            switch (type) {
+                case ActionType.SwitchPetal:
+                    return {
+                        type,
+                        petalIndex: stream.readUint8(),
+                        petalToIndex: stream.readUint8()
+                    }
+                case ActionType.DeletePetal:
+                    return {
+                        type,
+                        petalIndex: stream.readUint8()
+                    }
+                case ActionType.TransformLoadout:
+                    return {
+                        type
+                    }
+            }
+        })
     }
 }

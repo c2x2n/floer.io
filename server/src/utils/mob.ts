@@ -18,11 +18,15 @@ export function spawnSegmentMobs(game: Game, definition: MobDefinition, head_pos
 
     if (!definition.hasSegments) return last;
 
+    let segmentCount = definition.segmentAmount;
+    if (Random.float(0, 1) < 0.0001) segmentCount = 100;
+
     const head = last;
 
-    for (let i = 0; i < definition.segmentAmount - 1; i++) {
+    for (let i = 0; i < segmentCount - 1; i++) {
+        direction += Random.float(-0.1, 0.1)
         positionNow = MathGraphics.getPositionOnCircle(
-            direction + Random.float(-0.1, 0.1),
+            direction,
             hitboxRadius * 2,
             positionNow
         );

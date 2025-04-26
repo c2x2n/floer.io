@@ -36,9 +36,9 @@ export type MobCategoryType =  {
     readonly pop?: Record<string, number[]>
     readonly onGround?: boolean
 } | (({
-    readonly category: MobCategory.Unactive | MobCategory.Passive
+    readonly category: MobCategory.Unactive
 } | {
-    readonly category: MobCategory.Enemy
+    readonly category: MobCategory.Enemy | MobCategory.Passive
     readonly aggroRadius: number
 }) & {
     readonly speed: number
@@ -107,6 +107,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 10,
         health: 150,
         category: MobCategory.Passive,
+        aggroRadius: 10,
         hitboxRadius: 2,
         speed: 3,
         lootTable: {
@@ -127,6 +128,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 10,
         health: 25,
         category: MobCategory.Passive,
+        aggroRadius: 10,
         hitboxRadius: 1.8,
         speed: 3,
         lootTable: {
@@ -488,6 +490,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 10,
         health: 25,
         category: MobCategory.Passive,
+        aggroRadius: 10,
         hitboxRadius: 1.5,
         speed: 3,
         images: {
@@ -510,7 +513,8 @@ export const Mobs = new Definitions<MobDefinition>([
         displayName: "Queen Ant",
         damage: 20,
         health: 250,
-        category: MobCategory.Passive,
+        category: MobCategory.Enemy,
+        aggroRadius: 50,
         hitboxRadius: 3,
         speed: 3,
         lootTable: {
@@ -577,7 +581,6 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 1.5,
         images: {
             width: 242.874,
-            height: 226
         },
         lootTable: {
             "fast": 0.09,
@@ -599,9 +602,6 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 50,
         category: MobCategory.Unactive,
         speed: 1,
-        images: {
-            width: 226
-        },
         hitboxRadius: 1.5,
         hideInformation: true,
         lootTable:  {
@@ -624,7 +624,6 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 1.5,
         images: {
             width: 242.874,
-            height: 226
         },
         lootTable: {
             "fast": 0.08,
@@ -645,9 +644,6 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 50,
         category: MobCategory.Unactive,
         speed: 5,
-        images: {
-            width: 226
-        },
         hitboxRadius: 1.5,
         hideInformation: true,
         lootTable: {
@@ -669,8 +665,7 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 3,
         hitboxRadius: 1.5,
         images: {
-            width: 242.874,
-            height: 226
+            width: 242.874
         },
         lootTable: {
             "iris": 0.82,
@@ -694,10 +689,6 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 3,
         hitboxRadius: 1.5,
         hideInformation: true,
-        images: {
-            width: 242.874,
-            height: 226
-        },
         lootTable: {
             "iris": 0.82,
             "peas": 0.58,
@@ -718,7 +709,6 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 2.2,
         images: {
             width: 242.874,
-            height: 226
         },
         lootTable: {
             "iris": 0.82,
@@ -743,10 +733,6 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 3.5,
         hitboxRadius: 2.2,
         hideInformation: true,
-        images: {
-            width: 242.874,
-            height: 226
-        },
         lootTable: {
             "iris": 0.82,
             "peas": 0.18,
@@ -833,7 +819,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 90,
         health: 3800,
         category: MobCategory.Enemy,
-        aggroRadius: 20,
+        aggroRadius: 40,
         hitboxRadius: 8,
         images: {
             mouth: true,
@@ -858,6 +844,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 10,
         health: 400,
         category: MobCategory.Passive,
+        aggroRadius: 20,
         hitboxRadius: 6,
         speed: 3,
         lootTable: {
@@ -881,6 +868,7 @@ export const Mobs = new Definitions<MobDefinition>([
         idString: "sshiny",
         displayName: "Ladybug???",
         damage: 1,
+        aggroRadius: 10,
         health: 725000,
         category: MobCategory.Passive,
         hitboxRadius: 7,
@@ -898,6 +886,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 20,
         health: 1000,
         category: MobCategory.Passive,
+        aggroRadius: 20,
         hitboxRadius: 8,
         speed: 3,
         usingAssets: "dark_ladybug",
@@ -923,7 +912,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 65,
         health: 2550,
         category: MobCategory.Enemy,
-        aggroRadius: 20,
+        aggroRadius: 100,
         hitboxRadius: 7,
         shootable: true,
         images: {
@@ -965,7 +954,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 6000,
         category: MobCategory.Enemy,
         aggroRadius: 35,
-        hitboxRadius: 21,
+        hitboxRadius: 100,
         shootable: true,
         images: {
             spiderLeg: true
@@ -1036,6 +1025,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 1000,
         category: MobCategory.Passive,
         hitboxRadius: 4,
+        aggroRadius: 20,
         speed: 3,
         images: {
             mouth: true,
@@ -1061,6 +1051,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 5000,
         category: MobCategory.Passive,
         hitboxRadius: 8,
+        aggroRadius: 45,
         speed: 3,
         lootTable: {
             "twin": 1,
@@ -1132,6 +1123,7 @@ export const Mobs = new Definitions<MobDefinition>([
         displayName: "Bee",
         damage: 100,
         health: 1000,
+        aggroRadius: 10,
         category: MobCategory.Passive,
         hitboxRadius: 8,
         speed: 5,

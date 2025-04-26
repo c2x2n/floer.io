@@ -71,10 +71,10 @@ export class ExpUI {
             MathNumeric.remap(levelInfo.remainsExp, 0, levelInfo.toNextLevelExp, 0, this.width - 8),
             30 // set minimum width so that it won't look weird
         );
-        
+
         // Use targetEasing for smooth animation
         this.currentExpWidth = MathNumeric.targetEasing(this.currentExpWidth, targetExpWidth, 10);
-        
+
         this.expGraphics.clear()
             .roundRect(0, 0, this.width, this.height, 100)
             .fill({ color: 0x343434, alpha: 0.8 })

@@ -1825,6 +1825,30 @@ export const Petals = new Definitions<PetalDefinition>([
         undroppable: true
     },
     {
+        idString: "segg4",
+        displayName: "Egg",
+        description: "Something that can bomb might pop out of this.",
+        damage: 1,
+        health: 2500,
+        extendable: false,
+        usable: true,
+        images: {
+            slotDisplaySize: 80
+        },
+        useTime: 0.2,
+        attributes: {
+            spawner: Mobs.fromString("myt_ant_hole"),
+        },
+        reloadTime: 0.2,
+        hitboxRadius: 0.6,
+        isDuplicate: true,
+        pieceAmount: 5,
+        isShowedInOne: false,
+        rarity: RarityName.ethereal,
+        usingAssets: "egg",
+        undroppable: true
+    },
+    {
         idString: "talisman",
         displayName: "Talisman",
         description: "A necklace that allows the wearer to anticipate enemy attacks",
@@ -1944,7 +1968,7 @@ export const Petals = new Definitions<PetalDefinition>([
         pieceAmount: 1,
         rarity: RarityName.epic
     },
-    {   
+    {
         idString: "heaviest",
         displayName: "Heaviest",
         description: "This thing is so heavy that nothing gets in the way.",
@@ -1972,7 +1996,7 @@ export const Petals = new Definitions<PetalDefinition>([
         images: {
             slotDisplaySize: 45,
             selfGameRotation: 0.01,
-            slotRotation: 0.3,  
+            slotRotation: 0.3,
         },
         attributes: {
             boost: -20
@@ -1994,7 +2018,7 @@ export const Petals = new Definitions<PetalDefinition>([
         images: {
             slotDisplaySize: 45,
             selfGameRotation: 0.01,
-            slotRotation: 0.3,  
+            slotRotation: 0.3,
         },
         attributes: {
             boost: -300
@@ -2007,7 +2031,7 @@ export const Petals = new Definitions<PetalDefinition>([
         usingAssets: "jelly",
         undroppable: true
     },
-    {   
+    {
         idString: "rock",
         displayName: "Rock",
         description: "Extremely durable, but takes a bit longer to recharge.",
@@ -2036,7 +2060,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 65/0.94,
             slotRotation: -(90-32.5)*(Math.PI/180),
             facingOut:true,
-            
+
         },
         modifiers: {
             conditionalHeal: {
@@ -2061,7 +2085,7 @@ export const Petals = new Definitions<PetalDefinition>([
         images: {
             slotDisplaySize: 43,
             selfGameRotation: 0.25,
-            
+
         },
         attributes: {
             damage_heal: {

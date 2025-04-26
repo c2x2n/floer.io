@@ -8,6 +8,20 @@ export enum EntityType {
     Projectile
 }
 
+export enum ActionType {
+    SwitchPetal,
+    DeletePetal,
+    TransformLoadout
+}
+
+export enum PlayerState {
+    Attacking,
+    Defending,
+    Danded,
+    Poisoned,
+    Normal
+}
+
 export const GameConstants = {
     defaultModifiers: (): Modifiers => ({
         healPerSecond: 0,
@@ -22,8 +36,6 @@ export const GameConstants = {
         maxSpeed: 3.5,
         defaultName: "Player",
         maxNameLength: 20,
-        spawnMaxX: 100,
-        spawnMaxY: 50,
         defaultSlot: 5,
         defaultPrepareSlot: 10,
         defaultEquippedPetals: ["basic","basic","basic","basic","basic"],
@@ -58,7 +70,7 @@ export const GameConstants = {
     },
     game: {
         width: 2566,
-        height: 120
+        height: 866
     },
     loot: {
         radius: 0.6,
@@ -72,4 +84,3 @@ export const GameConstants = {
     },
     maxTokenLength: 20
 };
-

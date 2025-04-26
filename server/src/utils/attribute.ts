@@ -2,14 +2,13 @@ import { ServerPetal } from "../entities/serverPetal";
 import { MathGraphics } from "../../../common/src/utils/math";
 import { Vec2 } from "../../../common/src/utils/vector";
 import { AttributeName } from "../../../common/src/definitions/attribute";
-import { AttributeParameters, Petals } from "../../../common/src/definitions/petal";
+import { AttributeParameters } from "../../../common/src/definitions/petal";
 import { EventInitializer } from "./eventManager";
 import { Effect } from "./effects";
 import { EntityType } from "../../../common/src/constants";
 import { ServerPlayer } from "../entities/serverPlayer";
 import { ServerFriendlyMob, ServerMob } from "../entities/serverMob";
 import { ServerProjectile } from "../entities/serverProjectile";
-import { Projectile } from "../../../common/src/definitions/projectile";
 import { isDamageableEntity } from "../typings";
 import { CircleHitbox } from "../../../common/src/utils/hitbox";
 import { ServerEntity } from "../entities/serverEntity";
@@ -56,13 +55,12 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
         callback: (on, petal, data) => {
             on(AttributeEvents.CAN_USE,
                 () => {
-                    if (data && petal.owner instanceof ServerPlayer) {
+                    if (data) {
                         const maxShield = petal.owner.modifiers.maxHealth * 0.75;
-                        const newShield = Math.min(
+                        petal.owner.shield = Math.min(
                             (petal.owner.shield || 0) + Number(data),
                             maxShield
                         );
-                        petal.owner.shield = newShield;
                     }
                 }
             , PetalUsingAnimations.SHIELD);
@@ -265,28 +263,28 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
                 const projectile = new ServerProjectile(
                     petal.owner, position, direction, data, petal);
             }, PetalUsingAnimations.NORMAL)
-            
+
             if (data && (data as any).spawnDelay && (data as any).spawner) {
                 const spawnDelay = (data as any).spawnDelay;
                 const originalTick = petal.tick;
                 let timeUntilNextSpawn = 0;
-                
+
                 petal.tick = function() {
                     originalTick.call(this);
-                    
+
                     if (this.isReloading || this.destroyed) return;
-                    
+
                     timeUntilNextSpawn += this.game.dt;
-                    
+
                     if (timeUntilNextSpawn >= spawnDelay) {
                         timeUntilNextSpawn = 0;
-                        
+
                         const randomOffset = Vec2.new(
-                            (Math.random() * 10 - 5), 
+                            (Math.random() * 10 - 5),
                             (Math.random() * 10 - 5)
                         );
                         const spawnPosition = Vec2.add(this.owner.position, randomOffset);
-                        
+
                         const mobDefinition = data.customDefinition;
                         if (mobDefinition) {
                             const mob = new ServerMob(
@@ -306,11 +304,11 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
         callback: (on, petal, data) => {
             on(AttributeEvents.CAN_USE,() => {
                 if (!data) return;
-                
+
                 const isSandstorm = data.idString === "sandstorm";
-                
+
                 let spawnedMob: ServerFriendlyMob;
-                
+
                 if (isSandstorm) {
                     spawnedMob = new ServerFriendlyMob(petal.game, petal.owner, data, true);
                     if (data.despawnTime) {
@@ -518,9 +516,9 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
     armor: {
         callback: (on, petal, data) => {
             const originalReceiveDamage = petal.receiveDamage;
-            
+
             petal.receiveDamage = function(amount: number, source: any) {
-                if (data && typeof data === 'number') {
+                if (data) {
                     amount = Math.max(0, amount - data);
                 }
                 originalReceiveDamage.call(this, amount, source);
@@ -530,38 +528,38 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
     lightning: {
         callback: (on, petal, data) => {
             if (!data) return;
-            
+
             on<AttributeEvents.PETAL_DEAL_DAMAGE>(
                 AttributeEvents.PETAL_DEAL_DAMAGE,
                 (entity) => {
                     if (!entity || !data) return;
-                    
+
                     const hitEntities = new Set([entity]);
                     let currentTarget = entity;
                     let remainingBounces = data.bounces;
                     let currentDamage = petal.damage || 0;
-                    
+
                     while (remainingBounces > 0 && currentDamage > 1) {
-                        
+
                         currentDamage *= data.attenuation;
-                        
+
                         const rangeHitbox = new CircleHitbox(data.range, currentTarget.position);
-                        
+
                         const nearbyEntities = petal.game.grid.intersectsHitbox(rangeHitbox)
-                        const validTargets = Array.from(nearbyEntities).filter((e: ServerEntity) => 
-                            !hitEntities.has(e) && 
-                            e.type !== EntityType.Petal && 
+                        const validTargets = Array.from(nearbyEntities).filter((e: ServerEntity) =>
+                            !hitEntities.has(e) &&
+                            e.type !== EntityType.Petal &&
                             e.type !== EntityType.Projectile &&
                             e !== petal.owner &&
                             isDamageableEntity(e) &&
                             e.canReceiveDamageFrom(petal.owner)
                         );
-                        
+
                         if (validTargets.length === 0) break;
-                        
+
                         let nextTarget = validTargets[0];
                         let minDistance = Vec2.distance(currentTarget.position, nextTarget.position);
-                        
+
                         for (let i = 1; i < validTargets.length; i++) {
                             const distance = Vec2.distance(currentTarget.position, validTargets[i].position);
                             if (distance < minDistance) {
@@ -569,17 +567,17 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
                                 nextTarget = validTargets[i];
                             }
                         }
-                        
+
                         if (minDistance > data.range) break;
-                        
+
                         if (isDamageableEntity(nextTarget)) {
                             nextTarget.receiveDamage(currentDamage, petal.owner);
-                            
+
                             hitEntities.add(nextTarget);
 
                             currentTarget = nextTarget;
                             remainingBounces--;
-                            
+
                             // 闪电特效谁帮我写一下
                             petal.owner.sendEvent(
                                 'lightning_effect' as any,

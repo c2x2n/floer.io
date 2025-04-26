@@ -73,6 +73,7 @@ export class ClientMob extends ClientEntity {
         this.container.addChild(
             this.images.body,
         );
+
     }
 
     render(dt: number): void {
@@ -141,6 +142,13 @@ export class ClientMob extends ClientEntity {
                     this.getDamageAnimation()
                 this.healthPercent = data.full.healthPercent;
                 this.reddrawHealthBar();
+                const rarity = Rarity.fromString(this.definition.rarity);
+                if (rarity.globalMessage) {
+                    this.game.bossbar.bossbarDatas.set(this.id, {
+                        mob: this.definition,
+                        healthPercent: this.healthPercent
+                    })
+                }
             }
         }
 
@@ -149,6 +157,8 @@ export class ClientMob extends ClientEntity {
 
     init(): void {
         if (!this.definition) return;
+
+        const rarity = Rarity.fromString(this.definition.rarity);
 
         const hitboxRadius = this.definition.hitboxRadius;
 
@@ -227,7 +237,6 @@ export class ClientMob extends ClientEntity {
         }
 
         this.name.text = this.definition.displayName;
-        const rarity = Rarity.fromString(this.definition.rarity);
         this.rarity.text = rarity.displayName;
         this.rarity.style.fill = rarity.color;
     }
@@ -372,5 +381,7 @@ export class ClientMob extends ClientEntity {
             }),
             super.destroy.bind(this)
         )
+
+        this.game.bossbar.bossbarDatas.delete(this.id);
     }
 }

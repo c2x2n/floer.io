@@ -4,10 +4,10 @@ import { MathNumeric } from "@common/utils/math.ts";
 import { Vec2 } from "@common/utils/vector.ts";
 import { GameConstants } from "@common/constants.ts";
 
-import { Zone, ZoneName, Zones } from "@common/definitions/zones.ts";
+import { ZoneData, ZoneName, Zones } from "@common/zones.ts";
 
 const widthDiv = 10;
-const heightDiv = 3;
+const heightDiv = 5;
 
 export class Minimap {
     mapBackground = new Graphics({
@@ -22,6 +22,17 @@ export class Minimap {
 
     mapNames: Text[] = [];
 
+    mapTitle: Text = new Text({
+        text: 'Map',
+        alpha: 0.8,
+        style: {
+            fontFamily: 'Ubuntu',
+            fontSize: 25,
+            fill: "#fff",
+            stroke: {color: "#000", width: 2}
+        }
+    });
+
     private minimapPositionX: number = 0;
     private minimapPositionY: number = 0;
     private minimapWidth: number = 0;
@@ -34,7 +45,8 @@ export class Minimap {
     init(){
        this.container.addChild(
            this.mapBackground,
-           this.playerPosition
+           this.playerPosition,
+           this.mapTitle
        );
        this.container.zIndex = 999;
 
@@ -42,6 +54,8 @@ export class Minimap {
            this.container
        );
 
+       this.mapTitle.anchor.set(0.5);
+       this.mapTitle.zIndex = 4;
     }
 
     render(){
@@ -97,38 +111,25 @@ export class Minimap {
                 width: 10,
             });
 
-        for (const x in Zones) {
-            const data = Zones[x as ZoneName];
-            this.mapBackground
-                .rect(data.x / widthDiv, 0, data.width / widthDiv, this.minimapHeight)
-                .fill(data.displayColor)
-
-            this.mapBackground.alpha = 0.9;
-        }
-
-        // TODO: fix mysterious bug
-        // attachment sent in #moderator-only
-        const mapText = new Text({
-            text: 'Map',
-            alpha: 0.8,
-            style: {
-                fontFamily: 'Ubuntu',
-                fontSize: 25,
-                fill: "#fff",
-                stroke: {color: "#000", width: 2}
-            }
-        });
-        mapText.anchor.set(0.5);
-        this.container.addChild(mapText);
-        mapText.zIndex = 4;
-        mapText.position.set(this.minimapWidth / 2, -this.minimapHeight / 2.3)
+        this.mapTitle.position.set(this.minimapWidth / 2, -8)
 
         let index = 0;
         for (const x in Zones) {
             const data = Zones[x as ZoneName];
+
+            this.mapBackground
+                .rect(
+                    data.x / widthDiv,
+                    (data.y ?? 0) / heightDiv,
+                    data.width / widthDiv,
+                    (data.height ?? this.minimapHeight * heightDiv) / heightDiv)
+                .fill(data.displayColor)
+
+            this.mapBackground.alpha = 0.9;
+
             if (!this.mapNames[index]) {
                 this.mapNames[index] = new Text({
-                    text: x,
+                    text: data.displayName,
                     style: {
                         fontFamily: 'Ubuntu',
                         fontSize: 15,
@@ -140,7 +141,10 @@ export class Minimap {
                 this.container.addChild(this.mapNames[index]);
                 this.mapNames[index].zIndex = 3;
             }
-            this.mapNames[index].position.set(data.x / widthDiv + data.width / widthDiv / 2, this.minimapHeight / 2);
+            this.mapNames[index].position.set(
+                (data.x + data.width / 2) / widthDiv ,
+                ((data.y ?? 0) + (data.height ?? this.minimapHeight * heightDiv) / 2) / heightDiv
+            );
             index ++;
         }
     }

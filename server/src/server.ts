@@ -5,7 +5,7 @@ import { WebSocketServer } from "ws";
 import { Socket } from "node:net";
 import { Game } from "./game";
 import * as jwt from "jsonwebtoken";
-
+import { WebhookClient } from "discord.js";
 
 // LOAD ENV //
 import { config } from "dotenv";

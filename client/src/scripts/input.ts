@@ -1,11 +1,14 @@
 import { Vec2, Vector } from "@common/utils/vector.ts";
 import { type Game } from "./game";
 import { halfPI, P2, PI } from "@common/utils/math.ts";
+import { InputAction } from "@common/packets/inputPacket.ts";
 
 export class Input {
     readonly game: Game;
 
     private _inputsDown: Record<string, boolean> = {};
+
+    actionsToSend = new Set<InputAction>();
 
     /**
      * The angle between the mouse pointer and the screen center
@@ -28,7 +31,7 @@ export class Input {
         return this._inputsDown[input] ?? false;
     }
 
-    get moveDirection(): {direction: number,mouseDir: number} | undefined {
+    get moveDirection(): {direction: number, mouseDirection: number} | undefined {
         if (this.game.app.settings.data.keyboardMovement) {
             let hMove = 0;
             let vMove = 0;
@@ -46,17 +49,17 @@ export class Input {
             if (hMove != 0 && vMove != 0) {
                 return {
                     direction: Vec2.directionToRadians(Vec2.add(vDir, hDir)),
-                    mouseDir: this.mouseDirection
+                    mouseDirection: this.mouseDirection
                 };
             } else if (hMove != 0) {
                 return {
                     direction: hRad,
-                    mouseDir: this.mouseDirection
+                    mouseDirection: this.mouseDirection
                 };
             } else if (vMove != 0) {
                 return {
                     direction: vRad,
-                    mouseDir: this.mouseDirection
+                    mouseDirection: this.mouseDirection
                 };
             }
 
@@ -64,7 +67,7 @@ export class Input {
         }else {
             return {
                 direction: this.mouseDirection,
-                mouseDir: this.mouseDirection
+                mouseDirection: this.mouseDirection
             };
         }
     }
@@ -82,6 +85,14 @@ export class Input {
         if (distance > maxDistance) return maxDistance;
         return distance;
     }
+
+    mousePosition: {
+        clientX: number,
+        clientY: number
+    } = {
+        clientX: 0,
+        clientY: 0
+    };
 
     constructor(game: Game) {
         this.game = game;
@@ -110,6 +121,11 @@ export class Input {
                     e.clientY - window.innerHeight / 2, e.clientX - window.innerWidth / 2
                 )
             );
+
+            this.mousePosition = {
+                clientX: e.clientX,
+                clientY: e.clientY
+            }
         });
     }
 

@@ -125,6 +125,27 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         }
     }
 
+    getRandomAggroAround() {
+        if (this.definition.category === MobCategory.Enemy
+            && !this.aggroTarget) {
+            const aggro = new CircleHitbox(
+                this.definition.aggroRadius, this.position
+            );
+
+            const entities =
+                this.game.grid.intersectsHitbox(aggro);
+
+            const aggroable = Array.from(entities)
+                .filter(e =>
+                    isDamageSourceEntity(e)
+                    && aggro.collidesWith(e.hitbox)) as damageSource[];
+
+            if (aggroable.length) {
+                this.changeAggroTo(aggroable[Random.int(0, aggroable.length - 1)])
+            }
+        }
+    }
+
     shoot(shoot: ProjectileParameters): void {
         const position = shoot.definition.onGround ? this.position
            : Vec2.add(this.position,Vec2.mul(this.direction, this.hitbox.radius))
@@ -150,17 +171,22 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                 this.definition.hitboxRadius + this.lastSegment.definition.hitboxRadius,
                 this.lastSegment.position
             );
-        } else if (this.definition.category !== MobCategory.Fixed) {
-            if (this.aggroTarget) {
+        } else if (this.definition.category != MobCategory.Fixed) {
+            if ((this.definition.category === MobCategory.Enemy
+                || this.definition.category === MobCategory.Passive)
+                && this.aggroTarget) {
                 if (this.aggroTarget.destroyed) {
                     this.changeAggroTo();
                 } else {
-                    if (Vec2.distance(this.aggroTarget.position, this.position) > 60) {
+                    if (Vec2.distance(this.aggroTarget.position, this.position) >
+                        this.definition.aggroRadius * 6) {
                         return this.changeAggroTo();
                     }
 
                     if (this.definition.shootable) {
-                        if (Vec2.distance(this.position, this.aggroTarget.position) < 15 && this.definition.reachingAway) {
+                        if (Vec2.distance(this.position, this.aggroTarget.position)
+                            < Math.max(15, this.definition.aggroRadius * 0.8)
+                            && this.definition.reachingAway) {
                             this.shootReload += this.game.dt;
                             if (this.shootReload >= this.definition.shootSpeed) {
                                 this.direction = MathGraphics.directionBetweenPoints(this.aggroTarget.position, this.position);
@@ -264,22 +290,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                         this.walkingTime = 0;
                     }
                 }
-
-                if (this.definition.category === MobCategory.Enemy && !this.aggroTarget) {
-                    const aggro = new CircleHitbox(
-                        this.definition.aggroRadius, this.position
-                    );
-
-                    const entities =
-                        this.game.grid.intersectsHitbox(aggro);
-
-                    for (const entity of entities) {
-                        if (!(isDamageSourceEntity(entity))) continue;
-                        if (aggro.collidesWith(entity.hitbox)) {
-                            this.changeAggroTo(entity);
-                        }
-                    }
-                }
+                this.getRandomAggroAround();
             }
         }
 
@@ -370,8 +381,8 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         if (!noDrops) spawnLoot(this.game, loots, this.position);
 
         const highestPlayer =
-            Array.from(this.damageFrom).sort(
-                (a, b) => b[1] - a[1])[0]
+            Array.from(this.damageFrom).filter(e => e[0].isActive())
+                .sort((a, b) => b[1] - a[1])[0]
 
         if (!(highestPlayer && highestPlayer.length && highestPlayer[0].isActive())) return;
 
@@ -411,6 +422,7 @@ export class ServerFriendlyMob extends ServerMob {
     }
 
     canCollideWith(entity: collideableEntity): boolean {
+        if(entity instanceof ServerFriendlyMob) return true;
         if(isDamageableEntity(entity)) return this.owner.canReceiveDamageFrom(entity)
         else return false;
     }
@@ -421,6 +433,9 @@ export class ServerFriendlyMob extends ServerMob {
             this.direction, shoot);
     }
 
+    changeAggroTo(entity?: damageSource) {
+        if(!this.gettingBackToOwner) super.changeAggroTo(entity);
+    }
 
     constructor(game: Game
         , public owner: ServerPlayer
@@ -430,11 +445,20 @@ export class ServerFriendlyMob extends ServerMob {
         this.isSummoned = isSummoned;
     }
 
+    gettingBackToOwner: boolean = false;
+
     tick() {
-        if (Vec2.distance(this.position, this.owner.position) > 25) {
-            this.changeAggroTo();
+        if (Vec2.distance(this.position, this.owner.position) > 8 * this.definition.hitboxRadius) {
+            this.gettingBackToOwner = true;
+        }
+
+        if (this.gettingBackToOwner) {
+            this.aggroTarget = undefined;
             this.direction = MathGraphics.directionBetweenPoints(this.owner.position, this.position);
-            this.addVelocity(Vec2.mul(this.direction, 10), 0.6)
+            this.setAcceleration(Vec2.mul(
+                this.direction, this.speed
+            ));
+            if (Vec2.distance(this.position, this.owner.position) < 3 * this.definition.hitboxRadius) this.gettingBackToOwner = false;
         }
 
         super.tick();

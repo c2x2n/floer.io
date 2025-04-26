@@ -1,4 +1,4 @@
-import { Zone, ZoneName, Zones } from "../definitions/zones";
+import { ZoneData, ZoneName, Zones } from "../zones";
 
 interface CurrentLevelInformation {
     level: number;
@@ -7,6 +7,7 @@ interface CurrentLevelInformation {
     extraMaxHealth: number;
     extraSlot: number;
     nextExtraSlot: number;
+    spawnAt: ZoneName;
 }
 
 export function getLevelInformation(exp: number): CurrentLevelInformation {
@@ -26,15 +27,22 @@ export function getLevelInformation(exp: number): CurrentLevelInformation {
 
     let extraSlot = 0;
 
-    let currentPassedThreshold = 0;
+    let spawnAt: ZoneName = ZoneName.SpawnZone;
+    let currentStat: LevelStat | undefined = undefined;
     let nextExtraSlotLevel = 0;
 
     let i = 0;
     for (const levelStat of levelStats){
         if (levelNow >= levelStat.level){
             extraSlot += levelStat.extraSlot;
-            currentPassedThreshold = levelStat.level;
-            if (!levelStats[i + 1]) nextExtraSlotLevel = 0; else nextExtraSlotLevel = levelStats[i + 1].level ?? 0;
+            if (levelStat.level > (currentStat?.level ?? 0) && levelStat.spawnAt) {
+                currentStat = levelStat;
+                spawnAt = levelStat.spawnAt;
+            }
+            if (!levelStats[i + 1]) nextExtraSlotLevel = 0;
+            else nextExtraSlotLevel = levelStats[i + 1].level ?? 0;
+        } else {
+            break
         }
         i++
     }
@@ -45,7 +53,8 @@ export function getLevelInformation(exp: number): CurrentLevelInformation {
         toNextLevelExp: levelExpCost,
         extraMaxHealth: levelNow * ( 200 - 100 ) / 59,
         extraSlot: extraSlot,
-        nextExtraSlot: nextExtraSlotLevel
+        nextExtraSlot: nextExtraSlotLevel,
+        spawnAt: spawnAt
     };
 }
 
@@ -65,26 +74,26 @@ export function getLevelExpCost(level: number): number {
 
 export interface LevelStat {
     level: number;
-    spawnAt?: Zone;
+    spawnAt?: ZoneName;
     extraSlot: number;
 }
 
 export const levelStats : LevelStat[] = [
     {
         level: 1,
-        spawnAt: Zones[ZoneName.Easy],
+        spawnAt: ZoneName.SpawnZone,
         extraSlot: 0
     },{
         level: 15,
-        spawnAt: Zones[ZoneName.Medium],
+        spawnAt: ZoneName.Medium,
         extraSlot: 1
     },{
         level: 30,
-        spawnAt: Zones[ZoneName.Hard],
+        spawnAt: ZoneName.Hard,
         extraSlot: 1
     },{
         level: 45,
-        spawnAt: Zones[ZoneName.Nightmare],
+        spawnAt: ZoneName.Nightmare,
         extraSlot: 1
     },{
         level: 60,

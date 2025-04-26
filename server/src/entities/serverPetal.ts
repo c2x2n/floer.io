@@ -108,6 +108,7 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
         if (this.owner.overleveled) {
             this.isReloading = true;
             this.isLoadingFirstTime = true;
+            this.spawned?.destroy()
             return;
         }
 
@@ -126,7 +127,7 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
                     this.position = this.owner.position;
                 } else if (this.isUsing === PetalUsingAnimations.HATCH) {
                     const isSandstorm = this.definition.attributes?.spawner?.idString === "sandstorm";
-                    
+
                     if (isSandstorm) {
                         this.isUsing = undefined;
                         this.useReload = 0;
@@ -160,7 +161,7 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
 
         if (this.isUsing === PetalUsingAnimations.HATCH) {
             const isSandstorm = this.definition.attributes?.spawner?.idString === "sandstorm";
-            
+
             if (isSandstorm) {
                 setTimeout(() => {
                     this.isUsing = undefined;

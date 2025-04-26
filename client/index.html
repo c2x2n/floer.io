@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="user-scalable=no,width=device-width,height=device-height,initial-scale=1,shrink-to-fit=no,viewport-fit=cover,maximum-scale=1">
     <title>floer.io</title>
   </head>
   <body>
@@ -13,11 +13,11 @@
         <canvas id="canvas"></canvas>
         <div id="hud">
             <div id="floer-logo" textStroke="floer.io">floer.io</div>
-            <div id="move-right" style="display: none">
-                <div style="font-size: 25px" textStroke="MOVE RIGHT!">MOVE RIGHT!</div>
+            <div id="move-high" style="display: none">
+                <div style="font-size: 25px" textStroke="MOVE TO HARDER ZONE!">MOVE TO HARDER ZONE!</div>
                 <div style="font-size: 15px" textStroke="You are overleveled for this zone.">You are overleveled for this zone.</div>
                 <div style="font-size: 15px" textStroke="You will be unable to attack after">You will be unable to attack after</div>
-                <div id="move-right-time" style="font-size: 25px; color:indianred" textStroke="6s">6s</div>
+                <div id="move-high-time" style="font-size: 25px; color:indianred" textStroke="6s">6s</div>
             </div>
 
             <div id="chat-box">
@@ -27,6 +27,8 @@
                     <input type="text" id="chat-input" placeholder="Press [ENTER] or click here to chat">
                 </div>
             </div>
+            <div id="game-info" textStroke=""></div>
+            <div id="debug-info" textStroke="no debug information available">no debug information available</div>
         </div>
     </div>
     <div id="game-over-screen">
@@ -38,7 +40,7 @@
         <div id="btn-continue" class="btn btn-green" textStroke="Continue">Continue</div>
     </div>
     <div id="out-game-screen">
-        <div id="floer-version" textStroke="floer.io v0.2.6">floer.io v0.2.6</div>
+        <div id="floer-version" textStroke="floer.io v0.2.7">floer.io v0.2.7</div>
         <div id="main">
             <span id="title" textStroke="floer.io">floer.io</span>
             <div class="line-container">
@@ -108,8 +110,6 @@
                  onclick='window.open("https://github.com/c2x2n/floer.io", "_blank");'></div>
         </div>
     </div>
-    <div id="game-info" textStroke=""></div>
-    <div id="debug-info" textStroke="no debug information available">no debug information available</div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

@@ -1,17 +1,9 @@
-import { EntityType, GameConstants } from "../constants";
+import { EntityType, GameConstants, PlayerState } from "../constants";
 import { type GameBitStream, type Packet } from "../net";
 import { type Vector } from "../utils/vector";
 import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../definitions/petal";
 import { MobDefinition, Mobs } from "../definitions/mob";
 import { Projectile, ProjectileDefinition } from "../definitions/projectile";
-
-export enum PlayerState {
-    Attacking,
-    Defending,
-    Danded,
-    Poisoned,
-    Normal
-}
 
 export interface EntitiesNetData {
     [EntityType.Player]: {

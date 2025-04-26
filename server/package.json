@@ -14,7 +14,9 @@
         "typescript": "^5.4.5"
     },
     "dependencies": {
+        "axios": "^1.9.0",
         "bit-buffer": "^0.2.5",
+        "discord.js": "^14.19.1",
         "dotenv": "^16.4.7",
         "jsonwebtoken": "^9.0.2",
         "nanotimer": "^0.3.15",

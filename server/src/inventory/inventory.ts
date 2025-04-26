@@ -137,16 +137,16 @@ export class Inventory {
     delete(petalIndex: number) {
         if (petalIndex < 0 || petalIndex > this.inventory.length) return;
         const definition = this.inventory[petalIndex];
-        if(definition) {
-            this.player.addExp(Rarity.fromString(definition.rarity).expWhenAbsorb)
-        }
-        this.updateInventory(petalIndex, null);
+
         if (definition) {
+            this.player.addExp(Rarity.fromString(definition.rarity).expWhenAbsorb)
             this.absorbedBefore.add({
                 definition: definition,
                 time: Date.now()
             })
         }
+
+        this.updateInventory(petalIndex, null);
     }
 
     updateInventory(index: number, petal: SavedPetalDefinitionData){
@@ -263,8 +263,8 @@ export class Inventory {
         if (this.player.modifiers.controlRotation) {
             // Use player's MOUSE direction to determine the angle
             const directionAngle = Math.atan2(
-                this.player.direction.mouseDir.y,
-                this.player.direction.mouseDir.x
+                this.player.direction.mouseDirection.y,
+                this.player.direction.mouseDirection.x
             );
 
             this.revolutionRadians = directionAngle;

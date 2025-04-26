@@ -9,7 +9,7 @@ import { ServerMob } from "./entities/serverMob";
 import { ServerLoot } from "./entities/serverLoot";
 import { ServerProjectile } from "./entities/serverProjectile";
 
-import { Zones } from "../../common/src/definitions/zones";
+import { Zones } from "../../common/src/zones";
 
 /**
  * A Grid to filter collision detection of game entities

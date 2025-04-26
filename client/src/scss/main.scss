@@ -10,6 +10,7 @@ $none_bd: #ccc;
 *{
     font-family: 'Ubuntu', sans-serif;
     user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 #loader {
@@ -62,11 +63,8 @@ body {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.2));
   }
-  .floating-entity.mob {
-    animation: spin var(--spin-duration, 15s) linear infinite;
-  }
+
   .floating-entity.petal {
     animation: spin var(--spin-duration, 15s) linear infinite;
   }
@@ -275,8 +273,8 @@ body {
 
 .dragging-petal {
     position: absolute;
-    width: 70px;
-    height: 70px;
+    width: 50px;
+    height: 50px;
     z-index: 9;
     pointer-events: none;
     transform-origin: center center;
@@ -324,6 +322,8 @@ body {
 
 .piece-petal {
     position: absolute;
+    background-repeat: no-repeat;
+    pointer-events: none;
 }
 
 [petalName]:before{
@@ -365,7 +365,7 @@ img {
 .petal-information {
     position: absolute;
     padding: 7px;
-    transform: translate(0, -100%);
+    transform: translate(-35%, -100%);
     background: rgba(0, 0, 0, 0.6);
     height: max-content;
     width: max-content;
@@ -418,13 +418,13 @@ img {
     }
 }
 
-#move-right{
+#move-high{
     position: absolute;
     background: rgba(#000, 0.5);
     top: 40%;
     left: 60%;
     width: 260px;
-    height: 90px;
+    height: 120px;
     border-radius: 6px;
     z-index: 6;
     color: white;

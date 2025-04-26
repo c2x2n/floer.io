@@ -151,7 +151,6 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
 
     destroy() {
         this.game.camera.container.removeChild(this.container);
-
         this.game.camera.container.removeChild(this.staticContainer);
     }
 }

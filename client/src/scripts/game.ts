@@ -5,7 +5,7 @@ import { ClientPlayer } from "@/scripts/entities/clientPlayer.ts";
 import { loadAssets } from "@/scripts/utils/pixi";
 import { Camera } from "@/scripts/render/camera";
 import { ClientEntity } from "@/scripts/entities/clientEntity.ts";
-import { EntityType, GameConstants } from "@common/constants.ts";
+import { ActionType, EntityType, GameConstants } from "@common/constants.ts";
 import { Inventory, PetalContainer } from "@/scripts/inventory.ts";
 import { ClientApplication } from "../main.ts";
 import { JoinPacket } from "@common/packets/joinPacket.ts";
@@ -29,7 +29,9 @@ import { Vec2, Vector } from "@common/utils/vector.ts";
 import { Petals, SavedPetalDefinitionData } from "@common/definitions/petal.ts";
 import { ChatChannel, ChatPacket } from "@common/packets/chatPacket.ts";
 
-import { ZoneName, Zones } from "@common/definitions/zones.ts";
+import { ZoneName, Zones } from "@common/zones.ts";
+import { Rarity } from "@common/definitions/rarity.ts";
+import { Bossbar } from "@/scripts/render/bossbar.ts";
 
 const typeToEntity = {
     [EntityType.Player]: ClientPlayer,
@@ -100,6 +102,7 @@ export class Game {
     readonly exp = new ExpUI(this);
     readonly leaderboard = new Leaderboard(this);
     readonly particleManager = new ParticleManager(this);
+    readonly bossbar = new Bossbar(this);
 
     constructor(app: ClientApplication) {
         this.app = app;
@@ -115,12 +118,12 @@ export class Game {
 
     serverDt: number = 0;
 
-    addTween(tween: Tween, doFunc?: Function): Tween {
+    addTween(tween: Tween, resolve?: Function): Tween {
         this.tweens.add(tween);
         tween.start();
         tween.onComplete(() => {
             this.removeTween(tween);
-            if(doFunc) doFunc();
+            if(resolve) resolve();
         })
         return tween
     }
@@ -131,8 +134,8 @@ export class Game {
 
     async init() {
         await this.pixi.init({
+            resolution: 1.5,
             resizeTo: window,
-            resolution: this.app.settings.data.lowResolution ? 1 : 2,
             antialias: true,
             preference: "webgl",
             autoDensity: true,
@@ -140,16 +143,16 @@ export class Game {
         });
 
         this.pixi.stop();
-        this.pixi.ticker.add(() => this.render());
+        this.pixi.ticker.add(
+            () => this.render()
+        );
         this.pixi.renderer.on("resize", () => this.resize());
 
         this.miniMap.init();
-
         this.camera.init();
-
         this.exp.init();
-
         this.leaderboard.init();
+        this.bossbar.init();
 
         await loadAssets();
         this.inventory.updatePetalRows();
@@ -324,9 +327,9 @@ export class Game {
                 const data = Zones[zonesKey as ZoneName];
                 ctx.rect(
                     Camera.unitToScreen(data.x),
-                    0,
+                    Camera.unitToScreen(data.y ?? 0),
                     Camera.unitToScreen(data.width),
-                    Camera.unitToScreen(this.height)
+                    Camera.unitToScreen(data.height ?? this.height)
                 ).fill(data.backgroundColor);
 
                 ctx.rect(
@@ -447,15 +450,12 @@ export class Game {
         }
 
         this.camera.render();
-
         this.miniMap.render();
-
         this.exp.render();
-
         this.leaderboard.render();
         this.particleManager.render(dt);
-
         this.ui.render();
+        this.bossbar.render();
 
         this.sendInput();
 
@@ -464,12 +464,13 @@ export class Game {
         })
 
         this.needUpdateEntities.clear();
+
     }
 
     lastDirection: {
         direction: number;
-        mouseDir: number
-    } = {direction:0,mouseDir:0};
+        mouseDirection: number
+    } = {direction:0,mouseDirection:0};
 
     sendInput() {
         const inputPacket = new InputPacket();
@@ -482,17 +483,12 @@ export class Game {
         const direction = this.input.moveDirection;
         inputPacket.direction = direction ?? this.lastDirection;
         this.lastDirection = inputPacket.direction;
-        inputPacket.mouseDistance = this.input.moveDistance;
+        inputPacket.movementDistance = this.input.moveDistance;
 
-        inputPacket.switchedPetalIndex = this.inventory.switchedPetalIndex;
-        inputPacket.switchedToPetalIndex = this.inventory.switchedToPetalIndex;
-        inputPacket.deletedPetalIndex = this.inventory.deletedPetalIndex;
+        inputPacket.actions = Array.from(this.input.actionsToSend);
+        this.input.actionsToSend.clear();
 
         this.sendPacket(inputPacket);
-
-        this.inventory.switchedPetalIndex = -1;
-        this.inventory.switchedToPetalIndex = -1;
-        this.inventory.deletedPetalIndex = -1;
     }
 
     sendChat(message: string, channel: ChatChannel): void {
@@ -507,5 +503,6 @@ export class Game {
         this.miniMap.resize();
         this.exp.resize();
         this.leaderboard.resize();
+        this.bossbar.resize();
     }
 }

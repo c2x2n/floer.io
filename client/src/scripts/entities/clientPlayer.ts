@@ -1,8 +1,8 @@
 import { ClientEntity } from "./clientEntity";
-import { EntityType, GameConstants } from "@common/constants";
+import { EntityType, GameConstants, PlayerState } from "@common/constants";
 import { GameSprite, getGameAssetsPath } from "@/scripts/utils/pixi";
 import { Game } from "@/scripts/game";
-import { EntitiesNetData, PlayerState } from "@common/packets/updatePacket.ts";
+import { EntitiesNetData } from "@common/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
 import { Graphics, Text, Container } from "pixi.js";
 import { MathNumeric } from "@common/utils/math.ts";

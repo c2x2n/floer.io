@@ -4,8 +4,8 @@ import { MathNumeric } from "@common/utils/math.ts";
 import { Petals } from "@common/definitions/petal.ts";
 
 class LeaderboardContent {
-    width: number = 182;
-    height: number = 19;
+    readonly width: number = 182;
+    readonly height: number = 19;
 
     graphics: Graphics = new Graphics();
     text: Text = new Text({
@@ -21,7 +21,6 @@ class LeaderboardContent {
     constructor() {
         this.text.anchor.set(0.5);
     }
-
 }
 
 export class Leaderboard {
@@ -124,7 +123,7 @@ export class Leaderboard {
                 leaderboard.graphics
                     .roundRect(8, 40 + height, leaderboard.width, leaderboard.height, 16)
                     .fill({ color: 0x343434, alpha: 0.5 })
-                    
+
                 // score bar
                 // minimum width so that border radius works
                 width = Math.max(width, 20);
