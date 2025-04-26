@@ -43,6 +43,7 @@ export class ClientProjectile extends ClientEntity {
         if (data.full){
             if (isNew) {
                 this.definition = data.full.definition;
+                this.hitboxRadius = data.full.hitboxRadius;
 
                 this.container.position = Camera.vecToScreen(this.position);
 

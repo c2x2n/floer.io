@@ -184,6 +184,9 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
     }
 
     dealDamageTo(to: damageableEntity): void{
+        if (this.definition.doesNotDamage?.includes(to.type)) {
+            return;
+        };
         if (this.damage && to.canReceiveDamageFrom(this)) {
             to.receiveDamage(this.damage, this.owner);
             this.owner.sendEvent(

@@ -87,6 +87,7 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
     }
 
     dealDamageTo(to: damageableEntity): void{
+        if (this.definition.doesNotDamage?.includes(to.type)) return;
         if (to.canReceiveDamageFrom(this)) {
             to.receiveDamage(this.damage, this.source);
             if (this.from && this.source.type === EntityType.Player) {

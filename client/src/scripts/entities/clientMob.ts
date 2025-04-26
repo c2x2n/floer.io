@@ -102,6 +102,7 @@ export class ClientMob extends ClientEntity {
 
         if (data.full) {
             this.definition = data.full.definition;
+            this.hitboxRadius = this.definition.hitboxRadius;
 
             if (isNew) {
                 this.container.position = Camera.vecToScreen(this.position);

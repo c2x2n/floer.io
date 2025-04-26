@@ -131,13 +131,9 @@ export class ClientPetal extends ClientEntity {
     updateFromData(data: EntitiesNetData[EntityType.Petal], isNew: boolean): void {
         this.position = data.position;
 
-        // const offset =
-        //     Camera.vecToScreen(
-        //         Vec2.div(Vec2.sub(this.oldPosition, this.position), 1)
-        //     );
-
         if (data.full) {
             this.definition = data.full.definition;
+            this.hitboxRadius = this.definition.hitboxRadius;
 
             if (isNew){
                 this.container.position = Camera.vecToScreen(this.position);

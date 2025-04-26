@@ -36,6 +36,7 @@ export class ClientPlayer extends ClientEntity {
 
     constructor(game: Game, id: number) {
         super(game, id)
+        this.hitboxRadius = GameConstants.player.radius;
 
         this.container.zIndex = 2;
 

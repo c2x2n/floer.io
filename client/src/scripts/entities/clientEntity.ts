@@ -2,7 +2,7 @@ import { type GameEntity } from "@common/utils/entityPool";
 import { EntityType } from "@common/constants";
 import { Vec2, Vector } from "@common/utils/vector";
 import { Game } from "@/scripts/game";
-import { Container, ColorMatrixFilter } from "pixi.js";
+import { Container, ColorMatrixFilter, Graphics } from "pixi.js";
 import { EntitiesNetData } from "@common/packets/updatePacket.ts";
 import { Tween } from "@tweenjs/tween.js";
 import { MathNumeric } from "@common/utils/math.ts";
@@ -16,11 +16,13 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
 
     container = new Container();
     staticContainer: Container = new Container();
+    hitboxGraphics = new Graphics();
 
     lastReceivePacket: number = 0;
 
     oldPosition: Vector = Vec2.new(0, 0);
     _position: Vector = Vec2.new(0, 0);
+    hitboxRadius: number = 0;
     get position(): Vector {
         return this._position;
     }
@@ -50,6 +52,10 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
 
         this.game.camera.addObject(this.container);
         this.game.camera.addObject(this.staticContainer);
+        // Add hitboxGraphics to staticContainer instead of container
+        // otherwise hitbox size will scale twice
+        this.staticContainer.addChild(this.hitboxGraphics);
+        this.hitboxGraphics.zIndex = 10;
     }
 
     updateFromData(_data: EntitiesNetData[T], _isNew: boolean): void {
@@ -71,6 +77,17 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
             this.interpolationTick / this.game.serverDt
             , 0, 1
         );
+        // TODO: Either remove or make dev-only. BUT how?
+        this.renderHitbox();
+    }
+
+    renderHitbox(): void {
+        this.hitboxGraphics.clear();
+        if (this.hitboxRadius > 0) {
+            const screenRadius = Camera.unitToScreen(this.hitboxRadius);
+            this.hitboxGraphics.circle(0, 0, screenRadius)
+                .stroke({ width: 1.5, color: 0xff0000, alpha: 0.8 }); // red
+        }
     }
 
     updateContainerPosition(n?: number): void {

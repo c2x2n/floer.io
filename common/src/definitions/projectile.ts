@@ -1,8 +1,10 @@
 import { Definitions, ObjectDefinition } from "../utils/definitions";
 import { Modifiers, PlayerModifiers } from "../typings";
+import { EntityType } from "../constants";
 
 export type ProjectileDefinition = ObjectDefinition & {
     readonly onGround?: boolean;
+    readonly doesNotDamage?: EntityType[];
 };
 
 export const Projectile = new Definitions<ProjectileDefinition>([
@@ -35,6 +37,11 @@ export const Projectile = new Definitions<ProjectileDefinition>([
         idString: "uranium",
         displayName: "Uranium",
         onGround: true
+    },{
+        idString: "speas",
+        displayName: "Grapes",
+        usingAssets: "poison_peas",
+        doesNotDamage: [EntityType.Player],
     },
 ] as ProjectileDefinition[]);
 

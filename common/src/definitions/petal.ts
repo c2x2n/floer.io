@@ -5,6 +5,7 @@ import { PlayerModifiers } from "../typings";
 import { Projectile, ProjectileDefinition, ProjectileParameters } from "./projectile";
 import { MobDefinition, Mobs } from "./mob";
 import { MobCategory } from "./mob";
+import { EntityType } from "../constants";
 
 export type SavedPetalDefinitionData = PetalDefinition | null
 
@@ -18,6 +19,7 @@ export type PetalDefinition = ObjectDefinition & {
     readonly hitboxRadius: number
     readonly effectiveFirstReload?: boolean;
     readonly noAnnouncement?: boolean;
+    readonly doesNotDamage?: EntityType[]
     readonly images?: {
         readonly slotDisplaySize?: number
         readonly slotRotation?: number
@@ -1245,6 +1247,42 @@ export const Petals = new Definitions<PetalDefinition>([
         pieceAmount: 5,
         isShowedInOne: true,
         rarity: RarityName.mythic,
+        usingAssets: "poison_peas",
+    },
+    {
+        idString: "speas",
+        displayName: "Grapes",
+        description: "pea machine gun AAAAAA",
+        damage: 2,
+        health: 12,
+        extendable: false,
+        usable: true,
+        useTime: 0.05,
+        images: {
+            slotDisplaySize: 45,
+        },
+        attributes: {
+            peas_shoot: {
+                definition: Projectile.fromString("speas"),
+                speed: 7.5,
+                damage: 0.1,
+                health: 26,
+                hitboxRadius: 0.46,
+                despawnTime: 4.5
+            },
+            poison: {
+                damagePerSecond: 40,
+                duration: 120
+            }
+        },
+        reloadTime: 0.15,
+        hitboxRadius: 0.5,
+        isDuplicate: true,
+        pieceAmount: 7,
+        isShowedInOne: true,
+        rarity: RarityName.super,
+        undroppable: true,
+        doesNotDamage: [EntityType.Player],
         usingAssets: "poison_peas",
     },
     {
