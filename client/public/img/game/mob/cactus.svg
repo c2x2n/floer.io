@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    version="1.1"
-   width="200"
-   height="200"
-   viewBox="0 0 200.00001 199.99999"
+   width="228"
+   height="228"
+   viewBox="0 0 228.00001 227.99999"
    id="svg13"
    sodipodi:docname="cactus.svg"
    inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
@@ -23,13 +23,13 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="1.6062891"
-     inkscape:cx="59.142529"
-     inkscape:cy="163.42015"
-     inkscape:window-width="1397"
-     inkscape:window-height="1041"
-     inkscape:window-x="142"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0"
+     inkscape:cx="161.86376"
+     inkscape:cy="210.11162"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="3832"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
      inkscape:current-layer="g13" />
   <g
      transform="matrix(0.77748032,0,0,0.74434283,-148.81391,-34.217618)"
@@ -43,7 +43,7 @@
        stroke-dashoffset="0"
        style="mix-blend-mode:normal"
        id="g12"
-       transform="matrix(1.0000843,0,0,1.0025644,-0.01474792,-0.11940385)">
+       transform="matrix(1.1402771,0,0,1.1431049,-26.844933,-6.5836312)">
       <path
          d="m 422.30531,144.24319 25.17169,-1.80978 -23.04173,12.64782 z"
          fill="#2f271e"

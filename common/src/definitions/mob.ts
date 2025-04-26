@@ -878,6 +878,31 @@ export const Mobs = new Definitions<MobDefinition>([
         usingAssets: "shiny_ladybug"
     },
     {
+        idString: "sshiny",
+        displayName: "Ladybug???",
+        damage: 1,
+        health: 725000,
+        category: MobCategory.Passive,
+        hitboxRadius: 7,
+        speed: 4,
+        lootTable: {
+            "rose": 1,
+            "twin": 1,
+            "tri_rose": 1,
+            "bubble": 1,
+            "wing": 1,
+            "tri_wing": 0.6,
+            "leg_bubble": 0.012,
+            "epic_rose": 0.9,
+            "triplet": 1,
+            "penta": 0.5,
+            "myt_tri_rose": 0.009
+        },
+        rarity: RarityName.ethereal,
+        exp: 5,
+        usingAssets: "shiny_ladybug"
+    },
+    {
         idString: "massive_dark_ladybug",
         displayName: "Ladybug",
         damage: 20,

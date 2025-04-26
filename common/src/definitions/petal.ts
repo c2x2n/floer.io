@@ -1271,7 +1271,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 despawnTime: 4.5
             },
             poison: {
-                damagePerSecond: 40,
+                damagePerSecond: 100,
                 duration: 120
             }
         },
@@ -1280,7 +1280,7 @@ export const Petals = new Definitions<PetalDefinition>([
         isDuplicate: true,
         pieceAmount: 7,
         isShowedInOne: true,
-        rarity: RarityName.super,
+        rarity: RarityName.phantasmagoric,
         undroppable: true,
         doesNotDamage: [EntityType.Player],
         usingAssets: "poison_peas",
@@ -1432,6 +1432,22 @@ export const Petals = new Definitions<PetalDefinition>([
             zoom: 45
         },
         rarity: RarityName.mythic,
+        usingAssets: "antennae"
+    },
+    {
+        idString: "santennae",
+        displayName: "Antennae",
+        description: "A larger vision comes at the cost of details you can observe",
+        equipment: true,
+        images: {
+            slotDisplaySize: 60
+        },
+        hitboxRadius: 0.9,
+        modifiers: {
+            zoom: 120
+        },
+        undroppable: true,
+        rarity: RarityName.super,
         usingAssets: "antennae"
     },
     {
@@ -1782,6 +1798,29 @@ export const Petals = new Definitions<PetalDefinition>([
         isDuplicate: true,
         pieceAmount: 25,
         rarity: RarityName.super,
+        usingAssets: "egg",
+        undroppable: true
+    },
+    {
+        idString: "segg3",
+        displayName: "Egg",
+        description: "Something that does not belong to this world might pop out of this.",
+        damage: 1,
+        health: 2500,
+        extendable: false,
+        usable: true,
+        images: {
+            slotDisplaySize: 80
+        },
+        useTime: 0.2,
+        attributes: {
+            spawner: Mobs.fromString("sshiny"),
+        },
+        reloadTime: 0.2,
+        hitboxRadius: 0.6,
+        isDuplicate: false,
+        pieceAmount: 1,
+        rarity: RarityName.ethereal,
         usingAssets: "egg",
         undroppable: true
     },
