@@ -1542,8 +1542,8 @@ export const Petals = new Definitions<PetalDefinition>([
         displayName: "Stick",
         description: "A mysterious stick that summons the forces of the wind.",
         damage: 5,
-        health: 15,
-        extendable: true,
+        health: 20,
+        extendable: false,
         usable: true,
         useTime: 5,
         images: {
@@ -2028,7 +2028,8 @@ export const Petals = new Definitions<PetalDefinition>([
         usable: false,
         images: {
             slotDisplaySize: 45,
-            selfGameRotation: 0.15
+            selfGameRotation: 0.15,
+            fontSizeMultiplier: 0.9
         },
         attributes: {
             lightning: {
