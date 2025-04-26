@@ -1136,7 +1136,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 damage: 8,
                 health: 5,
                 hitboxRadius: 0.38,
-                despawnTime: 5
+                despawnTime: 3.5
             }
         },
         reloadTime: 1.2,
@@ -1165,7 +1165,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 damage: 8,
                 health: 5,
                 hitboxRadius: 0.33,
-                despawnTime: 5
+                despawnTime: 3.5
             },
             poison: {
                 damagePerSecond: 10,
@@ -1198,7 +1198,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 damage: 10,
                 health: 5,
                 hitboxRadius: 0.46,
-                despawnTime: 5
+                despawnTime: 4
             },
             poison: {
                 damagePerSecond: 10,
@@ -1232,7 +1232,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 damage: 15,
                 health: 10,
                 hitboxRadius: 0.46,
-                despawnTime: 5
+                despawnTime: 4.5
             },
             poison: {
                 damagePerSecond: 15,
