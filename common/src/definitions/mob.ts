@@ -261,7 +261,7 @@ export const Mobs = new Definitions<MobDefinition>([
         lootTable: {
             "iris": 0.09,
             "salt": 0.06,
-            "triplet": 0.004,
+            "triplet": 0.08,
             "wing": 0.006,
         },
         rarity: RarityName.unusual,
@@ -285,7 +285,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "triplet": 0.1,
             "wing": 0.6,
             "powder": 0.00009,
-            "leg_egg": 0.006,
+            "leg_egg": 0.06,
         },
         rarity: RarityName.legendary,
         exp: 500
@@ -343,13 +343,12 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 5,
         speed: 4,
         lootTable:  {
-            "dandelion": 0.3,
+            "dandelion": 1,
             "bubble": 0.2,
-            "missile": 0.75,
-            "big_missile": 0.02,
+            "missile": 1,
+            "big_missile": 0.2,
             "leg_bubble": 0.0009,
             "wing": 0.5,
-            "tri_wing": 0.000005,
             "antennae": 0.005,
         },
         rarity: RarityName.legendary,
@@ -662,7 +661,7 @@ export const Mobs = new Definitions<MobDefinition>([
         exp: 4
     },{
         idString: "evil_centipede",
-        displayName: "Centipede",
+        displayName: "Evil Centipede",
         damage: 10,
         health: 50,
         category: MobCategory.Enemy,
@@ -687,7 +686,7 @@ export const Mobs = new Definitions<MobDefinition>([
         segmentDefinitionIdString: "evil_centipede_body"
     }, {
         idString: "evil_centipede_body",
-        displayName: "Centipede",
+        displayName: "Evil Centipede",
         damage: 10,
         health: 50,
         category: MobCategory.Enemy,
@@ -701,13 +700,61 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         lootTable: {
             "iris": 0.82,
-            "peas": 0.18,
-            "chip": 0.028,
-            "poison_peas": 0.01,
-            "leg_poison_peas": 0.001
+            "peas": 0.58,
+            "chip": 0.28,
+            "poison_peas": 0.2,
+            "leg_poison_peas": 0.01
         },
         rarity: RarityName.rare,
         exp: 4
+    },{
+        idString: "leg_evil_centipede",
+        displayName: "Evil Centipede",
+        damage: 20,
+        health: 1500,
+        category: MobCategory.Enemy,
+        aggroRadius: 25,
+        speed: 3.5,
+        hitboxRadius: 2.2,
+        images: {
+            width: 242.874,
+            height: 226
+        },
+        lootTable: {
+            "iris": 0.82,
+            "peas": 0.85,
+            "chip": 0.028,
+            "poison_peas": 0.2,
+            "leg_poison_peas": 0.02
+        },
+        rarity: RarityName.legendary,
+        exp: 100,
+        hasSegments: true,
+        segmentAmount: 20,
+        segmentDefinitionIdString: "leg_evil_centipede_body"
+    }, {
+        idString: "leg_evil_centipede_body",
+        displayName: "Evil Centipede",
+        damage: 20,
+        health: 500,
+        category: MobCategory.Enemy,
+        aggroRadius: 25,
+        speed: 3.5,
+        hitboxRadius: 2.2,
+        hideInformation: true,
+        images: {
+            width: 242.874,
+            height: 226
+        },
+        lootTable: {
+            "iris": 0.82,
+            "peas": 0.18,
+            "chip": 0.028,
+            "poison_peas": 0.5,
+            "leg_poison_peas": 0.01
+        },
+        rarity: RarityName.legendary,
+        exp: 100
     },{
         idString: "mega_mantis",
         displayName: "Mantis",
