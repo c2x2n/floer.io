@@ -1799,7 +1799,7 @@ export const Petals = new Definitions<PetalDefinition>([
         description: "Highly radioactive material that poisons enemies and the wearer. Handle with care!",
         damage: 1,
         health: 32,
-        extendable: true,
+        extendable: false,
         usable: false,
         images: {
             slotDisplaySize: 40,
