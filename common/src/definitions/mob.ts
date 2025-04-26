@@ -886,19 +886,9 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 7,
         speed: 4,
         lootTable: {
-            "rose": 1,
-            "twin": 1,
-            "tri_rose": 1,
-            "bubble": 1,
-            "wing": 1,
-            "tri_wing": 0.6,
-            "leg_bubble": 0.012,
-            "epic_rose": 0.9,
-            "triplet": 1,
-            "penta": 0.5,
-            "myt_tri_rose": 0.009
+            'fast': 1,
         },
-        rarity: RarityName.ethereal,
+        rarity: RarityName.common,
         exp: 5,
         usingAssets: "shiny_ladybug"
     },
