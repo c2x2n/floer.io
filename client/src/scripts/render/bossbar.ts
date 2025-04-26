@@ -37,7 +37,7 @@ export interface BossbarData {
 }
 
 export class Bossbar {
-    readonly width: number = 320;
+    readonly width: number = 335;
     readonly height: number = 30;
 
     bossbars: BossbarContent[] = [];
@@ -103,12 +103,12 @@ export class Bossbar {
                     .fill({ color: 0x87e63e, alpha: 0.8 })
 
                 bossbar.nameText.text = data.mob.displayName;
-                bossbar.nameText.position.set(0, yPosition - this.height / 2 - 3);
+                bossbar.nameText.position.set(0, yPosition - this.height / 2 - 1.5);
 
                 const rarity = Rarity.fromString(data.mob.rarity);
                 bossbar.rarityText.text = rarity.displayName;
                 bossbar.rarityText.style.fill = rarity.color;
-                bossbar.rarityText.position.set(0, yPosition + (this.height + stroke) / 2 + 3);
+                bossbar.rarityText.position.set(0, yPosition + (this.height + stroke) / 2 + 1);
 
             } else {
                 bossbar.nameText.text = ""

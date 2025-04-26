@@ -364,6 +364,10 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Enemy,
         reachingAway: true,
         shootable: true,
+        images: {
+            width: 254.552,
+        //    height: 163.995
+        },
         shoot: {
             hitboxRadius: 0.7,
             damage: 10,
@@ -776,6 +780,36 @@ export const Mobs = new Definitions<MobDefinition>([
         rarity: RarityName.mythic,
         exp: 14000,
         usingAssets: "mantis"
+    },
+    {
+        idString: "giant_mantis",
+        displayName: "Mantis",
+        damage: 260,
+        health: 225000,
+        category: MobCategory.Enemy,
+        reachingAway: true,
+        shootable: true,
+        images: {
+            width: 254.552,
+          //  height: 163.995
+        },
+        shoot: {
+            hitboxRadius: 5.6,
+            damage: 60,
+            health: 2300,
+            despawnTime: 5,
+            speed: 15,
+            definition: Projectile.fromString("peas")
+        },
+        shootSpeed: 0.5,
+        aggroRadius: 90,
+        hitboxRadius: 21,
+        speed: 4,
+        lootTable: {
+        },
+        rarity: RarityName.ethereal,
+        exp: 96000,
+        usingAssets: "mantis"
     },{
         idString: "mega_hornet",
         displayName: "Hornet",
@@ -838,6 +872,24 @@ export const Mobs = new Definitions<MobDefinition>([
         rarity: RarityName.mythic,
         exp: 10000,
         usingAssets: "beetle"
+    },
+    {
+        idString: "giant_roach",
+        displayName: "Roach",
+        damage: 520,
+        health: 225000*3,
+        category: MobCategory.Passive,
+        aggroRadius: 180,
+        hitboxRadius: 21,
+        images: {
+            width: 235.000
+        },
+        speed: 7,
+        lootTable: {
+        },
+        rarity: RarityName.phantasmagoric,
+        exp: 232000,
+        usingAssets: "roach"
     },{
         idString: "massive_shiny_ladybug",
         displayName: "Ladybug",
@@ -910,7 +962,7 @@ export const Mobs = new Definitions<MobDefinition>([
         idString: "mega_spider",
         displayName: "Spider",
         damage: 65,
-        health: 2550,
+        health: 2500,
         category: MobCategory.Enemy,
         aggroRadius: 100,
         hitboxRadius: 7,
@@ -950,17 +1002,17 @@ export const Mobs = new Definitions<MobDefinition>([
     {
         idString: "giant_spider",
         displayName: "Spider",
-        damage: 60,
-        health: 6000,
+        damage: 130,
+        health: 7500,
         category: MobCategory.Enemy,
         aggroRadius: 35,
-        hitboxRadius: 100,
+        hitboxRadius: 10,
         shootable: true,
         images: {
             spiderLeg: true
         },
         shoot: {
-            hitboxRadius: 8,
+            hitboxRadius: 6.5,
             despawnTime: 7,
             speed: 0,
             definition: Projectile.fromString("web"),
