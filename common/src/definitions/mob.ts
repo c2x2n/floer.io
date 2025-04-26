@@ -731,7 +731,8 @@ export const Mobs = new Definitions<MobDefinition>([
         exp: 100,
         hasSegments: true,
         segmentAmount: 20,
-        segmentDefinitionIdString: "leg_evil_centipede_body"
+        segmentDefinitionIdString: "leg_evil_centipede_body",
+        usingAssets: "evil_centipede"
     }, {
         idString: "leg_evil_centipede_body",
         displayName: "Evil Centipede",
@@ -754,7 +755,8 @@ export const Mobs = new Definitions<MobDefinition>([
             "leg_poison_peas": 0.01
         },
         rarity: RarityName.legendary,
-        exp: 100
+        exp: 100,
+        usingAssets: "evil_centipede_body"
     },{
         idString: "mega_mantis",
         displayName: "Mantis",
