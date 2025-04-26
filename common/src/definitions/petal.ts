@@ -613,7 +613,7 @@ export const Petals = new Definitions<PetalDefinition>([
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 45,
+            slotDisplaySize: 38,
         },
         reloadTime: 2.5,
         hitboxRadius: 0.55,
