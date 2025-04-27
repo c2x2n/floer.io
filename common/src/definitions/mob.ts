@@ -805,7 +805,9 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 260,
         health: 225000,
         category: MobCategory.Enemy,
-        reachingAway: true,
+        movement: {
+            reachingAway: true,
+        },
         shootable: true,
         images: {
             width: 254.552,
