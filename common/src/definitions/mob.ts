@@ -1342,7 +1342,7 @@ export const Mobs = new Definitions<MobDefinition>([
         idString: "myt_starfish",
         displayName: "Starfish",
         damage: 150,
-        health: 1400,
+        health: 7400,
         category: MobCategory.Enemy,
         aggroRadius: 55,
         hitboxRadius: 13,
@@ -1362,7 +1362,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "starfish": 1,
         },
         rarity: RarityName.mythic,
-        exp: 150,
+        exp: 500,
         usingAssets: "starfish"
     }
 ] satisfies MobDefinition[]);
