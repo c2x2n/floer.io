@@ -78,10 +78,15 @@ export class PetalBunch {
             if (this.definition.isShowedInOne) {
                 let rotationRadians = this.rotationRadians;
                 const singleRotatedRadians = P2 / totalPieces;
+                const definition = this.definition;
 
                 this.petals.forEach(petal => {
                     petal.setPositionSafe(
-                        MathGraphics.getPositionOnCircle(rotationRadians, GameConstants.petal.rotationRadius, firstPetalCenter)
+                        MathGraphics.getPositionOnCircle(
+                            rotationRadians,
+                            definition.distanceToCenter ?? GameConstants.petal.rotationRadius,
+                            firstPetalCenter
+                        )
                     )
 
                     rotationRadians += singleRotatedRadians;

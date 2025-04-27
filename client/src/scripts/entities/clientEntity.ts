@@ -78,12 +78,16 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
             , 0, 1
         );
         // TODO: Either remove or make dev-only. BUT how?
-        this.renderHitbox();
+        if (this.game.app.settings.data.hitbox) this.renderHitbox();
+        else if (this.drawedHitbox) this.renderHitbox(true);
     }
 
-    renderHitbox(): void {
+    drawedHitbox: boolean = false;
+
+    renderHitbox(hide?: boolean): void {
+        this.drawedHitbox = !hide;
         this.hitboxGraphics.clear();
-        if (this.hitboxRadius > 0) {
+        if (!hide && this.hitboxRadius > 0) {
             const screenRadius = Camera.unitToScreen(this.hitboxRadius);
             this.hitboxGraphics.circle(0, 0, screenRadius)
                 .stroke({ width: 1.5, color: 0xff0000, alpha: 0.8 }); // red

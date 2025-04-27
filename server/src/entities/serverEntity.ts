@@ -188,9 +188,25 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
             [EntityType.Petal]: 0,
             [EntityType.Player]: 1.5,
             [EntityType.Projectile]: 0,
-            [EntityType.Loot]: 0
+            [EntityType.Loot]: 0,
+            [EntityType.Wall]: 0,
         }
         if (collision) {
+            if (entity.knockback === 0) {
+                this.position = Vec2.add(
+                    this.position,
+                    Vec2.mul(collision.dir, collision.pen)
+                )
+
+                for (const aVelocity of this.velocity) {
+                    aVelocity.vector = Vec2.add(
+                        aVelocity.vector,
+                        Vec2.mul(collision.dir, collision.pen)
+                    )
+                }
+
+                return;
+            }
             this.addVelocity(
                 Vec2.mul(
                     collision.dir,

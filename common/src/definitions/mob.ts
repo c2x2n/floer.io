@@ -1,6 +1,7 @@
 import { Definitions, ObjectDefinition } from "../utils/definitions";
 import { Projectile, ProjectileDefinition, ProjectileParameters } from "./projectile";
 import { RarityName } from "./rarity";
+import { Modifiers } from "../typings";
 
 export enum MobCategory{
     Fixed,
@@ -24,8 +25,16 @@ export type MobDefinition = ObjectDefinition & {
         mouthXPosition?: number
         mouthYPosition?: number
         spiderLeg?: boolean
+        rotation?: number
     }
-    readonly reachingAway?: boolean
+    readonly movement?: {
+        readonly reachingAway?: boolean
+        readonly sandstormLike?: boolean
+    }
+    readonly skill?: {
+        readonly healUnder?: number
+    }
+    readonly modifiers?: Partial<Modifiers>
     readonly hideInformation?: boolean
     readonly despawnTime?: number
     readonly noSpawnMessage?: boolean
@@ -139,7 +148,6 @@ export const Mobs = new Definitions<MobDefinition>([
             "jelly": 0.08,
             "wing": 0.08,
             "leg_bubble": 0.00012,
-            "starfish": 0.0001,
             "triplet": 0.002,
             "shell": 0.02
         },
@@ -297,7 +305,6 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 50,
         health: 35,
         category: MobCategory.Enemy,
-        reachingAway: true,
         shootable: true,
         turningHead: true,
         shoot: {
@@ -307,6 +314,9 @@ export const Mobs = new Definitions<MobDefinition>([
             despawnTime: 3,
             speed: 6,
             definition: Projectile.fromString("missile")
+        },
+        movement: {
+            reachingAway: true,
         },
         shootSpeed: 1.5,
         aggroRadius: 30,
@@ -329,7 +339,9 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 75,
         health: 900,
         category: MobCategory.Enemy,
-        reachingAway: true,
+        movement: {
+            reachingAway: true,
+        },
         shootable: true,
         turningHead: true,
         shoot: {
@@ -362,7 +374,9 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 30,
         health: 70,
         category: MobCategory.Enemy,
-        reachingAway: true,
+        movement: {
+            reachingAway: true,
+        },
         shootable: true,
         shoot: {
             hitboxRadius: 0.7,
@@ -390,7 +404,9 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 30,
         health: 70,
         category: MobCategory.Enemy,
-        reachingAway: true,
+        movement: {
+            reachingAway: true,
+        },
         shootable: true,
         shoot: {
             hitboxRadius: 0.7,
@@ -749,7 +765,9 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 30,
         health: 1500,
         category: MobCategory.Enemy,
-        reachingAway: true,
+        movement: {
+            reachingAway: true,
+        },
         shootable: true,
         shoot: {
             hitboxRadius: 2.8,
@@ -782,7 +800,9 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 125,
         health: 2500,
         category: MobCategory.Enemy,
-        reachingAway: true,
+        movement: {
+            reachingAway: true,
+        },
         shootable: true,
         turningHead: true,
         shoot: {
@@ -898,7 +918,6 @@ export const Mobs = new Definitions<MobDefinition>([
             "wing": 0.16,
             "yinyang": 0.4,
             "leg_bubble": 0.2,
-            "starfish": 0.2,
             "triplet": 0.8,
             "penta": 0.002,
             "myt_tri_rose": 0.45,
@@ -1221,7 +1240,9 @@ export const Mobs = new Definitions<MobDefinition>([
         images: {
             width: 150,
             height: 150,
-            spiderLeg: true
+        },
+        movement: {
+            sandstormLike: true
         },
         lootTable: {
             "sand": 0.5,
@@ -1234,5 +1255,58 @@ export const Mobs = new Definitions<MobDefinition>([
         rarity: RarityName.rare,
         exp: 15,
         usingAssets: "sandstorm"
+    }, {
+        idString: "starfish",
+        displayName: "Starfish",
+        damage: 40,
+        health: 140,
+        category: MobCategory.Enemy,
+        aggroRadius: 15,
+        hitboxRadius: 5,
+        speed: 5,
+        images: {
+            rotation: 1
+        },
+        skill: {
+            healUnder: 0.5
+        },
+        modifiers: {
+            healPerSecond: 10
+        },
+        lootTable: {
+            "sand": 0.5,
+            "fast": 0.2,
+            "triangle": 0.08,
+            "powder": 0.05,
+            "starfish": 0.2,
+        },
+        rarity: RarityName.rare,
+        exp: 15,
+    }, {
+        idString: "myt_starfish",
+        displayName: "Starfish",
+        damage: 150,
+        health: 1400,
+        category: MobCategory.Enemy,
+        aggroRadius: 55,
+        hitboxRadius: 13,
+        speed: 5,
+        images: {
+            rotation: 1
+        },
+        skill: {},
+        modifiers: {
+            healPerSecond: 50
+        },
+        lootTable: {
+            "sand": 1,
+            "fast": 1,
+            "triangle": 1,
+            "powder": 0.5,
+            "starfish": 1,
+        },
+        rarity: RarityName.mythic,
+        exp: 150,
+        usingAssets: "starfish"
     }
 ] satisfies MobDefinition[]);

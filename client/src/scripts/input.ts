@@ -198,6 +198,20 @@ export class Input {
                 this.game.ui.keyboardMovement.trigger("click");
             }
 
+            if (upperCaseKey === "KeyG") {
+                this.game.app.settings.changeSettings(
+                    "hitbox", !this.game.app.settings.data.hitbox
+                );
+            }
+
+            if (upperCaseKey === "KeyL") {
+                this.game.app.settings.changeSettings(
+                    "debug", !this.game.app.settings.data.debug
+                );
+
+                this.game.ui.renderDebug();
+            }
+
             if (upperCaseKey === "KeyX" || upperCaseKey === "KeyR") {
                 this.game.inventory.transformAllSlot();
             }

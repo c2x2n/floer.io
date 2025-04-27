@@ -59,7 +59,7 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
     readonly damage?: number;
     health?: number;
 
-    knockback: number = 0;
+    knockback: number = 0.00002;
     weight = 0.0002;
 
     spawned?: ServerMob;

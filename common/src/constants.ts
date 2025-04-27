@@ -5,7 +5,8 @@ export enum EntityType {
     Petal,
     Mob,
     Loot,
-    Projectile
+    Projectile,
+    Wall
 }
 
 export enum ActionType {
@@ -69,8 +70,8 @@ export const GameConstants = {
         rotationRadius: 0.5
     },
     game: {
-        width: 2566,
-        height: 866
+        width: 3000,
+        height: 400
     },
     loot: {
         radius: 0.6,

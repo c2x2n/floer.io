@@ -32,13 +32,15 @@ import { ChatChannel, ChatPacket } from "@common/packets/chatPacket.ts";
 import { ZoneName, Zones } from "@common/zones.ts";
 import { Rarity } from "@common/definitions/rarity.ts";
 import { Bossbar } from "@/scripts/render/bossbar.ts";
+import { ClientWall } from "@/scripts/entities/clientWall.ts";
 
 const typeToEntity = {
     [EntityType.Player]: ClientPlayer,
     [EntityType.Petal]: ClientPetal,
     [EntityType.Mob]: ClientMob,
     [EntityType.Loot]: ClientLoot,
-    [EntityType.Projectile]: ClientProjectile
+    [EntityType.Projectile]: ClientProjectile,
+    [EntityType.Wall]: ClientWall
 }
 
 
@@ -134,7 +136,7 @@ export class Game {
 
     async init() {
         await this.pixi.init({
-            resolution: 1.5,
+            resolution: this.app.settings.data.lowResolution ? 0.8 : 1,
             resizeTo: window,
             antialias: true,
             preference: "webgl",
@@ -302,70 +304,122 @@ export class Game {
             this.miniMap.resize();
 
             const ctx = this.mapGraphics;
-            ctx.clear();
+
             this.camera.addObject(ctx);
 
-            const values = Object.values(Zones);
-
-            const borderDistance = 999;
-
-            ctx.rect(
-                Camera.unitToScreen(-borderDistance),
-                Camera.unitToScreen(-borderDistance),
-                Camera.unitToScreen(borderDistance),
-                Camera.unitToScreen(this.height + borderDistance * 2)
-            ).fill(values[0].borderColor);
-
-            ctx.rect(
-                Camera.unitToScreen(this.width),
-                Camera.unitToScreen(-borderDistance),
-                Camera.unitToScreen(borderDistance),
-                Camera.unitToScreen(this.height + borderDistance * 2)
-            ).fill(values[values.length - 1].borderColor);
-
-            for (const zonesKey in Zones) {
-                const data = Zones[zonesKey as ZoneName];
-                ctx.rect(
-                    Camera.unitToScreen(data.x),
-                    Camera.unitToScreen(data.y ?? 0),
-                    Camera.unitToScreen(data.width),
-                    Camera.unitToScreen(data.height ?? this.height)
-                ).fill(data.backgroundColor);
-
-                ctx.rect(
-                    Camera.unitToScreen(data.x),
-                    Camera.unitToScreen(-borderDistance),
-                    Camera.unitToScreen(data.width),
-                    Camera.unitToScreen(borderDistance)
-                ).fill(data.borderColor);
-
-                ctx.rect(
-                    Camera.unitToScreen(data.x),
-                    Camera.unitToScreen(this.height),
-                    Camera.unitToScreen(data.width),
-                    Camera.unitToScreen(borderDistance)
-                ).fill(data.borderColor);
-            }
-
-            const gridSize = 2.5 * Camera.scale;
-            const gridWidth = packet.map.width * Camera.scale;
-            const gridHeight = packet.map.height * Camera.scale;
-            for (let x = 0; x <= gridWidth; x += gridSize) {
-                ctx.moveTo(x, 0);
-                ctx.lineTo(x, gridHeight);
-            }
-
-            for (let y = 0; y <= gridHeight; y += gridSize) {
-                ctx.moveTo(0, y);
-                ctx.lineTo(gridWidth, y);
-            }
-
-            ctx.stroke({
-                color: 0x000000,
-                alpha: 0.05,
-                width: 2
-            });
+            this.drawWorldMap();
         }
+    }
+
+    drawWorldMap(): void {
+        const ctx = this.mapGraphics;
+
+        ctx.clear();
+
+        const borderDistance = 999;
+
+        for (const zonesKey in Zones) {
+            const data = Zones[zonesKey as ZoneName];
+
+            const y = (data.y ?? 0);
+            const height = (data.height ?? this.height);
+
+            const leftBorder = data.x <= 0;
+            const rightBorder = (data.x + data.width) >= this.width;
+            const topBorder = y <= 0;
+            const bottomBorder = (height + y) >= this.height;
+
+            const border = leftBorder || rightBorder || topBorder || bottomBorder;
+            if (border) {
+                let borderX = data.x;
+                let borderY = y;
+                let borderWidth = data.width;
+                let borderHeight = height;
+
+                if (leftBorder) {
+                    borderX -= borderDistance;
+                    borderWidth += borderDistance;
+                }
+
+                if (rightBorder) {
+                    borderWidth += data.width + borderDistance;
+                }
+
+                if (topBorder) {
+                    borderY -= borderDistance;
+                    borderHeight += borderDistance;
+                }
+
+                if (bottomBorder) {
+                    borderHeight += height + borderDistance;
+                }
+
+                ctx.rect(
+                    Camera.unitToScreen(borderX),
+                    Camera.unitToScreen(borderY),
+                    Camera.unitToScreen(borderWidth),
+                    Camera.unitToScreen(borderHeight)
+                ).fill(data.backgroundColor);
+            }
+
+            ctx.rect(
+                Camera.unitToScreen(data.x),
+                Camera.unitToScreen(y),
+                Camera.unitToScreen(data.width),
+                Camera.unitToScreen(height)
+            ).fill(data.backgroundColor);
+        }
+
+        ctx
+            .rect(
+                Camera.unitToScreen(-borderDistance),
+                Camera.unitToScreen(-borderDistance),
+                Camera.unitToScreen(this.width + borderDistance * 2),
+                Camera.unitToScreen(borderDistance)
+            )
+            .fill({ color: 0x000, alpha: 0.3 })
+            .rect(
+                Camera.unitToScreen(-borderDistance),
+                Camera.unitToScreen(0),
+                Camera.unitToScreen(borderDistance),
+                Camera.unitToScreen(this.height + borderDistance * 2)
+            )
+            .fill({ color: 0x000, alpha: 0.3 })
+            .rect(
+                Camera.unitToScreen(this.width),
+                Camera.unitToScreen(0),
+                Camera.unitToScreen(borderDistance),
+                Camera.unitToScreen(this.height + borderDistance)
+            )
+            .fill({ color: 0x000, alpha: 0.3 })
+            .rect(
+                Camera.unitToScreen(0),
+                Camera.unitToScreen(this.height),
+                Camera.unitToScreen(this.width),
+                Camera.unitToScreen(borderDistance)
+            ).fill({ color: 0x000, alpha: 0.3 })
+
+
+
+
+        const gridSize = Camera.unitToScreen(2.5);
+        const gridWidth = Camera.unitToScreen(this.width);
+        const gridHeight = Camera.unitToScreen(this.height);
+        for (let x = 0; x <= gridWidth; x += gridSize) {
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, gridHeight);
+        }
+
+        for (let y = 0; y <= gridHeight; y += gridSize) {
+            ctx.moveTo(0, y);
+            ctx.lineTo(gridWidth, y);
+        }
+
+        ctx.stroke({
+            color: 0x000000,
+            alpha: 0.05,
+            width: 2
+        });
     }
 
     sendPacket(packet: Packet) {
@@ -428,13 +482,16 @@ export class Game {
     }
 
     lastRenderTime = Date.now();
+    dt: number = 0;
 
     render() {
-        this.ui.renderDebug();
         if (!this.running) return;
         const dt = (Date.now() - this.lastRenderTime) / 1000;
+        this.dt = dt;
         this.debug.fps = Math.round(this.pixi.ticker.FPS);
         this.lastRenderTime = Date.now();
+
+        if (this.app.settings.data.debug) this.ui.renderDebug();
 
         for (const needUpdateEntity of this.needUpdateEntities) {
             if (!needUpdateEntity) continue;

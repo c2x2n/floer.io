@@ -6,6 +6,12 @@ import { loadStyleSheet } from "@/scripts/utils/styleSheets.ts";
 
 loadStyleSheet();
 
+const version = `0.2.8.1`
+
+export function getVersion() {
+    return `v${version}`;
+}
+
 export class ClientApplication {
     settings = new Settings(this);
     ui = new UI(this);

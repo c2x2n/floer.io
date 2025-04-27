@@ -53,6 +53,12 @@ export interface EntitiesNetData {
             hitboxRadius: number
         }
     }
+    [EntityType.Wall]: {
+        position: Vector
+        max: Vector
+
+        full?: {}
+    }
 }
 
 interface EntitySerialization<T extends EntityType> {
@@ -192,6 +198,26 @@ export const EntitySerializations: { [K in EntityType]: EntitySerialization<K> }
                 definition: Projectile.readFromStream(stream),
                 hitboxRadius: stream.readFloat(0, 10, 8)
             };
+        }
+    },
+    [EntityType.Wall]: {
+        partialSize: 16,
+        fullSize: 0,
+        serializePartial(stream, data) {
+            stream.writePosition(data.position);
+            stream.writePosition(data.max);
+        },
+        serializeFull(): void {
+
+        },
+        deserializePartial(stream) {
+            return {
+                position: stream.readPosition(),
+                max: stream.readPosition()
+            };
+        },
+        deserializeFull() {
+            return {}
         }
     }
 };

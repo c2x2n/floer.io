@@ -20,10 +20,12 @@ import { P2 } from "../../common/src/utils/math";
 import { spawnSegmentMobs } from "./utils/mob";
 import { Rarity, RarityName } from "../../common/src/definitions/rarity";
 import { ChatData } from "../../common/src/packets/updatePacket";
-import { MobSpawner, SpecialSpawn, ZoneName } from "../../common/src/zones";
+import { MobSpawner, SpecialSpawn, Walls, ZoneName } from "../../common/src/zones";
 import jwt from "jsonwebtoken";
 import { getLevelInformation } from "../../common/src/utils/levels";
 import { Zone, ZonesManager } from "./utils/zonesManager";
+import { ServerWall } from "./entities/serverWall";
+import { CircleHitbox, RectHitbox } from "../../common/src/utils/hitbox";
 
 export class Game {
     players = new EntityPool<ServerPlayer>();
@@ -76,10 +78,17 @@ export class Game {
         //     content: `Game | SECRET GENERATED: ${this.adminSecret}`,
         //     username: 'GAMER',
         // });
+
+
+        for (const wall of Walls) {
+            const { x, y, width, height } = wall;
+            new ServerWall(this, Vec2.new(x, y), Vec2.new(x + width, y + height));
+        }
     }
 
-    clampPosition(position: Vector, width: number, height: number){
+    clampPosition(p: Vector, width: number, height: number): Vector{
         const maxVector = Vec2.sub(this.maxVector, Vec2.new(width, height));
+        const position = Vec2.clone(p);
         return Vec2.clampWithVector(
             position,
             Vec2.new(width, height),

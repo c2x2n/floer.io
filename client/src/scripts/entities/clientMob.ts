@@ -5,7 +5,7 @@ import { Game } from "@/scripts/game";
 import { EntitiesNetData } from "@common/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
 import { Text, Graphics } from "pixi.js";
-import { MathNumeric } from "@common/utils/math.ts";
+import { MathGraphics, MathNumeric } from "@common/utils/math.ts";
 import { MobDefinition } from "@common/definitions/mob.ts";
 import { Vec2 } from "@common/utils/vector.ts";
 import { Rarity } from "@common/definitions/rarity.ts";
@@ -21,10 +21,10 @@ export class ClientMob extends ClientEntity {
         body: new GameSprite(),
         left_mouth: new GameSprite(),
         right_mouth: new GameSprite(),
-        leg1: new GameSprite(),
-        leg2: new GameSprite(),
-        leg3: new GameSprite(),
-        leg4: new GameSprite()
+        limbs1: new GameSprite(),
+        limbs2: new GameSprite(),
+        limbs3: new GameSprite(),
+        limbs4: new GameSprite()
     };
 
     healthPercent = 1;
@@ -85,15 +85,24 @@ export class ClientMob extends ClientEntity {
         if (movementDistance) {
             this.playMovementAnimation(movementDistance)
         }
-        if (this.definition && this.definition.idString === "sandstorm") {
-            if (this.definition.images?.spiderLeg) {
-                this.images.leg1.angle += 5;
-                this.images.leg2.angle -= 4;
-                this.images.leg3.angle += 3;
-            }
+        if (!this.definition) return;
+        if (this.definition.movement && this.definition.movement.sandstormLike) {
+            this.images.limbs1.angle += 5;
+            this.images.limbs2.angle -= 4;
+            this.images.limbs3.angle += 3;
         } else {
-            this.container.rotation =
-                Vec2.directionToRadians(Vec2.targetEasing(Vec2.radiansToDirection(this.container.rotation), this.direction, 6));
+            if (this.definition.images?.rotation) {
+                this.selfRotation += this.definition.images.rotation * this.game.dt;
+
+                this.container.angle = MathGraphics.radiansToDegrees(this.selfRotation)
+            }else {
+                const actualDirection = this.direction
+                this.container.rotation =
+                    Vec2.directionToRadians(Vec2.targetEasing(
+                        Vec2.radiansToDirection(this.container.rotation),
+                        actualDirection, 6)
+                    );
+            }
         }
     }
 
@@ -187,46 +196,51 @@ export class ClientMob extends ClientEntity {
 
         if (this.definition.images?.spiderLeg) {
             this.container.addChild(
-                this.images.leg1,
-                this.images.leg2,
-                this.images.leg3,
-                this.images.leg4
+                this.images.limbs1,
+                this.images.limbs2,
+                this.images.limbs3,
+                this.images.limbs4
+            )
+            this.images.limbs1
+                .setFrame(getGameAssetsPath("animation", "spider_leg1"))
+                .setZIndex(-1)
+                .setAnchor(Vec2.new(0.5, 0.5));
+            this.images.limbs2
+                .setFrame(getGameAssetsPath("animation", "spider_leg2"))
+                .setZIndex(-1)
+                .setAnchor(Vec2.new(0.5, 0.5));
+            this.images.limbs3
+                .setFrame(getGameAssetsPath("animation", "spider_leg3"))
+                .setZIndex(-1)
+                .setAnchor(Vec2.new(0.5, 0.5));
+            this.images.limbs4
+                .setFrame(getGameAssetsPath("animation", "spider_leg4"))
+                .setZIndex(-1)
+                .setAnchor(Vec2.new(0.5, 0.5));
+        }
+
+        if (this.definition.movement && this.definition.movement.sandstormLike) {
+            this.container.addChild(
+                this.images.limbs1,
+                this.images.limbs2,
+                this.images.limbs3
             )
 
-            if (this.definition.idString === "sandstorm") {
-                this.images.leg1
-                    .setFrame(getGameAssetsPath("mob", "sandstorm_inner"))
-                    .setZIndex(-1)
-                    .setAnchor(Vec2.new(0.5, 0.5));
-                this.images.leg2
-                    .setFrame(getGameAssetsPath("mob", "sandstorm_middle"))
-                    .setZIndex(-2)
-                    .setAnchor(Vec2.new(0.5, 0.5));
-                this.images.leg3
-                    .setFrame(getGameAssetsPath("mob", "sandstorm_outer"))
-                    .setZIndex(-3)
-                    .setAnchor(Vec2.new(0.5, 0.5));
-                this.images.leg1.angle = Math.random() * 360;
-                this.images.leg2.angle = Math.random() * 360;
-                this.images.leg3.angle = Math.random() * 360;
-            } else {
-                this.images.leg1
-                    .setFrame(getGameAssetsPath("animation", "spider_leg1"))
-                    .setZIndex(-1)
-                    .setAnchor(Vec2.new(0.5, 0.5));
-                this.images.leg2
-                    .setFrame(getGameAssetsPath("animation", "spider_leg2"))
-                    .setZIndex(-1)
-                    .setAnchor(Vec2.new(0.5, 0.5));
-                this.images.leg3
-                    .setFrame(getGameAssetsPath("animation", "spider_leg3"))
-                    .setZIndex(-1)
-                    .setAnchor(Vec2.new(0.5, 0.5));
-                this.images.leg4
-                    .setFrame(getGameAssetsPath("animation", "spider_leg4"))
-                    .setZIndex(-1)
-                    .setAnchor(Vec2.new(0.5, 0.5));
-            }
+            this.images.limbs1
+                .setFrame(getGameAssetsPath("mob", "sandstorm_inner"))
+                .setZIndex(-1)
+                .setAnchor(Vec2.new(0.5, 0.5));
+            this.images.limbs2
+                .setFrame(getGameAssetsPath("mob", "sandstorm_middle"))
+                .setZIndex(-2)
+                .setAnchor(Vec2.new(0.5, 0.5));
+            this.images.limbs3
+                .setFrame(getGameAssetsPath("mob", "sandstorm_outer"))
+                .setZIndex(-3)
+                .setAnchor(Vec2.new(0.5, 0.5));
+            this.images.limbs1.angle = Math.random() * 360;
+            this.images.limbs2.angle = Math.random() * 360;
+            this.images.limbs3.angle = Math.random() * 360;
         }
 
         this.container.scale = GameSprite.getScaleByUnitRadius(hitboxRadius);
@@ -245,10 +259,12 @@ export class ClientMob extends ClientEntity {
     lastMovementAnimationTime: number = 0;
     lastScale: number = 1;
 
+    selfRotation: number = 0;
+
     playMovementAnimation(size: number): void {
         if (!this.definition) return;
 
-        if (this.definition.idString === "sandstorm") {
+        if (this.definition.movement && this.definition.movement.sandstormLike) {
             if (Date.now() - this.lastMovementAnimation < 1200) return;
             let time = 800 + Math.random() * 400;
             this.lastMovementAnimation = Date.now();
@@ -319,10 +335,10 @@ export class ClientMob extends ClientEntity {
                 new Tween({angle: 0})
                 .to({ angle: 20 }, time)
                 .onUpdate((d) => {
-                    this.images.leg1.angle = -d.angle / 1.8;
-                    this.images.leg2.angle = d.angle;
-                    this.images.leg3.angle = d.angle / 2;
-                    this.images.leg4.angle = -d.angle / 1.2;
+                    this.images.limbs1.angle = -d.angle / 1.8;
+                    this.images.limbs2.angle = d.angle;
+                    this.images.limbs3.angle = d.angle / 2;
+                    this.images.limbs4.angle = -d.angle / 1.2;
                 })
             )
 
@@ -331,10 +347,10 @@ export class ClientMob extends ClientEntity {
                 .delay(time)
                 .to({angle: 0}, time)
                 .onUpdate((d) => {
-                    this.images.leg1.angle = -d.angle / 1.8;
-                    this.images.leg2.angle = d.angle;
-                    this.images.leg3.angle = d.angle / 2;
-                    this.images.leg4.angle = -d.angle / 1.2;
+                    this.images.limbs1.angle = -d.angle / 1.8;
+                    this.images.limbs2.angle = d.angle;
+                    this.images.limbs3.angle = d.angle / 2;
+                    this.images.limbs4.angle = -d.angle / 1.2;
                 })
             )
         }

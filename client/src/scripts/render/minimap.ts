@@ -4,7 +4,7 @@ import { MathNumeric } from "@common/utils/math.ts";
 import { Vec2 } from "@common/utils/vector.ts";
 import { GameConstants } from "@common/constants.ts";
 
-import { ZoneData, ZoneName, Zones } from "@common/zones.ts";
+import { Walls, ZoneData, ZoneName, Zones } from "@common/zones.ts";
 
 const widthDiv = 10;
 const heightDiv = 5;
@@ -146,6 +146,16 @@ export class Minimap {
                 ((data.y ?? 0) + (data.height ?? this.minimapHeight * heightDiv) / 2) / heightDiv
             );
             index ++;
+        }
+
+        for (const data of Walls) {
+            this.mapBackground
+               .rect(
+                    data.x / widthDiv,
+                    data.y / heightDiv,
+                    data.width / widthDiv,
+                    data.height / heightDiv)
+               .fill({ color: 0x000, alpha: 0.8 });
         }
     }
 }

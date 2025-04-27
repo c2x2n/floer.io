@@ -8,6 +8,8 @@ export interface SettingsData {
     blockMytAnn: boolean
     playerName: string
     screenShake: boolean
+    hitbox: boolean
+    debug: boolean
 }
 
 export class Settings {
@@ -17,7 +19,9 @@ export class Settings {
         lowResolution : false,
         blockMytAnn: false,
         screenShake: true,
-        playerName : ""
+        playerName : "",
+        hitbox: false,
+        debug: false
     };
 
     constructor(public app: ClientApplication) {

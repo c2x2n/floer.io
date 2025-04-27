@@ -1,5 +1,5 @@
 import $ from "jquery";
-import { ClientApplication } from "@/main.ts";
+import { ClientApplication, getVersion } from "@/main.ts";
 import { GameOverPacket } from "@common/packets/gameOverPacket.ts";
 import { Game } from "@/scripts/game.ts";
 import { SettingsData } from "@/settings.ts";
@@ -15,7 +15,7 @@ import { getGameAssetsFile, getGameAssetsPath } from "@/scripts/utils/pixi.ts";
 export class UI {
     readonly app: ClientApplication;
 
-    readonly canvas = $<HTMLCanvasElement>("#canvas");
+    readonly version = $<HTMLDivElement>("#floer-version");
     readonly readyButton = $<HTMLDivElement>("#btn-ready");
 
     readonly inGameScreen =  $<HTMLDivElement>("#in-game-screen");
@@ -164,6 +164,10 @@ export class UI {
         this.startRandomEntityAnimation();
 
         this.loader.animate({ opacity: 0 }, 100, ()=>{ this.loader.css("display", "none");});
+
+        const content  = `floer.io ${getVersion()}`;
+        this.version.text(content);
+        this.version.attr("textStroke", content)
     }
 
     initSettingsDialog() {
@@ -270,14 +274,23 @@ export class UI {
     }
 
     renderDebug(): void {
+        if (!this.game.app.settings.data.debug) {
+            this.debugInfo.css("display", "none");
+            this.gameInfo.css("display", "none");
+            return;
+        }
+
+        this.debugInfo.css("display", "block");
+        this.gameInfo.css("display", "block");
+
         this.game.debug.particles = this.game.particleManager.particlesCount();
-        this.game.debug.entities.loot = this.game.entityPool.countType(EntityType.Loot);
+        this.game.debug.entities.loot = this.game.entityPool.countType(EntityType.Wall);
         this.game.debug.entities.mobs = this.game.entityPool.countType(EntityType.Mob);
         this.game.debug.entities.petals = this.game.entityPool.countType(EntityType.Petal);
         this.game.debug.entities.projectiles = this.game.entityPool.countType(EntityType.Projectile);
         this.game.debug.entities.players = this.game.entityPool.countType(EntityType.Player);
         const debug = this.game.debug;
-        const t = `floer.io BETA 0.2.6`;
+        const t = `floer.io BETA ${getVersion()}`;
         this.gameInfo.attr("textStroke", t);
         this.gameInfo.text(t);
         const text = `${debug.fps} FPS / ${debug.particles} Particles / ${debug.entities.loot} Loot / ${debug.entities.mobs} Mobs / ${debug.entities.petals} Petals / ${debug.entities.projectiles} Projectiles / ${debug.entities.players} Players`;

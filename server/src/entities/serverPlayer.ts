@@ -652,7 +652,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
             // Clean up drops
             for (const [id, entity] of this.game.grid.entities) {
-                if (entity.type === EntityType.Loot) {
+                if (entity.type === EntityType.Wall) {
                     entity.destroy();
                     dropCount++;
                 }

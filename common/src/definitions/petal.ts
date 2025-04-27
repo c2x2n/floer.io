@@ -62,6 +62,7 @@ type PetalPieceType = {
     // Only allowed to use duplicateDisplay when have more than one
     readonly pieceAmount: number
     readonly isShowedInOne: boolean
+    readonly distanceToCenter?: number
 };
 
 type PetalUsageType = {

@@ -1,10 +1,8 @@
-import { ZoneName, Zones } from "../../../common/src/zones";
-import { ZoneData } from "../../../common/src/zones";
+import { ZoneData, ZoneName, Zones } from "../../../common/src/zones";
 import { Vec2, Vector } from "../../../common/src/utils/vector";
 import { Random } from "../../../common/src/utils/random";
 import { Game } from "../game";
-import { CircleHitbox, Hitbox, RectHitbox } from "../../../common/src/utils/hitbox";
-import { ServerMob } from "../entities/serverMob";
+import { CircleHitbox, RectHitbox } from "../../../common/src/utils/hitbox";
 import { EntityType } from "../../../common/src/constants";
 
 export class ZonesManager {
@@ -68,16 +66,27 @@ export class Zone {
     randomSafePosition(hitboxRadius: number): Vector {
         let collidedNumber = 0;
         let position = this.randomPoint();
+        let attempt = 0;
         do {
+            position = this.randomPoint();
+
             collidedNumber = 0;
-            const hitbox = new CircleHitbox(hitboxRadius + 10, position);
+
+            const hitbox = new CircleHitbox(hitboxRadius + 5, position);
+
             const collided =
                 this.game.grid.intersectsHitbox(hitbox);
+
             for (const collidedElement of collided) {
-                if (collidedElement.hitbox.collidesWith(hitbox)) collidedNumber++;
+                if (hitbox.collidesWith(collidedElement.hitbox)) collidedNumber++;
             }
-            position = this.randomPoint();
-        } while (collidedNumber != 0);
+
+            attempt += 1;
+            if (attempt >= 50) {
+                console.log("Too many attempts. Chose the last position.");
+                break;
+            }
+        } while (collidedNumber != 0 && attempt < 50);
 
         return position;
     }

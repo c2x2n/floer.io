@@ -62,7 +62,8 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
     }
 
     get speed(): number {
-        if (this.definition.category !== MobCategory.Fixed) return this.definition.speed * this.modifiers.speed;
+        if (this.definition.category !== MobCategory.Fixed)
+            return this.definition.speed * this.modifiers.speed;
         return 0;
     }
 
@@ -89,6 +90,8 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
     damageFrom = new Map<ServerPlayer, number>;
 
     spawnTime: number = Date.now();
+
+    healingToFull: boolean = false;
 
     constructor(game: Game
                 , position: Vector
@@ -155,8 +158,27 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
             this.direction, shoot);
     }
 
+    shootTick(): void {
+        if (!this.definition.shootable) return
+        this.shootReload += this.game.dt;
+        if (this.shootReload >= this.definition.shootSpeed) {
+            this.shoot(this.definition.shoot);
+            this.shootReload = 0;
+        }
+    }
+
+    move(): void {
+        this.setAcceleration(Vec2.mul(
+            this.direction, this.speed
+        ));
+    }
+
     tick(): void{
         super.tick()
+
+        this.otherModifiers.push(this.definition.modifiers ?? {});
+
+        this.updateModifiers();
 
         if (this.lastSegment && !this.lastSegment.destroyed) {
             this.direction = MathGraphics.directionBetweenPoints(
@@ -171,130 +193,126 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                 this.definition.hitboxRadius + this.lastSegment.definition.hitboxRadius,
                 this.lastSegment.position
             );
-        } else if (this.definition.category != MobCategory.Fixed) {
-            if ((this.definition.category === MobCategory.Enemy
-                || this.definition.category === MobCategory.Passive)
-                && this.aggroTarget) {
-                if (this.aggroTarget.destroyed) {
-                    this.changeAggroTo();
-                } else {
-                    if (Vec2.distance(this.aggroTarget.position, this.position) >
-                        this.definition.aggroRadius * 6) {
-                        return this.changeAggroTo();
+            return ;
+        }
+
+        if (this.modifiers.healPerSecond) {
+            if (this.definition.skill?.healUnder) {
+                if (this.health < this.definition.skill.healUnder * this.definition.health) {
+                    this.healingToFull = true;
+                }
+                if (this.healingToFull) {
+                    this.health += this.modifiers.healPerSecond * this.game.dt;
+                    this.modifiers.speed *= -1;
+                    this.move();
+
+                    if (this.health >= this.definition.health) {
+                        this.healingToFull = false;
                     }
-
-                    if (this.definition.shootable) {
-                        if (Vec2.distance(this.position, this.aggroTarget.position)
-                            < Math.max(15, this.definition.aggroRadius * 0.8)
-                            && this.definition.reachingAway) {
-                            this.shootReload += this.game.dt;
-                            if (this.shootReload >= this.definition.shootSpeed) {
-                                this.direction = MathGraphics.directionBetweenPoints(this.aggroTarget.position, this.position);
-                                this.shoot(this.definition.shoot);
-                                this.shootReload = 0;
-                            } else if (this.shootReload >= this.definition.shootSpeed * 0.6 && this.definition.turningHead) {
-                                this.direction = Vec2.mul(
-                                    MathGraphics.directionBetweenPoints(this.aggroTarget.position, this.position),
-                                    -1
-                                );
-                            } else {
-                                this.direction = MathGraphics.directionBetweenPoints(this.aggroTarget.position, this.position);
-                            }
-                        } else {
-                            this.direction = MathGraphics.directionBetweenPoints(this.aggroTarget.position, this.position);
-
-                            this.setAcceleration(Vec2.mul(
-                                this.direction, this.speed
-                            ));
-
-                            if (!this.definition.reachingAway) {
-                                this.shootReload += this.game.dt;
-                                if (this.shootReload >= this.definition.shootSpeed) {
-                                    this.shoot(this.definition.shoot);
-                                    this.shootReload = 0;
-                                }
-                            }
-                        }
-                    } else {
-                        this.direction = MathGraphics.directionBetweenPoints(this.aggroTarget.position, this.position);
-                        if (this.definition.reachingAway) {
-                            if (Vec2.distance(this.position, this.aggroTarget.position) > 15) {
-                                this.setAcceleration(Vec2.mul(
-                                    this.direction, this.speed
-                                ));
-                            }
-                        } else {
-                            this.setAcceleration(Vec2.mul(
-                                this.direction, this.speed
-                            ));
-                        }
-                    }
+                    return;
                 }
             } else {
-                this.walkingReload += this.game.dt;
-                if (this.definition.idString === "sandstorm") {
-                    const changeDirectionInterval = 0.05;
-                    if (this.walkingReload >= changeDirectionInterval) {
-                        const entities = this.game.grid.intersectsHitbox(new CircleHitbox(30, this.position));
-                        let nearestPlayer: ServerPlayer | null = null;
-                        let nearestDistance = Infinity;
-
-                        for (const entity of entities) {
-                            if (entity instanceof ServerPlayer) {
-                                const distance = Vec2.distance(this.position, entity.position);
-                                if (distance < nearestDistance) {
-                                    nearestDistance = distance;
-                                    nearestPlayer = entity;
-                                }
-                            }
-                        }
-
-                        let moveDirection;
-                        const randomSpeedMultiplier = 0.6 + Math.random() * 1.2;
-
-                        if (this instanceof ServerFriendlyMob && this.isSummoned && nearestPlayer && Math.random() < 0.7) {
-                            moveDirection = Vec2.new(nearestPlayer.direction.direction.x, nearestPlayer.direction.direction.y);
-                            moveDirection.x += (Math.random() * 0.6 - 0.3);
-                            moveDirection.y += (Math.random() * 0.6 - 0.3);
-                            moveDirection = Vec2.normalize(moveDirection);
-                            this.setAcceleration(Vec2.mul(
-                                moveDirection, 2 * this.speed * randomSpeedMultiplier
-                            ));
-                        } else {
-                            moveDirection = Random.vector(-1, 1, -1, 1);
-                            this.setAcceleration(Vec2.mul(
-                                moveDirection, this.speed * randomSpeedMultiplier
-                            ));
-                        }
-
-                        this.walkingReload = 0;
-                    }
-
-                    if ((this.definition as any).despawnTime) {
-                        const despawnTime = (this.definition as any).despawnTime;
-                        const aliveTime = (Date.now() - this.spawnTime) / 1000;
-                        if (aliveTime >= despawnTime) {
-                            this.destroy(true);
-                        }
-                    }
-                } else if (this.walkingReload >= GameConstants.mob.walkingReload) {
-                    if (this.walkingTime === 0) this.direction = Random.vector(-1, 1, -1, 1)
-                    this.setAcceleration(Vec2.mul(
-                        this.direction, this.speed * GameConstants.mob.walkingTime
-                    ))
-
-                    this.walkingTime += this.game.dt;
-
-                    if (this.walkingTime >= GameConstants.mob.walkingTime) {
-                        this.walkingReload = 0;
-                        this.walkingTime = 0;
-                    }
-                }
-                this.getRandomAggroAround();
+                this.health += this.modifiers.healPerSecond * this.game.dt;
             }
         }
 
-        this.updateModifiers();
+        if (this.definition.category === MobCategory.Fixed) return;
+
+        if ((this.definition.category === MobCategory.Enemy
+            || this.definition.category === MobCategory.Passive)
+            && this.aggroTarget)
+        {
+            if (this.aggroTarget.destroyed) return this.changeAggroTo();
+            const distanceBetween = Vec2.distance(this.aggroTarget.position, this.position);
+            if (distanceBetween > this.definition.aggroRadius * 2.2) return this.changeAggroTo();
+
+            this.direction = MathGraphics.directionBetweenPoints(
+                this.aggroTarget.position, this.position
+            );
+
+            if (this.definition.shootable) {
+                if (this.definition.movement && this.definition.movement.reachingAway) {
+                    const reachingAwayRadius = Math.max(15, this.definition.aggroRadius * 0.8);
+                    if (distanceBetween <= reachingAwayRadius) {
+                        this.shootTick();
+                        if (
+                            this.definition.turningHead
+                            && this.shootReload >= this.definition.shootSpeed * 0.6
+                        ) this.direction = Vec2.mul(this.direction, -1);
+                    } else {
+                        this.move();
+                    }
+                } else {
+                    this.shootTick();
+                }
+            } else {
+                this.move();
+            }
+        } else {
+            this.walkingReload += this.game.dt;
+
+            if (this.definition.movement && this.definition.movement.sandstormLike) {
+                const changeDirectionInterval = 1 + Math.random() * 0.5;
+                if (this.walkingReload >= changeDirectionInterval) {
+                    const entities = this.game.grid.intersectsHitbox(new CircleHitbox(30, this.position));
+                    let nearestPlayer: ServerPlayer | null = null;
+                    let nearestDistance = Infinity;
+
+                    for (const entity of entities) {
+                        if (entity instanceof ServerPlayer) {
+                            const distance = Vec2.distance(this.position, entity.position);
+                            if (distance < nearestDistance) {
+                                nearestDistance = distance;
+                                nearestPlayer = entity;
+                            }
+                        }
+                    }
+
+                    let moveDirection;
+                    const randomSpeedMultiplier = 0.6 + Math.random() * 0.5;
+
+                    if (this instanceof ServerFriendlyMob && this.isSummoned && nearestPlayer && Math.random() < 0.7) {
+                        moveDirection = Vec2.new(nearestPlayer.direction.direction.x, nearestPlayer.direction.direction.y);
+                        moveDirection.x += (Math.random() * 0.6 - 0.3);
+                        moveDirection.y += (Math.random() * 0.6 - 0.3);
+                        moveDirection = Vec2.normalize(moveDirection);
+                        this.setAcceleration(Vec2.mul(
+                            moveDirection, 2 * this.speed * randomSpeedMultiplier
+                        ));
+                    } else {
+                        moveDirection = Random.vector(-1, 1, -1, 1);
+                        this.setAcceleration(Vec2.mul(
+                            moveDirection, this.speed * randomSpeedMultiplier
+                        ));
+                    }
+
+
+                }
+
+                if (this.definition.despawnTime) {
+                    const despawnTime = this.definition.despawnTime;
+                    const aliveTime = (Date.now() - this.spawnTime) / 1000;
+                    if (aliveTime >= despawnTime) {
+                        this.destroy(true);
+                    }
+                }
+            } else if (this.walkingReload >= GameConstants.mob.walkingReload) {
+                if (this.walkingTime === 0) this.direction = Random.vector(-1, 1, -1, 1);
+
+                this.setAcceleration(Vec2.mul(
+                    this.direction, this.speed * GameConstants.mob.walkingTime
+                ))
+
+                this.walkingTime += this.game.dt;
+
+                if (this.walkingTime >= GameConstants.mob.walkingTime) {
+                    this.walkingReload = 0;
+                    this.walkingTime = 0;
+                }
+            }
+
+            if (this.definition.category === MobCategory.Enemy) this.getRandomAggroAround();
+        }
     }
 
     dealDamageTo(to: damageableEntity): void{
@@ -441,24 +459,31 @@ export class ServerFriendlyMob extends ServerMob {
         , public owner: ServerPlayer
         , definition: MobDefinition
         , isSummoned: boolean = true) {
-        super(game, Random.pointInsideCircle(owner.position, 6), owner.direction.direction, definition);
+        super(game
+            , Random.pointInsideCircle(owner.position, 12)
+            , owner.direction.direction
+            , definition
+        );
         this.isSummoned = isSummoned;
     }
 
     gettingBackToOwner: boolean = false;
 
     tick() {
-        if (Vec2.distance(this.position, this.owner.position) > 8 * this.definition.hitboxRadius) {
+        const distanceToOwner = Vec2.distance(this.position, this.owner.position);
+        if (distanceToOwner > 8 * this.definition.hitboxRadius) {
             this.gettingBackToOwner = true;
         }
 
         if (this.gettingBackToOwner) {
             this.aggroTarget = undefined;
-            this.direction = MathGraphics.directionBetweenPoints(this.owner.position, this.position);
+            this.direction =
+                MathGraphics.directionBetweenPoints(this.owner.position, this.position);
             this.setAcceleration(Vec2.mul(
                 this.direction, this.speed
             ));
-            if (Vec2.distance(this.position, this.owner.position) < 3 * this.definition.hitboxRadius) this.gettingBackToOwner = false;
+            if (distanceToOwner < 3 * this.definition.hitboxRadius)
+                this.gettingBackToOwner = false;
         }
 
         super.tick();

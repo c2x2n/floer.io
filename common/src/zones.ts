@@ -2,13 +2,12 @@ export type MobSpawner = Record<string, number>
 
 export enum ZoneName {
     SpawnZone = "SpawnZone",
-    Ladies = "Ladies",
     Medium = "Medium",
     Cactus = "Cactus",
     Hard = "Hard",
     Harder = "Harder",
     Nightmare = "Nightmare",
-    Nightmarer = "Nightmarer",
+    Dungeon = "Dungeon",
     Abyss = "Abyss"
 }
 
@@ -25,7 +24,6 @@ export type ZoneData = {
     height?: number
     displayColor: string
     backgroundColor: string
-    borderColor: string
     density: number
     highestLevel: number
     normalSpawning: MobSpawner
@@ -41,10 +39,9 @@ export const Zones:
         x: 1000,
         y: 0,
         width: 600,
-        height: 300,
+        height: 200,
         displayColor: "#1da25e",
         backgroundColor: "#1ea761",
-        borderColor: "#1b9657",
         highestLevel: 15,
         density: 0.8,
         normalSpawning: {
@@ -58,37 +55,19 @@ export const Zones:
             "centipede": 1,
         }
     },
-    [ZoneName.Ladies]: {
-        displayName: "Ladies",
-        x: 0,
-        y: 0,
-        width: 600,
-        height: 400,
-        displayColor: "#1da25e",
-        backgroundColor: "#1ea761",
-        borderColor: "#1b9657",
-        highestLevel: 15,
-        density: 0.2,
-        normalSpawning: {
-            "ladybug": 10,
-            "rock": 20,
-            "massive_ladybug": 0.1,
-        }
-    },
     [ZoneName.Medium]: {
         displayName: "Medium",
-        x: 1000,
-        y: 300,
+        x: 1600,
+        y: 0,
         width: 500,
-        height: 866 - 300,
+        height: 200,
         displayColor: "#92a728",
         backgroundColor: "#decf7c",
-        borderColor: "#c7ba6f",
-        density: 1.2,
+        density: 1,
         highestLevel: 30,
         normalSpawning: {
             "ladybug": 10,
-            "shiny_ladybug": 1,
+            "shiny_ladybug": 0.5,
             "massive_shiny_ladybug": 0.0000001,
             "beetle": 5,
             "cactus": 35,
@@ -100,6 +79,7 @@ export const Zones:
             "soldier_ant": 5,
             "centipede": 1,
             "desert_centipede": 1,
+            "sandstorm": 5
         }
     },
     [ZoneName.Cactus]: {
@@ -107,61 +87,47 @@ export const Zones:
         x: 600,
         y: 0,
         width: 400,
-        height: 866,
+        height: 200,
         displayColor: "#bfb295",
         backgroundColor: "#eddfbf",
-        borderColor: "#7c7563",
         density: 0.5,
         highestLevel: 30,
         normalSpawning: {
-            "shiny_ladybug": 1,
-            "massive_shiny_ladybug": 0.0000001,
+            "shiny_ladybug": 0.1,
             "cactus": 35,
             "mega_cactus": 5,
             "soldier_ant": 5,
             "desert_centipede": 1,
+            "sandstorm": 1
         }
     },
     [ZoneName.Harder]: {
         displayName: "Harder",
-        x: 0,
-        y: 400,
-        width: 600,
-        height: 666 - 400,
+        x: 2100,
+        y: 0,
+        width: 500,
+        height: 200,
         displayColor: "#923a28",
         backgroundColor: "#b36658",
-        borderColor: "#742d2d",
-        density: 0.4,
+        density: 0.6,
         highestLevel: 45,
         normalSpawning: {
-            "ladybug": 10,
-            "dark_ladybug": 20,
-            "massive_shiny_ladybug": 0.0000001,
-            "ant_hole": 1,
             "hornet": 15,
-            "leg_hornet": 1,
+            "leg_hornet": 2,
             "spider": 10,
             "beetle": 20,
-            "mantis": 3,
-            "rock": 5,
-            "boulder": 10,
-            "worker_ant": 7,
-            "baby_ant": 7,
-            "soldier_ant": 15,
-            "centipede": 0.1,
-            "desert_centipede": 0.1,
-            "evil_centipede": 1
+            "boulder": 40,
+            "leg_evil_centipede": 1
         }
     },
-    [ZoneName.Nightmarer]: {
-        displayName: "!!!",
-        x: 0,
-        y: 666,
-        width: 600,
-        height: 866 - 666,
+    [ZoneName.Dungeon]: {
+        displayName: "Dungeon",
+        x: 200,
+        y: 200,
+        width: 2400,
+        height: 200,
         displayColor: "#a4aaa6",
         backgroundColor: "#4d5e55",
-        borderColor: "#484646",
         density: 0.825,
         highestLevel: 999,
         normalSpawning: {
@@ -170,7 +136,6 @@ export const Zones:
             "leg_hornet": 0.9,
             "spider": 15,
             "beetle": 20,
-            "boulder": 8,
             "worker_ant": 7,
             "baby_ant": 7,
             "soldier_ant": 15,
@@ -178,6 +143,7 @@ export const Zones:
             "desert_centipede": 0.05,
             "evil_centipede": 2,
             "ant_hole": 1,
+            "leg_evil_centipede": 1
         },
         specialSpawning: [
             {
@@ -203,13 +169,12 @@ export const Zones:
     },
     [ZoneName.Hard]: {
         displayName: "Hard",
-        x: 1600,
+        x: 200,
         y: 0,
         width: 400,
-        height: 300,
+        height: 200,
         displayColor: "#923a28",
         backgroundColor: "#b36658",
-        borderColor: "#742d2d",
         density: 0.75,
         highestLevel: 45,
         normalSpawning: {
@@ -233,12 +198,11 @@ export const Zones:
         }
     },
     [ZoneName.Nightmare]: {
-        displayName: "???",
-        x: 2000,
-        width: 2566 - 2000,
-        displayColor: "#a4aaa6",
-        backgroundColor: "#4d5e55",
-        borderColor: "#484646",
+        displayName: "!!!",
+        x: 0,
+        width: 200,
+        displayColor: "#b02424",
+        backgroundColor: "#943434",
         density: 0.825,
         highestLevel: 999,
         normalSpawning: {
@@ -280,17 +244,14 @@ export const Zones:
     },
     [ZoneName.Abyss]: {
         displayName: `αBYsS`,
-        x: 1500,
-        y: 300,
-        width: 500,
-        height: 866 - 300,
+        x: 2600,
+        width: 400,
         displayColor: "#5785ba",
         backgroundColor: "#5785ba",
-        borderColor: "#466c97",
-        density: 0.825,
+        density: 0.4,
         highestLevel: 999,
         normalSpawning: {
-            "dark_ladybug": 20,
+            "starfish": 20,
             "hornet": 20,
             "leg_hornet": 0.9,
             "spider": 15,
@@ -306,24 +267,38 @@ export const Zones:
         },
         specialSpawning: [
             {
-                timer: 1000000 * 60,
+                timer: 30 * 60,
                 spawn: {
-                    "myt_worker_ant": 3,
-                    "myt_baby_ant": 3,
-                    "myt_soldier_ant": 3,
-                    "myt_ant_hole": 0.1,
-                    "myt_boulder": 1,
-                    "myt_evil_centipede": 0.1,
-                    "mega_hornet": 5,
-                    "mega_spider": 5,
-                    "mega_beetle": 5,
-                    "mega_mantis": 5,
-                    "passive_bee": 3,
-                    "massive_dark_ladybug": 8,
-                    "massive_shiny_ladybug": 0.01,
-                    "giant_spider": 0.0001,
+                    "myt_starfish": 3,
                 }
             }
         ]
     }
 }
+
+export interface Wall{
+    x: number
+    y: number
+    width: number
+    height: number
+}
+
+export const Walls: Wall[] = [
+    {
+        x: 190,
+        y: 170,
+        width: 20,
+        height: 250
+    },
+    {
+        x: 2590,
+        y: 170,
+        width: 20,
+        height: 250
+    },{
+        x: 250,
+        y: 200,
+        width: 2300,
+        height: 20
+    }
+]
