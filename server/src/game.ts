@@ -67,18 +67,8 @@ export class Game {
         this.timer.setInterval(this.tick.bind(this), "", `${this.deltaMs}m`);
         const token = jwt.sign({ now: Date.now() }, "mhmm", { expiresIn: '1h' });
         const where = Random.int(0, token.length);
-        // this.adminSecret = token
-        //     .substring(where, where + Random.int(8, 15));
-        this.adminSecret = "RyoIjP9ohT47R";
-        // const url = 'https://discord.com/api/webhooks/1365582184093712447/xT0SdrOQ1sRyGHmlppQ4ck7AJPFWFgCG7sAdYNAJ8ArhJcH3VCU4ySSVKGRQBEwTly1T';
-        //
-        // const webhookClient = new WebhookClient({ url });
-        //
-        // webhookClient.send({
-        //     content: `Game | SECRET GENERATED: ${this.adminSecret}`,
-        //     username: 'GAMER',
-        // });
-
+        this.adminSecret = token
+            .substring(where, where + Random.int(8, 15));
 
         for (const wall of Walls) {
             const { x, y, width, height } = wall;
