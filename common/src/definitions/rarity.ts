@@ -11,6 +11,8 @@ export enum RarityName {
     super = "super",
     ethereal = "ethereal",
     phantasmagoric  = "phantasmagoric",
+    arcane = "arcane",
+    empyrean = "Empyrean",
 }
 
 type RarityDefinition = ObjectDefinition & {
@@ -109,7 +111,8 @@ export const Rarity = new Definitions<RarityDefinition>([
         expWhenAbsorb: 25,
         level: 9,
         showParticle: true,
-        petalMaxCount: 0
+        petalMaxCount: 0,
+        globalMessage: true
     },
     {
         idString: RarityName.phantasmagoric,
@@ -119,6 +122,29 @@ export const Rarity = new Definitions<RarityDefinition>([
         expWhenAbsorb: 5,
         level: 10,
         showParticle: true,
-        petalMaxCount: 0
+        petalMaxCount: 0,
+        globalMessage: true
+    },
+    {
+        idString: RarityName.arcane,
+        displayName: "Arcane",
+        color: "#7bb78c",
+        border: "#4f8c60",
+        expWhenAbsorb: 2,
+        level: 11,
+        showParticle: true,
+        petalMaxCount: 0,
+        globalMessage: true
+    },
+    {
+        idString: RarityName.empyrean,
+        displayName: "Empyrean",
+        color: "#707c8f",
+        border: "#515e73",
+        expWhenAbsorb: 1,
+        level: 12,
+        showParticle: true,
+        petalMaxCount: 0,
+        globalMessage: true
     }
 ] as RarityDefinition[]);

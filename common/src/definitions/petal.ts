@@ -1,6 +1,6 @@
 import { Definitions, ObjectDefinition } from "../utils/definitions";
 import { AttributeName } from "./attribute";
-import { RarityName } from "./rarity";
+import { Rarity, RarityName } from "./rarity";
 import { PlayerModifiers } from "../typings";
 import { Projectile, ProjectileDefinition, ProjectileParameters } from "./projectile";
 import { MobDefinition, Mobs } from "./mob";
@@ -135,7 +135,7 @@ export function getDisplayedPieces(petal: PetalDefinition): number {
     return petal.pieceAmount;
 }
 
-export const Petals = new Definitions<PetalDefinition>([
+export let Petals = new Definitions<PetalDefinition>([
     {
         idString: "fast",
         displayName: "Fast",
@@ -800,6 +800,28 @@ export const Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.unusual,
+    },
+    {
+        idString: "siris",
+        displayName: "Iris",
+        description: "very poisonous and takes a little while to do 3.6m damage",
+        damage: 3,
+        health: 729,
+        extendable: true,
+        usable: false,
+        attributes: {
+            poison: {
+                damagePerSecond: 3645,
+                duration: 1000
+            }
+        },
+        reloadTime: 0.5,
+        hitboxRadius: 0.35,
+        isDuplicate: false,
+        pieceAmount: 1,
+        rarity: RarityName.arcane,
+        undroppable: true,
+        usingAssets: "iris"
     }, {
         idString: "cactus",
         displayName: "Cactus",
@@ -1258,7 +1280,7 @@ export const Petals = new Definitions<PetalDefinition>([
         health: 12,
         extendable: false,
         usable: true,
-        useTime: 0.05,
+        useTime: 0.03,
         images: {
             slotDisplaySize: 45,
         },
@@ -1272,11 +1294,11 @@ export const Petals = new Definitions<PetalDefinition>([
                 despawnTime: 4.5
             },
             poison: {
-                damagePerSecond: 100,
+                damagePerSecond: 240,
                 duration: 120
             }
         },
-        reloadTime: 0.15,
+        reloadTime: 0.12,
         hitboxRadius: 0.5,
         isDuplicate: true,
         pieceAmount: 7,
@@ -1850,6 +1872,52 @@ export const Petals = new Definitions<PetalDefinition>([
         undroppable: true
     },
     {
+        idString: "segg5",
+        displayName: "Egg",
+        description: "Something gigantic might pop out of this this.",
+        damage: 3,
+        health: 7500,
+        extendable: false,
+        usable: true,
+        images: {
+            slotDisplaySize: 80
+        },
+        useTime: 0.2,
+        attributes: {
+            spawner: Mobs.fromString("giant_spider"),
+        },
+        reloadTime: 0.2,
+        hitboxRadius: 0.6,
+        pieceAmount: 1,
+        isDuplicate: false,
+        rarity: RarityName.phantasmagoric,
+        usingAssets: "egg",
+        undroppable: true
+    },
+    {
+        idString: "segg6",
+        displayName: "Egg",
+        description: "Something beyond imagination might pop out of this.",
+        damage: 9,
+        health: 7500*3,
+        extendable: false,
+        usable: true,
+        images: {
+            slotDisplaySize: 85
+        },
+        useTime: 0.2,
+        attributes: {
+            spawner: Mobs.fromString("giant_mantis"),
+        },
+        reloadTime: 0.2,
+        hitboxRadius: 0.6,
+        pieceAmount: 1,
+        isDuplicate: false,
+        rarity: RarityName.arcane,
+        usingAssets: "egg",
+        undroppable: true
+    },
+    {
         idString: "talisman",
         displayName: "Talisman",
         description: "A necklace that allows the wearer to anticipate enemy attacks",
@@ -2148,7 +2216,7 @@ export const Petals = new Definitions<PetalDefinition>([
     },
     {
         idString: "slightning",
-        displayName: "Slightning",
+        displayName: "Lightning",
         description: "Strikes several nearby enemies.",
         damage: 20,
         health: 1,
@@ -2173,3 +2241,89 @@ export const Petals = new Definitions<PetalDefinition>([
         usingAssets: "lightning"
     }
 ] satisfies PetalDefinition[]);
+
+// if  u use this to generate iris s tats, remember to remove the 'siris' up there
+/*
+let rnameArr = ['c','un','r','e','l','m','u','s','eth','phas','arc','em'];
+let rrrrrrr = [
+    RarityName.common,
+    RarityName.unusual,
+    RarityName.rare,
+    RarityName.epic,
+    RarityName.legendary,
+    RarityName.mythic,
+    RarityName.unique,
+    RarityName.super,
+    RarityName.ethereal,
+    RarityName.phantasmagoric,
+    RarityName.arcane,
+    RarityName.empyrean,
+]
+let i=0;
+const rrrrrrrrrrrrrrrrrrrrr: PetalDefinition[] = [];
+for (let r in rnameArr) {
+    if (i<2) {
+        i++
+        continue;
+    }
+    const xxx: PetalDefinition = {
+        idString: rnameArr[i]+'iris',
+        displayName: "Iris",
+        description: "uhmm",
+        damage: 5*(3**i),
+        health: 5*(3**i),
+        extendable: true,
+        usable: false,
+        attributes: {
+            poison: {
+                damagePerSecond: 30*(3**i),
+                duration: 5
+            }
+        },
+        reloadTime: 0.5,
+        hitboxRadius: 0.35,
+        isDuplicate: false,
+        pieceAmount: 1,
+        rarity: rrrrrrr[i],
+        undroppable: true,
+        usingAssets: "iris"
+    };
+    const asd: PetalDefinition = {
+        idString: rnameArr[i]+'basic',
+        displayName: "Basic",
+        description: "uhmm",
+        damage: 10*(3**i),
+        health: 10*(3**i),
+        extendable: true,
+        usable: false,
+        attributes: {
+            self_damage: 5*(3**i),
+            armor: 5*(3**i),
+            critical_hit: {
+                chance: 0.03,
+                multiplier: 40
+            },
+            damage_reflection: i*5,
+            damage_heal: {
+                healPercent: 0.5
+            },
+            damage_avoidance: {
+                chance: 0.99,
+            }
+        },
+        modifiers: {
+            speed: 1.2
+        },
+        reloadTime: 2.5,
+        hitboxRadius: 0.55,
+        isDuplicate: false,
+        pieceAmount: 1,
+        rarity: rrrrrrr[i],
+        undroppable: true,
+        usingAssets: "basic"
+    };
+    rrrrrrrrrrrrrrrrrrrrr.push(xxx);
+    rrrrrrrrrrrrrrrrrrrrr.push(asd);
+    i++
+}
+Petals = new Definitions<PetalDefinition>([...Petals.definitions, ...rrrrrrrrrrrrrrrrrrrrr]);*/
