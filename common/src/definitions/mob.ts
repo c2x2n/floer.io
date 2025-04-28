@@ -280,7 +280,7 @@ export const Mobs = new Definitions<MobDefinition>([
         idString: "leg_beetle",
         displayName: "Beetle",
         damage: 50,
-        health: 1200,
+        health: 2000,
         category: MobCategory.Enemy,
         aggroRadius: 20,
         hitboxRadius: 5,
@@ -292,13 +292,14 @@ export const Mobs = new Definitions<MobDefinition>([
         lootTable: {
             "iris": 0.09,
             "salt": 0.06,
-            "triplet": 0.1,
+            "triplet": 0.2,
             "wing": 0.6,
             "powder": 0.00009,
             "leg_egg": 0.06,
         },
         rarity: RarityName.legendary,
-        exp: 500
+        exp: 500, 
+        usingAssets: "beetle"
     },{
         idString: "hornet",
         displayName: "Hornet",
@@ -337,7 +338,7 @@ export const Mobs = new Definitions<MobDefinition>([
         idString: "leg_hornet",
         displayName: "Hornet",
         damage: 75,
-        health: 900,
+        health: 1500,
         category: MobCategory.Enemy,
         movement: {
             reachingAway: true,
@@ -345,7 +346,7 @@ export const Mobs = new Definitions<MobDefinition>([
         shootable: true,
         turningHead: true,
         shoot: {
-            hitboxRadius: 1.2,
+            hitboxRadius: 2.4,
             damage: 20,
             health: 100,
             despawnTime: 3,
@@ -360,7 +361,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "dandelion": 1,
             "bubble": 0.2,
             "missile": 1,
-            "big_missile": 0.2,
+            "big_missile": 0.5,
             "leg_bubble": 0.0009,
             "wing": 0.5,
             "antennae": 0.005,
@@ -406,7 +407,7 @@ export const Mobs = new Definitions<MobDefinition>([
         idString: "leg_mantis",
         displayName: "Mantis",
         damage: 30,
-        health: 70,
+        health: 1500,
         category: MobCategory.Enemy,
         movement: {
             reachingAway: true,
@@ -461,7 +462,7 @@ export const Mobs = new Definitions<MobDefinition>([
         idString: "leg_spider",
         displayName: "Spider",
         damage: 25,
-        health: 675,
+        health: 1675,
         category: MobCategory.Enemy,
         aggroRadius: 20,
         hitboxRadius: 1.5,
@@ -474,13 +475,14 @@ export const Mobs = new Definitions<MobDefinition>([
             "stinger": 0.8,
             "triangle": 0.12,
             "web": 0.9,
-            "pincer": 0.1,
+            "pincer": 0.8,
             "faster": 1,
             "tri_web": 0.02,
             "faster_wing": 0.01
         },
         rarity: RarityName.legendary,
-        exp: 500
+        exp: 500,
+        usingAssets: "spider"
     },{
         idString: "soldier_ant",
         displayName: "Soldier Ant",
@@ -1340,7 +1342,7 @@ export const Mobs = new Definitions<MobDefinition>([
         idString: "myt_starfish",
         displayName: "Starfish",
         damage: 150,
-        health: 1400,
+        health: 7400,
         category: MobCategory.Enemy,
         aggroRadius: 55,
         hitboxRadius: 13,
@@ -1360,7 +1362,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "starfish": 1,
         },
         rarity: RarityName.mythic,
-        exp: 150,
+        exp: 500,
         usingAssets: "starfish"
     }
 ] satisfies MobDefinition[]);
