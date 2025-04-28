@@ -70,8 +70,8 @@ export const GameConstants = {
         rotationRadius: 0.5
     },
     game: {
-        width: 3000,
-        height: 400
+        width: 2566,
+        height: 300
     },
     loot: {
         radius: 0.6,

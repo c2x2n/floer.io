@@ -7,7 +7,7 @@ import { GameConstants } from "@common/constants.ts";
 import { Walls, ZoneData, ZoneName, Zones } from "@common/zones.ts";
 
 const widthDiv = 10;
-const heightDiv = 5;
+const heightDiv = 8;
 
 export class Minimap {
     mapBackground = new Graphics({
