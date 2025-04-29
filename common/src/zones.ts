@@ -64,7 +64,6 @@ export const Zones:
         normalSpawning: {
             "ladybug": 10,
             "shiny_ladybug": 1,
-            "massive_shiny_ladybug": 0.0000001,
             "beetle": 5,
             "cactus": 35,
             "mega_cactus": 5,
@@ -88,10 +87,8 @@ export const Zones:
         normalSpawning: {
             "ladybug": 10,
             "dark_ladybug": 20,
-            "massive_shiny_ladybug": 0.0000001,
             "ant_hole": 1,
             "hornet": 15,
-            "leg_hornet": 1,
             "spider": 10,
             "beetle": 20,
             "mantis": 3,
@@ -116,7 +113,11 @@ export const Zones:
         normalSpawning: {
             "dark_ladybug": 20,
             "hornet": 20,
-            "leg_hornet": 0.9,
+            "leg_hornet": 0.004,
+            "leg_beetle": 0.009,
+            "leg_spider": 0.009,
+            "leg_mantis": 0.004,
+            "leg_evil_centipede": 0.0009,
             "spider": 15,
             "beetle": 20,
             "boulder": 8,
