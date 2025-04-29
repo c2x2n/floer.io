@@ -2042,7 +2042,7 @@ export let Petals = new Definitions<PetalDefinition>([
         displayName: "Heaviest",
         description: "This thing is so heavy that nothing gets in the way.",
         damage: 10,
-        health: 200,
+        health: 100,
         extendable: true,
         usable: false,
         images: {
