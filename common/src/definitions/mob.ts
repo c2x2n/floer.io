@@ -716,7 +716,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "peas": 0.58,
             "chip": 0.28,
             "poison_peas": 0.2,
-            "leg_poison_peas": 0.01
+            "leg_poison_peas": 0.001
         },
         rarity: RarityName.rare,
         exp: 4
