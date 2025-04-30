@@ -37,7 +37,7 @@ export const GameConstants = {
         maxSpeed: 3.5,
         defaultName: "Player",
         maxNameLength: 20,
-        defaultSlot: 5,
+        defaultSlot: 10,
         defaultPrepareSlot: 10,
         defaultEquippedPetals: ["basic","basic","basic","basic","basic"],
         mutateDefaultPetals: {
