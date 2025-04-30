@@ -150,7 +150,6 @@ export let Petals = new Definitions<PetalDefinition>([
         pieceAmount: 1,
         rarity: RarityName.common,
         usingAssets: "light",
-        moreExtendDistance: 0.52,
         modifiers: {
             speed: 1.008
         },
@@ -170,7 +169,6 @@ export let Petals = new Definitions<PetalDefinition>([
         isShowedInOne: false,
         rarity: RarityName.unusual,
         usingAssets: "light",
-        moreExtendDistance: 0.52,
         modifiers: {
             speed: 1.008
         },
@@ -190,7 +188,6 @@ export let Petals = new Definitions<PetalDefinition>([
         isShowedInOne: false,
         rarity: RarityName.mythic,
         usingAssets: "light",
-        moreExtendDistance: 0.52,
         modifiers: {
             speed: 1.02
         },
@@ -200,7 +197,7 @@ export let Petals = new Definitions<PetalDefinition>([
         displayName: "Wing",
         description: "It comes and goes.",
         damage: 20,
-        health: 15,
+        health: 20,
         moreExtendDistance: 2.6,
         images:{
             slotDisplaySize: 45,
@@ -218,8 +215,8 @@ export let Petals = new Definitions<PetalDefinition>([
         idString: "tri_wing",
         displayName: "Wing",
         description: "They come and go.",
-        damage: 25,
-        health: 15,
+        damage: 32,
+        health: 20,
         moreExtendDistance: 2.6,
         images:{
             slotDisplaySize: 45,
@@ -250,7 +247,6 @@ export let Petals = new Definitions<PetalDefinition>([
         isShowedInOne: false,
         rarity: RarityName.epic,
         usingAssets: "light",
-        moreExtendDistance: 0.52,
         modifiers: {
             speed: 1.008
         },
@@ -263,7 +259,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         reloadTime: 0.5,
         modifiers: {
-            revolutionSpeed: 0.8
+            revolutionSpeed: 1.0
         },
         usable: false,
         hitboxRadius: 0.3,
@@ -275,7 +271,7 @@ export let Petals = new Definitions<PetalDefinition>([
         displayName: "Wing",
         description: "It comes and goes quickly.",
         damage: 20,
-        health: 15,
+        health: 20,
         extendable: true,
         reloadTime: 1.25,
         moreExtendDistance: 2.6,
@@ -295,12 +291,12 @@ export let Petals = new Definitions<PetalDefinition>([
         idString: "tri_faster",
         displayName: "Faster",
         description: "Quickly.",
-        damage: 13,
-        health: 12,
+        damage: 15,
+        health: 15,
         extendable: true,
         reloadTime: 0.5,
         modifiers: {
-            revolutionSpeed: 0.8
+            revolutionSpeed: 1.0
         },
         usable: false,
         hitboxRadius: 0.3,
@@ -360,7 +356,7 @@ export let Petals = new Definitions<PetalDefinition>([
         damage: 35,
         health: 8,
         extendable: true,
-        reloadTime: 4,
+        reloadTime: 3.5,
         images: {
             selfGameRotation: 0.1,
             slotDisplaySize: 25,
@@ -396,7 +392,7 @@ export let Petals = new Definitions<PetalDefinition>([
         idString: "dev_stinger",
         displayName: "Stinger",
         description: "I think it hurts?",
-        damage: 60,
+        damage: 100,
         health: 8,
         extendable: true,
         reloadTime: 0.2,
@@ -419,7 +415,7 @@ export let Petals = new Definitions<PetalDefinition>([
         description: "A bunch of sand particles.",
         damage: 5,
         health: 2,
-        reloadTime: 1.5,
+        reloadTime: 1,
         extendable: true,
         usable: false,
         hitboxRadius: 0.3,
@@ -443,7 +439,7 @@ export let Petals = new Definitions<PetalDefinition>([
         attributes: {
             absorbing_heal: 10
         },
-        reloadTime: 3.5,
+        reloadTime: 3,
         hitboxRadius: 0.5,
         isDuplicate: false,
         pieceAmount: 1,
@@ -460,7 +456,7 @@ export let Petals = new Definitions<PetalDefinition>([
         attributes: {
             absorbing_heal: 3.5
         },
-        reloadTime: 3.5,
+        reloadTime: 3,
         hitboxRadius: 0.34,
         isDuplicate: true,
         isShowedInOne: true,
@@ -482,7 +478,7 @@ export let Petals = new Definitions<PetalDefinition>([
         attributes: {
             absorbing_heal: 22
         },
-        reloadTime: 3.5,
+        reloadTime: 3,
         hitboxRadius: 0.5,
         isDuplicate: false,
         pieceAmount: 1,
@@ -525,7 +521,7 @@ export let Petals = new Definitions<PetalDefinition>([
         attributes: {
             health_percent_damage: {
                 percent: 0.3,
-                maxDamage: 200
+                maxDamage: 150
             }
         },
         reloadTime: 2.5,
@@ -887,6 +883,7 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         reloadTime: 1,
         hitboxRadius: 0.7,
+        distanceToCenter：0.65,
         isDuplicate: true,
         isShowedInOne: true,
         pieceAmount: 3,
@@ -919,7 +916,7 @@ export let Petals = new Definitions<PetalDefinition>([
         damage: 35,
         health: 8,
         extendable: true,
-        reloadTime: 4,
+        reloadTime: 3.5,
         usable: false,
         hitboxRadius: 0.3,
         isDuplicate: true,
@@ -1439,7 +1436,7 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         hitboxRadius: 0.9,
         modifiers: {
-            zoom: 15
+            zoom: 30
         },
         rarity: RarityName.legendary
     },{
@@ -1668,7 +1665,7 @@ export let Petals = new Definitions<PetalDefinition>([
             place_projectile: {
                 definition: Projectile.fromString("pollen"),
                 speed: 0,
-                damage: 11,
+                damage: 8,
                 health: 5,
                 hitboxRadius: 0.3,
                 despawnTime: 5,
@@ -1686,8 +1683,8 @@ export let Petals = new Definitions<PetalDefinition>([
         idString: "myt_pollen",
         displayName: "Pollen",
         description: "Asthmatics beware.",
-        damage: 8,
-        health: 5,
+        damage: 13,
+        health: 10,
         extendable: false,
         usable: true,
         useTime: 0.2,
@@ -1944,8 +1941,8 @@ export let Petals = new Definitions<PetalDefinition>([
         idString: "yinyang",
         displayName: "Yin Yang",
         description: "A mysterious petal with mighty power coming from the East.\nReverses your petal rotation direction.",
-        damage: 10,
-        health: 10,
+        damage: 20,
+        health: 20,
         extendable: true,
         usable: false,
         images: {
@@ -2029,9 +2026,9 @@ export let Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 40,
         },
         attributes: {
-            absorbing_shield: 15.5
+            absorbing_shield: 25
         },
-        reloadTime: 3.5,
+        reloadTime: 3,
         hitboxRadius: 0.5,
         isDuplicate: false,
         pieceAmount: 1,
@@ -2111,7 +2108,7 @@ export let Petals = new Definitions<PetalDefinition>([
         images: {
             slotDisplaySize: 55,
         },
-        reloadTime: 2.5,
+        reloadTime: 4,
         hitboxRadius: 0.7,
         isDuplicate: false,
         pieceAmount: 1,
@@ -2134,7 +2131,7 @@ export let Petals = new Definitions<PetalDefinition>([
         modifiers: {
             conditionalHeal: {
                 healthPercent: 0.75,
-                healAmount: 7.5
+                healAmount: 9.5
             }
         },
         reloadTime: 2,
