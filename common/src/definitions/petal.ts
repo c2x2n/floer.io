@@ -140,7 +140,7 @@ export let Petals = new Definitions<PetalDefinition>([
         idString: "fast",
         displayName: "Fast",
         description: "Weaker than most petals, but recharges very quickly",
-        damage: 9,
+        damage: 8,
         health: 5,
         extendable: true,
         reloadTime: 0.5,
@@ -152,14 +152,14 @@ export let Petals = new Definitions<PetalDefinition>([
         usingAssets: "light",
         moreExtendDistance: 0.52,
         modifiers: {
-            speed: 1.01
+            speed: 1.008
         },
     },
     {
         idString: "twin",
         displayName: "Twin",
         description: "Why stop at one? Why not TWO?!",
-        damage: 9,
+        damage: 8,
         health: 5,
         extendable: true,
         reloadTime: 0.5,
@@ -172,7 +172,7 @@ export let Petals = new Definitions<PetalDefinition>([
         usingAssets: "light",
         moreExtendDistance: 0.52,
         modifiers: {
-            speed: 1.01
+            speed: 1.008
         },
     },
     {
@@ -239,7 +239,7 @@ export let Petals = new Definitions<PetalDefinition>([
         idString: "triplet",
         displayName: "Triplet",
         description: "How about THREE?!",
-        damage: 11,
+        damage: 8,
         health: 5,
         extendable: true,
         reloadTime: 0.5,
@@ -252,7 +252,7 @@ export let Petals = new Definitions<PetalDefinition>([
         usingAssets: "light",
         moreExtendDistance: 0.52,
         modifiers: {
-            speed: 1.01
+            speed: 1.008
         },
     },{
         idString: "faster",
@@ -470,7 +470,7 @@ export let Petals = new Definitions<PetalDefinition>([
     },{
         idString: "epic_rose",
         displayName: "Rose",
-        description: "健胃消食片？",
+        description: "Extremely powerful rose, almost unheard of",
         damage: 5,
         health: 5,
         extendable: false,
@@ -490,7 +490,7 @@ export let Petals = new Definitions<PetalDefinition>([
     },{
         idString: "myt_tri_rose",
         displayName: "Rose",
-        description: "Its healing properties are amazing. Not so good at combat though",
+        description: "This is a miracle rose, only one in the world",
         damage: 5,
         health: 5,
         extendable: false,
@@ -675,7 +675,7 @@ export let Petals = new Definitions<PetalDefinition>([
             }
         },
         useTime: 0.2,
-        reloadTime: 3.3,
+        reloadTime: 2.3,
         hitboxRadius: 0.6,
         isDuplicate: false,
         pieceAmount: 1,
@@ -752,7 +752,7 @@ export let Petals = new Definitions<PetalDefinition>([
         idString: "myt_big_missile",
         displayName: "Missile",
         description: "You can actually shoot this quickly bigger one",
-        damage: 50,
+        damage: 100,
         health: 25,
         extendable: true,
         images: {
@@ -1145,7 +1145,7 @@ export let Petals = new Definitions<PetalDefinition>([
     {
         idString: "peas",
         displayName: "Peas",
-        description: "Prooooof.",
+        description: "4 in 1 deal",
         damage: 8,
         health: 5,
         extendable: false,
@@ -1160,7 +1160,7 @@ export let Petals = new Definitions<PetalDefinition>([
                 speed: 6.25,
                 damage: 8,
                 health: 5,
-                hitboxRadius: 0.38,
+                hitboxRadius: 0.35,
                 despawnTime: 3.5
             }
         },
@@ -1174,7 +1174,7 @@ export let Petals = new Definitions<PetalDefinition>([
     {
         idString: "poison_peas",
         displayName: "Peas",
-        description: "Prooooof. With Poison",
+        description: "4 in 1 deal, now with a secret ingredient: poison",
         damage: 8,
         health: 5,
         extendable: false,
@@ -1189,7 +1189,7 @@ export let Petals = new Definitions<PetalDefinition>([
                 speed: 6.25,
                 damage: 8,
                 health: 5,
-                hitboxRadius: 0.33,
+                hitboxRadius: 0.35,
                 despawnTime: 3.5
             },
             poison: {
@@ -1207,7 +1207,7 @@ export let Petals = new Definitions<PetalDefinition>([
     {
         idString: "leg_poison_peas",
         displayName: "Peas",
-        description: "Bigger prooooof. With Poison",
+        description: "4 bigger in 1 deal, now with a secret ingredient: poison",
         damage: 10,
         health: 5,
         extendable: false,
@@ -1241,7 +1241,7 @@ export let Petals = new Definitions<PetalDefinition>([
     {
         idString: "myt_poison_peas",
         displayName: "Peas",
-        description: "Quickly bigger prooooof. With Poison",
+        description: "The most poisonous peas ever, it recharges at an amazing speed",
         damage: 10,
         health: 5,
         extendable: false,
@@ -1420,7 +1420,7 @@ export let Petals = new Definitions<PetalDefinition>([
         1,
             rarity
     :
-        RarityName.rare
+        RarityName.epic
     },{
         idString: "antennae",
         displayName: "Antennae",
@@ -2042,7 +2042,7 @@ export let Petals = new Definitions<PetalDefinition>([
         displayName: "Heaviest",
         description: "This thing is so heavy that nothing gets in the way.",
         damage: 10,
-        health: 200,
+        health: 100,
         extendable: true,
         usable: false,
         images: {

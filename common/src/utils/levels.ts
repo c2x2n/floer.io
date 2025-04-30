@@ -86,20 +86,20 @@ export const levelStats : LevelStat[] = [
     },{
         level: 15,
         spawnAt: ZoneName.Medium,
-        extraSlot: 1
+        extraSlot: 0
     },{
         level: 30,
         spawnAt: ZoneName.Hard,
-        extraSlot: 1
+        extraSlot: 0
     },{
         level: 45,
         spawnAt: ZoneName.Nightmare,
-        extraSlot: 1
+        extraSlot: 0
     },{
         level: 60,
-        extraSlot: 1
+        extraSlot: 0
     },{
         level: 75,
-        extraSlot: 1
+        extraSlot: 0
     }
 ]

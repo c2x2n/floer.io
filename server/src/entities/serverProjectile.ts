@@ -104,7 +104,7 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
         if (!(to instanceof ServerPlayer || to instanceof ServerMob)) return false
 
         if (this.parameters.modifiers) {
-            if (this.source.type === EntityType.Player) {
+            if (this.source.type === EntityType.Mob) {
                 return !(to instanceof ServerMob
                     && to.definition.shootable
                     && to.definition.shoot.definition === this.definition);

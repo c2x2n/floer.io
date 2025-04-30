@@ -298,7 +298,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "leg_egg": 0.06,
         },
         rarity: RarityName.legendary,
-        exp: 500, 
+        exp: 500,
         usingAssets: "beetle"
     },{
         idString: "hornet",
@@ -346,7 +346,7 @@ export const Mobs = new Definitions<MobDefinition>([
         shootable: true,
         turningHead: true,
         shoot: {
-            hitboxRadius: 2.4,
+            hitboxRadius: 1.85,
             damage: 20,
             health: 100,
             despawnTime: 3,
@@ -414,7 +414,7 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         shootable: true,
         shoot: {
-            hitboxRadius: 0.7,
+            hitboxRadius: 1.25,
             damage: 15,
             health: 30,
             despawnTime: 3,
@@ -426,11 +426,11 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 2,
         speed: 3,
         lootTable: {
-            "peas": 0.1,
-            "poison_peas": 0.05,
+            "peas": 1,
+            "poison_peas": 1,
             "leg_poison_peas": 0.01,
             "leg_bubble": 0.00006,
-            "wing": 0.14,
+            "wing": 0.5
         },
         rarity: RarityName.legendary,
         exp: 500,
@@ -716,7 +716,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "peas": 0.58,
             "chip": 0.28,
             "poison_peas": 0.2,
-            "leg_poison_peas": 0.01
+            "leg_poison_peas": 0.001
         },
         rarity: RarityName.rare,
         exp: 4
@@ -1029,7 +1029,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 7500,
         category: MobCategory.Enemy,
         aggroRadius: 35,
-        hitboxRadius: 10,
+        hitboxRadius: 20,
         shootable: true,
         images: {
             spiderLeg: true
