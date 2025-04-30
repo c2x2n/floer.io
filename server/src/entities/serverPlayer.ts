@@ -71,6 +71,8 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     distance: number = 0;
     isAttacking = false;
     isDefending = false;
+    
+    isPetalAttack = false;
 
     inventory: Inventory;
 

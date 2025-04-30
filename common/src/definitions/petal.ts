@@ -127,6 +127,7 @@ export type AttributeParameters = {
         range: number
         bounces: number
     }
+    damage_reduction_percent?: number
 })
 
 export function getDisplayedPieces(petal: PetalDefinition): number {
@@ -883,7 +884,7 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         reloadTime: 1,
         hitboxRadius: 0.7,
-        distanceToCenter：0.65,
+        distanceToCenter: 0.65,
         isDuplicate: true,
         isShowedInOne: true,
         pieceAmount: 3,
@@ -2044,6 +2045,9 @@ export let Petals = new Definitions<PetalDefinition>([
         usable: false,
         images: {
             slotDisplaySize: 60,
+        },
+        attributes: {
+            damage_reduction_percent: 65
         },
         reloadTime: 5,
         hitboxRadius: 1.0,

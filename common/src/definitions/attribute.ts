@@ -82,6 +82,10 @@ const AttributeDefinitions = [
     {
         idString: "lightning",
         displayName: "Lightning"
+    },
+    {
+        idString: "damage_reduction_percent",
+        displayName: "Damage Reduction Percent"
     }
 ] as const;
 

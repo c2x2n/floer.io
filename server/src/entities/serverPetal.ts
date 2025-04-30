@@ -189,12 +189,19 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
             return;
         };
         if (this.damage && to.canReceiveDamageFrom(this)) {
-            to.receiveDamage(this.damage, this.owner);
-            this.owner.sendEvent(
+            const owner = this.owner;
+            const originalIsPetalAttack = owner.isPetalAttack;
+            owner.isPetalAttack = true;
+            
+            to.receiveDamage(this.damage, owner);
+            
+            owner.sendEvent(
                 AttributeEvents.PETAL_DEAL_DAMAGE,
                 to,
                 this
-            )
+            );
+            
+            owner.isPetalAttack = originalIsPetalAttack;
         }
     }
 

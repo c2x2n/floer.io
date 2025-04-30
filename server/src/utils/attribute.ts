@@ -13,6 +13,10 @@ import { isDamageableEntity } from "../typings";
 import { CircleHitbox } from "../../../common/src/utils/hitbox";
 import { ServerEntity } from "../entities/serverEntity";
 
+// 创建一个更精确的映射来存储花瓣攻击信息
+// 键: "攻击者ID-目标ID" 形式的字符串，值: {时间戳, 伤害量}
+const petalAttacks = new Map<string, {timestamp: number, damage: number}>();
+
 export enum AttributeEvents {
     HEALING = "HEALING",
     DEFEND = "DEFEND",
@@ -591,6 +595,32 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
                     }
                 }
             );
+        }
+    },
+    damage_reduction_percent: {
+        callback: (on, petal, data) => {
+            const originalReceiveDamage = petal.receiveDamage;
+            
+            petal.receiveDamage = function(amount: number, source: any) {
+                let shouldReduceDamage = false;
+                
+                if (data && source) {
+                    if (source.type === EntityType.Petal || source.type === EntityType.Projectile) {
+                        shouldReduceDamage = true;
+                    } 
+                    else if (source.type === EntityType.Player && source.isPetalAttack) {
+                        shouldReduceDamage = true;
+                    }
+                    
+                    if (shouldReduceDamage) {
+                        const reduction = data / 100;
+                        const originalAmount = amount;
+                        amount = amount * (1 - reduction);
+                    }
+                }
+                
+                originalReceiveDamage.call(this, amount, source);
+            };
         }
     }
 } as const;

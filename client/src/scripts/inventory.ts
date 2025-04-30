@@ -300,6 +300,13 @@ const attributesShowingConfigs: { [K in AttributeName] : AttributeShowingFunctio
                 color: "#66ffff"
             }]
         },
+        damage_reduction_percent: (data) => {
+            return [{
+                displayName: "Petal Resistance",
+                value: `${data}%`,
+                color: "#3344ff"
+            }]
+        }
         /*revive: (data) => {
             return [...(data.reviveHpMulti !== undefined ? [{
                 displayName: "Revive HP",
