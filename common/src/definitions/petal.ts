@@ -752,7 +752,7 @@ export let Petals = new Definitions<PetalDefinition>([
         idString: "myt_big_missile",
         displayName: "Missile",
         description: "You can actually shoot this quickly bigger one",
-        damage: 50,
+        damage: 100,
         health: 25,
         extendable: true,
         images: {
