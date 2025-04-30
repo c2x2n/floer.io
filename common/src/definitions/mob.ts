@@ -298,7 +298,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "leg_egg": 0.06,
         },
         rarity: RarityName.legendary,
-        exp: 500, 
+        exp: 500,
         usingAssets: "beetle"
     },{
         idString: "hornet",
@@ -1029,7 +1029,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 7500,
         category: MobCategory.Enemy,
         aggroRadius: 35,
-        hitboxRadius: 10,
+        hitboxRadius: 20,
         shootable: true,
         images: {
             spiderLeg: true
