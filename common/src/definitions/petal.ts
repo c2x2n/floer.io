@@ -1163,8 +1163,9 @@ export let Petals = new Definitions<PetalDefinition>([
             }
         },
         reloadTime: 1.2,
-        hitboxRadius: 0.33,
+        hitboxRadius: 0.35,
         isDuplicate: true,
+        distanceToCenter: 0.4,
         pieceAmount: 4,
         isShowedInOne: true,
         rarity: RarityName.rare
@@ -1196,8 +1197,9 @@ export let Petals = new Definitions<PetalDefinition>([
             }
         },
         reloadTime: 1.2,
-        hitboxRadius: 0.4,
+        hitboxRadius: 0.35,
         isDuplicate: true,
+        distanceToCenter: 0.4,
         pieceAmount: 4,
         isShowedInOne: true,
         rarity: RarityName.epic,
