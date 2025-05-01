@@ -182,8 +182,8 @@ export let Petals = new Definitions<PetalDefinition>([
         idString: "penta",
         displayName: "Penta",
         description: "FIVE.",
-        damage: 18,
-        health: 9,
+        damage: 15,
+        health: 10,
         extendable: true,
         reloadTime: 0.5,
         usable: false,
@@ -202,9 +202,9 @@ export let Petals = new Definitions<PetalDefinition>([
         displayName: "Wing",
         description: "It comes and goes.",
         damage: 20,
-        health: 20,
+        health: 15,
         swinging: {
-            time: 2,
+            time: 1,
             distance: 2.6
         },
         images:{
@@ -225,7 +225,10 @@ export let Petals = new Definitions<PetalDefinition>([
         description: "They come and go.",
         damage: 32,
         health: 20,
-        moreExtendDistance: 2.6,
+        swinging: {
+            time: 1,
+            distance: 2.6
+        },
         images:{
             slotDisplaySize: 45,
             selfGameRotation: 2
@@ -279,7 +282,11 @@ export let Petals = new Definitions<PetalDefinition>([
         displayName: "Wing",
         description: "It comes and goes quickly.",
         damage: 20,
-        health: 20,
+        health: 15,
+        swinging: {
+            time: 0.5,
+            distance: 2.6
+        },
         extendable: true,
         reloadTime: 1.25,
         moreExtendDistance: 2.6,
@@ -999,7 +1006,7 @@ export let Petals = new Definitions<PetalDefinition>([
         idString: "rice",
         displayName: "Rice",
         description: "Spawns instantly, but not very strong",
-        damage: 9,
+        damage: 10,
         health: 1,
         extendable: true,
         reloadTime: 0.04,
@@ -1007,7 +1014,7 @@ export let Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 45
         },
         usable: false,
-        hitboxRadius: 0.5,
+        hitboxRadius: 1,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.epic
