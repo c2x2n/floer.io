@@ -1,11 +1,7 @@
 import { ServerPlayer } from "../entities/serverPlayer";
 import { PetalBunch } from "./petalBunch";
 import { Game } from "../game";
-import {
-    PetalDefinition,
-    Petals,
-    SavedPetalDefinitionData
-} from "../../../common/src/definitions/petal";
+import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../../../common/src/definitions/petal";
 import { P2 } from "../../../common/src/utils/math";
 import { Vector } from "../../../common/src/utils/vector";
 import { GameConstants } from "../../../common/src/constants";
@@ -30,7 +26,16 @@ export class Inventory {
     private totalDisplayedPetals = 0;
 
     private revolutionRadians = 0;
-    range = 0;
+    _range = 0;
+
+    get range(): number {
+        return this._range;
+    }
+
+    set range(r: number) {
+        this._range = r;
+        this.petalBunches.forEach(e => e.updateRange(this._range));
+    }
 
     eventManager = new AttributeEventManager();
 
@@ -256,18 +261,14 @@ export class Inventory {
             this.totalDisplayedPetals += petalBunch.displayedPieces;
         });
 
-        const radius = this.range;
-
         let finalRevSpeed = this.player.modifiers.revolutionSpeed;
 
         if (this.player.modifiers.controlRotation) {
             // Use player's MOUSE direction to determine the angle
-            const directionAngle = Math.atan2(
+            this.revolutionRadians = Math.atan2(
                 this.player.direction.mouseDirection.y,
                 this.player.direction.mouseDirection.x
             );
-
-            this.revolutionRadians = directionAngle;
         } else {
             const yyEffects = this.getYinYangEffects(this.player.modifiers.yinYangs);
 
@@ -287,7 +288,7 @@ export class Inventory {
         const singleOccupiedRadians = P2 / this.totalDisplayedPetals;
 
         this.petalBunches.forEach(petalBunch => {
-            petalBunch.tick(radius, revolutionRadians, singleOccupiedRadians);
+            petalBunch.tick(revolutionRadians, singleOccupiedRadians);
             revolutionRadians += singleOccupiedRadians * petalBunch.displayedPieces;
         });
     }

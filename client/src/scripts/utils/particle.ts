@@ -143,8 +143,6 @@ class Particle {
     }
 
     render(dt: number) {
-        const { ctx } = this;
-
         this.tick += dt;
         if (this.tick > this.end) {
             this.dead = true;

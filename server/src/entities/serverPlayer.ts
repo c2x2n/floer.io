@@ -232,11 +232,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             this.sendEvent(AttributeEvents.ATTACK, undefined)
         }
 
-        this.inventory.range = MathNumeric.targetEasing(
-            this.inventory.range,
-            targetRange,
-            2
-        )
+        this.inventory.range = targetRange;
 
         this.inventory.tick();
 

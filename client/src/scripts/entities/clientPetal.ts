@@ -73,7 +73,7 @@ export class ClientPetal extends ClientEntity {
                 }
             } else if (this.definition.images?.selfGameRotation) {
                 this.angle += this.definition.images.selfGameRotation;
-                this.container.rotation = this.angle
+                this.container.rotation = MathGraphics.degreesToRadians(this.angle)
             }
 
             if (Rarity.fromString(this.definition.rarity).showParticle && this.visible) {
@@ -106,6 +106,7 @@ export class ClientPetal extends ClientEntity {
                 this.container.visible = visible;
                 this.container.alpha = 1;
                 this.container.scale = 1;
+                this.container.rotation = 0;
             } else {
                 this.reloadAnimation = new Tween({ alpha: 1, scale: this.container.scale })
                     .to({ alpha: 0, scale: this.container.scale * 3}

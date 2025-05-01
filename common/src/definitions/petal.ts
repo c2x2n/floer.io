@@ -50,6 +50,10 @@ type PetalEquipmentType = ({
     readonly reloadTime?: number
     readonly extendable: boolean
     readonly moreExtendDistance?: number
+    readonly swinging?: {
+        time: number
+        distance: number
+    }
 } & PetalPieceType & PetalUsageType) | {
     readonly equipment: true
 }
@@ -199,7 +203,10 @@ export let Petals = new Definitions<PetalDefinition>([
         description: "It comes and goes.",
         damage: 20,
         health: 20,
-        moreExtendDistance: 2.6,
+        swinging: {
+            time: 2,
+            distance: 2.6
+        },
         images:{
             slotDisplaySize: 45,
             selfGameRotation: 2
@@ -207,7 +214,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         reloadTime: 1.25,
         usable: false,
-        hitboxRadius: 0.5,
+        hitboxRadius: 0.6,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.rare
@@ -284,7 +291,7 @@ export let Petals = new Definitions<PetalDefinition>([
             revolutionSpeed: 1.2
         },
         usable: false,
-        hitboxRadius: 0.5,
+        hitboxRadius: 0.6,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.legendary,

@@ -1,6 +1,6 @@
 import { getDisplayedPieces, SavedPetalDefinitionData } from "../../../common/src/definitions/petal";
 import { ServerPetal } from "../entities/serverPetal";
-import { MathGraphics, P2 } from "../../../common/src/utils/math";
+import { MathGraphics, MathNumeric, P2 } from "../../../common/src/utils/math";
 import { Vec2, Vector } from "../../../common/src/utils/vector";
 import { Inventory } from "./inventory";
 import { GameConstants } from "../../../common/src/constants";
@@ -52,14 +52,57 @@ export class PetalBunch {
         }
     }
 
-    tick(radius: number, revolutionRadians: number, singleOccupiedRadians: number): void {
+    range: number = GameConstants.player.defaultPetalDistance;
+    nowRange: number = GameConstants.player.defaultPetalDistance;
+
+    updateRange(newR: number) {
         if (!this.definition) return;
         if (this.definition.equipment) return;
 
-        if (radius > GameConstants.player.defaultPetalDistance){
-            if (!this.definition.extendable) radius = GameConstants.player.defaultPetalDistance;
-            if (this.definition.moreExtendDistance) radius += this.definition.moreExtendDistance;
+        if (newR > GameConstants.player.defaultPetalDistance){
+            if (!this.definition.extendable) return;
+        } else {
+            if (this.definition.swinging) {
+                this.extraRange = 0;
+                this.swingingBack = false;
+            }
         }
+
+        this.nowRange = newR;
+    }
+
+    extraRange: number = 0;
+    swingingBack: boolean = false;
+
+    tick(revolutionRadians: number, singleOccupiedRadians: number): void {
+        if (!this.definition) return;
+        if (this.definition.equipment) return;
+
+        const target = this.nowRange + this.extraRange;
+
+        if (this.player.isAttacking){
+            if (this.definition.moreExtendDistance) {
+                this.extraRange = this.definition.moreExtendDistance
+            } else if (this.definition.swinging) {
+                const morer = this.definition.swinging.distance
+                if (this.extraRange >= morer && !this.swingingBack) this.swingingBack = true;
+                if (this.extraRange <= 0 && this.swingingBack) this.swingingBack = false;
+
+                const target =
+                    this.swingingBack ? -1 : 1;
+
+                this.extraRange +=
+                    target * this.player.game.dt * morer / this.definition.swinging.time;
+            }
+        }
+
+        this.range = MathNumeric.targetEasing(
+            this.range,
+            target,
+            2
+        )
+
+        const radius = this.range;
 
         this.position = this.inventory.position;
 
