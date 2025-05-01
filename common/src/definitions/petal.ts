@@ -2023,7 +2023,7 @@ export let Petals = new Definitions<PetalDefinition>([
                 revolutionReduction: 0.25
             }
         },
-        reloadTime: 1.5,
+        reloadTime: 1.7,
         hitboxRadius: 0.6,
         isDuplicate: false,
         pieceAmount: 1,
