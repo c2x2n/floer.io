@@ -82,7 +82,7 @@ export const Zones:
         width: 800,
         displayColor: "#923a28",
         backgroundColor: "#b36658",
-        density: 0.8,
+        density: 1,
         highestLevel: 45,
         normalSpawning: {
             "ladybug": 10,
@@ -108,7 +108,7 @@ export const Zones:
         width: 2566 - 2000,
         displayColor: "#a4aaa6",
         backgroundColor: "#4d5e55",
-        density: 0.8,
+        density: 1,
         highestLevel: 999,
         normalSpawning: {
             "dark_ladybug": 20,
