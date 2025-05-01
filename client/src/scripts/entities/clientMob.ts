@@ -1,52 +1,20 @@
 import { ClientEntity } from "./clientEntity";
 import { EntityType } from "@common/constants";
-import { GameSprite, getGameAssetsPath } from "@/scripts/utils/pixi";
+import { getGameAssetsFile, getGameAssetsName } from "@/scripts/utils/render.ts";
 import { Game } from "@/scripts/game";
 import { EntitiesNetData } from "@common/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
-import { Text, Graphics } from "pixi.js";
-import { MathGraphics, MathNumeric } from "@common/utils/math.ts";
 import { MobDefinition } from "@common/definitions/mob.ts";
 import { Vec2 } from "@common/utils/vector.ts";
 import { Rarity } from "@common/definitions/rarity.ts";
-import { Tween } from '@tweenjs/tween.js';
-import { Easing } from '@tweenjs/tween.js';
-
-const defaultImageSize = 200;
+import { mobAssets } from "@/assets/mob.ts";
+import { Tween } from "@tweenjs/tween.js";
+import { MathGraphics, MathNumeric } from "@common/utils/math.ts";
 
 export class ClientMob extends ClientEntity {
     type = EntityType.Mob;
 
-    images = {
-        body: new GameSprite(),
-        left_mouth: new GameSprite(),
-        right_mouth: new GameSprite(),
-        limbs1: new GameSprite(),
-        limbs2: new GameSprite(),
-        limbs3: new GameSprite(),
-        limbs4: new GameSprite()
-    };
-
     healthPercent = 1;
-    healthBar = new Graphics();
-    name: Text = new Text({
-        text: "",
-        style: {
-            fontFamily: 'Ubuntu',
-            fontSize: 11,
-            fill: "#fff",
-            stroke: {color: "#000", width: 2}
-        }
-    });
-    rarity: Text = new Text({
-        text: "",
-        style: {
-            fontFamily: 'Ubuntu',
-            fontSize: 11,
-            fill: "#fff",
-            stroke: {color: "#000", width: 2}
-        }
-    });
 
     definition?: MobDefinition;
 
@@ -55,46 +23,23 @@ export class ClientMob extends ClientEntity {
     constructor(game: Game, id: number) {
         super(game, id);
 
-        this.container.zIndex = 0;
-
-        this.images.body.anchor.set(0.5);
-
-        this.healthBar.position.set(0, 50);
-
-        this.name.anchor.y = 0.5;
-        this.rarity.anchor.x = 1;
-
-        this.staticContainer.addChild(
-            this.name,
-            this.healthBar,
-            this.rarity
-        )
-
-        this.container.addChild(
-            this.images.body,
-        );
-
     }
+
+    image?: HTMLImageElement;
+    selfRotation: number = 0;
 
     render(dt: number): void {
         super.render(dt);
 
-        this.updateContainerPosition(8);
-
-        const movementDistance = Vec2.distance(this.oldPosition, this.position);
-        if (movementDistance) {
-            this.playMovementAnimation(movementDistance)
-        }
         if (!this.definition) return;
+
         if (this.definition.movement && this.definition.movement.sandstormLike) {
-            this.images.limbs1.angle += 5;
-            this.images.limbs2.angle -= 4;
-            this.images.limbs3.angle += 3;
         } else {
             if (this.definition.images?.rotation) {
                 this.selfRotation += this.definition.images.rotation * this.game.dt;
 
-                this.container.angle = MathGraphics.radiansToDegrees(this.selfRotation)
+                this.container.rotation = this.selfRotation;
+                return;
             }else {
                 const actualDirection = this.direction
                 this.container.rotation =
@@ -104,6 +49,86 @@ export class ClientMob extends ClientEntity {
                     );
             }
         }
+
+        const name = getGameAssetsName(this.definition);
+
+        this.updateContainerPosition(4);
+        this.container.radius = Camera.unitToScreen(this.hitboxRadius);
+
+        if (mobAssets.hasOwnProperty(name)) {
+            mobAssets[name](this.container)
+        } else  {
+            const scalePercent =
+                Camera.unitToScreen(this.hitboxRadius) * 2 / 200;
+            if (!this.image) {
+                this.image = new Image();
+                const image = this.image;
+
+                image.src = `/img/game/mob/${getGameAssetsFile(this.definition)}`;
+            } else if (this.image){
+                this.ctx.drawImage(
+                    this.image,
+                    -this.image.width * scalePercent / 2,
+                    -this.image.height * scalePercent / 2,
+                    this.image.width * scalePercent,
+                    this.image.height * scalePercent,
+                )
+            }
+        }
+    }
+
+    staticRender(dt: number): void {
+        this.drawHealthBar();
+    }
+
+    healthBarY: number = 0;
+
+    drawHealthBar(): void {
+        if (!this.definition) return;
+
+        const { ctx } = this;
+        const positionY = this.healthBarY;
+
+        const healthBarWidth = MathNumeric.clamp(
+            Camera.unitToScreen(this.definition.hitboxRadius) * 2,
+            80,
+            Infinity
+        );
+        const fillWidth = healthBarWidth * this.healthPercent;
+
+        if (this.definition.hideInformation) {
+            if (this.healthPercent > 0.999) return;
+        } else {
+            const name = this.definition.displayName;
+            ctx.textAlign = "left";
+            ctx.textBaseline = "bottom";
+            ctx.font = "11px Ubuntu";
+            ctx.strokeStyle = "#000000";
+            ctx.lineWidth = 2;
+            ctx.strokeText(name, -healthBarWidth / 2, positionY - 6);
+            ctx.font = "11px Ubuntu";
+            ctx.fillStyle = "#ffffff";
+            ctx.fillText(name, -healthBarWidth / 2, positionY - 6);
+
+            const rarity = Rarity.fromString(this.definition.rarity);
+            ctx.fillStyle = rarity.color;
+            ctx.textAlign = "right";
+            ctx.textBaseline = "top";
+            ctx.strokeText(rarity.displayName, (healthBarWidth + 5) / 2, positionY + 6);
+            ctx.fillText(rarity.displayName, (healthBarWidth + 5) / 2, positionY + 6);
+        }
+
+        ctx.fillStyle = "#000000";
+        ctx.globalAlpha = 0.3;
+        ctx.beginPath();
+        ctx.roundRect((-healthBarWidth - 5) / 2, positionY - 5, healthBarWidth + 5, 10, 10);
+        ctx.fill();
+
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = "#87e63e";
+        ctx.beginPath()
+        ctx.roundRect(-healthBarWidth / 2, positionY + 3 / 2 - 5, fillWidth, 7, 10)
+        ctx.fill()
     }
 
     updateFromData(data: EntitiesNetData[EntityType.Mob], isNew: boolean): void {
@@ -116,41 +141,22 @@ export class ClientMob extends ClientEntity {
 
             if (isNew) {
                 this.container.position = Camera.vecToScreen(this.position);
-                this.images.body
-                    .setFrame(getGameAssetsPath("mob", this.definition));
                 this.container.rotation = Vec2.directionToRadians(data.direction);
+                this.container.radius = Camera.unitToScreen(this.hitboxRadius);
 
-                const healthBarY = Camera.unitToScreen(this.definition.hitboxRadius + 5 / 20);
-                this.healthBar.position.set(0, healthBarY);
-                this.name.position.y = healthBarY - 7;
-                this.rarity.position.y = healthBarY + 7;
-
-                if (this.definition.images?.width) {
-                    this.images.body.anchor.x = 0.5 + (
-                        (defaultImageSize - this.definition.images.width) / defaultImageSize
-                    ) / 2;
-                }
-
-                if (this.definition.images?.height) {
-                    this.images.body.anchor.y = 0.5 + (
-                        (defaultImageSize - this.definition.images.height) / defaultImageSize
-                    ) / 2;
-                }
+                this.healthBarY = Camera.unitToScreen(this.definition.hitboxRadius + 5 / 20);
 
                 if (this.definition.idString === "sandstorm") {
                     this.container.rotation = Math.random() * Math.PI * 2;
                 } else {
                     this.container.rotation = Vec2.directionToRadians(data.direction);
                 }
-
-                this.init();
             }
 
             if (isNew || this.healthPercent != data.full.healthPercent) {
                 if (!isNew && this.healthPercent > data.full.healthPercent)
                     this.getDamageAnimation()
                 this.healthPercent = data.full.healthPercent;
-                this.reddrawHealthBar();
                 const rarity = Rarity.fromString(this.definition.rarity);
                 if (rarity.globalMessage) {
                     this.game.bossbar.bossbarDatas.set(this.id, {
@@ -164,240 +170,18 @@ export class ClientMob extends ClientEntity {
         super.updateFromData(data, isNew);
     }
 
-    init(): void {
-        if (!this.definition) return;
-
-        const rarity = Rarity.fromString(this.definition.rarity);
-
-        const hitboxRadius = this.definition.hitboxRadius;
-
-        if (this.definition.images?.mouth) {
-            this.container.addChild(
-                this.images.left_mouth,
-                this.images.right_mouth
-            )
-
-            this.images.left_mouth
-                .setFrame(getGameAssetsPath("animation", this.definition))
-                .setZIndex(-1)
-                .setAnchor(Vec2.new(0, 0.5));
-            this.images.right_mouth
-                .setFrame(getGameAssetsPath("animation", this.definition))
-                .setZIndex(-1)
-                .setAnchor(Vec2.new(0, 0.5));
-            this.images.right_mouth.scale.y = -1;
-
-            this.images.right_mouth.position.x = Camera.unitToScreen(hitboxRadius) * (this.definition.images?.mouthXPosition ?? 0.6 * 1.5 / hitboxRadius);
-            this.images.right_mouth.position.y = Camera.unitToScreen(hitboxRadius) * (this.definition.images?.mouthYPosition ?? 0.9 * 1.5 / hitboxRadius);
-
-            this.images.left_mouth.position.x = Camera.unitToScreen(hitboxRadius) * (this.definition.images?.mouthXPosition ?? 0.6 * 1.5 / hitboxRadius);
-            this.images.left_mouth.position.y = Camera.unitToScreen(-hitboxRadius) * (this.definition.images?.mouthYPosition ?? 0.9 * 1.5 / hitboxRadius);
-        }
-
-        if (this.definition.images?.spiderLeg) {
-            this.container.addChild(
-                this.images.limbs1,
-                this.images.limbs2,
-                this.images.limbs3,
-                this.images.limbs4
-            )
-            this.images.limbs1
-                .setFrame(getGameAssetsPath("animation", "spider_leg1"))
-                .setZIndex(-1)
-                .setAnchor(Vec2.new(0.5, 0.5));
-            this.images.limbs2
-                .setFrame(getGameAssetsPath("animation", "spider_leg2"))
-                .setZIndex(-1)
-                .setAnchor(Vec2.new(0.5, 0.5));
-            this.images.limbs3
-                .setFrame(getGameAssetsPath("animation", "spider_leg3"))
-                .setZIndex(-1)
-                .setAnchor(Vec2.new(0.5, 0.5));
-            this.images.limbs4
-                .setFrame(getGameAssetsPath("animation", "spider_leg4"))
-                .setZIndex(-1)
-                .setAnchor(Vec2.new(0.5, 0.5));
-        }
-
-        if (this.definition.movement && this.definition.movement.sandstormLike) {
-            this.container.addChild(
-                this.images.limbs1,
-                this.images.limbs2,
-                this.images.limbs3
-            )
-
-            this.images.limbs1
-                .setFrame(getGameAssetsPath("mob", "sandstorm_inner"))
-                .setZIndex(-1)
-                .setAnchor(Vec2.new(0.5, 0.5));
-            this.images.limbs2
-                .setFrame(getGameAssetsPath("mob", "sandstorm_middle"))
-                .setZIndex(-2)
-                .setAnchor(Vec2.new(0.5, 0.5));
-            this.images.limbs3
-                .setFrame(getGameAssetsPath("mob", "sandstorm_outer"))
-                .setZIndex(-3)
-                .setAnchor(Vec2.new(0.5, 0.5));
-            this.images.limbs1.angle = Math.random() * 360;
-            this.images.limbs2.angle = Math.random() * 360;
-            this.images.limbs3.angle = Math.random() * 360;
-        }
-
-        this.container.scale = GameSprite.getScaleByUnitRadius(hitboxRadius);
-
-        if (this.definition.hideInformation) {
-            this.name.visible = false;
-            this.rarity.visible = false;
-        }
-
-        this.name.text = this.definition.displayName;
-        this.rarity.text = rarity.displayName;
-        this.rarity.style.fill = rarity.color;
-    }
-
-    lastMovementAnimation: number = 0;
-    lastMovementAnimationTime: number = 0;
-    lastScale: number = 1;
-
-    selfRotation: number = 0;
-
-    playMovementAnimation(size: number): void {
-        if (!this.definition) return;
-
-        if (this.definition.movement && this.definition.movement.sandstormLike) {
-            if (Date.now() - this.lastMovementAnimation < 1200) return;
-            let time = 800 + Math.random() * 400;
-            this.lastMovementAnimation = Date.now();
-            const offsetX = (Math.random() * 20 - 10);
-            const offsetY = (Math.random() * 20 - 10);
-            this.game.addTween(new Tween({x: 0, y: 0})
-                .to({x: offsetX, y: offsetY}, time)
-                .easing(Easing.Cubic.InOut)
-                .onUpdate((d) => {
-                    this.container.position.x = Camera.vecToScreen(this.position).x + d.x;
-                    this.container.position.y = Camera.vecToScreen(this.position).y + d.y;
-                })
-            );
-            this.game.addTween(new Tween({scale: 1, alpha: 1})
-                .to({scale: 1.08, alpha: 0.85}, time / 2)
-                .easing(Easing.Quadratic.Out)
-                .onUpdate((d) => {
-                    this.container.scale.set(this.container.scale.x * d.scale / this.lastScale);
-                    this.lastScale = d.scale;
-                })
-            );
-
-            this.game.addTween(new Tween({scale: 1.08, alpha: 0.85})
-                .delay(time / 2)
-                .to({scale: 1, alpha: 1}, time / 2)
-                .easing(Easing.Quadratic.In)
-                .onUpdate((d) => {
-                    this.container.scale.set(this.container.scale.x * d.scale / this.lastScale);
-                    this.lastScale = d.scale;
-                })
-            );
-
-            this.lastMovementAnimationTime = time;
-            return;
-        }
-
-        if (Date.now() - this.lastMovementAnimation < this.lastMovementAnimationTime * 2) return;
-        let time = 150;
-
-        this.lastMovementAnimation = Date.now();
-        if (this.definition.images?.mouth) {
-            time =
-                MathNumeric.remap(size, 0, 0.3, 500, 150);
-            this.game.addTween(
-                new Tween({angle: 0})
-                .to({angle: 8}, time)
-                .onUpdate((d) => {
-                    this.images.left_mouth.angle = d.angle;
-                    this.images.right_mouth.angle = -d.angle;
-                })
-            )
-
-            this.game.addTween(
-                new Tween({angle: 8})
-                .delay(time)
-                .to({angle: 0}, time)
-                .onUpdate((d) => {
-                    this.images.left_mouth.angle = d.angle;
-                    this.images.right_mouth.angle = -d.angle;
-                })
-            )
-        }
-
-        if (this.definition.images?.spiderLeg) {
-            time =
-                MathNumeric.remap(size, 0, 0.3, 600, 160);
-            this.game.addTween(
-                new Tween({angle: 0})
-                .to({ angle: 20 }, time)
-                .onUpdate((d) => {
-                    this.images.limbs1.angle = -d.angle / 1.8;
-                    this.images.limbs2.angle = d.angle;
-                    this.images.limbs3.angle = d.angle / 2;
-                    this.images.limbs4.angle = -d.angle / 1.2;
-                })
-            )
-
-            this.game.addTween(
-                new Tween({angle: 20 })
-                .delay(time)
-                .to({angle: 0}, time)
-                .onUpdate((d) => {
-                    this.images.limbs1.angle = -d.angle / 1.8;
-                    this.images.limbs2.angle = d.angle;
-                    this.images.limbs3.angle = d.angle / 2;
-                    this.images.limbs4.angle = -d.angle / 1.2;
-                })
-            )
-        }
-
-        this.lastMovementAnimationTime = time;
-    }
-
-    reddrawHealthBar(): void {
-        if (!this.definition) return;
-
-        const healthBarWidth = MathNumeric.clamp(
-            Camera.unitToScreen(this.definition.hitboxRadius) * 2,
-            80,
-            Infinity
-        );
-        const fillWidth = healthBarWidth * this.healthPercent;
-
-        if (
-            this.definition.hideInformation
-        ) this.healthBar.visible = this.healthPercent < 0.999;
-
-        this.healthBar.clear()
-            .roundRect((-healthBarWidth - 5) / 2, 0, healthBarWidth + 5, 10)
-            .fill({
-                color: 0x000000,
-                alpha: 0.3
-            })
-            .roundRect(-healthBarWidth / 2, 3 / 2, fillWidth, 7)
-            .fill({
-                color: 0x87e63e
-            });
-
-        this.name.position.x = -healthBarWidth / 2;
-        this.rarity.position.x = (healthBarWidth + 5) / 2;
-    }
-
     destroy() {
         this.game.addTween(
-            new Tween({ scale: this.container.scale.x, alpha: 1 },)
-            .to({ scale: this.container.scale.x * 3, alpha: 0 }, 100 )
-            .onUpdate(d => {
-                this.container.scale.set(d.scale);
-                this.container.alpha = d.alpha;
-            }),
+            new Tween({ scale: this.container.scale, alpha: 1 },)
+                .to({ scale: this.container.scale * 3, alpha: 0 }, 100 )
+                .onUpdate(d => {
+                    this.container.scale = d.scale;
+                    this.container.alpha = d.alpha;
+                }),
             super.destroy.bind(this)
         )
 
         this.game.bossbar.bossbarDatas.delete(this.id);
     }
+
 }

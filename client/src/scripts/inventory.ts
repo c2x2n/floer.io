@@ -4,11 +4,10 @@ import { Vec2 } from "@common/utils/vector.ts";
 import { P2, MathGraphics, MathNumeric } from "@common/utils/math.ts";
 import { AttributeParameters, PetalDefinition, Petals, SavedPetalDefinitionData } from "@common/definitions/petal.ts";
 import { UI } from "@/ui.ts";
-import { RarityName, Rarity } from "@common/definitions/rarity.ts";
-import { getGameAssetsFile, getGameAssetsName } from "@/scripts/utils/pixi.ts";
+import { Rarity } from "@common/definitions/rarity.ts";
 import { PlayerModifiers } from "@common/typings.ts";
 import { AttributeName } from "@common/definitions/attribute.ts";
-import { ActionType, GameConstants } from "@common/constants";
+import { ActionType } from "@common/constants";
 
 const defaultCenter = Vec2.new(25, 21);
 
@@ -220,11 +219,11 @@ const attributesShowingConfigs: { [K in AttributeName] : AttributeShowingFunctio
                 value: `${data.percent * 100}%`,
                 color: "#ff3333"
             },
-            ...(data.maxDamage !== undefined ? [{
-                displayName: "Max Damage",
-                value: data.maxDamage.toString(),
-                color: "#ff6666"
-            }] : [])
+                ...(data.maxDamage !== undefined ? [{
+                    displayName: "Max Damage",
+                    value: data.maxDamage.toString(),
+                    color: "#ff6666"
+                }] : [])
             ]
         },
         damage_avoidance: (data) => {
@@ -512,17 +511,17 @@ export class Inventory{
             petalEl.remove();
             resolve?.();
             return false;
-       }
+        }
 
-       from = (from ??
-           {
+        from = (from ??
+            {
                 x: currentOffset.left,
                 y: currentOffset.top,
                 w: petalEl.width() || draggingBoxSize,
                 opacity: parseFloat(petalEl.css('opacity')) || 1,
                 angle: this.swingAngle || 0,
                 fontSize: parseFloat(petalEl.css('--x')) || 13.2*1.4,
-           }) as EasingData;
+            }) as EasingData;
 
         const duration = 250;
         let st = performance.now();
@@ -634,7 +633,7 @@ export class Inventory{
                         targetPetalClone.css({
                             position: 'fixed',
                             //left: targetOffset.left + 'px',
-                           // top: targetOffset.top + 'px',
+                            // top: targetOffset.top + 'px',
                             width: (mouseSelectingPetal.ui_slot.width() || 50) + 'px',
                             height: (mouseSelectingPetal.ui_slot.height() || 50) + 'px',
                             zIndex: parseInt(draggingData.item.css('z-index'))-1, // Below the main dragged item
@@ -736,7 +735,7 @@ export class Inventory{
             draggingData.item.remove();
             draggingData.item = null;
 
-        // Case 3: Dropping back to original slot OR onto empty space (No data change needed)
+            // Case 3: Dropping back to original slot OR onto empty space (No data change needed)
         } else {
             // Animate return to original slot
             if (draggingData.item && draggingData.container && draggingData.container.ui_slot) {
@@ -788,7 +787,7 @@ export class Inventory{
         if (targetIndex >= this.equippedPetals.length) {
             // is a secondary slot , >= : 10 is also a secondary slot
             destinationElement = this.preparationPetals[
-                targetIndex - this.equippedPetals.length]?.ui_slot || null;
+            targetIndex - this.equippedPetals.length]?.ui_slot || null;
         } else {
             destinationElement = this.equippedPetals[targetIndex]?.ui_slot || null;
         }

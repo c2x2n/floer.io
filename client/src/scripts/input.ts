@@ -1,7 +1,8 @@
-import { Vec2, Vector } from "@common/utils/vector.ts";
+import { Vec2 } from "@common/utils/vector.ts";
 import { type Game } from "./game";
-import { halfPI, P2, PI } from "@common/utils/math.ts";
+import { halfPI, PI } from "@common/utils/math.ts";
 import { InputAction } from "@common/packets/inputPacket.ts";
+
 
 export class Input {
     readonly game: Game;

@@ -1,70 +1,26 @@
 import { Game } from "@/scripts/game.ts";
-import { Graphics, Container, Text } from "pixi.js";
 import { MathNumeric } from "@common/utils/math.ts";
 import { getLevelInformation } from "@common/utils/levels.ts";
 
 export class ExpUI {
-    expGraphics: Graphics = new Graphics();
-    expText: Text = new Text({
-        text: "",
-        style: {
-            fontFamily: 'Ubuntu',
-            fontSize: 16,
-            fill: "#fff",
-            stroke: {color: "#000", width: 1.6}
-        }
-    });
-    slotText: Text = new Text({
-        text: "",
-        alpha: 0.9,
-        style: {
-            fontFamily: 'Ubuntu',
-            fontSize: 14,
-            fill: "#fff",
-            stroke: {color: "#000", width: 1.25}
-        }
-    });
-    nameText: Text = new Text({
-        text: "",
-        alpha: 0.9,
-        style: {
-            fontFamily: 'Ubuntu',
-            fontSize: 22.5,
-            fill: "#fff",
-            stroke: {color: "#000", width: 2.1}
-        }
-    });
 
-
+    positionX: number = 0;
+    positionY: number = 0;
     exp: number = 0;
-    currentExpWidth: number = 30; // Starting width for animation
-
-    container = new Container();
-
-    width: number = 340;
-    height: number = 39;
+    currentExpWidth: number = 30;
+    readonly width: number = 340;
+    readonly height: number = 39;
 
     constructor(private game: Game) {}
 
-    init(){
-        this.expText.anchor.set(0.5);
-        this.slotText.anchor.set(0.5);
-        this.nameText.anchor.set(0.5);
+    render(ctx: CanvasRenderingContext2D){
+        ctx.save();
 
-        this.container.addChild(
-            this.expGraphics,
-            this.expText,
-            this.slotText,
-            this.nameText
-        );
-        this.game.pixi.stage.addChild(
-            this.container
-        );
+        ctx.translate(
+            this.positionX,
+            this.positionY
+        )
 
-        this.resize();
-    }
-
-    render(){
         const levelInfo = getLevelInformation(this.exp);
 
         const targetExpWidth = Math.max(
@@ -75,33 +31,88 @@ export class ExpUI {
         // Use targetEasing for smooth animation
         this.currentExpWidth = MathNumeric.targetEasing(this.currentExpWidth, targetExpWidth, 10);
 
-        this.expGraphics.clear()
-            .roundRect(0, 0, this.width, this.height, 100)
-            .fill({ color: 0x343434, alpha: 0.8 })
-            .roundRect(6/2, 6/2, this.currentExpWidth, this.height - 6, 100)
-            .fill({ color: 0xd8f060, alpha: 1 });
+        ctx.fillStyle = "#343434";
+        ctx.globalAlpha = 0.8;
+        ctx.beginPath();
+        ctx.roundRect(
+            0,
+            0,
+            this.width,
+            this.height,
+            100
+        )
+        ctx.fill()
 
-        this.expText.position.set(this.width / 2, this.height / 2);
+        ctx.fillStyle = "#D8F060";
+        ctx.globalAlpha = 1;
+        ctx.beginPath();
+        ctx.roundRect(
+            6/2,
+            6/2,
+            this.currentExpWidth,
+            this.height - 6,
+            100
+        )
+        ctx.fill()
 
-        this.expText.text = `Lvl ${levelInfo.level} Flower`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.font = "16px Ubuntu";
+        ctx.fillStyle = "#FFFFFF";
+        ctx.strokeStyle = "#000000";
+        ctx.lineWidth = 1.6;
+        ctx.globalAlpha = 0.9;
+
+        ctx.strokeText(
+            `Lvl ${levelInfo.level} Flower`,
+            this.width / 2,
+            this.height / 2
+        )
+        ctx.fillText(
+            `Lvl ${levelInfo.level} Flower`,
+            this.width / 2,
+            this.height / 2
+        )
+
         if (levelInfo.nextExtraSlot !== 0) {
-            this.slotText.text = `Extra petal slot at level ${levelInfo.nextExtraSlot}`;
-        } else {
-            this.slotText.text = "";
+            ctx.font = "14px Ubuntu";
+            ctx.lineWidth = 1.25;
+            ctx.strokeText(
+                `Extra petal slot at level ${levelInfo.nextExtraSlot}`,
+                this.width / 2, this.height + 10
+            )
+            ctx.fillText(
+                `Extra petal slot at level ${levelInfo.nextExtraSlot}`,
+                this.width / 2, this.height + 10
+            )
         }
-        this.nameText.text = `${this.game.ui.nameInput.val() ?? "Player"}`;
+
+        ctx.font = "22.5px Ubuntu";
+        ctx.lineWidth = 2.1;
+
+        const name =
+            (this.game.playerData.get(this.game.activePlayerID)?.name) ?? "Player"
+        ctx.strokeText(
+            name,
+            this.width / 2,
+            -22.5
+        )
+        ctx.fillText(
+            name,
+            this.width / 2,
+            -22.5
+        )
+
+        ctx.restore();
     }
 
     resize(): void {
-        const screenWidth = this.game.pixi.screen.width;
-        const screenHeight = this.game.pixi.screen.height;
+        const screenHeight = this.game.screenHeight;
 
         const positionX = 10;
         const positionY = screenHeight - this.height - 50;
 
-        this.slotText.position.set(this.width / 2, this.height + 10);
-        this.nameText.position.set(this.width / 2, -this.height + 22.5);
-
-        this.container.position.set(positionX, positionY);
+        this.positionX = positionX;
+        this.positionY = positionY;
     }
 }

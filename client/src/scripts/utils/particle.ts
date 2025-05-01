@@ -1,9 +1,8 @@
-import { type BLEND_MODES, Sprite, type TextureSourceLike, type ColorSource } from "pixi.js";
-import { EasingFunctions, MathNumeric } from "@common/utils/math.ts";
+import { EasingFunctions, MathNumeric, P2 } from "@common/utils/math.ts";
 import { Random } from "@common/utils/random.ts";
 import { Vec2, type Vector } from "@common/utils/vector.ts";
 import { type Game } from "../game.ts";
-import { Camera } from "../render/camera.ts";
+import { RenderContainer } from "@/scripts/utils/renderContainer.ts";
 
 export class ParticleManager {
     particles: Particle[] = [];
@@ -11,8 +10,7 @@ export class ParticleManager {
     constructor(public game: Game) { }
 
     spawnParticle(options: ParticleOptions): Particle {
-        const particle = new Particle(options);
-        this.game.camera.addObject(particle.sprite);
+        const particle = new Particle(options, this.game.getCanvasCtx());
         this.particles.push(particle);
         return particle;
     }
@@ -33,7 +31,6 @@ export class ParticleManager {
 
             if (part.dead) {
                 this.particles.splice(i, 1);
-                part.destroy();
                 continue;
             }
 
@@ -63,14 +60,10 @@ type ParticleOption = (MinMax | {
 interface ParticleOptions {
     /** Particle initial position */
     position: Vector
-    /** Particle frame id */
-    sprite: TextureSourceLike
     /** Particle sprite zIndex */
     zIndex?: number
-    /** Particle sprite blend mode */
-    blendMode?: BLEND_MODES
     /** Particle Sprite tint */
-    tint?: ColorSource
+    tint?: string
     /** Particle life time in seconds */
     lifeTime: MinMax | number
     /** Particle rotation */
@@ -113,7 +106,7 @@ class Particle {
     end: number;
     position: Vector;
 
-    sprite: Sprite;
+    container: RenderContainer;
 
     data: {
         [K in keyof ParticleInterpData]: {
@@ -124,22 +117,11 @@ class Particle {
         }
     };
 
-    constructor(options: ParticleOptions) {
+    constructor(
+        private options: ParticleOptions
+        , private ctx: CanvasRenderingContext2D
+    ) {
         this.position = options.position;
-
-        this.sprite = Sprite.from(options.sprite);
-        this.sprite.visible = false;
-        this.sprite.anchor.set(0.5);
-
-        if (options.zIndex) {
-            this.sprite.zIndex = options.zIndex;
-        }
-        if (options.blendMode) {
-            this.sprite.blendMode = options.blendMode;
-        }
-        if (options.tint) {
-            this.sprite.tint = options.tint;
-        }
 
         if (typeof options.lifeTime === "number") {
             this.end = options.lifeTime;
@@ -154,15 +136,19 @@ class Particle {
             scale: getMinMax(options.scale),
             alpha: getMinMax(options.alpha)
         };
+
+        this.container = new RenderContainer(ctx);
+
+        this.container.renderFunc = this.draw.bind(this)
     }
 
     render(dt: number) {
+        const { ctx } = this;
+
         this.tick += dt;
         if (this.tick > this.end) {
             this.dead = true;
         }
-
-        this.sprite.visible = true;
 
         const t = this.tick / this.end;
 
@@ -171,18 +157,42 @@ class Particle {
             data!.value = MathNumeric.lerp(data!.start, data!.end, data!.easing(t));
         }
 
-        this.sprite.rotation = this.data.rotation.value;
-        this.sprite.scale = this.data.scale.value;
-        this.sprite.alpha = this.data.alpha.value;
 
         this.position = Vec2.add(
             this.position,
             Vec2.fromPolar(this.data.direction.value, this.data.speed.value * dt)
         );
-        this.sprite.position = this.position; //Camera.vecToScreen(this.position)
+
+        if (!this.options.tint) return;
+
+        const position = this.position;
+        const rotation = this.data.rotation.value;
+        const alpha = this.data.alpha.value;
+        const scale = this.data.scale.value;
+
+        this.container.position = position;
+        this.container.rotation = rotation;
+        this.container.alpha = alpha;
+        this.container.scale = scale;
+
+        this.container.render(dt)
     }
 
-    destroy() {
-        this.sprite.destroy();
+    draw() {
+        if (!this.options.tint) return;
+
+        const { ctx } = this;
+
+        ctx.fillStyle = this.options.tint;
+        ctx.beginPath()
+
+        ctx.arc(
+            0,
+            0,
+            1,
+            0, P2
+        )
+
+        ctx.fill()
     }
 }

@@ -1,15 +1,15 @@
 import { ClientEntity } from "./clientEntity";
 import { EntityType } from "@common/constants";
-import { GameSprite, getGameAssetsPath } from "@/scripts/utils/pixi";
 import { Game } from "@/scripts/game";
 import { EntitiesNetData } from "@common/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
 import { PetalDefinition } from "@common/definitions/petal.ts";
-import { Graphics, Text, Container } from "pixi.js";
 import { Vec2 } from "@common/utils/vector.ts";
 import { MathGraphics, P2 } from "@common/utils/math.ts";
 import { Rarity } from "@common/definitions/rarity.ts";
 import { Tween } from "@tweenjs/tween.js";
+import { RenderContainer } from "@/scripts/utils/renderContainer.ts";
+import { petalAssets } from "@/assets/petal.ts";
 
 const defaultCenter = Vec2.new(0, -4);
 
@@ -17,22 +17,34 @@ const defaultRadius = 6;
 const defaultBoxSize = 50;
 
 function drawPetalPiece(
-    xOffset: number, yOffset: number, displaySize: number, petal: PetalDefinition, degree?: number
+    ctx: CanvasRenderingContext2D,
+    xOffset: number,
+    yOffset: number,
+    displaySize: number,
+    petal: PetalDefinition,
+    degree?: number
 ) {
-    const size = GameSprite.getScaleByUnitRadius(displaySize / defaultBoxSize / 2);
-    const center = Vec2.sub(defaultCenter, size);
+    const { x, y } = defaultCenter;
 
-    const piece = new GameSprite(getGameAssetsPath("petal", petal));
+    const container = new RenderContainer(ctx);
+    container.radius = Camera.unitToScreen(displaySize / defaultBoxSize / 2);
+    container.position = Vec2.new(
+        x + xOffset,
+        y + yOffset
+    );
+    container.rotation = (petal.images?.slotRotation ?? 0) + (degree ?? 0)
 
-    piece.scale = size;
-    const { x, y } = center;
-    piece.position.set(x + xOffset, y + yOffset);
-    piece.setRotation((petal.images?.slotRotation ?? 0) + (degree ?? 0))
-
-    return piece;
+    container.renderFunc = () => {
+        petalAssets["basic"](container)
+    }
+    container.render(0);
 }
 
-function drawPetal(petal_box: Container, petal: PetalDefinition) {
+function drawPetal(
+    ctx: CanvasRenderingContext2D,
+    petal_box: RenderContainer,
+    petal: PetalDefinition
+) {
     const displaySize = petal.images?.slotDisplaySize ?? 25;
     const offsetX = petal.images?.centerXOffset ?? 0;
     const offsetY = petal.images?.centerYOffset ?? 0;
@@ -44,18 +56,13 @@ function drawPetal(petal_box: Container, petal: PetalDefinition) {
 
         for (let i = 0; i < count; i++) {
             const { x, y } =
-                MathGraphics.getPositionOnCircle(radiansNow, defaultRadius)
-            petal_box.addChild(
-                drawPetalPiece(x + offsetX, y + offsetY,displaySize, petal, degree)
-            );
-
+                MathGraphics.getPositionOnCircle(radiansNow, defaultRadius);
+            drawPetalPiece(ctx, x + offsetX, y + offsetY,displaySize, petal, degree)
             radiansNow += P2 / count;
             degree += petal.images?.slotRevolution ?? 0
         }
     } else {
-        petal_box.addChild(
-            drawPetalPiece(offsetX, offsetY, displaySize, petal)
-        );
+        drawPetalPiece(ctx, offsetX, offsetY, displaySize, petal)
     }
 
     return petal_box;
@@ -64,19 +71,6 @@ function drawPetal(petal_box: Container, petal: PetalDefinition) {
 export class ClientLoot extends ClientEntity {
     type = EntityType.Loot;
 
-    background = new Graphics();
-
-    pieces: Container = new Container();
-
-    name: Text = new Text({
-        style: {
-            fontFamily: 'Ubuntu',
-            fontSize: 10,
-            fill: "#fff",
-            stroke: {color: "#000", width: 2}
-        }
-    });
-
     definition!: PetalDefinition;
 
     animations: Tween[] = [];
@@ -84,10 +78,63 @@ export class ClientLoot extends ClientEntity {
     constructor(game: Game, id: number) {
         super(game, id);
 
-        this.game.camera.addObject(this.container);
+        this.container.scale = 0;
     }
 
-    override render(dt: number): void {}
+    override render(dt: number): void {
+        super.render(dt);
+        const rarity = Rarity.fromString(this.definition.rarity);
+
+        const { ctx } = this;
+
+        ctx.fillStyle = "#000000";
+        ctx.globalAlpha = 0.2;
+        ctx.beginPath();
+        ctx.roundRect(
+            -26,
+            -26,
+            52,
+            52,
+            2
+        )
+        ctx.fill()
+
+        ctx.fillStyle = rarity.color;
+        ctx.strokeStyle = rarity.border;
+        ctx.lineWidth = 3;
+        ctx.globalAlpha = 1;
+        ctx.beginPath();
+        ctx.roundRect(
+            -22,
+            -22,
+            44,
+            44,
+            2
+        )
+        ctx.fill()
+        ctx.stroke()
+
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.font = "10.5px Ubuntu";
+        ctx.fillStyle = "#FFFFFF";
+        ctx.strokeStyle = "#000000";
+        ctx.lineWidth = 1;
+
+        ctx.strokeText(
+            this.definition.displayName,
+            0,
+            13
+        )
+
+        ctx.fillText(
+            this.definition.displayName,
+            0,
+            13
+        )
+
+        drawPetal(ctx, this.container, this.definition);
+    }
 
     override updateFromData(data: EntitiesNetData[EntityType.Petal], isNew: boolean): void {
         this.position = data.position;
@@ -95,35 +142,6 @@ export class ClientLoot extends ClientEntity {
 
         if (data.full && isNew){
             this.definition = data.full.definition;
-
-            const rarity = Rarity.fromString(this.definition.rarity);
-
-            this.background.clear()
-                .roundRect(-27, -27, 54, 54, 2)
-                .fill({ color: "#000", alpha: 0.2 })
-                .roundRect(-25, -25, 50, 50, 2)
-                .fill(rarity.border)
-                .roundRect(-22, -22, 44, 44, 2)
-                .fill(rarity.color);
-
-            this.container.zIndex = -1;
-
-            this.background.zIndex = -1;
-
-            drawPetal(this.container, this.definition);
-
-            this.name.text = this.definition.displayName;
-
-            this.name.anchor.set(0.5);
-            this.name.position.set(0, 13)
-
-            this.name.zIndex = 0;
-
-            this.container.addChild(
-                this.pieces,
-                this.background,
-                this.name
-            );
 
             this.animations.push(this.game.addTween(
                 new Tween({ scale: 0, alpha: 0 })

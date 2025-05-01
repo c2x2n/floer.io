@@ -1,35 +1,33 @@
-import { Graphics, Text, Container } from "pixi.js";
 import { Game } from "@/scripts/game.ts";
-import { MobDefinition, Mobs } from "@common/definitions/mob.ts";
-import { MathNumeric } from "@common/utils/math.ts";
+import { MobDefinition } from "@common/definitions/mob.ts";
 import { Rarity } from "@common/definitions/rarity.ts";
 
-export class BossbarContent {
-    bossbarGraphics: Graphics = new Graphics();
-    nameText: Text = new Text({
-        text: "",
-        style: {
-            fontFamily: 'Ubuntu',
-            fontSize: 29,
-            fill: "#fff",
-            stroke: {color: "#000", width: 3}
-        }
-    });
-    rarityText: Text = new Text({
-        text: "",
-        style: {
-            fontFamily: 'Ubuntu',
-            fontSize: 18,
-            fill: "#fff",
-            stroke: {color: "#000", width: 1.25}
-        }
-    });
-
-    constructor() {
-        this.nameText.anchor.set(0.5);
-        this.rarityText.anchor.set(0.5);
-    }
-}
+// export class BossbarContent {
+//     bossbarGraphics: Graphics = new Graphics();
+//     nameText: Text = new Text({
+//         text: "",
+//         style: {
+//             fontFamily: 'Ubuntu',
+//             fontSize: 29,
+//             fill: "#fff",
+//             stroke: {color: "#000", width: 3}
+//         }
+//     });
+//     rarityText: Text = new Text({
+//         text: "",
+//         style: {
+//             fontFamily: 'Ubuntu',
+//             fontSize: 18,
+//             fill: "#fff",
+//             stroke: {color: "#000", width: 1.25}
+//         }
+//     });
+//
+//     constructor() {
+//         this.nameText.anchor.set(0.5);
+//         this.rarityText.anchor.set(0.5);
+//     }
+// }
 
 export interface BossbarData {
     mob: MobDefinition;
@@ -39,94 +37,106 @@ export interface BossbarData {
 export class Bossbar {
     readonly width: number = 335;
     readonly height: number = 30;
+    readonly maxLength: number = 10;
 
-    bossbars: BossbarContent[] = [];
+    positionX: number = 0;
+    positionY: number = 0;
 
     bossbarDatas = new Map<number, BossbarData>();
 
-    container = new Container();
-
     constructor(private game: Game) {}
 
-    init(): void {
-        this.game.pixi.stage.addChild(
-            this.container
-        )
+    render(ctx: CanvasRenderingContext2D): void {
+        ctx.save();
 
-        for (let i = 0; i < 10; i++) {
-            this.bossbars.push(new BossbarContent());
+        ctx.translate(this.positionX, this.positionY)
 
-            this.container.addChild(
-                this.bossbars[i].bossbarGraphics,
-                this.bossbars[i].nameText,
-                this.bossbars[i].rarityText
-            )
-        }
-
-        this.resize();
-    }
-
-    render(): void {
         let index = 0;
         let yPosition = 0;
 
-        this.bossbars.forEach(bossbar => {
-            bossbar.bossbarGraphics.clear();
-            if (index < this.bossbarDatas.size && index < this.bossbars.length) {
-                let data = Array.from(this.bossbarDatas.values())[index];
+        const stroke = 10;
 
-                const stroke = 10;
+        for (const data of this.bossbarDatas.values()) {
+            if (index >= this.maxLength) break;
 
-                let width = this.width * data.healthPercent;
-                let height = this.height;
+            let clampedWidth = this.width * data.healthPercent;
+            let clampedHeight = this.height;
 
-                if (width < stroke * 3) {
-                    height = Math.max(width / (stroke * 3) * this.height, 0);
-                }
-
-                bossbar.bossbarGraphics
-                    .roundRect(
-                        -(this.width + stroke) / 2,
-                        yPosition - this.height / 2,
-                        this.width + stroke,
-                        this.height + stroke,
-                        20
-                    )
-                    .fill({ color: 0x000, alpha: 0.6 })
-                    .roundRect(
-                        -this.width / 2,
-                        yPosition - this.height / 2 + (this.height - height) / 2 + stroke / 2 ,
-                        width,
-                        height,
-                        20
-                    )
-                    .fill({ color: 0x87e63e, alpha: 0.8 })
-
-                bossbar.nameText.text = data.mob.displayName;
-                bossbar.nameText.position.set(0, yPosition - this.height / 2 - 1.5);
-
-                const rarity = Rarity.fromString(data.mob.rarity);
-                bossbar.rarityText.text = rarity.displayName;
-                bossbar.rarityText.style.fill = rarity.color;
-                bossbar.rarityText.position.set(0, yPosition + (this.height + stroke) / 2 + 1);
-
-            } else {
-                bossbar.nameText.text = ""
-                bossbar.rarityText.text = ""
+            if (clampedWidth < stroke * 3) {
+                clampedHeight = Math.max(clampedWidth / (stroke * 3) * this.height, 0);
             }
 
+            ctx.fillStyle = "#000000";
+            ctx.globalAlpha = 0.6;
+            ctx.beginPath();
+            ctx.roundRect(
+                -(this.width + stroke) / 2,
+                yPosition - this.height / 2,
+                this.width + stroke,
+                this.height + stroke,
+                20
+            )
+            ctx.fill();
+
+            ctx.fillStyle = "#87e63e";
+            ctx.globalAlpha = 0.8;
+            ctx.beginPath()
+            ctx.roundRect(
+                -this.width / 2,
+                yPosition - this.height / 2 + (this.height - clampedHeight) / 2 + stroke / 2 ,
+                clampedWidth,
+                clampedHeight,
+                20
+            )
+            ctx.fill();
+
+            ctx.globalAlpha = 0.9;
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.strokeStyle = "#000000";
+            ctx.fillStyle = "#FFFFFF";
+
+            ctx.font = "29px Ubuntu";
+            ctx.lineWidth = 3;
+            ctx.strokeText(
+                data.mob.displayName,
+                0, yPosition - this.height / 2 - 1.5
+            )
+            ctx.fillText(
+                data.mob.displayName,
+                0, yPosition - this.height / 2 - 1.5
+            )
+
+            const rarity = Rarity.fromString(data.mob.rarity);
+
+            ctx.fillStyle = rarity.color;
+
+            ctx.font = "18px Ubuntu";
+            ctx.lineWidth = 1.25;
+            ctx.strokeText(
+                rarity.displayName,
+                0,
+                yPosition + (this.height + stroke) / 2 + 1
+            )
+            ctx.fillText(
+                rarity.displayName,
+                0,
+                yPosition + (this.height + stroke) / 2 + 1
+            )
             yPosition += this.height + 40;
             index ++;
-        })
+        }
+
+        ctx.restore();
     }
 
     resize(): void {
-        const screenWidth = this.game.pixi.screen.width;
-        const screenHeight = this.game.pixi.screen.height;
+        const screenWidth = this.game.screenWidth;
 
         const positionX = screenWidth / 2;
         const positionY = 60;
 
-        this.container.position.set(positionX, positionY);
+        this.positionX = positionX;
+        this.positionY = positionY;
     }
 }

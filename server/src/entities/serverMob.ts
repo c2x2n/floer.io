@@ -243,6 +243,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                         this.move();
                     }
                 } else {
+                    this.move();
                     this.shootTick();
                 }
             } else {

@@ -101,18 +101,16 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
     }
 
     canEffect(to: damageableEntity): to is ServerPlayer | ServerMob {
-        if (!(to instanceof ServerPlayer || to instanceof ServerMob)) return false
+        if (!(to instanceof ServerPlayer || to instanceof ServerMob)) return false;
 
         if (this.parameters.modifiers) {
-            if (this.source.type === EntityType.Mob) {
+            if (this.source.type === EntityType.Player) {
                 return !(to instanceof ServerMob
                     && to.definition.shootable
                     && to.definition.shoot.definition === this.definition);
             }
 
-            if (this.source.type != to.type) {
-                return true;
-            }
+            return this.source.type !== to.type;
         }
 
         return false;

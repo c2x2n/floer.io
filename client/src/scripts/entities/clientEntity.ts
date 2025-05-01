@@ -2,11 +2,11 @@ import { type GameEntity } from "@common/utils/entityPool";
 import { EntityType } from "@common/constants";
 import { Vec2, Vector } from "@common/utils/vector";
 import { Game } from "@/scripts/game";
-import { Container, ColorMatrixFilter, Graphics } from "pixi.js";
 import { EntitiesNetData } from "@common/packets/updatePacket.ts";
 import { Tween } from "@tweenjs/tween.js";
 import { MathNumeric } from "@common/utils/math.ts";
 import { Camera } from "@/scripts/render/camera.ts";
+import { RenderContainer } from "@/scripts/utils/renderContainer.ts";
 
 export abstract class ClientEntity<T extends EntityType = EntityType> implements GameEntity{
     readonly game: Game;
@@ -14,15 +14,14 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
     readonly id: number;
     abstract readonly type: EntityType;
 
-    container = new Container();
-    staticContainer: Container = new Container();
-    hitboxGraphics = new Graphics();
+    ctx: CanvasRenderingContext2D;
 
     lastReceivePacket: number = 0;
 
     oldPosition: Vector = Vec2.new(0, 0);
     _position: Vector = Vec2.new(0, 0);
     hitboxRadius: number = 0;
+
     get position(): Vector {
         return this._position;
     }
@@ -46,16 +45,21 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
 
     lastGettingDamage: number = 0;
 
+    container: RenderContainer;
+
     protected constructor(game: Game, id: number) {
         this.game = game;
         this.id = id;
+        this.ctx = game.getCanvasCtx();
 
-        this.game.camera.addObject(this.container);
-        this.game.camera.addObject(this.staticContainer);
-        // Add hitboxGraphics to staticContainer instead of container
-        // otherwise hitbox size will scale twice
-        this.staticContainer.addChild(this.hitboxGraphics);
-        this.hitboxGraphics.zIndex = 10;
+        this.container = new RenderContainer(
+            this.ctx
+        );
+
+        this.container.renderFunc = this.render.bind(this);
+        this.container.staticRenderFunc = this.staticRender.bind(this)
+
+        game.app.renderer.addContainer(this.container);
     }
 
     updateFromData(_data: EntitiesNetData[T], _isNew: boolean): void {
@@ -64,7 +68,6 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
             this.oldPosition = _data.position;
             this._position = _data.position;
         }
-        this.render((Date.now() - this.lastReceivePacket) / 1000);
         this.lastReceivePacket = Date.now();
     }
 
@@ -77,33 +80,23 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
             this.interpolationTick / this.game.serverDt
             , 0, 1
         );
-        // TODO: Either remove or make dev-only. BUT how?
-        if (this.game.app.settings.data.hitbox) this.renderHitbox();
-        else if (this.drawedHitbox) this.renderHitbox(true);
     }
 
-    drawedHitbox: boolean = false;
-
-    renderHitbox(hide?: boolean): void {
-        this.drawedHitbox = !hide;
-        this.hitboxGraphics.clear();
-        if (!hide && this.hitboxRadius > 0) {
-            const screenRadius = Camera.unitToScreen(this.hitboxRadius);
-            this.hitboxGraphics.circle(0, 0, screenRadius)
-                .stroke({ width: 1.5, color: 0xff0000, alpha: 0.8 }); // red
-        }
-    }
+    staticRender(dt: number): void {}
 
     updateContainerPosition(n?: number): void {
         if (n) {
             this.container.position =
-                Vec2.targetEasing(this.container.position, Camera.vecToScreen(this.position), n)
+                Vec2.targetEasing(
+                    this.container.position,
+                    Camera.vecToScreen(this.position),
+                    n
+                )
         } else {
             this.container.position = Camera.vecToScreen(
                 Vec2.lerp(this.oldPosition, this.position, this.interpolationFactor)
             );
         }
-        this.staticContainer.position = this.container.position;
     }
 
     getDamageAnimation(disableFilter?: boolean) {
@@ -122,8 +115,6 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
             )
             return;
         }
-        const filter = new ColorMatrixFilter();
-        this.container.filters = [filter];
 
         this.game.addTween(
             new Tween({ color: { r: 255, g: 0, b: 0 } })
@@ -138,7 +129,7 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
                 .delay(tick)
                 .to({ brightness: 3 }, tick )
                 .onUpdate(d => {
-                    filter.brightness(d.brightness, false);
+                    this.container.brightness = d.brightness;
                 })
         )
 
@@ -147,14 +138,15 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
                 .delay(tick * 2)
                 .to({ brightness: 1 }, tick )
                 .onUpdate(d => {
-                    filter.brightness(d.brightness, false);
+                    this.container.brightness = d.brightness;
                 })
-            ,() => this.container.filters = []
+            ,() => this.container.brightness = 1
         )
     }
 
+    drawedHitbox: boolean = false;
+
     destroy() {
-        this.game.camera.container.removeChild(this.container);
-        this.game.camera.container.removeChild(this.staticContainer);
+        this.game.app.renderer.removeContainer(this.container);
     }
 }

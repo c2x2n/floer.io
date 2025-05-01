@@ -1,12 +1,10 @@
-import { Application, Graphics } from "pixi.js";
 import { UI } from "@/ui.ts";
 import { EntityPool } from "@common/utils/entityPool";
 import { ClientPlayer } from "@/scripts/entities/clientPlayer.ts";
-import { loadAssets } from "@/scripts/utils/pixi";
 import { Camera } from "@/scripts/render/camera";
 import { ClientEntity } from "@/scripts/entities/clientEntity.ts";
-import { ActionType, EntityType, GameConstants } from "@common/constants.ts";
-import { Inventory, PetalContainer } from "@/scripts/inventory.ts";
+import { EntityType, GameConstants } from "@common/constants.ts";
+import { Inventory } from "@/scripts/inventory.ts";
 import { ClientApplication } from "../main.ts";
 import { JoinPacket } from "@common/packets/joinPacket.ts";
 import { GameBitStream, Packet, PacketStream } from "@common/net.ts";
@@ -14,25 +12,22 @@ import { EntitiesNetData, UpdatePacket } from "@common/packets/updatePacket.ts";
 import { ClientPetal } from "@/scripts/entities/clientPetal.ts";
 import { Input } from "@/scripts/input.ts";
 import { InputPacket } from "@common/packets/inputPacket.ts";
-import { Minimap } from "@/scripts/render/minimap.ts";
 import { ClientMob } from "@/scripts/entities/clientMob.ts";
 import { GameOverPacket } from "@common/packets/gameOverPacket.ts";
 import { Tween } from '@tweenjs/tween.js';
 import { ClientLoot } from "@/scripts/entities/clientLoot.ts";
 import { ClientProjectile } from "@/scripts/entities/clientProjectile.ts";
-import { ExpUI } from "@/scripts/render/expUI.ts";
-import { Leaderboard } from "@/scripts/render/leaderboard.ts";
 import { Config } from "@/config.ts";
 import { LoggedInPacket } from "@common/packets/loggedInPacket.ts";
-import { ParticleManager } from "@/scripts/utils/particle.ts";
-import { Vec2, Vector } from "@common/utils/vector.ts";
 import { Petals, SavedPetalDefinitionData } from "@common/definitions/petal.ts";
 import { ChatChannel, ChatPacket } from "@common/packets/chatPacket.ts";
-
-import { ZoneName, Zones } from "@common/zones.ts";
-import { Rarity } from "@common/definitions/rarity.ts";
-import { Bossbar } from "@/scripts/render/bossbar.ts";
 import { ClientWall } from "@/scripts/entities/clientWall.ts";
+import { Settings } from "@/settings.ts";
+import { Minimap } from "@/scripts/render/minimap.ts";
+import { Leaderboard } from "@/scripts/render/leaderboard.ts";
+import { ExpUI } from "@/scripts/render/expUI.ts";
+import { ParticleManager } from "@/scripts/utils/particle.ts";
+import { Bossbar } from "@/scripts/render/bossbar.ts";
 
 const typeToEntity = {
     [EntityType.Player]: ClientPlayer,
@@ -49,14 +44,17 @@ export class Game {
 
     readonly app: ClientApplication;
     readonly ui: UI;
-    readonly pixi = new Application();
 
     running = false;
 
     // This means which player are controlled by the user
     activePlayerID = -1;
-    width: number = 0;
-    height: number = 0;
+
+    gameWidth: number = 0;
+    gameHeight: number = 0;
+
+    screenWidth: number = 0;
+    screenHeight: number = 0;
 
     debug: {
         fps: number,
@@ -81,6 +79,7 @@ export class Game {
             petals: 0,
         }
     }
+
     private lastPingTime: number = 0;
     private pingSentTime: number = 0;
 
@@ -100,21 +99,20 @@ export class Game {
 
     readonly input = new Input(this);
 
+    readonly settings: Settings;
+
     readonly miniMap = new Minimap(this);
-    readonly exp = new ExpUI(this);
     readonly leaderboard = new Leaderboard(this);
-    readonly particleManager = new ParticleManager(this);
+    readonly expUI = new ExpUI(this);
+    readonly particles = new ParticleManager(this);
     readonly bossbar = new Bossbar(this);
 
     constructor(app: ClientApplication) {
         this.app = app;
         this.ui = app.ui;
         this.inventory = new Inventory(this);
+        this.settings = app.settings;
     }
-
-    mapGraphics = new Graphics({
-        zIndex: -99
-    })
 
     inventory: Inventory;
 
@@ -135,31 +133,25 @@ export class Game {
     }
 
     async init() {
-        await this.pixi.init({
-            resolution: this.app.settings.data.lowResolution ? 0.8 : 1,
-            resizeTo: window,
-            antialias: true,
-            preference: "webgl",
-            autoDensity: true,
-            canvas: document.getElementById("canvas") as HTMLCanvasElement
-        });
+        window.onresize = () => {
+            this.resize();
+        }
 
-        this.pixi.stop();
-        this.pixi.ticker.add(
-            () => this.render()
-        );
-        this.pixi.renderer.on("resize", () => this.resize());
+        this.resize();
 
-        this.miniMap.init();
-        this.camera.init();
-        this.exp.init();
-        this.leaderboard.init();
-        this.bossbar.init();
-
-        await loadAssets();
         this.inventory.updatePetalRows();
 
         this.connect(Config.address);
+    }
+
+    getDOMCanvas() {
+        const canvas = this.ui.canvas.get(0);
+        if (!canvas) throw new Error("Canvas not found.");
+        return canvas;
+    }
+
+    getCanvasCtx() {
+        return this.app.renderer.ctx;
     }
 
     startGame(loggedInPacket: LoggedInPacket): void {
@@ -168,12 +160,9 @@ export class Game {
         this.running = true;
 
         this.ui.startTransition(true);
-
-        this.pixi.start();
-
         this.inventory.loadInventoryData(loggedInPacket.inventory)
-
         this.inventory.updatePetalRows();
+        this.render();
     }
 
     endGame() {
@@ -183,14 +172,12 @@ export class Game {
             entity.destroy();
         }
 
-        this.camera.clear();
+        // this.camera.clear();
         this.entityPool.clear();
         this.activePlayerID = -1;
         this.playerData.clear();
         this.needUpdateEntities.clear();
         this.tweens.clear();
-
-        this.pixi.stop();
 
         this.ui.startTransition(false);
 
@@ -235,6 +222,7 @@ export class Game {
 
         if (packet.playerDataDirty.zoom) {
             this.camera.zoom = packet.playerData.zoom;
+            this.camera.resize()
         }
 
         if (packet.playerDataDirty.slot)  {
@@ -245,9 +233,9 @@ export class Game {
             this.inventory.loadInventoryData(packet.playerData.inventory);
         }
 
-        if (packet.playerDataDirty.exp) {
-            this.exp.exp = packet.playerData.exp;
-        }
+        // if (packet.playerDataDirty.exp) {
+        //     this.exp.exp = packet.playerData.exp;
+        // }
 
         if (packet.playerDataDirty.overleveled) {
             this.ui.showOverleveled(packet.playerData.overleveled);
@@ -298,128 +286,12 @@ export class Game {
         }
 
         if (packet.mapDirty) {
-            this.width = packet.map.width;
-            this.height = packet.map.height;
+            this.gameWidth = packet.map.width;
+            this.gameHeight = packet.map.height;
 
+            this.app.renderer.initWorldMap();
             this.miniMap.resize();
-
-            const ctx = this.mapGraphics;
-
-            this.camera.addObject(ctx);
-
-            this.drawWorldMap();
         }
-    }
-
-    drawWorldMap(): void {
-        const ctx = this.mapGraphics;
-
-        ctx.clear();
-
-        const borderDistance = 999;
-
-        for (const zonesKey in Zones) {
-            const data = Zones[zonesKey as ZoneName];
-
-            const y = (data.y ?? 0);
-            const height = (data.height ?? this.height);
-
-            const leftBorder = data.x <= 0;
-            const rightBorder = (data.x + data.width) >= this.width;
-            const topBorder = y <= 0;
-            const bottomBorder = (height + y) >= this.height;
-
-            const border = leftBorder || rightBorder || topBorder || bottomBorder;
-            if (border) {
-                let borderX = data.x;
-                let borderY = y;
-                let borderWidth = data.width;
-                let borderHeight = height;
-
-                if (leftBorder) {
-                    borderX -= borderDistance;
-                    borderWidth += borderDistance;
-                }
-
-                if (rightBorder) {
-                    borderWidth += data.width + borderDistance;
-                }
-
-                if (topBorder) {
-                    borderY -= borderDistance;
-                    borderHeight += borderDistance;
-                }
-
-                if (bottomBorder) {
-                    borderHeight += height + borderDistance;
-                }
-
-                ctx.rect(
-                    Camera.unitToScreen(borderX),
-                    Camera.unitToScreen(borderY),
-                    Camera.unitToScreen(borderWidth),
-                    Camera.unitToScreen(borderHeight)
-                ).fill(data.backgroundColor);
-            }
-
-            ctx.rect(
-                Camera.unitToScreen(data.x),
-                Camera.unitToScreen(y),
-                Camera.unitToScreen(data.width),
-                Camera.unitToScreen(height)
-            ).fill(data.backgroundColor);
-        }
-
-        ctx
-            .rect(
-                Camera.unitToScreen(-borderDistance),
-                Camera.unitToScreen(-borderDistance),
-                Camera.unitToScreen(this.width + borderDistance * 2),
-                Camera.unitToScreen(borderDistance)
-            )
-            .fill({ color: 0x000, alpha: 0.3 })
-            .rect(
-                Camera.unitToScreen(-borderDistance),
-                Camera.unitToScreen(0),
-                Camera.unitToScreen(borderDistance),
-                Camera.unitToScreen(this.height + borderDistance * 2)
-            )
-            .fill({ color: 0x000, alpha: 0.3 })
-            .rect(
-                Camera.unitToScreen(this.width),
-                Camera.unitToScreen(0),
-                Camera.unitToScreen(borderDistance),
-                Camera.unitToScreen(this.height + borderDistance)
-            )
-            .fill({ color: 0x000, alpha: 0.3 })
-            .rect(
-                Camera.unitToScreen(0),
-                Camera.unitToScreen(this.height),
-                Camera.unitToScreen(this.width),
-                Camera.unitToScreen(borderDistance)
-            ).fill({ color: 0x000, alpha: 0.3 })
-
-
-
-
-        const gridSize = Camera.unitToScreen(2.5);
-        const gridWidth = Camera.unitToScreen(this.width);
-        const gridHeight = Camera.unitToScreen(this.height);
-        for (let x = 0; x <= gridWidth; x += gridSize) {
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, gridHeight);
-        }
-
-        for (let y = 0; y <= gridHeight; y += gridSize) {
-            ctx.moveTo(0, y);
-            ctx.lineTo(gridWidth, y);
-        }
-
-        ctx.stroke({
-            color: 0x000000,
-            alpha: 0.05,
-            width: 2
-        });
     }
 
     sendPacket(packet: Packet) {
@@ -486,33 +358,24 @@ export class Game {
 
     render() {
         if (!this.running) return;
-        const dt = (Date.now() - this.lastRenderTime) / 1000;
-        this.dt = dt;
-        this.debug.fps = Math.round(this.pixi.ticker.FPS);
+
+        this.dt = (Date.now() - this.lastRenderTime) / 1000;
+        this.debug.fps = Math.round(0);
         this.lastRenderTime = Date.now();
-
-        if (this.app.settings.data.debug) this.ui.renderDebug();
-
-        for (const needUpdateEntity of this.needUpdateEntities) {
-            if (!needUpdateEntity) continue;
-            needUpdateEntity[0].updateFromData(needUpdateEntity[1], false);
-        }
-
-        for (const entity of this.entityPool) {
-            entity.render(dt);
-        }
 
         if (this.activePlayer) {
             this.camera.position = this.activePlayer.container.position;
         }
 
         this.camera.render();
-        this.miniMap.render();
-        this.exp.render();
-        this.leaderboard.render();
-        this.particleManager.render(dt);
+        this.app.renderer.render();
+
         this.ui.render();
-        this.bossbar.render();
+
+        for (const needUpdateEntity of this.needUpdateEntities) {
+            if (!needUpdateEntity) continue;
+            needUpdateEntity[0].updateFromData(needUpdateEntity[1], false);
+        }
 
         this.sendInput();
 
@@ -522,6 +385,7 @@ export class Game {
 
         this.needUpdateEntities.clear();
 
+        window.requestAnimationFrame(() => this.render());
     }
 
     lastDirection: {
@@ -556,10 +420,16 @@ export class Game {
     }
 
     resize() {
-        this.camera.resize();
+        this.screenWidth = window.innerWidth;
+        this.screenHeight = window.innerHeight;
+
+        const canvas = this.getDOMCanvas();
+        canvas.width = this.screenWidth;
+        canvas.height = this.screenHeight;
+
         this.miniMap.resize();
-        this.exp.resize();
-        this.leaderboard.resize();
+        this.leaderboard.resize()
+        this.expUI.resize();
         this.bossbar.resize();
     }
 }

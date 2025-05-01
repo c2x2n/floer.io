@@ -593,7 +593,6 @@ export let Petals = new Definitions<PetalDefinition>([
         modifiers: {
             maxHealth: 66666,
             healPerSecond: 66666,
-            zoom: 50
         },
         reloadTime: 0,
         hitboxRadius: 0.6,
@@ -1344,7 +1343,7 @@ export let Petals = new Definitions<PetalDefinition>([
             }
         },
         reloadTime: 3,
-        hitboxRadius: 0.6,
+        hitboxRadius: 0.7,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.epic
@@ -1432,12 +1431,12 @@ export let Petals = new Definitions<PetalDefinition>([
                 noRender: false,
                 coordsToOwner:{
                     x: 0,
-                    y: 25,
+                    y: 27,
                     scale: 1
                 }
             }
         },
-        hitboxRadius: 0.9,
+        hitboxRadius: 0.7,
         modifiers: {
             zoom: 30
         },

@@ -71,7 +71,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     distance: number = 0;
     isAttacking = false;
     isDefending = false;
-    
+
     isPetalAttack = false;
 
     inventory: Inventory;
@@ -235,7 +235,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         this.inventory.range = MathNumeric.targetEasing(
             this.inventory.range,
             targetRange,
-            5
+            2
         )
 
         this.inventory.tick();

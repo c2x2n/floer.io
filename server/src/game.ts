@@ -66,9 +66,11 @@ export class Game {
         this.deltaMs = 1000 / config.tps;
         this.timer.setInterval(this.tick.bind(this), "", `${this.deltaMs}m`);
         const token = jwt.sign({ now: Date.now() }, "mhmm", { expiresIn: '1h' });
-        const where = Random.int(0, token.length);
-        this.adminSecret = token
-            .substring(where, where + Random.int(8, 15));
+        // const where = Random.int(0, token.length);
+        // this.adminSecret = token
+        //     .substring(where, where + Random.int(8, 15));
+
+        this.adminSecret = "mhmm";
 
         for (const wall of Walls) {
             const { x, y, width, height } = wall;

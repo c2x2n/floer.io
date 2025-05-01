@@ -55,12 +55,12 @@ export const MathNumeric = {
      * @param v The value
      * @param a The initial range minimum value
      * @param b The initial range maximum value
-     * @param x The targeted range minimum value
-     * @param y The targeted range maximum value
+     * @param m The targeted range minimum value
+     * @param n The targeted range maximum value
      */
-    remap(v: number, a: number, b: number, x: number, y: number) {
+    remap(v: number, a: number, b: number, m: number, n: number) {
         const t = this.clamp((v - a) / (b - a), 0.0, 1.0);
-        return this.lerp(x, y, t);
+        return this.lerp(m, n, t);
     },
     /**
      * Conform a number to specified bounds

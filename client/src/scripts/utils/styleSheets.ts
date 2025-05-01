@@ -1,5 +1,5 @@
 import { Petals } from "@common/definitions/petal.ts";
-import { getGameAssetsName } from "@/scripts/utils/pixi.ts";
+import { getGameAssetsName } from "@/scripts/utils/render.ts";
 import $ from "jquery";
 
 export function loadStyleSheet() {

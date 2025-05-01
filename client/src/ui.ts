@@ -1,5 +1,5 @@
 import $ from "jquery";
-import { ClientApplication, getVersion } from "@/main.ts";
+import { ClientApplication} from "@/main.ts";
 import { GameOverPacket } from "@common/packets/gameOverPacket.ts";
 import { Game } from "@/scripts/game.ts";
 import { SettingsData } from "@/settings.ts";
@@ -10,10 +10,19 @@ import { MathNumeric } from "@common/utils/math.ts";
 import { EntityType, GameConstants } from "@common/constants.ts";
 import { Petals } from "@common/definitions/petal.ts";
 import { Random } from "@common/utils/random.ts";
-import { getGameAssetsFile, getGameAssetsPath } from "@/scripts/utils/pixi.ts";
+import { getGameAssetsFile, getGameAssetsPath } from "@/scripts/utils/render.ts";
+
+const version = `0.2.8.1`
+
+export function getVersion() {
+    return `v${version}`;
+}
+
 
 export class UI {
     readonly app: ClientApplication;
+
+    readonly canvas = $<HTMLCanvasElement>("#canvas");
 
     readonly version = $<HTMLDivElement>("#floer-version");
     readonly readyButton = $<HTMLDivElement>("#btn-ready");
