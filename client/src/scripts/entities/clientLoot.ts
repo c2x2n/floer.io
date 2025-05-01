@@ -10,6 +10,7 @@ import { Rarity } from "@common/definitions/rarity.ts";
 import { Tween } from "@tweenjs/tween.js";
 import { RenderContainer } from "@/scripts/utils/renderContainer.ts";
 import { petalAssets } from "@/assets/petal.ts";
+import { getGameAssetsName } from "@/scripts/utils/render.ts";
 
 const defaultCenter = Vec2.new(0, -4);
 
@@ -24,10 +25,10 @@ function drawPetalPiece(
     petal: PetalDefinition,
     degree?: number
 ) {
-    const { x, y } = defaultCenter;
-
     const container = new RenderContainer(ctx);
-    container.radius = Camera.unitToScreen(displaySize / defaultBoxSize / 2);
+    container.radius = Camera.unitToScreen(petal.hitboxRadius);
+    container.scale = displaySize / defaultBoxSize
+    const { x, y } = defaultCenter;
     container.position = Vec2.new(
         x + xOffset,
         y + yOffset
@@ -35,7 +36,8 @@ function drawPetalPiece(
     container.rotation = (petal.images?.slotRotation ?? 0) + (degree ?? 0)
 
     container.renderFunc = () => {
-        petalAssets["basic"](container)
+        const name = getGameAssetsName(petal);
+        if (petalAssets.hasOwnProperty(name)) petalAssets[name](container)
     }
     container.render(0);
 }
@@ -116,7 +118,7 @@ export class ClientLoot extends ClientEntity {
 
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.font = "10.5px Ubuntu";
+        ctx.font = "10.2px Ubuntu";
         ctx.fillStyle = "#FFFFFF";
         ctx.strokeStyle = "#000000";
         ctx.lineWidth = 1;

@@ -84,7 +84,7 @@ export class ClientPetal extends ClientEntity {
                     direction: { min: -6.28, max: 6.28 },
                     alpha: { min: 0, max: 0.5 },
                     lifeTime: { min: 0, max: 0.25 },
-                    scale: { min: 2, max: 8 },
+                    scale: { min: 2, max: 4 },
                     rotation: { value: 0 }
                 })
             }
