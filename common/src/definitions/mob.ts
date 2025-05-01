@@ -163,7 +163,7 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 3,
         lootTable: {
             "fast": 0.12,
-            "stinger": 0.9,
+            "stinger": 0.1,
             "twin": 0.04,
             "triangle": 0.002,
             "bubble": 0.012,
@@ -238,7 +238,7 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         rarity: RarityName.unique,
         noSpawnMessage: true,
-        exp: 5
+        exp: 2500
     },{
         idString: "boulder",
         displayName: "Boulder",
@@ -249,7 +249,7 @@ export const Mobs = new Definitions<MobDefinition>([
         lootTable: {
             "fast": 1,
             "uranium": 0.00012,
-            "rock": 0.06,
+            "rock": 0.09,
             "heaviest": 0.004
         },
         rarity: RarityName.unusual,
@@ -325,11 +325,11 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 4,
         lootTable: {
             "dandelion": 0.14,
-            "bubble": 0.05,
-            "missile": 0.09,
+            "bubble": 0.085,
+            "missile": 0.18,
             "big_missile": 0.005,
             "leg_bubble": 0.00006,
-            "wing": 0.03,
+            "wing": 0.06,
             "antennae": 0.0003,
         },
         rarity: RarityName.rare,
