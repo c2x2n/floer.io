@@ -41,7 +41,7 @@ export const Zones:
         displayColor: "#1da25e",
         backgroundColor: "#1ea761",
         highestLevel: 15,
-        density: 0.8,
+        density: 1.2,
         normalSpawning: {
             "ladybug": 10,
             "rock": 20,
@@ -59,7 +59,7 @@ export const Zones:
         width: 600,
         displayColor: "#92a728",
         backgroundColor: "#decf7c",
-        density: 1.2,
+        density: 1.5,
         highestLevel: 30,
         normalSpawning: {
             "ladybug": 10,
@@ -82,7 +82,7 @@ export const Zones:
         width: 800,
         displayColor: "#923a28",
         backgroundColor: "#b36658",
-        density: 1,
+        density: 1.55,
         highestLevel: 45,
         normalSpawning: {
             "ladybug": 10,
@@ -108,7 +108,7 @@ export const Zones:
         width: 2566 - 2000,
         displayColor: "#a4aaa6",
         backgroundColor: "#4d5e55",
-        density: 1,
+        density: 1.6,
         highestLevel: 999,
         normalSpawning: {
             "dark_ladybug": 20,
