@@ -204,7 +204,7 @@ export let Petals = new Definitions<PetalDefinition>([
         damage: 20,
         health: 20,
         swinging: {
-            time: 2,
+            time: 1,
             distance: 2.6
         },
         images:{
@@ -225,7 +225,10 @@ export let Petals = new Definitions<PetalDefinition>([
         description: "They come and go.",
         damage: 32,
         health: 20,
-        moreExtendDistance: 2.6,
+        swinging: {
+            time: 1,
+            distance: 2.6
+        },
         images:{
             slotDisplaySize: 45,
             selfGameRotation: 2
@@ -280,6 +283,10 @@ export let Petals = new Definitions<PetalDefinition>([
         description: "It comes and goes quickly.",
         damage: 20,
         health: 20,
+        swinging: {
+            time: 0.5,
+            distance: 2.6
+        },
         extendable: true,
         reloadTime: 1.25,
         moreExtendDistance: 2.6,
