@@ -290,9 +290,9 @@ export const Mobs = new Definitions<MobDefinition>([
             mouthXPosition: 1.2
         },
         lootTable: {
-            "iris": 0.09,
-            "salt": 0.06,
-            "triplet": 0.2,
+            "iris": 1,
+            "salt": 0.8,
+            "triplet": 0.5,
             "wing": 0.6,
             "powder": 0.01,
             "leg_egg": 0.05,
