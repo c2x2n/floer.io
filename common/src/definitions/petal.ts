@@ -156,7 +156,7 @@ export let Petals = new Definitions<PetalDefinition>([
         rarity: RarityName.common,
         usingAssets: "light",
         modifiers: {
-            speed: 1.008
+            speed: 1.007
         },
     },
     {
@@ -175,7 +175,7 @@ export let Petals = new Definitions<PetalDefinition>([
         rarity: RarityName.unusual,
         usingAssets: "light",
         modifiers: {
-            speed: 1.008
+            speed: 1.007
         },
     },
     {
@@ -259,7 +259,7 @@ export let Petals = new Definitions<PetalDefinition>([
         rarity: RarityName.epic,
         usingAssets: "light",
         modifiers: {
-            speed: 1.008
+            speed: 1.007
         },
     },{
         idString: "faster",
@@ -270,7 +270,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         reloadTime: 0.5,
         modifiers: {
-            revolutionSpeed: 1.0
+            revolutionSpeed: 0.8
         },
         usable: false,
         hitboxRadius: 0.3,
@@ -295,7 +295,7 @@ export let Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 2
         },
         modifiers: {
-            revolutionSpeed: 1.2
+            revolutionSpeed: 1
         },
         usable: false,
         hitboxRadius: 0.6,
@@ -311,7 +311,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         reloadTime: 0.5,
         modifiers: {
-            revolutionSpeed: 1.0
+            revolutionSpeed: 0.9
         },
         usable: false,
         hitboxRadius: 0.3,
@@ -325,7 +325,7 @@ export let Petals = new Definitions<PetalDefinition>([
         idString: "leaf",
         displayName: "Leaf",
         description: "Gathers energy from the sun to heal your flower passively",
-        damage: 10,
+        damage: 9,
         health: 10,
         extendable: true,
         images: {
@@ -333,7 +333,7 @@ export let Petals = new Definitions<PetalDefinition>([
             slotRotation: -0.1
         },
         modifiers: {
-            healPerSecond: 1
+            healPerSecond: 2
         },
         reloadTime: 1,
         usable: false,
@@ -345,7 +345,7 @@ export let Petals = new Definitions<PetalDefinition>([
         idString: "tri_leaf",
         displayName: "Leaf",
         description: "Gathers energy from the sun to heal your flower passively",
-        damage: 10,
+        damage: 9,
         health: 10,
         extendable: true,
         images: {
@@ -369,9 +369,9 @@ export let Petals = new Definitions<PetalDefinition>([
         displayName: "Stinger",
         description: "It really hurts, but it's very fragile",
         damage: 35,
-        health: 8,
+        health: 10,
         extendable: true,
-        reloadTime: 3.5,
+        reloadTime: 4,
         images: {
             selfGameRotation: 0.1,
             slotDisplaySize: 25,
@@ -447,14 +447,14 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 3,
         extendable: false,
         usable: true,
-        useTime: 1.5,
+        useTime: 1,
         images: {
             slotDisplaySize: 35,
         },
         attributes: {
-            absorbing_heal: 10
+            absorbing_heal: 12
         },
-        reloadTime: 3,
+        reloadTime: 3.5,
         hitboxRadius: 0.5,
         isDuplicate: false,
         pieceAmount: 1,
@@ -469,9 +469,9 @@ export let Petals = new Definitions<PetalDefinition>([
         usable: true,
         useTime: 1,
         attributes: {
-            absorbing_heal: 3.5
+            absorbing_heal: 4.5
         },
-        reloadTime: 3,
+        reloadTime: 3.5,
         hitboxRadius: 0.34,
         isDuplicate: true,
         isShowedInOne: true,
@@ -491,9 +491,9 @@ export let Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 40
         },
         attributes: {
-            absorbing_heal: 22
+            absorbing_heal: 27
         },
-        reloadTime: 3,
+        reloadTime: 3.5,
         hitboxRadius: 0.5,
         isDuplicate: false,
         pieceAmount: 1,
@@ -928,9 +928,9 @@ export let Petals = new Definitions<PetalDefinition>([
         displayName: "Stinger",
         description: "It really hurts, but it's very fragile",
         damage: 35,
-        health: 8,
+        health: 10,
         extendable: true,
-        reloadTime: 3.5,
+        reloadTime: 4,
         usable: false,
         hitboxRadius: 0.3,
         isDuplicate: true,
