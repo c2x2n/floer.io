@@ -111,7 +111,7 @@ export const Zones:
         density: 0.875,
         highestLevel: 999,
         normalSpawning: {
-            "dark_ladybug": 20,
+            "dark_ladybug": 30,
             "hornet": 20,
             "leg_hornet": 0.08,
             "leg_beetle": 0.1,
