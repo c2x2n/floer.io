@@ -162,9 +162,13 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         const position = shoot.definition.onGround ? this.position
            : Vec2.add(this.position,Vec2.mul(this.shootDirection, this.hitbox.radius))
 
-        new ServerProjectile(this,
+        const projectile = new ServerProjectile(this,
             position,
-            this.direction, shoot);
+            this.shootDirection, shoot);
+
+        if(shoot.velocityAtFirst) projectile.addVelocity(
+            Vec2.mul(this.shootDirection, shoot.velocityAtFirst)
+        )
     }
 
     shootTick(): void {
@@ -385,11 +389,15 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
     calcModifiers(now: Modifiers, extra: Partial<Modifiers>): Modifiers {
         now.healPerSecond += extra.healPerSecond ?? 0;
-        if (this.definition.rarity === RarityName.mythic && extra.speed) {
-            now.speed *= (1 - (1 - extra.speed) / 2);
+        if (
+            this.definition.rarity === RarityName.mythic
+            && typeof extra.speed === "number" && extra.speed < 1
+        ) {
+            now.speed *= (1 - (1 - extra.speed) / 3);
         } else {
             now.speed *= extra.speed ?? 1;
         }
+        now.selfPoison += extra.selfPoison ?? 0;
 
         return now;
     }

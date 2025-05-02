@@ -1252,11 +1252,12 @@ export const Mobs = new Definitions<MobDefinition>([
         shootable: true,
         shoot: {
             definition: Projectile.fromString("red_peas"),
-            health: 50,
-            damage: 30,
-            despawnTime: 1.5,
+            health: 20,
+            damage: 10,
+            despawnTime: 1,
             hitboxRadius: 1,
-            speed: 10,
+            speed: 1.5,
+            velocityAtFirst: 150,
             poison: {
                 duration: 1,
                 damagePerSecond: 10
@@ -1267,18 +1268,18 @@ export const Mobs = new Definitions<MobDefinition>([
                 spawn: {
                     definition: Projectile.fromString("poison_peas"),
                     health: 100,
-                    damage: 15,
-                    despawnTime: 1.5,
+                    damage: 30,
+                    despawnTime: 3,
                     speed: 6,
                     poison: {
-                        duration: 1,
-                        damagePerSecond: 10
+                        duration: 2,
+                        damagePerSecond: 20
                     },
                     hitboxRadius: 0.5
                 }
             }
         },
-        shootSpeed: { min: 2.5, max: 4 },
+        shootSpeed: { min: 2, max: 3.5 },
         images: {
             width: 242.874,
             height: 226
@@ -1311,11 +1312,12 @@ export const Mobs = new Definitions<MobDefinition>([
         shootable: true,
         shoot: {
             definition: Projectile.fromString("red_peas"),
-            health: 50,
-            damage: 30,
-            despawnTime: 1.5,
+            health: 20,
+            damage: 10,
+            despawnTime: 1,
             hitboxRadius: 1,
-            speed: 10,
+            speed: 1.5,
+            velocityAtFirst: 150,
             poison: {
                 duration: 1,
                 damagePerSecond: 10
@@ -1326,18 +1328,18 @@ export const Mobs = new Definitions<MobDefinition>([
                 spawn: {
                     definition: Projectile.fromString("poison_peas"),
                     health: 100,
-                    damage: 15,
-                    despawnTime: 1.5,
+                    damage: 30,
+                    despawnTime: 3,
                     speed: 6,
                     poison: {
-                        duration: 1,
-                        damagePerSecond: 10
+                        duration: 2,
+                        damagePerSecond: 20
                     },
                     hitboxRadius: 0.5
                 }
             }
         },
-        shootSpeed: { min: 2.5, max: 4 },
+        shootSpeed: { min: 2, max: 3.5 },
         images: {
             width: 242.874,
             height: 226
