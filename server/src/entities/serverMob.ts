@@ -21,6 +21,7 @@ import {
 import { ProjectileParameters } from "../../../common/src/definitions/projectile";
 import { Modifiers } from "../../../common/src/typings";
 import { Rarity, RarityName } from "../../../common/src/definitions/rarity";
+import { ServerWall } from "./serverWall";
 
 export class ServerMob extends ServerEntity<EntityType.Mob> {
     type: EntityType.Mob = EntityType.Mob;
@@ -81,7 +82,13 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
     }
 
     canCollideWith(entity: ServerEntity): boolean {
-        if (entity instanceof ServerMob && this.notCollidingMobs.includes(entity.definition.idString)) return false;
+        const rarity = Rarity.fromString(this.definition.rarity);
+        if (entity instanceof ServerWall) return true;
+        if (rarity.notCollideWithOther) return false;
+
+        if (entity instanceof ServerMob) {
+            if (this.notCollidingMobs.includes(entity.definition.idString)) return false;
+        }
 
         return !(
             this.definition.category === MobCategory.Fixed
@@ -161,6 +168,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
     shootDirection: Vector = Vec2.new(0, 0);
     shootSpeedForNow?: number;
+    sharingHealthToNextSegment = false;
 
     shoot(shoot: ProjectileParameters): void {
         const position = shoot.definition.onGround ? this.position
@@ -213,54 +221,64 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
         this.updateModifiers();
 
-        if (this.lastSegment && !this.lastSegment.destroyed) {
+        if (this.lastSegment) {
+            if (!this.lastSegment.destroyed) {
+                this.direction = MathGraphics.directionBetweenPoints(
+                    this.position,
+                    this.lastSegment.position
+                );
 
-            this.direction = MathGraphics.directionBetweenPoints(
-                this.position,
-                this.lastSegment.position
-            );
+                this.position = MathGraphics.getPositionOnCircle(
+                    Vec2.directionToRadians(
+                        this.direction,
+                    ),
+                    this.definition.hitboxRadius + this.lastSegment.definition.hitboxRadius,
+                    this.lastSegment.position
+                );
 
-            this.position = MathGraphics.getPositionOnCircle(
-                Vec2.directionToRadians(
-                    this.direction,
-                ),
-                this.definition.hitboxRadius + this.lastSegment.definition.hitboxRadius,
-                this.lastSegment.position
-            );
+                if (this.lastSegment.aggroTarget) {
+                    if (this.definition.shootable) {
+                        this.shootDirection = Vec2.radiansToDirection(
+                            Random.float(-P2, P2)
+                        )
+                        this.shootTick();
+                    }
 
-            if (this.lastSegment.aggroTarget) {
-                if (this.definition.shootable) {
-                    this.shootDirection = Vec2.radiansToDirection(
-                        Random.float(-P2, P2)
-                    )
-                    this.shootTick();
+                    this.changeAggroTo(this.lastSegment.aggroTarget);
+                } else  {
+                    this.changeAggroTo()
                 }
 
-                this.changeAggroTo(this.lastSegment.aggroTarget);
-            } else  {
-                this.changeAggroTo()
-            }
+                if (
+                    this.lastSegment.notCollidingMobs
+                    && !this.notCollidingMobs.length
+                ) {
+                    this.notCollidingMobs.push(
+                        ...this.lastSegment.notCollidingMobs
+                    )
+                }
 
-            if (
-                this.lastSegment.notCollidingMobs
-                && !this.notCollidingMobs.length
-            ) {
-                this.notCollidingMobs.push(
-                    ...this.lastSegment.notCollidingMobs
-                )
-            }
+                if (this.lastSegment.sharingHealthToNextSegment) {
+                    this.sharingHealthToNextSegment = true;
 
-            return ;
+                    if (this.lastSegment.health != this.health) this.health = this.lastSegment.health;
+                }
+
+                return ;
+            } else {
+                if (this.sharingHealthToNextSegment)
+                    this.destroy()
+            }
         }
 
-        if (this.definition.hasSegments
-            && this.definition.notCollideWithSegments
-            && !this.notCollidingMobs.length
-        ) {
-            this.notCollidingMobs.push(
-                this.definition.segmentDefinitionIdString,
-                this.definition.idString
-            )
+        if (this.definition.hasSegments) {
+            if (this.definition.notCollideWithSegments && !this.notCollidingMobs.length)
+                this.notCollidingMobs.push(
+                    this.definition.segmentDefinitionIdString,
+                    this.definition.idString
+                )
+            if (this.definition.sharingHealth && !this.sharingHealthToNextSegment)
+                this.sharingHealthToNextSegment = true
         }
 
         if (this.modifiers.healPerSecond) {
@@ -438,6 +456,10 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
             this.damageFrom.set(source, (get ?? 0) + amount)
         }
 
+        this.destroyCheck();
+    }
+
+    destroyCheck() {
         if (this.health <= 0) {
             this.destroy();
         }

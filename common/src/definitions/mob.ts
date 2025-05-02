@@ -70,6 +70,7 @@ export type MobSegmentType = {
 } | {
     readonly hasSegments?: true
     readonly notCollideWithSegments?: boolean
+    readonly sharingHealth?: boolean
     readonly segmentAmount: number
     readonly segmentDefinitionIdString: string
 }
@@ -1244,11 +1245,11 @@ export const Mobs = new Definitions<MobDefinition>([
         idString: "myt_evil_centipede",
         displayName: "Centipede",
         damage: 50,
-        health: 1700,
+        health: 50000,
         category: MobCategory.Enemy,
         aggroRadius: 50,
         speed: 3,
-        hitboxRadius: 6,
+        hitboxRadius: 3,
         shootable: true,
         shoot: {
             definition: Projectile.fromString("red_peas"),
@@ -1295,19 +1296,20 @@ export const Mobs = new Definitions<MobDefinition>([
         rarity: RarityName.mythic,
         exp: 1000,
         hasSegments: true,
-        segmentAmount: 25,
+        segmentAmount: 35,
         notCollideWithSegments: true,
+        sharingHealth: true,
         segmentDefinitionIdString: "myt_evil_centipede_body",
         usingAssets: "evil_centipede"
     }, {
         idString: "myt_evil_centipede_body",
         displayName: "Centipede",
         damage: 50,
-        health: 1700,
+        health: 50000,
         category: MobCategory.Enemy,
         aggroRadius: 50,
         speed: 3,
-        hitboxRadius: 6,
+        hitboxRadius: 3,
         hideInformation: true,
         shootable: true,
         shoot: {

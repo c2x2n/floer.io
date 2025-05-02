@@ -27,6 +27,7 @@ type RarityDefinition = ObjectDefinition & {
     isUnique?: boolean;
     petalMaxCount?: number;
     globalMessage?: boolean;
+    notCollideWithOther?: boolean;
 };
 
 export const Rarity = new Definitions<RarityDefinition>([
@@ -74,7 +75,8 @@ export const Rarity = new Definitions<RarityDefinition>([
         showParticle: true,
         isUnique: true,
         petalMaxCount: 3,
-        globalMessage: true
+        globalMessage: true,
+        notCollideWithOther: true
     },
     {
         idString: RarityName.unique,
