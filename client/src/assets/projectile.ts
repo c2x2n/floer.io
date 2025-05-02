@@ -1,5 +1,5 @@
 import { AssetsDrawer } from "@/assets/asset.ts";
-import { P2 } from "@common/utils/math.ts";
+import { MathNumeric, P2 } from "@common/utils/math.ts";
 
 const web = new Image();
 web.src = "img/game/projectile/web.svg";
@@ -70,17 +70,26 @@ export const projectileAssets: { [K: string]: AssetsDrawer } = {
     "red_peas": (containerToDraw) => {
         const { ctx, radius } = containerToDraw;
 
-        ctx.fillStyle = containerToDraw.getRenderColor("#9c1c1e");
-        ctx.strokeStyle = containerToDraw.getRenderColor("#6e2a25");
-        ctx.lineWidth = 2.5;
+
+        const time = (Date.now() - containerToDraw.createdTime) / 1000;
 
         if (containerToDraw.dotsData && containerToDraw.dotsData.length >= 4) {
+            ctx.lineWidth = time * 4;
+
             const one = containerToDraw.dotsData[0];
             const two = containerToDraw.dotsData[1];
             const three = containerToDraw.dotsData[2];
             const four = containerToDraw.dotsData[3];
 
-            ctx.globalAlpha = containerToDraw.getAlpha(0.5);
+            const oldBrightness = containerToDraw.brightness;
+
+            containerToDraw.brightness = MathNumeric.remap(time, 1, 2, 1, 10);
+
+            ctx.strokeStyle = containerToDraw.getRenderColor("#6e2a25");
+
+            ctx.globalAlpha = containerToDraw.getAlpha(
+                MathNumeric.remap(time, 0, 2, 0.5, 1)
+            );
             ctx.beginPath();
             ctx.moveTo(one.x, one.y);
             ctx.lineTo(three.x, three.y);
@@ -92,10 +101,18 @@ export const projectileAssets: { [K: string]: AssetsDrawer } = {
             ctx.stroke();
 
             ctx.globalAlpha = containerToDraw.getAlpha(1);
+
+            containerToDraw.brightness = oldBrightness;
         }
 
+        ctx.lineWidth = 2.5;
+
+        ctx.fillStyle = containerToDraw.getRenderColor("#9c1c1e");
+        ctx.strokeStyle = containerToDraw.getRenderColor("#6e2a25");
+
         ctx.beginPath();
-        ctx.arc(0, 0, radius, 0, P2);
+
+        ctx.arc(0, 0, radius + time * radius / 4, 0, P2);
 
         ctx.fill();
         ctx.stroke();

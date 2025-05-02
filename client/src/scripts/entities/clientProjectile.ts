@@ -57,7 +57,7 @@ export class ClientProjectile extends ClientEntity {
                     for (let i = 0; i < amount; i++) {
                         const { x, y } =
                             MathGraphics.getPositionOnCircle(
-                                radiansNow, 1000
+                                radiansNow, 4000
                             )
 
                         this.container.dotsData.push({x, y})

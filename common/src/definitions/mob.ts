@@ -1257,7 +1257,7 @@ export const Mobs = new Definitions<MobDefinition>([
             damage: 0,
             despawnTime: 2,
             hitboxRadius: 1,
-            speed: 1.5,
+            speed: 0.5,
             velocityAtFirst: 150,
             spawner: {
                 amount: 4,
@@ -1314,7 +1314,7 @@ export const Mobs = new Definitions<MobDefinition>([
             damage: 0,
             despawnTime: 2,
             hitboxRadius: 1,
-            speed: 1.5,
+            speed: 0.5,
             velocityAtFirst: 150,
             spawner: {
                 amount: 4,

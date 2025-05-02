@@ -47,7 +47,8 @@ export class RenderContainer {
     staticRenderFunc?: RenderFunc;
 
     lastRenderTime: number = 0;
-    lastTransingTime: number = 0;
+    lastTransingTime: number = Date.now();
+    readonly createdTime: number = Date.now();
     dotsData?: Dot[];
     noCustoming: boolean = false;
 

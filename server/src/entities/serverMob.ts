@@ -168,7 +168,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
     shootDirection: Vector = Vec2.new(0, 0);
     shootSpeedForNow?: number;
-    sharingHealthToNextSegment = false;
+    lastShootTime: number = 0;
 
     shoot(shoot: ProjectileParameters): void {
         const position = shoot.definition.onGround ? this.position
@@ -200,9 +200,16 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
         this.shootReload += this.game.dt;
         if (this.shootReload >= this.shootSpeedForNow) {
+            if (
+                this.lastSegment
+                && !(this.lastSegment.lastShootTime
+                && (Date.now() - this.lastSegment.lastShootTime) > 90)
+            ) return;
+
             this.shoot(this.definition.shoot);
             this.shootReload = 0;
             this.shootSpeedForNow = undefined;
+            this.lastShootTime = Date.now();
         }
     }
 
@@ -211,6 +218,8 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
             this.direction, this.speed
         ));
     }
+
+    sharingHealthBetweenSegments = false;
 
     notCollidingMobs: string[] = [];
 
@@ -258,15 +267,15 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                     )
                 }
 
-                if (this.lastSegment.sharingHealthToNextSegment) {
-                    this.sharingHealthToNextSegment = true;
+                if (this.lastSegment.sharingHealthBetweenSegments) {
+                    this.sharingHealthBetweenSegments = true;
 
                     if (this.lastSegment.health != this.health) this.health = this.lastSegment.health;
                 }
 
                 return ;
             } else {
-                if (this.sharingHealthToNextSegment)
+                if (this.sharingHealthBetweenSegments)
                     this.destroy()
             }
         }
@@ -277,8 +286,8 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                     this.definition.segmentDefinitionIdString,
                     this.definition.idString
                 )
-            if (this.definition.sharingHealth && !this.sharingHealthToNextSegment)
-                this.sharingHealthToNextSegment = true
+            if (this.definition.sharingHealth && !this.sharingHealthBetweenSegments)
+                this.sharingHealthBetweenSegments = true
         }
 
         if (this.modifiers.healPerSecond) {
@@ -429,7 +438,13 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
     receiveDamage(amount: number, source: damageSource, disableEvent?: boolean): void {
         if (!this.isActive()) return;
 
-        this.changeAggroTo(source)
+        this.changeAggroTo(source);
+
+        if (this.sharingHealthBetweenSegments && this.lastSegment) {
+            this.lastSegment.receiveDamage(
+                amount, source
+            );
+        }
 
         this.health -= amount;
 
