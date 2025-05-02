@@ -1245,7 +1245,7 @@ export const Mobs = new Definitions<MobDefinition>([
         idString: "myt_evil_centipede",
         displayName: "Centipede",
         damage: 50,
-        health: 50000,
+        health: 22500,
         category: MobCategory.Enemy,
         aggroRadius: 50,
         speed: 3,
@@ -1280,7 +1280,7 @@ export const Mobs = new Definitions<MobDefinition>([
                 }
             }
         },
-        shootSpeed: { min: 2, max: 3.5 },
+        shootSpeed: { min: 4, max: 6 },
         images: {
             width: 242.874,
             height: 226
@@ -1305,7 +1305,7 @@ export const Mobs = new Definitions<MobDefinition>([
         idString: "myt_evil_centipede_body",
         displayName: "Centipede",
         damage: 50,
-        health: 50000,
+        health: 22500,
         category: MobCategory.Enemy,
         aggroRadius: 50,
         speed: 3,
@@ -1341,7 +1341,7 @@ export const Mobs = new Definitions<MobDefinition>([
                 }
             }
         },
-        shootSpeed: { min: 2, max: 3.5 },
+        shootSpeed: { min: 4, max: 6 },
         images: {
             width: 242.874,
             height: 226
