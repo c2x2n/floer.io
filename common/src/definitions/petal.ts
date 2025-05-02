@@ -223,10 +223,10 @@ export let Petals = new Definitions<PetalDefinition>([
         idString: "tri_wing",
         displayName: "Wing",
         description: "They come and go.",
-        damage: 32,
+        damage: 25,
         health: 20,
         swinging: {
-            time: 1,
+            time: 0.7,
             distance: 2.6
         },
         images:{
