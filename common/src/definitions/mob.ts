@@ -110,6 +110,28 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         rarity: RarityName.legendary,
         exp: 500
+    },
+    {
+        idString: "massiver_ladybug",
+        displayName: "Ladybug",
+        damage: 20,
+        health: 2000,
+        category: MobCategory.Unactive,
+        hitboxRadius: 50,
+        speed: 3,
+        usingAssets: "ladybug",
+        lootTable: {
+            "rose": 1,
+            "tri_rose": 1,
+            "triplet": 0.25,
+            "epic_rose": 1,
+            "bubble": 1,
+            "leg_bubble": 0.06,
+            "penta": 0.000006,
+            "myt_tri_rose": 0.000005
+        },
+        rarity: RarityName.unique,
+        exp: 500
     },{
         idString: "shiny_ladybug",
         displayName: "Ladybug",

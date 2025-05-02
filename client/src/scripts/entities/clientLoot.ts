@@ -23,17 +23,19 @@ function drawPetalPiece(
     yOffset: number,
     displaySize: number,
     petal: PetalDefinition,
-    degree?: number
+    radians?: number
 ) {
     const container = new RenderContainer(ctx);
-    container.radius = Camera.unitToScreen(petal.hitboxRadius);
-    container.scale = displaySize / defaultBoxSize
+    container.radius = Camera.unitToScreen(displaySize / defaultBoxSize / 2);
+    container.scale = 0.8;
+
     const { x, y } = defaultCenter;
     container.position = Vec2.new(
         x + xOffset,
         y + yOffset
     );
-    container.rotation = (petal.images?.slotRotation ?? 0) + (degree ?? 0)
+    container.rotation = (petal.images?.slotRotation ?? 0) + (radians ?? 0)
+    container.noCustoming = true;
 
     container.renderFunc = () => {
         const name = getGameAssetsName(petal);
@@ -54,14 +56,14 @@ function drawPetal(
     if (!petal.equipment && petal.isDuplicate) {
         let radiansNow = 0;
         const count = petal.pieceAmount;
-        let degree = 0;
+        let radians = 0;
 
         for (let i = 0; i < count; i++) {
             const { x, y } =
                 MathGraphics.getPositionOnCircle(radiansNow, defaultRadius);
-            drawPetalPiece(ctx, x + offsetX, y + offsetY,displaySize, petal, degree)
+            drawPetalPiece(ctx, x + offsetX, y + offsetY,displaySize, petal, radians)
             radiansNow += P2 / count;
-            degree += petal.images?.slotRevolution ?? 0
+            radians += petal.images?.slotRevolution ?? 0
         }
     } else {
         drawPetalPiece(ctx, offsetX, offsetY, displaySize, petal)
@@ -116,6 +118,10 @@ export class ClientLoot extends ClientEntity {
         ctx.fill()
         ctx.stroke()
 
+
+
+        drawPetal(ctx, this.container, this.definition);
+
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.font = "10.2px Ubuntu";
@@ -134,8 +140,6 @@ export class ClientLoot extends ClientEntity {
             0,
             13
         )
-
-        drawPetal(ctx, this.container, this.definition);
     }
 
     override updateFromData(data: EntitiesNetData[EntityType.Petal], isNew: boolean): void {
@@ -144,6 +148,8 @@ export class ClientLoot extends ClientEntity {
 
         if (data.full && isNew){
             this.definition = data.full.definition;
+
+            this.container.zIndex = -888;
 
             this.animations.push(this.game.addTween(
                 new Tween({ scale: 0, alpha: 0 })

@@ -72,7 +72,7 @@ export class Renderer {
         this.app.game.particles.render(dt)
 
         for (const container of this.containers) {
-            container.render(dt)
+            container.render(dt);
         }
     }
 

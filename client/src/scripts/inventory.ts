@@ -194,6 +194,7 @@ const attributesShowingConfigs: { [K in AttributeName] : AttributeShowingFunctio
         },
         shoot: () => [],
         peas_shoot: () => [],
+        around_circle_shoot: () => [],
         place_projectile: () => [],
         spawner: (data) => {
             return [{

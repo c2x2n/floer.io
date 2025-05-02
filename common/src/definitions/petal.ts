@@ -6,6 +6,7 @@ import { Projectile, ProjectileDefinition, ProjectileParameters } from "./projec
 import { MobDefinition, Mobs } from "./mob";
 import { MobCategory } from "./mob";
 import { EntityType } from "../constants";
+import { P2 } from "../utils/math";
 
 export type SavedPetalDefinitionData = PetalDefinition | null
 
@@ -97,7 +98,12 @@ export type AttributeParameters = {
     damage_reflection?: number
     self_damage?: number
     shoot?: ProjectileParameters
-    peas_shoot?: ProjectileParameters
+    around_circle_shoot?: ProjectileParameters
+    peas_shoot?: {
+        radius?: number
+        amount: number
+        para: ProjectileParameters
+    }
     place_projectile?: ProjectileParameters
     spawner?: MobDefinition
     critical_hit?: {
@@ -231,7 +237,8 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         images:{
             slotDisplaySize: 45,
-            selfGameRotation: 2
+            selfGameRotation: 2,
+            slotRevolution: P2 / 3
         },
         extendable: true,
         reloadTime: 1.25,
@@ -329,8 +336,9 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 10,
         extendable: true,
         images: {
-            slotDisplaySize: 52,
-            slotRotation: -0.1
+            slotDisplaySize: 60,
+            slotRotation: -0.1,
+            centerXOffset: 2
         },
         modifiers: {
             healPerSecond: 1
@@ -350,7 +358,8 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         images: {
             slotDisplaySize: 40,
-            slotRotation: -0.1
+            slotRotation: P2 / 8,
+            slotRevolution: P2 / 3
         },
         modifiers: {
             healPerSecond: 1
@@ -413,7 +422,7 @@ export let Petals = new Definitions<PetalDefinition>([
         reloadTime: 0.2,
         images: {
             slotRotation: 3.14,
-            slotRevolution: 6.28 / 5
+            slotRevolution: P2 / 5
         },
         usable: false,
         hitboxRadius: 0.3,
@@ -1156,7 +1165,7 @@ export let Petals = new Definitions<PetalDefinition>([
     {
         idString: "peas",
         displayName: "Peas",
-        description: "4 in 1 deal",
+        description: "4 in 1 deal.",
         damage: 8,
         health: 5,
         extendable: false,
@@ -1164,24 +1173,27 @@ export let Petals = new Definitions<PetalDefinition>([
         useTime: 0.2,
         images: {
             slotDisplaySize: 30,
+            slotRotation: 0.2,
         },
         attributes: {
             peas_shoot: {
-                definition: Projectile.fromString("peas"),
-                speed: 6.25,
-                damage: 8,
-                health: 5,
-                hitboxRadius: 0.35,
-                despawnTime: 3.5
+                amount: 4,
+                para: {
+                    definition: Projectile.fromString("peas"),
+                    speed: 6.25,
+                    damage: 8,
+                    health: 5,
+                    hitboxRadius: 0.35,
+                    despawnTime: 3.5
+                }
             }
         },
         reloadTime: 1.2,
         hitboxRadius: 0.35,
-        isDuplicate: true,
-        distanceToCenter: 0.4,
-        pieceAmount: 4,
-        isShowedInOne: true,
-        rarity: RarityName.rare
+        isDuplicate: false,
+        pieceAmount: 1,
+        rarity: RarityName.rare,
+        usingAssets: "4peas",
     },
     {
         idString: "poison_peas",
@@ -1194,15 +1206,19 @@ export let Petals = new Definitions<PetalDefinition>([
         useTime: 0.2,
         images: {
             slotDisplaySize: 30,
+            slotRotation: 0.2,
         },
         attributes: {
             peas_shoot: {
-                definition: Projectile.fromString("poison_peas"),
-                speed: 6.25,
-                damage: 8,
-                health: 5,
-                hitboxRadius: 0.35,
-                despawnTime: 3.5
+                amount: 4,
+                para: {
+                    definition: Projectile.fromString("poison_peas"),
+                    speed: 6.25,
+                    damage: 8,
+                    health: 5,
+                    hitboxRadius: 0.35,
+                    despawnTime: 3.5
+                }
             },
             poison: {
                 damagePerSecond: 10,
@@ -1211,11 +1227,10 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         reloadTime: 1.2,
         hitboxRadius: 0.35,
-        isDuplicate: true,
-        distanceToCenter: 0.4,
-        pieceAmount: 4,
-        isShowedInOne: true,
+        isDuplicate: false,
+        pieceAmount: 1,
         rarity: RarityName.epic,
+        usingAssets: "4poison_peas",
     },
     {
         idString: "leg_poison_peas",
@@ -1227,16 +1242,20 @@ export let Petals = new Definitions<PetalDefinition>([
         usable: true,
         useTime: 0.2,
         images: {
-            slotDisplaySize: 45,
+            slotDisplaySize: 40,
+            slotRotation: 0.2,
         },
         attributes: {
             peas_shoot: {
-                definition: Projectile.fromString("poison_peas"),
-                speed: 6.25,
-                damage: 10,
-                health: 5,
-                hitboxRadius: 0.46,
-                despawnTime: 4
+                amount: 4,
+                para: {
+                    definition: Projectile.fromString("poison_peas"),
+                    speed: 6.25,
+                    damage: 10,
+                    health: 5,
+                    hitboxRadius: 0.46,
+                    despawnTime: 4
+                }
             },
             poison: {
                 damagePerSecond: 10,
@@ -1245,11 +1264,10 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         reloadTime: 1.2,
         hitboxRadius: 0.5,
-        isDuplicate: true,
-        pieceAmount: 4,
-        isShowedInOne: true,
+        isDuplicate: false,
+        pieceAmount: 1,
         rarity: RarityName.legendary,
-        usingAssets: "poison_peas",
+        usingAssets: "4poison_peas",
     },
     {
         idString: "myt_poison_peas",
@@ -1264,7 +1282,7 @@ export let Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 45,
         },
         attributes: {
-            peas_shoot: {
+            around_circle_shoot: {
                 definition: Projectile.fromString("poison_peas"),
                 speed: 6.25,
                 damage: 15,
@@ -1298,7 +1316,7 @@ export let Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 45,
         },
         attributes: {
-            peas_shoot: {
+            around_circle_shoot: {
                 definition: Projectile.fromString("speas"),
                 speed: 7.5,
                 damage: 0.1,
@@ -1648,6 +1666,9 @@ export let Petals = new Definitions<PetalDefinition>([
                 health: 35,
                 category: MobCategory.Unactive,
                 hitboxRadius: 4,
+                movement: {
+                    sandstormLike: true
+                },
                 speed: 7,
                 images: {
                     width: 100,

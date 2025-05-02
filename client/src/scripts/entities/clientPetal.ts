@@ -1,6 +1,6 @@
 import { ClientEntity } from "./clientEntity";
 import { EntityType } from "@common/constants";
-import { getGameAssetsName } from "@/scripts/utils/render.ts";
+import { getGameAssetsFile, getGameAssetsName } from "@/scripts/utils/render.ts";
 import { Game } from "@/scripts/game";
 import { EntitiesNetData } from "@common/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
@@ -27,6 +27,8 @@ export class ClientPetal extends ClientEntity {
         super(game, id);
     }
 
+    image?: HTMLImageElement
+
     render(dt: number) {
         super.render(dt);
 
@@ -36,6 +38,23 @@ export class ClientPetal extends ClientEntity {
 
         if (this.container.visible && petalAssets.hasOwnProperty(name)) {
             petalAssets[name](this.container)
+        } else {
+            const scalePercent =
+                Camera.unitToScreen(this.hitboxRadius) * 2 / 200;
+            if (!this.image) {
+                this.image = new Image();
+                const image = this.image;
+
+                image.src = `/img/game/petal/${getGameAssetsFile(this.definition)}`;
+            } else if (this.image){
+                this.ctx.drawImage(
+                    this.image,
+                    -this.image.width * scalePercent / 2,
+                    -this.image.height * scalePercent / 2,
+                    this.image.width * scalePercent,
+                    this.image.height * scalePercent,
+                )
+            }
         }
 
         if (this.definition) {
@@ -55,6 +74,8 @@ export class ClientPetal extends ClientEntity {
                         owner.container.position,
                         Vec2.new(x, y)
                     );
+
+                    this.container.zIndex = ZI;
 
                     // Apply the scale to the container
                     this.container.scale = scale;
@@ -127,12 +148,12 @@ export class ClientPetal extends ClientEntity {
         this.position = data.position;
 
         if (data.full) {
-            this.definition = data.full.definition;
-            this.hitboxRadius = this.definition.hitboxRadius;
-
             if (isNew){
+                this.definition = data.full.definition;
+                this.hitboxRadius = this.definition.hitboxRadius;
                 this.container.radius = Camera.unitToScreen(this.hitboxRadius);
                 this.container.visible = !data.isReloading;
+                this.container.position = Camera.vecToScreen(data.position);
             }
 
             this.ownerId = data.full.ownerId;

@@ -1,25 +1,13 @@
 import { AssetsDrawer } from "@/assets/asset.ts";
-import { RenderContainer } from "@/scripts/utils/renderContainer.ts";
-// 移除不再需要的导入
-// import { loadPath, PathLoader } from "@/assets/petal.ts";
-// import { P2 } from "@common/utils/math.ts";
+import { Dot, RenderContainer } from "@/scripts/utils/renderContainer.ts";
+import { Random } from "@common/utils/random.ts";
 
-// SVG 路径数据
 const ladybugHeadPathS = "m 34.922494,3.9576593 c 7.88843,0 14.283271,6.3814447 14.283271,14.2533487 0,7.871924 -6.394841,14.253408 -14.283271,14.253408 -7.888435,0 -14.283276,-6.381484 -14.283276,-14.253408 0,-7.871904 6.394841,-14.2533487 14.283276,-14.2533487 z";
 const ladybugBodyPathS = "m 26.689942,3.1151231 c 1.025874,0 3.620854,0.4174594 3.620854,0.4174594 0,0 1.799643,8.3626085 5.45483,12.4634625 3.085786,3.462078 13.213924,6.256938 13.213924,6.256938 0,0 1.116466,3.261075 1.116466,4.219162 0,12.899759 -10.479254,23.357139 -23.406074,23.357139 -12.926821,0 -23.4060862,-10.45738 -23.4060862,-23.357139 0,-12.899758 10.4792652,-23.357129 23.4060862,-23.357129 z";
-// 不再需要固定点的 Path2D 对象
-// const ladybugDot1PathS = "...";
-// const ladybugDot2PathS = "...";
-// const ladybugDot3PathS = "...";
 
-// 创建 Path2D 对象 (一次性)
 const ladybugHeadPath2D = new Path2D(ladybugHeadPathS);
 const ladybugBodyPath2D = new Path2D(ladybugBodyPathS);
-// const ladybugDot1Path2D = new Path2D(ladybugDot1PathS);
-// const ladybugDot2Path2D = new Path2D(ladybugDot2PathS);
-// const ladybugDot3Path2D = new Path2D(ladybugDot3PathS);
 
-// SVG viewBox 大约 53x53
 const SVG_WIDTH = 52.91669;
 const SVG_HEIGHT = 53.014581;
 const SVG_CENTER_X = SVG_WIDTH / 2;
@@ -32,18 +20,15 @@ interface LadybugDotsData {
 }
 
 
-interface RockVerticesData {
-    vertices: { x: number, y: number }[];
-}
-
-
-
+// interface RockVerticesData {
+//     vertices: { x: number, y: number }[];
+// }
 
 export const mobAssets: { [K: string]: AssetsDrawer } = {
     "rock": (containerToDraw: RenderContainer) => {
         const { ctx, radius } = containerToDraw;
 
-        let rockData = (containerToDraw as any)._rockVerticesData as RockVerticesData | undefined;
+        let rockData = containerToDraw.dotsData;
 
         if (!rockData) {
             const vertices: { x: number, y: number }[] = [];
@@ -58,11 +43,11 @@ export const mobAssets: { [K: string]: AssetsDrawer } = {
                 const y = Math.sin(angle) * currentRadius;
                 vertices.push({ x, y });
             }
-            rockData = { vertices };
-            (containerToDraw as any)._rockVerticesData = rockData;
+            rockData = vertices;
+            containerToDraw.dotsData =  rockData;
         }
 
-        const { vertices } = rockData;
+        const vertices = rockData;
 
         if (vertices.length < 3) return;
 
@@ -90,13 +75,13 @@ export const mobAssets: { [K: string]: AssetsDrawer } = {
     "ladybug": (containerToDraw: RenderContainer /* | RenderContainerWithDots */ ) => {
         const { ctx, radius } = containerToDraw;
 
-        let dotsData = (containerToDraw as any)._ladybugDotsData as LadybugDotsData | undefined;
+        let dotsData = containerToDraw.dotsData;
 
         if (!dotsData) {
-
-            const dots: { x: number, y: number }[] = [];
-            const numDots = Math.floor(Math.random() * 4) + 2;
-            const dotRadiusSVG = SVG_WIDTH * 0.06;
+            const dots: Dot[] = [];
+            const numDots =
+                Math.floor(
+                    Math.random() * Math.log(containerToDraw.radius * 0.4) + Math.random() * 2) + 2;
 
             const tempCanvas = document.createElement('canvas');
             tempCanvas.width = SVG_WIDTH;
@@ -105,8 +90,6 @@ export const mobAssets: { [K: string]: AssetsDrawer } = {
 
             if (!tempCtx) {
                 console.error("Failed to create temporary canvas context for dot check.");
-                dotsData = { dots: [], dotRadiusSVG };
-                (containerToDraw as any)._ladybugDotsData = dotsData;
             } else {
 
                 let attempts = 0;
@@ -115,14 +98,23 @@ export const mobAssets: { [K: string]: AssetsDrawer } = {
                 while (dots.length < numDots && attempts < maxAttempts) {
                     attempts++;
 
-                    const svgX = Math.random() * SVG_WIDTH;
-                    const svgY = Math.random() * SVG_HEIGHT;
+                    const size =
+                        Random.float(
+                            Math.max(Math.log(containerToDraw.radius * 0.5)
+                                , 5)
+                            , Math.log(containerToDraw.radius * 0.8)
+                        );
 
-                    const isInBody = tempCtx.isPointInPath(ladybugBodyPath2D, svgX, svgY);
-                    const isInHead = tempCtx.isPointInPath(ladybugHeadPath2D, svgX, svgY);
+                    const svgX =
+                        Random.float(-SVG_WIDTH, SVG_WIDTH);
+                    const svgY =
+                        Random.float(-SVG_HEIGHT, SVG_HEIGHT);
 
-                    if (isInBody && !isInHead) {
-                        dots.push({ x: svgX, y: svgY });
+                    const isInBody =
+                        tempCtx.isPointInPath(ladybugBodyPath2D, svgX, svgY);
+
+                    if (isInBody) {
+                        dots.push({ x: svgX, y: svgY, size });
                     }
                 }
 
@@ -130,8 +122,8 @@ export const mobAssets: { [K: string]: AssetsDrawer } = {
                     console.warn(`Ladybug dot generation reached max attempts (${maxAttempts}). Generated only ${dots.length}/${numDots} dots.`);
                 }
 
-                dotsData = { dots, dotRadiusSVG };
-                (containerToDraw as any)._ladybugDotsData = dotsData;
+                dotsData = dots;
+                containerToDraw.dotsData = dotsData;
             }
         }
 
@@ -141,27 +133,129 @@ export const mobAssets: { [K: string]: AssetsDrawer } = {
 
         const scaleFactor = (radius * 2) / SVG_WIDTH;
         ctx.rotate(Math.PI / 4);
+
         ctx.scale(scaleFactor, scaleFactor);
+
         ctx.translate(-SVG_CENTER_X, -SVG_CENTER_Y);
+
+        ctx.save();
 
         ctx.fillStyle = containerToDraw.getRenderColor("#000000");
         ctx.fill(ladybugHeadPath2D);
+
+        ctx.clip(ladybugBodyPath2D);
 
         ctx.fillStyle = containerToDraw.getRenderColor("#eb4134");
         ctx.fill(ladybugBodyPath2D);
 
         ctx.fillStyle = containerToDraw.getRenderColor("#000000");
-        const { dots, dotRadiusSVG } = dotsData;
+        const dots = dotsData;
         dots.forEach(dot => {
             ctx.beginPath();
-            ctx.ellipse(dot.x, dot.y, dotRadiusSVG, dotRadiusSVG, 0, 0, Math.PI * 2);
+            ctx.ellipse(dot.x, dot.y, dot.size ?? 2, dot.size ?? 2, 0, 0, Math.PI * 2);
             ctx.fill();
         });
+
+        ctx.restore();
+
         ctx.strokeStyle = containerToDraw.getRenderColor("#c3312b");
         ctx.lineWidth = 6.2;
         ctx.stroke(ladybugBodyPath2D);
 
+        ctx.restore()
+    },
+
+    "shiny_ladybug": (containerToDraw: RenderContainer /* | RenderContainerWithDots */ ) => {
+        const { ctx, radius } = containerToDraw;
+
+        let dotsData = containerToDraw.dotsData;
+
+        if (!dotsData) {
+            const dots: Dot[] = [];
+            const numDots =
+                Math.floor(
+                    Math.random() * Math.log(containerToDraw.radius * 0.4) + Math.random() * 2) + 2;
+
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = SVG_WIDTH;
+            tempCanvas.height = SVG_HEIGHT;
+            const tempCtx = tempCanvas.getContext('2d');
+
+            if (!tempCtx) {
+                console.error("Failed to create temporary canvas context for dot check.");
+            } else {
+
+                let attempts = 0;
+                const maxAttempts = numDots * 150;
+
+                while (dots.length < numDots && attempts < maxAttempts) {
+                    attempts++;
+
+                    const size =
+                        Random.float(
+                            Math.max(Math.log(containerToDraw.radius * 0.5)
+                                , 5)
+                            , Math.log(containerToDraw.radius * 0.8)
+                        );
+
+                    const svgX =
+                        Random.float(-SVG_WIDTH, SVG_WIDTH);
+                    const svgY =
+                        Random.float(-SVG_HEIGHT, SVG_HEIGHT);
+
+                    const isInBody =
+                        tempCtx.isPointInPath(ladybugBodyPath2D, svgX, svgY);
+
+                    if (isInBody) {
+                        dots.push({ x: svgX, y: svgY, size });
+                    }
+                }
+
+                if (attempts >= maxAttempts && dots.length < numDots) {
+                    console.warn(`Ladybug dot generation reached max attempts (${maxAttempts}). Generated only ${dots.length}/${numDots} dots.`);
+                }
+
+                dotsData = dots;
+                containerToDraw.dotsData = dotsData;
+            }
+        }
+
+        if (!dotsData) return;
+
+        ctx.save();
+
+        const scaleFactor = (radius * 2) / SVG_WIDTH;
+        ctx.rotate(Math.PI / 4);
+
+        ctx.scale(scaleFactor, scaleFactor);
+
+        ctx.translate(-SVG_CENTER_X, -SVG_CENTER_Y);
+
+        ctx.save();
+
+        ctx.fillStyle = containerToDraw.getRenderColor("#000000");
+        ctx.fill(ladybugHeadPath2D);
+
+        ctx.clip(ladybugBodyPath2D);
+
+        ctx.fillStyle = containerToDraw.getRenderColor("#ebeb35");
+        ctx.fill(ladybugBodyPath2D);
+
+        ctx.fillStyle = containerToDraw.getRenderColor("#000000");
+        const dots = dotsData;
+        dots.forEach(dot => {
+            ctx.beginPath();
+            ctx.ellipse(dot.x, dot.y, dot.size ?? 2, dot.size ?? 2, 0, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
         ctx.restore();
+
+        ctx.strokeStyle = containerToDraw.getRenderColor("#bcbe2d");
+        ctx.lineWidth = 6.2;
+        ctx.stroke(ladybugBodyPath2D);
+
+        ctx.restore()
     },
 
     "bee": (containerToDraw: RenderContainer) => {
@@ -174,7 +268,7 @@ export const mobAssets: { [K: string]: AssetsDrawer } = {
         const beeStripe1PathS = "m 276.98608,189.67929 c 0,0 -4.40295,-7.74385 -6.03118,-11.95009 -1.29462,-3.34443 -3.39005,-11.44032 -3.39005,-11.44032 l 38.95204,-38.64041 c 0,0 9.36763,1.69954 13.21268,3.40845 3.64416,1.61963 9.89691,5.59155 9.89691,5.59155 z";
         const beeStripe2PathS = "m 309.48608,222.4601 c 0,0 -6.30044,-3.93778 -8.71791,-5.82199 -3.08487,-2.40439 -9.14168,-8.34924 -9.14168,-8.34924 l 56.75,-56.75 c 0,0 6.02664,5.45594 8.56315,8.64845 2.26632,2.85244 5.93685,9.60155 5.93685,9.60155 z";
         const beeStripe3PathS = "m 333.62649,232.2101 l 38.46918,-38.67122 c 0,0 5.25681,21.24276 -7.51918,33 -12.54041,9.78876 -30.95,5.67122 -30.95,5.67122 z";
-        
+
         const beeStingerPath2D = new Path2D(beeStingerPathS);
         const beeBodyPath2D = new Path2D(beeBodyPathS);
         const beeAntenna1Path2D = new Path2D(beeAntenna1PathS);
@@ -182,19 +276,19 @@ export const mobAssets: { [K: string]: AssetsDrawer } = {
         const beeStripe1Path2D = new Path2D(beeStripe1PathS);
         const beeStripe2Path2D = new Path2D(beeStripe2PathS);
         const beeStripe3Path2D = new Path2D(beeStripe3PathS);
-        
+
         const BEE_EFFECTIVE_WIDTH = 385 - 218;
         const BEE_EFFECTIVE_HEIGHT = 246 - 89;
         const BEE_EFFECTIVE_CENTER_X = (218 + 385) / 2;
         const BEE_EFFECTIVE_CENTER_Y = (89 + 246) / 2;
-        
+
         const scaleFactor = 1.2 * (radius * 2) / BEE_EFFECTIVE_WIDTH;
         ctx.translate(0, 0);
         ctx.rotate(3 * Math.PI / 4);
         ctx.scale(scaleFactor, scaleFactor);
         ctx.translate(-BEE_EFFECTIVE_CENTER_X, -BEE_EFFECTIVE_CENTER_Y);
 
-        
+
         ctx.fillStyle = containerToDraw.getRenderColor("#ffe763");
         ctx.fill(beeBodyPath2D);
 
@@ -203,12 +297,14 @@ export const mobAssets: { [K: string]: AssetsDrawer } = {
         ctx.fill(beeStripe2Path2D);
         ctx.fill(beeStripe3Path2D);
         ctx.fill(beeStingerPath2D);
-        ctx.fill(beeAntenna1Path2D);
-        ctx.fill(beeAntenna2Path2D);
 
         ctx.strokeStyle = containerToDraw.getRenderColor("#d3bd46");
         ctx.lineWidth = 11.5;
         ctx.stroke(beeBodyPath2D);
+
+        ctx.fillStyle = containerToDraw.getRenderColor("#333333");
+        ctx.fill(beeAntenna1Path2D);
+        ctx.fill(beeAntenna2Path2D);
 
         ctx.restore();
     },

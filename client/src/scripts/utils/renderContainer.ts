@@ -24,6 +24,8 @@ function getColor(color: ColorLike): Color {
     return color
 }
 
+export interface Dot { x: number, y: number, size?: number }
+
 export class RenderContainer {
     alpha: number = 1;
     rotation: number = 0;
@@ -44,6 +46,13 @@ export class RenderContainer {
     renderFunc?: RenderFunc;
     staticRenderFunc?: RenderFunc;
 
+    lastRenderTime: number = 0;
+    lastTransingTime: number = 0;
+    dotsData?: Dot[];
+    noCustoming: boolean = false;
+
+    zIndex: number = 0;
+
     constructor(public ctx: CanvasRenderingContext2D) {}
 
     render(dt: number) {
@@ -54,7 +63,13 @@ export class RenderContainer {
         ctx.scale(scale, scale);
 
         ctx.globalAlpha = visible ? alpha : 0;
+
+        ctx.save()
+
         if (this.renderFunc) this.renderFunc(dt)
+
+        ctx.restore()
+
         ctx.globalAlpha = 1;
 
         ctx.scale(1 / scale, 1 / scale);
@@ -63,6 +78,8 @@ export class RenderContainer {
         if (this.staticRenderFunc) this.staticRenderFunc(dt)
 
         ctx.translate(-position.x, -position.y);
+
+        this.lastRenderTime = Date.now();
     }
 
     getAlpha(alpha: number): number {

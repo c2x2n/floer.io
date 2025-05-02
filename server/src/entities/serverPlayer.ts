@@ -27,6 +27,7 @@ import { PoisonEffect } from "../utils/effects";
 import { Rarity, RarityName } from "../../../common/src/definitions/rarity";
 import { Mobs } from "../../../common/src/definitions/mob";
 import { ZoneData, ZoneName, Zones } from "../../../common/src/zones";
+import { ServerWall } from "./serverWall";
 
 // 闪避
 enum curveType {
@@ -648,14 +649,6 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             let mobCount = 0;
             let petalCount = 0;
 
-            // Clean up drops
-            for (const [id, entity] of this.game.grid.entities) {
-                if (entity.type === EntityType.Wall) {
-                    entity.destroy();
-                    dropCount++;
-                }
-            }
-
             // Clean up mobs
             for (const [id, entity] of this.game.grid.entities) {
                 if (entity.type === EntityType.Mob) {
@@ -703,6 +696,42 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             }
 
             this.sendDirectMessage(`Cleanup complete: Removed ${dropCount} drops, ${mobCount} mobs, and ${petalCount} invalid petals.`);
+        } else if (rest.startsWith('rmwall')) {
+            for (const [id, entity] of this.game.grid.entities) {
+                if (entity.type === EntityType.Wall) {
+                    entity.destroy(true);
+                }
+            }
+        } else if (rest.startsWith('wallat')) {
+            const params = rest.substring('wallat'.length).trim();
+            const args = params.split(' ').filter(arg => arg.length > 0);
+            if (args.length < 4) {
+                return this.sendDirectMessage('Usage: insufficient params', 0xffcc00);
+            }
+
+            const x = parseInt(args[0]);
+            const y = parseInt(args[1]);
+            const width = parseInt(args[2]);
+            const height = parseInt(args[3]);
+
+            new ServerWall(
+                this.game, Vec2.new(x, y), Vec2.new(x + width, y + height)
+            )
+        } else if (rest.startsWith('wallhere')) {
+            const params = rest.substring('wallhere'.length).trim();
+            const args = params.split(' ').filter(arg => arg.length > 0);
+            if (args.length < 2) {
+                return this.sendDirectMessage('Usage: insufficient params', 0xffcc00);
+            }
+
+            const x = this.position.x;
+            const y = this.position.y;
+            const width = parseInt(args[0]);
+            const height = parseInt(args[1]);
+
+            new ServerWall(
+                this.game, Vec2.new(x, y), Vec2.new(x + width, y + height)
+            )
         } else if (rest.startsWith('givexp')) {
             const params = rest.substring('givexp'.length).trim();
             const args = params.split(' ').filter(arg => arg.length > 0);
@@ -909,7 +938,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             gotDamage: this.gotDamage,
             full: {
                 healthPercent: this.health / this.maxHealth,
-                shieldPercent: this._shield / this.maxHealth * 0.75, // 最大护盾为最大生命值的75%
+                shieldPercent: this.shield / (this.maxHealth * 0.75), // 最大护盾为最大生命值的75%
                 isAdmin: this.isAdmin
             }
         };

@@ -24,9 +24,9 @@ export class ClientPlayer extends ClientEntity {
     eyeTrianglePosition: number = 0;
     eyeDirection: number = 0;
 
-    gotDamage: boolean = false;
-
     state: PlayerState = PlayerState.Normal;
+
+    admin: boolean = false;
 
     updateFromData(data: EntitiesNetData[EntityType.Player], isNew: boolean): void {
         this.position = data.position;
@@ -36,6 +36,12 @@ export class ClientPlayer extends ClientEntity {
             if (this.id == this.game.activePlayerID) {
                 this.game.camera.screenShake();
             }
+            this.getDamageAnimation(true);
+        }
+
+        if (isNew && data.full) {
+            this.container.position = Camera.vecToScreen(data.position);
+            this.admin = data.full.isAdmin;
         }
 
         if (data.full) {
@@ -253,7 +259,7 @@ export class ClientPlayer extends ClientEntity {
         ctx.font = "14px Ubuntu";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillStyle = "#ffffff";
+        ctx.fillStyle = this.admin ? "#d95e5e" : "#ffffff";
         ctx.strokeStyle = "#000000";
         ctx.lineWidth = 2;
         ctx.strokeText(name, 0, -50);
@@ -284,7 +290,6 @@ export class ClientPlayer extends ClientEntity {
             ctx.roundRect(-healthbarWidth / 2, healthbarY + 3 / 2, fillWidth, 7, 10)
             ctx.fill()
         }
-
         if (this.shieldPercent > 0) {
             ctx.fillStyle = "#000000";
             ctx.globalAlpha = 0.3;

@@ -1,5 +1,5 @@
 import { ServerPetal } from "../entities/serverPetal";
-import { MathGraphics } from "../../../common/src/utils/math";
+import { MathGraphics, P2 } from "../../../common/src/utils/math";
 import { Vec2 } from "../../../common/src/utils/vector";
 import { AttributeName } from "../../../common/src/definitions/attribute";
 import { AttributeParameters } from "../../../common/src/definitions/petal";
@@ -231,7 +231,7 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
         }
     },
 
-    peas_shoot: {
+    around_circle_shoot: {
         callback: (on, petal, data) => {
             on(AttributeEvents.ATTACK,() => {
                 if (!data) return;
@@ -241,6 +241,35 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
                 const projectile = new ServerProjectile(
                     petal.owner, position, direction, data, petal);
                 projectile.addVelocity(Vec2.mul(direction, data.velocityAtFirst ?? data.speed * 6))
+            }, PetalUsingAnimations.NORMAL)
+        }
+    },
+
+    peas_shoot: {
+        callback: (on, petal, data) => {
+            on(AttributeEvents.ATTACK,() => {
+                if (!data) return;
+                const para = data.para;
+                const amount = data.amount;
+
+                const radius = data.radius ?? 0.2;
+                let radianNow = petal.petalBunch.rotationRadians;
+                const radianStep = P2 / amount;
+
+                for (let i = 0; i < amount; i++) {
+                    const position = MathGraphics.getPositionOnCircle(
+                        radianNow, radius, petal.petalBunch.centerPosition
+                    )
+
+                    const direction =
+                        MathGraphics.directionBetweenPoints(position, petal.petalBunch.centerPosition);
+                    const projectile = new ServerProjectile(
+                        petal.owner, position, direction, para, petal);
+                    projectile.addVelocity(Vec2.mul(direction, para.velocityAtFirst ?? para.speed * 6));
+
+                    radianNow += radianStep;
+                }
+
             }, PetalUsingAnimations.NORMAL)
         }
     },
@@ -600,25 +629,25 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
     damage_reduction_percent: {
         callback: (on, petal, data) => {
             const originalReceiveDamage = petal.receiveDamage;
-            
+
             petal.receiveDamage = function(amount: number, source: any) {
                 let shouldReduceDamage = false;
-                
+
                 if (data && source) {
                     if (source.type === EntityType.Petal || source.type === EntityType.Projectile) {
                         shouldReduceDamage = true;
-                    } 
+                    }
                     else if (source.type === EntityType.Player && source.isPetalAttack) {
                         shouldReduceDamage = true;
                     }
-                    
+
                     if (shouldReduceDamage) {
                         const reduction = data / 100;
                         const originalAmount = amount;
                         amount = amount * (1 - reduction);
                     }
                 }
-                
+
                 originalReceiveDamage.call(this, amount, source);
             };
         }

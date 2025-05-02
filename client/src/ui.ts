@@ -292,8 +292,8 @@ export class UI {
         this.debugInfo.css("display", "block");
         this.gameInfo.css("display", "block");
 
-        this.game.debug.particles = this.game.particleManager.particlesCount();
-        this.game.debug.entities.loot = this.game.entityPool.countType(EntityType.Wall);
+        this.game.debug.particles = this.game.particles.particlesCount();
+        this.game.debug.entities.loot = this.game.entityPool.countType(EntityType.Loot);
         this.game.debug.entities.mobs = this.game.entityPool.countType(EntityType.Mob);
         this.game.debug.entities.petals = this.game.entityPool.countType(EntityType.Petal);
         this.game.debug.entities.projectiles = this.game.entityPool.countType(EntityType.Projectile);
