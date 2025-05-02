@@ -1254,15 +1254,11 @@ export const Mobs = new Definitions<MobDefinition>([
         shoot: {
             definition: Projectile.fromString("red_peas"),
             health: 20,
-            damage: 10,
-            despawnTime: 1,
+            damage: 0,
+            despawnTime: 2,
             hitboxRadius: 1,
             speed: 1.5,
             velocityAtFirst: 150,
-            poison: {
-                duration: 1,
-                damagePerSecond: 10
-            },
             spawner: {
                 amount: 4,
                 type: EntityType.Projectile,
@@ -1280,7 +1276,7 @@ export const Mobs = new Definitions<MobDefinition>([
                 }
             }
         },
-        shootSpeed: { min: 4, max: 6 },
+        shootSpeed: { min: 3, max: 6 },
         images: {
             width: 242.874,
             height: 226
@@ -1315,15 +1311,11 @@ export const Mobs = new Definitions<MobDefinition>([
         shoot: {
             definition: Projectile.fromString("red_peas"),
             health: 20,
-            damage: 10,
-            despawnTime: 1,
+            damage: 0,
+            despawnTime: 2,
             hitboxRadius: 1,
             speed: 1.5,
             velocityAtFirst: 150,
-            poison: {
-                duration: 1,
-                damagePerSecond: 10
-            },
             spawner: {
                 amount: 4,
                 type: EntityType.Projectile,
@@ -1341,7 +1333,7 @@ export const Mobs = new Definitions<MobDefinition>([
                 }
             }
         },
-        shootSpeed: { min: 4, max: 6 },
+        shootSpeed: { min: 3, max: 6 },
         images: {
             width: 242.874,
             height: 226
