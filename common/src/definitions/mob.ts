@@ -95,7 +95,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 20,
         health: 2000,
         category: MobCategory.Unactive,
-        hitboxRadius: 5,
+        hitboxRadius: 6.2,
         speed: 3,
         usingAssets: "ladybug",
         lootTable: {
@@ -104,9 +104,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "triplet": 0.25,
             "epic_rose": 1,
             "bubble": 1,
-            "leg_bubble": 0.06,
-            "penta": 0.000006,
-            "myt_tri_rose": 0.000005
+            "leg_bubble": 0.06
         },
         rarity: RarityName.legendary,
         exp: 500
@@ -142,14 +140,13 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 3,
         lootTable: {
             "tri_rose": 0.36,
-            "epic_rose": 0.02,
+            "epic_rose": 0.002,
             "yinyang": 0.02,
             "bubble": 0.1,
-            "jelly": 0.08,
             "wing": 0.08,
             "leg_bubble": 0.00012,
             "triplet": 0.002,
-            "shell": 0.02
+            "shell": 0.002
         },
         rarity: RarityName.rare,
         exp: 5
@@ -164,11 +161,11 @@ export const Mobs = new Definitions<MobDefinition>([
         lootTable: {
             "fast": 0.12,
             "stinger": 0.1,
-            "twin": 0.04,
+            "twin": 0.08,
             "triangle": 0.002,
             "bubble": 0.012,
             "wing": 0.003,
-            "honey": 0.06
+            "honey": 0.07
         },
         rarity: RarityName.common,
         exp: 2
@@ -294,8 +291,8 @@ export const Mobs = new Definitions<MobDefinition>([
             "salt": 0.8,
             "triplet": 0.5,
             "wing": 0.6,
-            "powder": 0.01,
-            "leg_egg": 0.05,
+            "powder": 0.015,
+            "leg_egg": 0.055,
         },
         rarity: RarityName.legendary,
         exp: 500,
@@ -338,7 +335,7 @@ export const Mobs = new Definitions<MobDefinition>([
         idString: "leg_hornet",
         displayName: "Hornet",
         damage: 75,
-        health: 1500,
+        health: 1250,
         category: MobCategory.Enemy,
         movement: {
             reachingAway: true,
@@ -363,9 +360,9 @@ export const Mobs = new Definitions<MobDefinition>([
             "missile": 1,
             "big_missile": 0.8,
             "leg_bubble": 0.0009,
-            "faster_wing": 0.02,
+            "faster_wing": 0.025,
             "wing": 0.5,
-            "antennae": 0.03,
+            "antennae": 0.035,
         },
         rarity: RarityName.legendary,
         exp: 500,
@@ -385,7 +382,7 @@ export const Mobs = new Definitions<MobDefinition>([
         //    height: 163.995
         },
         shoot: {
-            hitboxRadius: 0.7,
+            hitboxRadius: 0.5,
             damage: 10,
             health: 10,
             despawnTime: 3,
