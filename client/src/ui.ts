@@ -10,7 +10,7 @@ import { MathNumeric } from "@common/utils/math.ts";
 import { EntityType, GameConstants } from "@common/constants.ts";
 import { Petals } from "@common/definitions/petal.ts";
 import { Random } from "@common/utils/random.ts";
-import { getGameAssetsFile, getGameAssetsPath } from "@/scripts/utils/render.ts";
+import { getGameAssetsFile, getGameAssetsPath } from "@/scripts/utils/assets.ts";
 
 const version = `0.2.8.1`
 

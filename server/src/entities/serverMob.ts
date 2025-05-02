@@ -81,7 +81,13 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
     }
 
     canCollideWith(entity: ServerEntity): boolean {
-        return !(this.definition.category === MobCategory.Fixed && this.definition.onGround && entity.type === this.type)
+        if (entity instanceof ServerMob && this.notCollidingMobs.includes(entity.definition.idString)) return false;
+
+        return !(
+            this.definition.category === MobCategory.Fixed
+                && this.definition.onGround
+                && entity.type === this.type
+            )
             && entity != this;
     }
 
@@ -149,9 +155,12 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         }
     }
 
+    shootDirection: Vector = Vec2.new(0, 0);
+    shootSpeedForNow?: number;
+
     shoot(shoot: ProjectileParameters): void {
         const position = shoot.definition.onGround ? this.position
-           : Vec2.add(this.position,Vec2.mul(this.direction, this.hitbox.radius))
+           : Vec2.add(this.position,Vec2.mul(this.shootDirection, this.hitbox.radius))
 
         new ServerProjectile(this,
             position,
@@ -159,11 +168,25 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
     }
 
     shootTick(): void {
-        if (!this.definition.shootable) return
+        if (!this.definition.shootable) return;
+
+        if (!this.shootSpeedForNow) {
+            if (typeof this.definition.shootSpeed === "number") {
+                this.shootSpeedForNow = this.definition.shootSpeed
+            } else {
+                this.shootSpeedForNow =
+                    Random.float(
+                        this.definition.shootSpeed.min,
+                        this.definition.shootSpeed.max
+                    )
+            }
+        }
+
         this.shootReload += this.game.dt;
-        if (this.shootReload >= this.definition.shootSpeed) {
+        if (this.shootReload >= this.shootSpeedForNow) {
             this.shoot(this.definition.shoot);
             this.shootReload = 0;
+            this.shootSpeedForNow = undefined;
         }
     }
 
@@ -173,6 +196,8 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         ));
     }
 
+    notCollidingMobs: string[] = [];
+
     tick(): void{
         super.tick()
 
@@ -181,6 +206,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         this.updateModifiers();
 
         if (this.lastSegment && !this.lastSegment.destroyed) {
+
             this.direction = MathGraphics.directionBetweenPoints(
                 this.position,
                 this.lastSegment.position
@@ -193,7 +219,40 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                 this.definition.hitboxRadius + this.lastSegment.definition.hitboxRadius,
                 this.lastSegment.position
             );
+
+            if (this.lastSegment.aggroTarget) {
+                if (this.definition.shootable) {
+                    this.shootDirection = Vec2.radiansToDirection(
+                        Random.float(-P2, P2)
+                    )
+                    this.shootTick();
+                }
+
+                this.changeAggroTo(this.lastSegment.aggroTarget);
+            } else  {
+                this.changeAggroTo()
+            }
+
+            if (
+                this.lastSegment.notCollidingMobs
+                && !this.notCollidingMobs.length
+            ) {
+                this.notCollidingMobs.push(
+                    ...this.lastSegment.notCollidingMobs
+                )
+            }
+
             return ;
+        }
+
+        if (this.definition.hasSegments
+            && this.definition.notCollideWithSegments
+            && !this.notCollidingMobs.length
+        ) {
+            this.notCollidingMobs.push(
+                this.definition.segmentDefinitionIdString,
+                this.definition.idString
+            )
         }
 
         if (this.modifiers.healPerSecond) {
@@ -229,15 +288,18 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
             this.direction = MathGraphics.directionBetweenPoints(
                 this.aggroTarget.position, this.position
             );
+            this.shootDirection = MathGraphics.directionBetweenPoints(
+                this.aggroTarget.position, this.position
+            );
 
             if (this.definition.shootable) {
-                if (this.definition.movement && this.definition.movement.reachingAway) {
+                if (this.shootSpeedForNow && this.definition.movement && this.definition.movement.reachingAway) {
                     const reachingAwayRadius = Math.max(15, this.definition.aggroRadius * 0.8);
                     if (distanceBetween <= reachingAwayRadius) {
                         this.shootTick();
                         if (
                             this.definition.turningHead
-                            && this.shootReload >= this.definition.shootSpeed * 0.6
+                            && this.shootReload >= this.shootSpeedForNow * 0.6
                         ) this.direction = Vec2.mul(this.direction, -1);
                     } else {
                         this.move();

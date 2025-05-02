@@ -66,7 +66,7 @@ export class RenderContainer {
 
         ctx.save()
 
-        if (this.renderFunc) this.renderFunc(dt)
+        if (this.renderFunc) this.renderFunc(dt);
 
         ctx.restore()
 
@@ -75,7 +75,7 @@ export class RenderContainer {
         ctx.scale(1 / scale, 1 / scale);
         ctx.rotate(-rotation);
 
-        if (this.staticRenderFunc) this.staticRenderFunc(dt)
+        if (this.staticRenderFunc) this.staticRenderFunc(dt);
 
         ctx.translate(-position.x, -position.y);
 

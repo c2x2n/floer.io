@@ -1,6 +1,6 @@
 import { ClientEntity } from "./clientEntity";
 import { EntityType } from "@common/constants";
-import { getGameAssetsFile, getGameAssetsName } from "@/scripts/utils/render.ts";
+import { getGameAssetsFile, getGameAssetsName } from "@/scripts/utils/assets.ts";
 import { Game } from "@/scripts/game";
 import { EntitiesNetData } from "@common/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
@@ -161,7 +161,7 @@ export class ClientMob extends ClientEntity {
                     this.getDamageAnimation()
                 this.healthPercent = data.full.healthPercent;
                 const rarity = Rarity.fromString(this.definition.rarity);
-                if (rarity.globalMessage) {
+                if (rarity.globalMessage && !this.definition.hideInformation) {
                     this.game.bossbar.bossbarDatas.set(this.id, {
                         mob: this.definition,
                         healthPercent: this.healthPercent

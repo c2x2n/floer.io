@@ -8,6 +8,7 @@ import { projectileAssets } from "@/assets/projectile.ts";
 import { Camera } from "@/scripts/render/camera.ts";
 import { Vec2 } from "@common/utils/vector.ts";
 import { Tween } from "@tweenjs/tween.js";
+import { MathGraphics, P2 } from "@common/utils/math.ts";
 
 export class ClientProjectile extends ClientEntity {
     type = EntityType.Projectile;
@@ -23,7 +24,7 @@ export class ClientProjectile extends ClientEntity {
     render(dt: number) {
         super.render(dt);
 
-        this.updateContainerPosition(4);
+        this.updateContainerPosition(6);
 
         if (!this.definition) return;
 
@@ -41,11 +42,28 @@ export class ClientProjectile extends ClientEntity {
             if (isNew) {
                 this.container.position = Camera.vecToScreen(this.position)
                 this.definition = data.full.definition;
+                this.direction = data.direction;
                 this.hitboxRadius = data.full.hitboxRadius;
                 this.container.radius = Camera.unitToScreen(this.hitboxRadius);
                 this.container.rotation = Vec2.directionToRadians(data.direction);
                 if (this.definition.onGround){
                     this.container.zIndex = -999
+                }
+
+                if (this.definition.showingXBackground) {
+                    const amount = this.definition.showingXBackground;
+                    this.container.dotsData = []
+                    let radiansNow = Vec2.directionToRadians(this.direction);
+                    for (let i = 0; i < amount; i++) {
+                        const { x, y } =
+                            MathGraphics.getPositionOnCircle(
+                                radiansNow, 1000
+                            )
+
+                        this.container.dotsData.push({x, y})
+
+                        radiansNow += P2 / amount;
+                    }
                 }
             }
         }

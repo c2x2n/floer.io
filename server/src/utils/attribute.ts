@@ -131,16 +131,6 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
                     }
                 }
             )
-            on<AttributeEvents.PROJECTILE_DEAL_DAMAGE>(
-                AttributeEvents.PROJECTILE_DEAL_DAMAGE,
-                (entity) => {
-                    if (entity && data) {
-                        entity.receivePoison(
-                            petal.owner, data.damagePerSecond, data.duration
-                        );
-                    }
-                }
-            )
         }
     },
 
@@ -150,22 +140,6 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
                 AttributeEvents.PETAL_DEAL_DAMAGE,
                 (entity) => {
                     if (!entity || !data) return
-                    new Effect({
-                        effectedTarget: entity,
-                        source: petal.owner,
-                        modifier: {
-                            healing: data.healing,
-                        },
-                        duration: data.duration,
-                        workingType: [EntityType.Player]
-                    }).start();
-                }
-            )
-
-            on<AttributeEvents.PROJECTILE_DEAL_DAMAGE>(
-                AttributeEvents.PROJECTILE_DEAL_DAMAGE,
-                (entity) => {
-                    if (!entity || !data) return;
                     new Effect({
                         effectedTarget: entity,
                         source: petal.owner,
@@ -293,43 +267,9 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
                 const direction =
                     MathGraphics.directionBetweenPoints(petal.position, petal.owner.position);
                 const position = petal.position;
-                const projectile = new ServerProjectile(
+                new ServerProjectile(
                     petal.owner, position, direction, data, petal);
             }, PetalUsingAnimations.NORMAL)
-
-            if (data && (data as any).spawnDelay && (data as any).spawner) {
-                const spawnDelay = (data as any).spawnDelay;
-                const originalTick = petal.tick;
-                let timeUntilNextSpawn = 0;
-
-                petal.tick = function() {
-                    originalTick.call(this);
-
-                    if (this.isReloading || this.destroyed) return;
-
-                    timeUntilNextSpawn += this.game.dt;
-
-                    if (timeUntilNextSpawn >= spawnDelay) {
-                        timeUntilNextSpawn = 0;
-
-                        const randomOffset = Vec2.new(
-                            (Math.random() * 10 - 5),
-                            (Math.random() * 10 - 5)
-                        );
-                        const spawnPosition = Vec2.add(this.owner.position, randomOffset);
-
-                        const mobDefinition = data.customDefinition;
-                        if (mobDefinition) {
-                            const mob = new ServerMob(
-                                this.game,
-                                spawnPosition,
-                                this.owner.direction.direction,
-                                mobDefinition
-                            );
-                        }
-                    }
-                };
-            }
         }
     },
 

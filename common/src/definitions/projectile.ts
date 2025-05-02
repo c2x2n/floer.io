@@ -1,10 +1,12 @@
 import { Definitions, ObjectDefinition } from "../utils/definitions";
 import { Modifiers, PlayerModifiers } from "../typings";
 import { EntityType } from "../constants";
+import { MobDefinition } from "./mob";
 
 export type ProjectileDefinition = ObjectDefinition & {
     readonly onGround?: boolean;
     readonly doesNotDamage?: EntityType[];
+    readonly showingXBackground?: number;
 };
 
 export const Projectile = new Definitions<ProjectileDefinition>([
@@ -24,6 +26,10 @@ export const Projectile = new Definitions<ProjectileDefinition>([
     },{
         idString: "poison_peas",
         displayName: "Peas",
+    },{
+        idString: "red_peas",
+        displayName: "Peas",
+        showingXBackground: 4
     },
     {
         idString: "blueberries",
@@ -53,9 +59,26 @@ export interface ProjectileParameters {
     damage?: number
     health?: number
     hitboxRadius: number
-    modifiers?: Partial<Modifiers>
+    modifiersWhenOn?: Partial<PlayerModifiers>
+    modifiersWhenDamage?: {
+        modifier: Partial<PlayerModifiers>
+        duration: number
+    }
+    poison?: {
+        damagePerSecond: number
+        duration: number
+    }
     velocityAtFirst?: number
-    spawnDelay?: number
-    spawner?: boolean
+    spawner?: SpawnerType
     customDefinition?: any
+}
+
+export type SpawnerType = {
+    amount: number
+    type: EntityType.Projectile
+    spawn: ProjectileParameters
+} | {
+    amount: number
+    type: EntityType.Mob
+    spawn: MobDefinition
 }

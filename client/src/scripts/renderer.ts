@@ -69,12 +69,29 @@ export class Renderer {
 
         this.drawWorldMap();
 
-        this.app.game.particles.render(dt)
+        this.app.game.particles.render(dt);
 
-        for (const container of this.containers) {
+        if (!this.oldSortedContainer || this.oldContainer !== this.containers) {
+            this.oldContainer = this.containers;
+
+            this.oldSortedContainer =
+                Array.from(this.containers)
+                    .sort((a, b) => b.zIndex - a.zIndex)
+        }
+
+        this.oldSortedContainer =
+            Array.from(this.containers)
+                .sort((a, b) => a.zIndex - b.zIndex)
+
+        for (const container of this.oldSortedContainer) {
+            ctx.save();
             container.render(dt);
+            ctx.restore();
         }
     }
+
+    oldContainer = new Set<RenderContainer>;
+    oldSortedContainer?: RenderContainer[];
 
     zonePaths?: Path2D[];
     gridPath?: Path2D;

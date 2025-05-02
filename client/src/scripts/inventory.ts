@@ -307,46 +307,7 @@ const attributesShowingConfigs: { [K in AttributeName] : AttributeShowingFunctio
                 color: "#3344ff"
             }]
         }
-        /*revive: (data) => {
-            return [...(data.reviveHpMulti !== undefined ? [{
-                displayName: "Revive HP",
-                value: data.reviveHpMulti.toString()+"%",
-                color: "#58fd48"
-            }]:[]),
-            ...(data.reviveShieldMulti !== undefined ? [{
-                displayName: "Revive Shield",
-                value: data.reviveShieldMulti.toString()+"%",
-                color: "#d2eb34"
-            }] : []),
-            ]
-        }*/
     }
-
-export function renderPetalPiece(
-    xOffset: number, yOffset: number, displaySize: number, petal: PetalDefinition, rotated?: number
-) {
-    const sizePercent = displaySize;
-    const size = sizePercent / 100 * defaultBoxSize / 2;
-    const center = Vec2.sub(defaultCenter, Vec2.new(size, size));
-    const rotatedDegree =
-        MathGraphics.radiansToDegrees(petal.images?.slotRotation ?? 0) + (rotated ?? 0);
-
-    // const piece = $(`<img alt='' class='piece-petal' src=
-    //     '/img/game/petal/${getGameAssetsFile(petal)}'>`
-    // );
-
-    const piece = $(`<div class='petal-${petal.idString} piece-petal'></div>`)
-    piece.css("background-size", `100% 100%`);
-    piece.css("width", `${sizePercent}%`);
-    piece.css("height", `${sizePercent}%`);
-    const { x, y } = center;
-
-    piece.css("top", `${ (y + yOffset) / defaultBoxSize * 100 }%`);
-    piece.css("left", `${ (x + xOffset) / defaultBoxSize * 100 }%`);
-    piece.css("transform", `rotate(${rotatedDegree}deg)`)
-
-    return piece;
-}
 
 export function renderPetal(petal: PetalDefinition, baseFs: number = 13.2) {
     const petal_box = $<HTMLDivElement>(
@@ -358,32 +319,14 @@ export function renderPetal(petal: PetalDefinition, baseFs: number = 13.2) {
     }
 
     const rarity = Rarity.fromString(petal.rarity);
-    const displaySize = petal.images?.slotDisplaySize ?? 25;
-    const offsetX = petal.images?.centerXOffset ?? 0;
-    const offsetY = petal.images?.centerYOffset ?? 0;
-
     petal_box.css("background", rarity.color);
     petal_box.css("border-color", rarity.border);
+    const piece = $(`<div class='petal-${petal.idString} piece-petal'></div>`)
+    piece.css("background-size", `100% 100%`);
+    piece.css("width", "100%")
+    piece.css("height", "100%")
 
-    if (!petal.equipment && petal.isDuplicate) {
-        let radiansNow = 0;
-        const count = petal.pieceAmount;
-        let degree = 0;
-
-        for (let i = 0; i < count; i++) {
-            const { x, y } = MathGraphics.getPositionOnCircle(radiansNow, defaultRadius)
-            petal_box.append(
-                renderPetalPiece(x + offsetX, y + offsetY, displaySize, petal, degree)
-            );
-
-            radiansNow += P2 / count;
-            degree += MathGraphics.radiansToDegrees(petal.images?.slotRevolution ?? 0);
-        }
-    } else {
-        petal_box.append(
-            renderPetalPiece(offsetX, offsetY, displaySize, petal)
-        );
-    }
+    petal_box.append(piece)
 
     return petal_box;
 }

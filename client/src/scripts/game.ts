@@ -90,6 +90,7 @@ export class Game {
         if (this.activePlayerID) return this.entityPool.get(this.activePlayerID) as ClientPlayer;
         return undefined;
     }
+    activePlayerName: string = "";
 
     readonly entityPool = new EntityPool<ClientEntity>();
     readonly playerData = new Map<number,
@@ -341,6 +342,7 @@ export class Game {
         const joinPacket = new JoinPacket();
         const name = this.ui.nameInput.val();
         joinPacket.name = name ? name : GameConstants.player.defaultName;
+        this.activePlayerName = joinPacket.name;
         joinPacket.secret = localStorage.getItem("secret") ?? "";
         const petals = JSON.parse(localStorage.getItem("petals") ?? "[]");
         if (petals instanceof Array && petals.length > 0) {

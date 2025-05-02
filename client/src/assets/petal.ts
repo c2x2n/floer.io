@@ -127,7 +127,7 @@ export const petalAssets: { [K: string]: AssetsDrawer } = {
         ctx.beginPath();
         ctx.fillStyle = containerToDraw.getRenderColor("#ffe869");
         ctx.strokeStyle = containerToDraw.getRenderColor("#cfbc55");
-        ctx.lineWidth = containerToDraw.radius / 3;
+        ctx.lineWidth = containerToDraw.radius / 5;
         ctx.rect(-radius, -radius, radius * 2, radius * 2);
         ctx.fill();
         ctx.stroke();
@@ -533,7 +533,7 @@ export const petalAssets: { [K: string]: AssetsDrawer } = {
             fill: "#FFFFFF",
             stroke: {
                 color: "#CFCFCF",
-                width: containerToDraw.radius * 1.5
+                width: containerToDraw.radius / 3 * 6
             }
         })
     },
@@ -544,7 +544,7 @@ export const petalAssets: { [K: string]: AssetsDrawer } = {
             fill: "#feffc9",
             stroke: {
                 color: "#cfd0a4",
-                width: containerToDraw.radius * 1.5
+                width: containerToDraw.radius / 3 * 6
             }
         })
     },
@@ -675,7 +675,7 @@ export const petalAssets: { [K: string]: AssetsDrawer } = {
         ctx.fillStyle = containerToDraw.getRenderColor("#333333");
 
         ctx.roundRect(
-            -radius * 0.5,
+            -radius,
             -radius * 0.3,
             radius,
             radius * 0.6,
@@ -688,7 +688,7 @@ export const petalAssets: { [K: string]: AssetsDrawer } = {
         ctx.strokeStyle = containerToDraw.getRenderColor("#cfcfcf");
         ctx.lineWidth = 2;
         ctx.arc(
-            radius * 0.65,
+            radius * 0.3,
             0,
             radius * 0.6,
             0, P2

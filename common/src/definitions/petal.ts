@@ -210,7 +210,7 @@ export let Petals = new Definitions<PetalDefinition>([
         damage: 20,
         health: 15,
         swinging: {
-            time: 1,
+            time: 0.5,
             distance: 2.6
         },
         images:{
@@ -341,7 +341,7 @@ export let Petals = new Definitions<PetalDefinition>([
         images: {
             slotDisplaySize: 60,
             slotRotation: -0.1,
-            centerXOffset: 0,
+            centerXOffset: 1,
             selfGameRotation: 18
         },
         modifiers: {
@@ -509,7 +509,8 @@ export let Petals = new Definitions<PetalDefinition>([
         useTime: 1,
         images: {
             slotDisplaySize: 40,
-            selfGameRotation: 18
+            selfGameRotation: 18,
+            slotRotation: 0.6
         },
         attributes: {
             absorbing_heal: 27
@@ -666,7 +667,8 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 60,
+            slotDisplaySize: 40,
+            slotRotation: P2 / 6,
             selfGameRotation: 18
         },
         reloadTime: 2.5,
@@ -686,8 +688,6 @@ export let Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 0.02,
             slotDisplaySize: 45,
             slotRotation: 0.8,
-            centerXOffset: -1,
-            centerYOffset: -1,
             facingOut: true,
             fontSizeMultiplier: 0.8
         },
@@ -703,7 +703,13 @@ export let Petals = new Definitions<PetalDefinition>([
                 health: 20,
                 despawnTime: 3,
                 speed: 8,
-                definition: Projectile.fromString("dandelion")
+                definition: Projectile.fromString("dandelion"),
+                modifiersWhenDamage: {
+                    modifier: {
+                        healing: 0
+                    },
+                    duration: 10
+                }
             }
         },
         useTime: 0.2,
@@ -1112,7 +1118,7 @@ export let Petals = new Definitions<PetalDefinition>([
                 speed: 0,
                 hitboxRadius: 3,
                 despawnTime: 5,
-                modifiers: {
+                modifiersWhenOn: {
                     speed: 0.4
                 }
             }
@@ -1142,7 +1148,7 @@ export let Petals = new Definitions<PetalDefinition>([
                 speed: 0,
                 hitboxRadius: 5,
                 despawnTime: 5,
-                modifiers: {
+                modifiersWhenOn: {
                     speed: 0.5
                 }
             }
@@ -1174,7 +1180,7 @@ export let Petals = new Definitions<PetalDefinition>([
                 speed: 0,
                 hitboxRadius: 10,
                 despawnTime: 5,
-                modifiers: {
+                modifiersWhenOn: {
                     speed: 0.5
                 }
             }
@@ -1244,7 +1250,11 @@ export let Petals = new Definitions<PetalDefinition>([
                     damage: 8,
                     health: 5,
                     hitboxRadius: 0.35,
-                    despawnTime: 3.5
+                    despawnTime: 3.5,
+                    poison: {
+                        damagePerSecond: 10,
+                        duration: 1
+                    }
                 }
             },
             poison: {
@@ -1282,7 +1292,11 @@ export let Petals = new Definitions<PetalDefinition>([
                     damage: 10,
                     health: 5,
                     hitboxRadius: 0.46,
-                    despawnTime: 4
+                    despawnTime: 4,
+                    poison: {
+                        damagePerSecond: 10,
+                        duration: 1
+                    }
                 }
             },
             poison: {
@@ -1317,7 +1331,11 @@ export let Petals = new Definitions<PetalDefinition>([
                 damage: 15,
                 health: 10,
                 hitboxRadius: 0.46,
-                despawnTime: 4.5
+                despawnTime: 4.5,
+                poison: {
+                    damagePerSecond: 15,
+                    duration: 2
+                }
             },
             poison: {
                 damagePerSecond: 15,
@@ -1351,7 +1369,11 @@ export let Petals = new Definitions<PetalDefinition>([
                 damage: 0.1,
                 health: 26,
                 hitboxRadius: 0.46,
-                despawnTime: 4.5
+                despawnTime: 4.5,
+                poison: {
+                    damagePerSecond: 240,
+                    duration: 120
+                }
             },
             poison: {
                 damagePerSecond: 240,

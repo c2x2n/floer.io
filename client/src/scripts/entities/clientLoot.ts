@@ -4,73 +4,9 @@ import { Game } from "@/scripts/game";
 import { EntitiesNetData } from "@common/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
 import { PetalDefinition } from "@common/definitions/petal.ts";
-import { Vec2 } from "@common/utils/vector.ts";
-import { MathGraphics, P2 } from "@common/utils/math.ts";
 import { Rarity } from "@common/definitions/rarity.ts";
 import { Tween } from "@tweenjs/tween.js";
-import { RenderContainer } from "@/scripts/utils/renderContainer.ts";
-import { petalAssets } from "@/assets/petal.ts";
-import { getGameAssetsName } from "@/scripts/utils/render.ts";
-
-const defaultCenter = Vec2.new(0, -4);
-
-const defaultRadius = 6;
-const defaultBoxSize = 50;
-
-function drawPetalPiece(
-    ctx: CanvasRenderingContext2D,
-    xOffset: number,
-    yOffset: number,
-    displaySize: number,
-    petal: PetalDefinition,
-    radians?: number
-) {
-    const container = new RenderContainer(ctx);
-    container.radius = Camera.unitToScreen(displaySize / defaultBoxSize / 2);
-    container.scale = 0.8;
-
-    const { x, y } = defaultCenter;
-    container.position = Vec2.new(
-        x + xOffset,
-        y + yOffset
-    );
-    container.rotation = (petal.images?.slotRotation ?? 0) + (radians ?? 0)
-    container.noCustoming = true;
-
-    container.renderFunc = () => {
-        const name = getGameAssetsName(petal);
-        if (petalAssets.hasOwnProperty(name)) petalAssets[name](container)
-    }
-    container.render(0);
-}
-
-function drawPetal(
-    ctx: CanvasRenderingContext2D,
-    petal_box: RenderContainer,
-    petal: PetalDefinition
-) {
-    const displaySize = petal.images?.slotDisplaySize ?? 25;
-    const offsetX = petal.images?.centerXOffset ?? 0;
-    const offsetY = petal.images?.centerYOffset ?? 0;
-
-    if (!petal.equipment && petal.isDuplicate) {
-        let radiansNow = 0;
-        const count = petal.pieceAmount;
-        let radians = 0;
-
-        for (let i = 0; i < count; i++) {
-            const { x, y } =
-                MathGraphics.getPositionOnCircle(radiansNow, defaultRadius);
-            drawPetalPiece(ctx, x + offsetX, y + offsetY,displaySize, petal, radians)
-            radiansNow += P2 / count;
-            radians += petal.images?.slotRevolution ?? 0
-        }
-    } else {
-        drawPetalPiece(ctx, offsetX, offsetY, displaySize, petal)
-    }
-
-    return petal_box;
-}
+import { ICON_drawPetal } from "@/scripts/utils/assets.ts";
 
 export class ClientLoot extends ClientEntity {
     type = EntityType.Loot;
@@ -95,10 +31,10 @@ export class ClientLoot extends ClientEntity {
         ctx.globalAlpha = 0.2;
         ctx.beginPath();
         ctx.roundRect(
-            -26,
-            -26,
-            52,
-            52,
+            -29,
+            -29,
+            58,
+            58,
             2
         )
         ctx.fill()
@@ -109,22 +45,20 @@ export class ClientLoot extends ClientEntity {
         ctx.globalAlpha = 1;
         ctx.beginPath();
         ctx.roundRect(
-            -22,
-            -22,
-            44,
-            44,
+            -25,
+            -25,
+            50,
+            50,
             2
         )
         ctx.fill()
         ctx.stroke()
 
-
-
-        drawPetal(ctx, this.container, this.definition);
+        ICON_drawPetal(ctx, this.definition);
 
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.font = "10.2px Ubuntu";
+        ctx.font = "11px Ubuntu";
         ctx.fillStyle = "#FFFFFF";
         ctx.strokeStyle = "#000000";
         ctx.lineWidth = 1;
@@ -132,13 +66,13 @@ export class ClientLoot extends ClientEntity {
         ctx.strokeText(
             this.definition.displayName,
             0,
-            13
+            15
         )
 
         ctx.fillText(
             this.definition.displayName,
             0,
-            13
+            15
         )
     }
 

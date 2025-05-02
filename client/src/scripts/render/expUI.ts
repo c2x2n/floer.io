@@ -90,8 +90,7 @@ export class ExpUI {
         ctx.font = "22.5px Ubuntu";
         ctx.lineWidth = 2.1;
 
-        const name =
-            (this.game.playerData.get(this.game.activePlayerID)?.name) ?? "Player"
+        const name = this.game.activePlayerName
         ctx.strokeText(
             name,
             this.width / 2,

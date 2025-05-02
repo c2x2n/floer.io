@@ -6,11 +6,12 @@ import { EntityType } from "../../../common/src/constants";
 import { ProjectileDefinition, ProjectileParameters } from "../../../common/src/definitions/projectile";
 import { AttributeEvents } from "../utils/attribute";
 import { ServerPetal } from "./serverPetal";
-import { collideableEntity, damageableEntity, damageSource, isDamageableEntity } from "../typings";
-import { Effect } from "../utils/effects";
+import { damageableEntity, damageSource, isDamageableEntity } from "../typings";
 import { ServerFriendlyMob, ServerMob } from "./serverMob";
-import { Config } from "../config";
 import { ServerPlayer } from "./serverPlayer";
+import { Random } from "../../../common/src/utils/random";
+import { MathGraphics, P2 } from "../../../common/src/utils/math";
+import { Effect } from "../utils/effects";
 
 export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
     type: EntityType.Projectile = EntityType.Projectile;
@@ -22,7 +23,7 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
     health?: number;
     damage: number = 0;
 
-    despawnTime: number = 0;
+    existingTime: number = 0;
     direction: Vector = Vec2.new(0, 0);
     source: damageSource;
     elasticity = 0;
@@ -78,12 +79,13 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
     tick(): void{
         super.tick();
 
-        this.despawnTime += this.game.dt;
-        if (this.despawnTime >= this.parameters.despawnTime) {
+        this.existingTime += this.game.dt;
+        if (this.existingTime >= this.parameters.despawnTime) {
             this.destroy();
         }
 
         this.setAcceleration(Vec2.mul(this.direction, this.parameters.speed));
+
     }
 
     dealDamageTo(to: damageableEntity): void{
@@ -93,17 +95,35 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
             if (this.from && this.source.type === EntityType.Player) {
                 this.source.sendEvent(AttributeEvents.PROJECTILE_DEAL_DAMAGE, to, this.from)
             }
+
+            if (this.parameters.modifiersWhenDamage) {
+                const d = this.parameters.modifiersWhenDamage;
+                new Effect({
+                    effectedTarget: to,
+                    duration: d.duration,
+                    source: this.source,
+                    modifier: d.modifier
+                }).start()
+            }
+
+            if (this.parameters.poison) {
+                to.receivePoison(
+                    this.source
+                    , this.parameters.poison.damagePerSecond
+                    , this.parameters.poison.duration
+                )
+            }
         }
 
-        if (this.parameters.modifiers && this.canEffect(to)) {
-            to.otherModifiers.push(this.parameters.modifiers)
+        if (this.parameters.modifiersWhenOn && this.canEffect(to)) {
+            to.otherModifiers.push(this.parameters.modifiersWhenOn)
         }
     }
 
     canEffect(to: damageableEntity): to is ServerPlayer | ServerMob {
         if (!(to instanceof ServerPlayer || to instanceof ServerMob)) return false;
 
-        if (this.parameters.modifiers) {
+        if (this.parameters.modifiersWhenOn) {
             if (this.source.type === EntityType.Player) {
                 return !(to instanceof ServerMob
                     && to.definition.shootable
@@ -127,6 +147,13 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
         }
     }
 
+    updatePosition(position: Vector): void {
+        super.updatePosition(position);
+        if (
+            this.definition && !this.definition.onGround && !Vec2.equals(position, this._position)
+        ) this.destroy()
+    }
+
     get data(): Required<EntitiesNetData[EntityType]>{
         return {
             position: this.position,
@@ -137,4 +164,37 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
             }
         };
     };
+
+    destroy(noDrops: boolean = false) {
+        super.destroy(noDrops);
+        if (noDrops) return;
+
+        if (this.parameters.spawner) {
+            const spawner = this.parameters.spawner;
+            if (spawner.type === EntityType.Projectile) {
+                let radiansNow = Vec2.directionToRadians(this.direction);
+                for (let i = 0; i < spawner.amount; i++) {
+                    new ServerProjectile(
+                        this.source,
+                        this.position,
+                        Vec2.radiansToDirection(radiansNow),
+                        spawner.spawn
+                    )
+                    radiansNow += P2 / spawner.amount;
+                }
+            } else {
+                for (let i = 0; i < spawner.amount; i++) {
+                    const position = Random.pointInsideCircle(
+                        this.position, 8
+                    )
+                    new ServerMob(
+                        this.game,
+                        position,
+                        Vec2.radiansToDirection(Random.float(-P2, P2)),
+                        spawner.spawn
+                    )
+                }
+            }
+        }
+    }
 }

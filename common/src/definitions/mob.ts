@@ -1,7 +1,8 @@
 import { Definitions, ObjectDefinition } from "../utils/definitions";
-import { Projectile, ProjectileDefinition, ProjectileParameters } from "./projectile";
+import { Projectile, ProjectileParameters } from "./projectile";
 import { RarityName } from "./rarity";
 import { Modifiers } from "../typings";
+import { EntityType } from "../constants";
 
 export enum MobCategory{
     Fixed,
@@ -53,12 +54,14 @@ export type MobCategoryType =  {
     readonly speed: number
 });
 
+
 export type MobShootType = {
     readonly shootable?: false
 } | {
     readonly shootable: true
     readonly shoot: ProjectileParameters;
-    readonly shootSpeed: number
+    readonly shootSpeed:
+        number | { min: number, max: number }
     readonly turningHead?: boolean
 }
 
@@ -66,6 +69,7 @@ export type MobSegmentType = {
     readonly hasSegments?: false
 } | {
     readonly hasSegments?: true
+    readonly notCollideWithSegments?: boolean
     readonly segmentAmount: number
     readonly segmentDefinitionIdString: string
 }
@@ -1018,7 +1022,7 @@ export const Mobs = new Definitions<MobDefinition>([
             despawnTime: 5,
             speed: 0,
             definition: Projectile.fromString("web"),
-            modifiers: {
+            modifiersWhenOn: {
                 speed: 0.6
             }
         },
@@ -1059,7 +1063,7 @@ export const Mobs = new Definitions<MobDefinition>([
             despawnTime: 7,
             speed: 0,
             definition: Projectile.fromString("web"),
-            modifiers: {
+            modifiersWhenOn: {
                 speed: 0.6
             }
         },
@@ -1242,9 +1246,39 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 50,
         health: 1700,
         category: MobCategory.Enemy,
-        aggroRadius: 25,
+        aggroRadius: 50,
         speed: 3,
         hitboxRadius: 6,
+        shootable: true,
+        shoot: {
+            definition: Projectile.fromString("red_peas"),
+            health: 50,
+            damage: 30,
+            despawnTime: 1.5,
+            hitboxRadius: 1,
+            speed: 10,
+            poison: {
+                duration: 1,
+                damagePerSecond: 10
+            },
+            spawner: {
+                amount: 4,
+                type: EntityType.Projectile,
+                spawn: {
+                    definition: Projectile.fromString("poison_peas"),
+                    health: 100,
+                    damage: 15,
+                    despawnTime: 1.5,
+                    speed: 6,
+                    poison: {
+                        duration: 1,
+                        damagePerSecond: 10
+                    },
+                    hitboxRadius: 0.5
+                }
+            }
+        },
+        shootSpeed: { min: 2.5, max: 4 },
         images: {
             width: 242.874,
             height: 226
@@ -1260,7 +1294,8 @@ export const Mobs = new Definitions<MobDefinition>([
         rarity: RarityName.mythic,
         exp: 1000,
         hasSegments: true,
-        segmentAmount: 10,
+        segmentAmount: 25,
+        notCollideWithSegments: true,
         segmentDefinitionIdString: "myt_evil_centipede_body",
         usingAssets: "evil_centipede"
     }, {
@@ -1269,10 +1304,40 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 50,
         health: 1700,
         category: MobCategory.Enemy,
-        aggroRadius: 25,
+        aggroRadius: 50,
         speed: 3,
         hitboxRadius: 6,
         hideInformation: true,
+        shootable: true,
+        shoot: {
+            definition: Projectile.fromString("red_peas"),
+            health: 50,
+            damage: 30,
+            despawnTime: 1.5,
+            hitboxRadius: 1,
+            speed: 10,
+            poison: {
+                duration: 1,
+                damagePerSecond: 10
+            },
+            spawner: {
+                amount: 4,
+                type: EntityType.Projectile,
+                spawn: {
+                    definition: Projectile.fromString("poison_peas"),
+                    health: 100,
+                    damage: 15,
+                    despawnTime: 1.5,
+                    speed: 6,
+                    poison: {
+                        duration: 1,
+                        damagePerSecond: 10
+                    },
+                    hitboxRadius: 0.5
+                }
+            }
+        },
+        shootSpeed: { min: 2.5, max: 4 },
         images: {
             width: 242.874,
             height: 226

@@ -27,6 +27,8 @@ import { Zone, ZonesManager } from "./utils/zonesManager";
 import { ServerWall } from "./entities/serverWall";
 import { CircleHitbox, RectHitbox } from "../../common/src/utils/hitbox";
 
+type SpecialSpawningTimer = { timer: number, toNextTimer: number, spawned?: ServerMob };
+
 export class Game {
     players = new EntityPool<ServerPlayer>();
 
@@ -42,7 +44,6 @@ export class Game {
 
     adminSecret: string;
 
-    minVector = Vec2.new(0, 0);
     maxVector = Vec2.new(GameConstants.game.width, GameConstants.game.height);
 
     mapDirty = false;
@@ -152,7 +153,8 @@ export class Game {
     }
 
     specialSpawnTimer = new Map<
-        Zone, Map<SpecialSpawn, { timer: number, spawned?: ServerMob }>
+        Zone,
+        Map<SpecialSpawn, SpecialSpawningTimer>
     >();
 
     tick(): void {
@@ -246,25 +248,38 @@ export class Game {
                 let zoneTimers =
                     this.specialSpawnTimer.get(zone);
                 if (!zoneTimers){
-                    zoneTimers = new Map<SpecialSpawn, { timer: number, spawned?: ServerMob }>();
+                    zoneTimers = new Map<SpecialSpawn, SpecialSpawningTimer>();
                 }
 
                 for (const specialSpawn of zone.data.specialSpawning) {
                     let spawned = zoneTimers.get(specialSpawn)?.spawned;
-
                     if (spawned && spawned.isActive()) return;
 
                     let timerNow
                         = (zoneTimers.get(specialSpawn)?.timer ?? 0) + this.dt;
+                    let toNextTimer =
+                        (zoneTimers.get(specialSpawn)?.toNextTimer ?? 0);
 
-                    if (timerNow >= specialSpawn.timer) {
+                    if (!toNextTimer) {
+                        if (typeof specialSpawn.timer === "number") {
+                            toNextTimer = specialSpawn.timer
+                        } else {
+                            toNextTimer = Random.float(
+                                specialSpawn.timer.min,
+                                specialSpawn.timer.max
+                            )
+                        }
+                    }
+                    if (timerNow >= toNextTimer) {
                         spawned = this.applyMobSpawnerInZone(specialSpawn.spawn, zone, true)
                         timerNow = 0;
+                        toNextTimer = 0;
                     }
 
                     zoneTimers.set(specialSpawn, {
                         timer: timerNow,
-                        spawned: spawned
+                        spawned: spawned,
+                        toNextTimer
                     });
                 }
 

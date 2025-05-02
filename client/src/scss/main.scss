@@ -30,18 +30,21 @@ $none_bd: #ccc;
 
 
 body {
-  background-color: #1ea761;
-  background-image: linear-gradient(90deg, rgba(0, 0, 0, 0.15) 2%, rgba(0, 0, 0, 0) 5%), linear-gradient(0deg, rgba(0, 0, 0, 0.15) 2%, rgba(0, 0, 0, 0) 5%);
-  background-size: 20px 20px;
-  overflow: hidden;
-  background-position: 0 0;
+    background-color: #1ea761;
+    background-image: linear-gradient(90deg, rgba(0, 0, 0, 0.15) 2%, rgba(0, 0, 0, 0) 5%), linear-gradient(0deg, rgba(0, 0, 0, 0.15) 2%, rgba(0, 0, 0, 0) 5%);
+    background-size: 20px 20px;
+    overflow: hidden;
+    background-position: 0 0;
+    animation: bodyAnimate 0.5s linear infinite;
 }
 @keyframes bodyAnimate {
     from {
-      background-position: 0 0;
+       background-position: 0 0;
+       width: 100%;
+       height: 100%;
     }
     to {
-      background-position: 20px 20px;
+       background-position: 20px 20px;
     }
   }
 

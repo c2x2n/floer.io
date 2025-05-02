@@ -12,7 +12,7 @@ export enum ZoneName {
 }
 
 export type SpecialSpawn = {
-    timer: number
+    timer: number | { min: number, max: number }
     spawn: MobSpawner
 }
 
@@ -129,23 +129,29 @@ export const Zones:
             "ant_hole": 1,
         },
         specialSpawning: [
+            // {
+            //     timer: 1000000 * 60,
+            //     spawn: {
+            //         "myt_worker_ant": 3,
+            //         "myt_baby_ant": 3,
+            //         "myt_soldier_ant": 3,
+            //         "myt_ant_hole": 0.1,
+            //         "myt_boulder": 1,
+            //         "myt_evil_centipede": 0.1,
+            //         "mega_hornet": 5,
+            //         "mega_spider": 5,
+            //         "mega_beetle": 5,
+            //         "mega_mantis": 5,
+            //         "passive_bee": 3,
+            //         "massive_dark_ladybug": 8,
+            //         "massive_shiny_ladybug": 0.01,
+            //         "giant_spider": 0.0001,
+            //     }
+            // }
             {
-                timer: 1000000 * 60,
+                timer: { min: 30 * 60, max: 45 * 60 },
                 spawn: {
-                    "myt_worker_ant": 3,
-                    "myt_baby_ant": 3,
-                    "myt_soldier_ant": 3,
-                    "myt_ant_hole": 0.1,
-                    "myt_boulder": 1,
-                    "myt_evil_centipede": 0.1,
-                    "mega_hornet": 5,
-                    "mega_spider": 5,
-                    "mega_beetle": 5,
-                    "mega_mantis": 5,
-                    "passive_bee": 3,
-                    "massive_dark_ladybug": 8,
-                    "massive_shiny_ladybug": 0.01,
-                    "giant_spider": 0.0001,
+                    "myt_evil_centipede": 0.1
                 }
             }
         ]

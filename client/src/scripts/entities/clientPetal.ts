@@ -1,6 +1,6 @@
 import { ClientEntity } from "./clientEntity";
 import { EntityType } from "@common/constants";
-import { getGameAssetsFile, getGameAssetsName } from "@/scripts/utils/render.ts";
+import { getGameAssetsFile, getGameAssetsName } from "@/scripts/utils/assets.ts";
 import { Game } from "@/scripts/game";
 import { EntitiesNetData } from "@common/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
@@ -60,7 +60,7 @@ export class ClientPetal extends ClientEntity {
             }
         }
 
-        if (this.definition) {
+        if (this.definition && this.visible) {
             const owner = this.game.entityPool.get(this.ownerId);
 
             if (this.definition.equipment) {
@@ -130,7 +130,6 @@ export class ClientPetal extends ClientEntity {
                 this.container.visible = visible;
                 this.container.alpha = 1;
                 this.container.scale = 1;
-                this.container.rotation = 0;
             } else {
                 this.reloadAnimation = new Tween({ alpha: 1, scale: this.container.scale })
                     .to({ alpha: 0, scale: this.container.scale * 3}
@@ -142,6 +141,7 @@ export class ClientPetal extends ClientEntity {
                     }).onComplete(() => {
                         this.container.visible = false;
                         this.reloadAnimation = undefined;
+                        this.container.rotation = 0;
                     }).start()
             }
         }

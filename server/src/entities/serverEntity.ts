@@ -151,7 +151,7 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
         this.updatePosition(position);
     }
 
-    updatePosition(position: Vector): Vector | undefined {
+    updatePosition(position: Vector): void {
         if (this._oldPosition && this._oldPosition == position) return;
 
         if (this.hitbox instanceof CircleHitbox) {
