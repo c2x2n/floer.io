@@ -233,9 +233,9 @@ export class Game {
             this.inventory.loadInventoryData(packet.playerData.inventory);
         }
 
-        // if (packet.playerDataDirty.exp) {
-        //     this.exp.exp = packet.playerData.exp;
-        // }
+        if (packet.playerDataDirty.exp) {
+            this.expUI.exp = packet.playerData.exp;
+        }
 
         if (packet.playerDataDirty.overleveled) {
             this.ui.showOverleveled(packet.playerData.overleveled);

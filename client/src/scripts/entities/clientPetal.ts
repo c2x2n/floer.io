@@ -93,7 +93,7 @@ export class ClientPetal extends ClientEntity {
                         )
                 }
             } else if (this.definition.images?.selfGameRotation) {
-                this.angle += this.definition.images.selfGameRotation;
+                this.angle += this.definition.images.selfGameRotation  * dt;
                 this.container.rotation = MathGraphics.degreesToRadians(this.angle)
             }
 
