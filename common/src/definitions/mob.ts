@@ -1268,12 +1268,12 @@ export const Mobs = new Definitions<MobDefinition>([
                 spawn: {
                     definition: Projectile.fromString("poison_peas"),
                     health: 100,
-                    damage: 30,
+                    damage: 10,
                     despawnTime: 3,
                     speed: 6,
                     poison: {
-                        duration: 2,
-                        damagePerSecond: 20
+                        duration: 1,
+                        damagePerSecond: 10
                     },
                     hitboxRadius: 0.5
                 }
@@ -1328,12 +1328,12 @@ export const Mobs = new Definitions<MobDefinition>([
                 spawn: {
                     definition: Projectile.fromString("poison_peas"),
                     health: 100,
-                    damage: 30,
+                    damage: 10,
                     despawnTime: 3,
                     speed: 6,
                     poison: {
-                        duration: 2,
-                        damagePerSecond: 20
+                        duration: 1,
+                        damagePerSecond: 10
                     },
                     hitboxRadius: 0.5
                 }

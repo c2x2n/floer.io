@@ -132,6 +132,10 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
             if (!this.canReceiveDamageFrom(entity)) return;
             this.aggroTarget = entity;
         }
+
+        if (this.lastSegment && !this.lastSegment.aggroTarget) {
+            this.lastSegment.changeAggroTo(entity);
+        }
     }
 
     getRandomAggroAround() {
