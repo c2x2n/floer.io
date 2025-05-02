@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
+   width="171.66782"
+   height="184.14273"
    version="1.1"
-   width="200.96222"
-   height="215.25421"
-   viewBox="0 0 200.96221 215.2542"
-   id="svg5"
-   sodipodi:docname="leaf.svg"
+   id="svg6"
+   sodipodi:docname="22.svg"
    inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <defs
-     id="defs5" />
+     id="defs6" />
   <sodipodi:namedview
-     id="namedview5"
+     id="namedview6"
      pagecolor="#ffffff"
      bordercolor="#000000"
      borderopacity="0.25"
@@ -22,44 +21,42 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="1.3144933"
-     inkscape:cx="21.681357"
-     inkscape:cy="154.8125"
+     inkscape:zoom="0.97840909"
+     inkscape:cx="-222.29965"
+     inkscape:cy="29.12892"
      inkscape:window-width="1920"
      inkscape:window-height="1057"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg5" />
-  <g
-     id="g5"
-     transform="matrix(1.1230402,0,0,1.1230402,-79.723295,-75.394944)">
-    <path
-       d="m 278.8285,256.38431 16.08233,-28.4336"
-       fill="none"
-       stroke="#2d923b"
-       stroke-width="13"
-       stroke-linecap="round"
-       id="path1"
-       style="mix-blend-mode:normal"
-       transform="matrix(1.3462086,0.32799269,-0.32799269,1.3462086,-211.274,-186.80114)" />
-    <path
-       d="m 360.61843,198.70546 c -18.67038,33.00928 -57.78951,39.29048 -68.48821,33.25858 -10.74619,-6.05869 -25.87113,-43.44268 -7.20075,-76.45196 15.98182,-28.25591 59.84521,-43.2142 73.20411,-47.44107 2.24731,-0.71106 4.3443,1.00092 4.78556,2.80957 3.0325,12.42964 13.99801,59.00868 -2.30071,87.82487 z"
-       fill="#3ab54a"
-       stroke="#2d923b"
-       stroke-width="13"
-       stroke-linecap="butt"
-       id="path2"
-       style="mix-blend-mode:normal"
-       transform="matrix(1.3462086,0.32799269,-0.32799269,1.3462086,-211.274,-186.80114)" />
-    <path
-       d="m 306.05414,205.45895 c 0,0 10.65761,-28.6314 16.95326,-39.76213 5.29413,-9.36004 18.33926,-22.63515 18.33926,-22.63515"
-       fill="none"
-       stroke="#2d923b"
-       stroke-width="13"
-       stroke-linecap="round"
-       id="path3"
-       style="mix-blend-mode:normal"
-       transform="matrix(1.3462086,0.32799269,-0.32799269,1.3462086,-211.274,-186.80114)" />
-  </g>
+     inkscape:current-layer="svg6" />
+  <path
+     fill="none"
+     stroke="#2e933c"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     stroke-width="19.0468"
+     d="M 31.15503,151.08372 9.5234003,174.61933"
+     id="path1" />
+  <path
+     fill="#39b54a"
+     d="M 31.15503,151.08372 C -1.4140015,74.708284 63.473975,4.09096 160.93013,9.853512 171.87183,109.76537 106.9847,180.37826 31.15503,151.08372"
+     id="path2"
+     style="stroke-width:4.44425" />
+  <path
+     fill="none"
+     stroke="#2e933c"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     stroke-width="19.0468"
+     d="M 31.15503,151.08372 C -1.4140015,74.708284 63.473975,4.09096 160.93013,9.853512 171.87183,109.76537 106.9847,180.37826 31.15503,151.08372"
+     id="path3" />
+  <path
+     fill="none"
+     stroke="#2e933c"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     stroke-width="19.0468"
+     d="M 57.109529,122.83574 Q 89.269099,73.861071 128.48699,45.157742"
+     id="path4" />
 </svg>

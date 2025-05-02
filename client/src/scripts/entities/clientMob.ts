@@ -61,10 +61,13 @@ export class ClientMob extends ClientEntity {
             const scalePercent =
                 Camera.unitToScreen(this.hitboxRadius) * 2 / 200;
             if (!this.image) {
-                this.image = new Image();
-                const image = this.image;
+                const image = new Image();
 
                 image.src = `/img/game/mob/${getGameAssetsFile(this.definition)}`;
+
+                image.onload = () => {
+                    this.image = image;
+                }
             } else if (this.image){
                 this.ctx.drawImage(
                     this.image,

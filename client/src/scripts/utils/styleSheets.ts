@@ -18,34 +18,9 @@ export function loadStyleSheet() {
 
         const name = getGameAssetsName(definition);
 
-        if (petalAssets.hasOwnProperty(name)) {
-            const rad = Camera.unitToScreen(definition.hitboxRadius);
-            canvas.height = rad * 2.5 * 10;
-            canvas.width = rad * 2.5 * 10;
-
-            ctx.save()
-
-            const container = new RenderContainer(ctx);
-            container.radius = rad;
-            container.scale = 10;
-            container.position = Vec2.new(canvas.height / 2, canvas.width / 2);
-            container.noCustoming = true;
-            container.renderFunc = () => {
-                petalAssets[name](container);
-            }
-            container.render(0);
-
-            ctx.restore()
-
-            const dataURL = canvas.toDataURL('image/png');
-            styleSheet += `.petal-${definition.idString} {
-                background-image: url(${dataURL})
-            }`
-        } else {
-            styleSheet += `.petal-${definition.idString} {
-                background-image: url("/img/game/petal/${name}.svg")
-            }`
-        }
+        styleSheet += `.petal-${definition.idString} {
+            background-image: url("/img/game/petal/${name}.svg")
+        }`
     }
 
     $("head").append(`<style>${styleSheet}</style>`);

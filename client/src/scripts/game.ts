@@ -172,7 +172,7 @@ export class Game {
             entity.destroy();
         }
 
-        // this.camera.clear();
+        this.app.renderer.containers.clear();
         this.entityPool.clear();
         this.activePlayerID = -1;
         this.playerData.clear();
