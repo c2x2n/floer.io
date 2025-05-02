@@ -271,7 +271,7 @@ export const Mobs = new Definitions<MobDefinition>([
         lootTable: {
             "iris": 0.09,
             "salt": 0.06,
-            "triplet": 0.08,
+            "triplet": 0.008,
             "wing": 0.006,
         },
         rarity: RarityName.unusual,
