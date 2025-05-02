@@ -100,7 +100,7 @@ export class Renderer {
 
         if (this.gridPath) {
             ctx.lineWidth = 1;
-            ctx.strokeStyle = "rgba(0, 0, 0, 0.2)";
+            ctx.strokeStyle = "rgba(0, 0, 0, 0.1)";
             ctx.beginPath();
 
             ctx.stroke(this.gridPath);

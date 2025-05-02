@@ -34,7 +34,6 @@ export const Rarity = new Definitions<RarityDefinition>([
         idString: RarityName.common,
         displayName: "Common",
         color: "#7eef6d",
-        border: "#66c258",
         expWhenAbsorb: 2,
         level: 1
     },
@@ -42,7 +41,6 @@ export const Rarity = new Definitions<RarityDefinition>([
         idString: RarityName.unusual,
         displayName: "Unusual",
         color: "#ffe65d",
-        border: "#cfba4b",
         expWhenAbsorb: 10,
         level: 2
     },
@@ -50,7 +48,6 @@ export const Rarity = new Definitions<RarityDefinition>([
         idString: RarityName.rare,
         displayName: "Rare",
         color: "#4d52e3",
-        border: "#3e42b8",
         expWhenAbsorb: 50,
         level: 3
     },
@@ -58,7 +55,6 @@ export const Rarity = new Definitions<RarityDefinition>([
         idString: RarityName.epic,
         displayName: "Epic",
         color: "#861fde",
-        border: "#6d19b4",
         expWhenAbsorb: 200,
         level: 4
     },
@@ -66,7 +62,6 @@ export const Rarity = new Definitions<RarityDefinition>([
         idString: RarityName.legendary,
         displayName: "Legendary",
         color: "#de1f1f",
-        border: "#b41919",
         expWhenAbsorb: 1000,
         level: 5
     },
@@ -74,7 +69,6 @@ export const Rarity = new Definitions<RarityDefinition>([
         idString: RarityName.mythic,
         displayName: "Mythic",
         color: "#1fdbde",
-        border: "#19b1b4",
         expWhenAbsorb: 5000,
         level: 6,
         showParticle: true,
@@ -86,7 +80,6 @@ export const Rarity = new Definitions<RarityDefinition>([
         idString: RarityName.unique,
         displayName: "Unique",
         color: "#dd2066",
-        border: strokeColor("#dd2066"),
         expWhenAbsorb: 12500,
         level: 7,
         showParticle: true,
@@ -98,7 +91,6 @@ export const Rarity = new Definitions<RarityDefinition>([
         idString: RarityName.super,
         displayName: "Super",
         color: "#2bffa3",
-        border: strokeColor("#2bffa3"),
         expWhenAbsorb: 25000,
         level: 8,
         showParticle: true,
@@ -108,7 +100,6 @@ export const Rarity = new Definitions<RarityDefinition>([
         idString: RarityName.ethereal,
         displayName: "Ethereal",
         color: "#fdbe28",
-        border: strokeColor("#fdbe28"),
         expWhenAbsorb: 25,
         level: 9,
         showParticle: true,
@@ -119,7 +110,6 @@ export const Rarity = new Definitions<RarityDefinition>([
         idString: RarityName.phantasmagoric,
         displayName: "Phantasmagoric",
         color: "#7852a9",
-        border: strokeColor("#7852a9"),
         expWhenAbsorb: 5,
         level: 10,
         showParticle: true,
@@ -130,7 +120,6 @@ export const Rarity = new Definitions<RarityDefinition>([
         idString: RarityName.arcane,
         displayName: "Arcane",
         color: "#7bb78c",
-        border: strokeColor("#7bb78c"),
         expWhenAbsorb: 2,
         level: 11,
         showParticle: true,
@@ -141,11 +130,13 @@ export const Rarity = new Definitions<RarityDefinition>([
         idString: RarityName.empyrean,
         displayName: "Empyrean",
         color: "#707c8f",
-        border: strokeColor("#707c8f"),
         expWhenAbsorb: 1,
         level: 12,
         showParticle: true,
         petalMaxCount: 0,
         globalMessage: true
     }
-] as RarityDefinition[]);
+].map(def => ({
+    ...def,
+    border: strokeColor(def.color)
+})) as RarityDefinition[]);
