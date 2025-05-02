@@ -59,7 +59,7 @@ export class PetalBunch {
         if (!this.definition) return;
         if (this.definition.equipment) return;
 
-        if (newR > GameConstants.player.defaultPetalDistance){
+        if (newR > GameConstants.player.defaultPetalDistance && !this.definition.extendable){
             if (this.nowRange < GameConstants.player.defaultPetalDistance) {
                 this.nowRange = GameConstants.player.defaultPetalDistance;
             }
