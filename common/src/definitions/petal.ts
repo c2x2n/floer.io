@@ -1807,7 +1807,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: false,
         usable: true,
         images: {
-            slotDisplaySize: 45
+            slotDisplaySize: 60
         },
         useTime: 1,
         attributes: {
@@ -1828,7 +1828,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: false,
         usable: true,
         images: {
-            slotDisplaySize: 45
+            slotDisplaySize: 70
         },
         useTime: 1.5,
         attributes: {
@@ -1850,7 +1850,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: false,
         usable: true,
         images: {
-            slotDisplaySize: 45
+            slotDisplaySize: 72.5
         },
         useTime: 1.5,
         attributes: {
