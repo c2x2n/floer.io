@@ -37,12 +37,13 @@ export class ClientProjectile extends ClientEntity {
 
     updateFromData(data: EntitiesNetData[EntityType.Projectile], isNew: boolean): void {
         this.position = data.position;
+        this.direction = data.direction;
 
         if (data.full){
             if (isNew) {
                 this.container.position = Camera.vecToScreen(this.position)
                 this.definition = data.full.definition;
-                this.direction = data.direction;
+
                 this.hitboxRadius = data.full.hitboxRadius;
                 this.container.radius = Camera.unitToScreen(this.hitboxRadius);
                 this.container.rotation = Vec2.directionToRadians(data.direction);
@@ -53,7 +54,8 @@ export class ClientProjectile extends ClientEntity {
                 if (this.definition.showingXBackground) {
                     const amount = this.definition.showingXBackground;
                     this.container.dotsData = []
-                    let radiansNow = Vec2.directionToRadians(this.direction);
+                    let radiansNow = 0;
+                    console.log(this.id, radiansNow)
                     for (let i = 0; i < amount; i++) {
                         const { x, y } =
                             MathGraphics.getPositionOnCircle(

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   width="130.68913"
-   height="61.582722"
+   width="199.83435"
+   height="93.562515"
    version="1.1"
    id="svg8"
    sodipodi:docname="beetle.svg"
@@ -21,9 +21,9 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="1.9568182"
-     inkscape:cx="-73.333333"
-     inkscape:cy="33.472706"
+     inkscape:zoom="1.3836794"
+     inkscape:cx="188.98886"
+     inkscape:cy="-57.455505"
      inkscape:window-width="1920"
      inkscape:window-height="1057"
      inkscape:window-x="-8"
@@ -40,18 +40,18 @@
   <g
      clip-path="url(#a)"
      id="g8"
-     transform="matrix(-2.6501572,2.6813652,-2.6813652,-2.6501572,277.11895,63.783132)">
-    <path
-       fill="#333333"
-       d="M 43.215,57.357 Q 24.359,52.643 22.002,36.144 q 7.07,11.785 25.927,16.499 z"
-       id="path4" />
-    <path
-       fill="none"
-       stroke="#333333"
-       stroke-linecap="round"
-       stroke-linejoin="round"
-       stroke-width="4.667"
-       d="M 43.215,57.357 Q 24.359,52.643 22.002,36.144 q 7.07,11.785 25.927,16.499 z"
-       id="path5" />
-  </g>
+     transform="matrix(-0.11411332,-21.72978,21.72978,-0.11411332,-966.59902,968.23016)" />
+  <path
+     fill="#333333"
+     d="M 13.473229,41.68771 Q 109.57226,-15.893057 186.38903,41.791806 109.55321,22.528603 13.450099,80.113442 Z"
+     id="path4"
+     style="stroke-width:5.76392" />
+  <path
+     fill="none"
+     stroke="#333333"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     stroke-width="26.9002"
+     d="M 13.473229,41.68771 Q 109.57226,-15.893057 186.38903,41.791806 109.55321,22.528603 13.450099,80.113442 Z"
+     id="path5" />
 </svg>

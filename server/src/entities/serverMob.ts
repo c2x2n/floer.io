@@ -517,8 +517,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         if (!(highestPlayer && highestPlayer.length && highestPlayer[0].isActive())) return;
 
         const rarity = Rarity.fromString(this.definition.rarity);
-        if (rarity.globalMessage) {
-
+        if (rarity.globalMessage && !this.definition.hideInformation) {
             let content = `The ${rarity.displayName} ${this.definition.displayName} has been defeated`
             content += ` by ${highestPlayer[0].name}`;
 

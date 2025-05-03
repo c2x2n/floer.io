@@ -47,11 +47,10 @@ export class RenderContainer {
     staticRenderFunc?: RenderFunc;
 
     lastRenderTime: number = 0;
-    lastTransingTime: number = Date.now();
+    transing: number = 0;
     readonly createdTime: number = Date.now();
     dotsData?: Dot[];
     noCustoming: boolean = false;
-
     zIndex: number = 0;
 
     constructor(public ctx: CanvasRenderingContext2D) {}

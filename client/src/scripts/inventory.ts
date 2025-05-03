@@ -311,12 +311,8 @@ const attributesShowingConfigs: { [K in AttributeName] : AttributeShowingFunctio
 
 export function renderPetal(petal: PetalDefinition, baseFs: number = 13.2) {
     const petal_box = $<HTMLDivElement>(
-        `<div class="petal" petalName="${petal.displayName}"></div>`
+        `<div class="petal"></div>`
     );
-    if (petal.images?.fontSizeMultiplier) {
-        const fsApplied = baseFs * petal.images.fontSizeMultiplier;
-        petal_box.css("--x", `${fsApplied}px`);
-    }
 
     const rarity = Rarity.fromString(petal.rarity);
     petal_box.css("background", rarity.color);

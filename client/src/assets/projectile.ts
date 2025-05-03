@@ -13,7 +13,7 @@ export const projectileAssets: { [K: string]: AssetsDrawer } = {
 
         ctx.fillStyle = containerToDraw.getRenderColor("#333333");
         ctx.strokeStyle = containerToDraw.getRenderColor("#333333");
-        ctx.lineWidth = 6;
+        ctx.lineWidth = radius * 0.3;
 
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
@@ -107,15 +107,25 @@ export const projectileAssets: { [K: string]: AssetsDrawer } = {
 
         ctx.lineWidth = 2.5;
 
+        ctx.save();
+
         ctx.fillStyle = containerToDraw.getRenderColor("#9c1c1e");
         ctx.strokeStyle = containerToDraw.getRenderColor("#6e2a25");
 
-        ctx.beginPath();
+        for (let i = 0; i < 4; i++) {
+            ctx.beginPath();
 
-        ctx.arc(0, 0, radius + time * radius / 4, 0, P2);
+            ctx.arc(radius * 0.57, 0, radius / 4 + time * radius / 4, 0, P2);
 
-        ctx.fill();
-        ctx.stroke();
+            ctx.rotate(P2 / 4)
+
+            ctx.fill();
+            ctx.stroke();
+        }
+
+
+
+        ctx.restore();
     },
     "poison_peas": (containerToDraw) => {
         const { ctx, radius } = containerToDraw;

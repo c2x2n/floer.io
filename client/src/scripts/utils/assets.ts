@@ -58,7 +58,8 @@ function ICON_drawPetalPiece(
 
 export function ICON_drawPetal(
     ctx: CanvasRenderingContext2D,
-    petal: PetalDefinition
+    petal: PetalDefinition,
+    fontSize: number = 11
 ) {
     const displaySize = petal.images?.slotDisplaySize ?? 25;
     const offsetX = petal.images?.centerXOffset ?? 0;
@@ -81,4 +82,21 @@ export function ICON_drawPetal(
     } else {
         ICON_drawPetalPiece(ctx, offsetX, offsetY, displaySize, petal)
     }
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = `${fontSize}px Ubuntu`;
+    ctx.fillStyle = "#FFFFFF";
+    ctx.strokeStyle = "#000000";
+    ctx.lineWidth = fontSize / 10;
+    ctx.strokeText(
+        petal.displayName,
+        0,
+        15
+    )
+    ctx.fillText(
+        petal.displayName,
+        0,
+        15
+    )
 }

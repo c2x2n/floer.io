@@ -4,6 +4,7 @@ import { type Vector } from "../utils/vector";
 import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../definitions/petal";
 import { MobDefinition, Mobs } from "../definitions/mob";
 import { Projectile, ProjectileDefinition } from "../definitions/projectile";
+import { P2 } from "../utils/math";
 
 export interface EntitiesNetData {
     [EntityType.Player]: {

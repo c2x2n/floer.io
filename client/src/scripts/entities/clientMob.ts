@@ -8,7 +8,7 @@ import { MobDefinition } from "@common/definitions/mob.ts";
 import { Vec2 } from "@common/utils/vector.ts";
 import { Rarity } from "@common/definitions/rarity.ts";
 import { mobAssets } from "@/assets/mob.ts";
-import { Tween } from "@tweenjs/tween.js";
+import { Tween, Easing } from "@tweenjs/tween.js";
 import { MathGraphics, MathNumeric } from "@common/utils/math.ts";
 
 export class ClientMob extends ClientEntity {
@@ -52,31 +52,17 @@ export class ClientMob extends ClientEntity {
 
         const name = getGameAssetsName(this.definition);
 
-        this.updateContainerPosition(4);
+        this.updateContainerPosition(8);
+
+        const movementDistance = Vec2.distance(this.oldPosition, this.position);
+        if (movementDistance) {
+            this.playMovementAnimation(movementDistance)
+        }
+
         this.container.radius = Camera.unitToScreen(this.hitboxRadius);
 
         if (mobAssets.hasOwnProperty(name)) {
             mobAssets[name](this.container)
-        } else  {
-            const scalePercent =
-                Camera.unitToScreen(this.hitboxRadius) * 2 / 200;
-            if (!this.image) {
-                const image = new Image();
-
-                image.src = `/img/game/mob/${getGameAssetsFile(this.definition)}`;
-
-                image.onload = () => {
-                    this.image = image;
-                }
-            } else if (this.image){
-                this.ctx.drawImage(
-                    this.image,
-                    -this.image.width * scalePercent / 2,
-                    -this.image.height * scalePercent / 2,
-                    this.image.width * scalePercent,
-                    this.image.height * scalePercent,
-                )
-            }
         }
     }
 
@@ -147,7 +133,7 @@ export class ClientMob extends ClientEntity {
                 this.container.rotation = Vec2.directionToRadians(data.direction);
                 this.container.radius = Camera.unitToScreen(this.hitboxRadius);
 
-                this.healthBarY = Camera.unitToScreen(this.definition.hitboxRadius + 5 / 20);
+                this.healthBarY = Camera.unitToScreen(this.definition.hitboxRadius + 5 / 20) + 6;
 
                 if (this.definition.idString === "sandstorm") {
                     this.container.rotation = Math.random() * Math.PI * 2;
@@ -171,6 +157,61 @@ export class ClientMob extends ClientEntity {
         }
 
         super.updateFromData(data, isNew);
+    }
+
+    lastMovementAnimation: number = 0;
+    lastMovementAnimationTime: number = 0;
+    lastScale: number = 1;
+
+    playMovementAnimation(size: number): void {
+        if (!this.definition) return;
+        if (Date.now() - this.lastMovementAnimation < this.lastMovementAnimationTime * 2) return;
+        let time = 150;
+
+        this.lastMovementAnimation = Date.now();
+        if (this.definition.images?.mouth) {
+            time =
+                MathNumeric.remap(size, 0, 0.3, 500, 150);
+            this.game.addTween(
+                new Tween({angle: 0})
+                    .to({angle: 8}, time)
+                    .onUpdate((d) => {
+                        this.container.transing = d.angle;
+                    })
+            )
+
+            this.game.addTween(
+                new Tween({angle: 8})
+                    .delay(time)
+                    .to({angle: 0}, time)
+                    .onUpdate((d) => {
+                        this.container.transing = d.angle;
+                    })
+            )
+        }
+
+        if (this.definition.images?.legs) {
+            time =
+                MathNumeric.remap(size, 0, 0.3, 600, 160);
+            this.game.addTween(
+                new Tween({angle: 0})
+                    .to({ angle: 20 }, time)
+                    .onUpdate((d) => {
+                        this.container.transing = d.angle;
+                    })
+            )
+
+            this.game.addTween(
+                new Tween({angle: 20 })
+                    .delay(time)
+                    .to({angle: 0}, time)
+                    .onUpdate((d) => {
+                        this.container.transing = d.angle;
+                    })
+            )
+        }
+
+        this.lastMovementAnimationTime = time;
     }
 
     destroy() {

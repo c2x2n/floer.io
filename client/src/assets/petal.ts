@@ -461,7 +461,7 @@ export const petalAssets: { [K: string]: AssetsDrawer } = {
 
             ctx.restore();
         } else {
-            if ((Date.now() - containerToDraw.lastTransingTime) < 50 && containerToDraw.dotsData) {
+            if ((Date.now() - containerToDraw.transing) < 50 && containerToDraw.dotsData) {
                 for (let i = 0; i < 10; i++) {
                     const x = containerToDraw.dotsData[i].x;
                     const y = containerToDraw.dotsData[i].y;
@@ -474,7 +474,7 @@ export const petalAssets: { [K: string]: AssetsDrawer } = {
                 return;
             }
 
-            containerToDraw.lastTransingTime = Date.now();
+            containerToDraw.transing = Date.now();
 
             containerToDraw.dotsData = []
 
@@ -573,7 +573,11 @@ export const petalAssets: { [K: string]: AssetsDrawer } = {
         })
     },
     "epic_rose": (containerToDraw) => {
-        const { ctx, radius } = containerToDraw;
+        const { ctx } = containerToDraw;
+        const strokeRadius = containerToDraw.radius * 1.1;
+
+        const radius = strokeRadius * 0.7;
+
         const centerX = 0;
         const centerY = 0;
         const angleOffset = -Math.PI / 2;
@@ -593,7 +597,7 @@ export const petalAssets: { [K: string]: AssetsDrawer } = {
 
         ctx.fillStyle = containerToDraw.getRenderColor("#ff94c9");
         ctx.strokeStyle = containerToDraw.getRenderColor("#d37ba6");
-        ctx.lineWidth = containerToDraw.radius ** 0.7;
+        ctx.lineWidth = strokeRadius;
         ctx.lineJoin = "round";
         ctx.lineCap = "round"
 
@@ -625,6 +629,10 @@ export const petalAssets: { [K: string]: AssetsDrawer } = {
         ctx.closePath();
         ctx.stroke();
         ctx.fill();
+
+        ctx.strokeStyle = containerToDraw.getRenderColor("#ff94c9");
+        ctx.lineWidth = strokeRadius * 0.5;
+        ctx.stroke();
 
         ctx.restore();
     },

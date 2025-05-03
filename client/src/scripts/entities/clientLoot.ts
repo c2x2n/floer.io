@@ -55,25 +55,6 @@ export class ClientLoot extends ClientEntity {
         ctx.stroke()
 
         ICON_drawPetal(ctx, this.definition);
-
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.font = "11px Ubuntu";
-        ctx.fillStyle = "#FFFFFF";
-        ctx.strokeStyle = "#000000";
-        ctx.lineWidth = 1;
-
-        ctx.strokeText(
-            this.definition.displayName,
-            0,
-            15
-        )
-
-        ctx.fillText(
-            this.definition.displayName,
-            0,
-            15
-        )
     }
 
     override updateFromData(data: EntitiesNetData[EntityType.Petal], isNew: boolean): void {

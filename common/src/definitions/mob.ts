@@ -25,7 +25,7 @@ export type MobDefinition = ObjectDefinition & {
         mouth?: boolean
         mouthXPosition?: number
         mouthYPosition?: number
-        spiderLeg?: boolean
+        legs?: boolean
         rotation?: number
     }
     readonly movement?: {
@@ -407,6 +407,7 @@ export const Mobs = new Definitions<MobDefinition>([
         images: {
             width: 254.552,
         //    height: 163.995
+            legs: true
         },
         shoot: {
             hitboxRadius: 0.5,
@@ -470,7 +471,7 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 1.5,
         speed: 4,
         images: {
-            spiderLeg: true
+            legs: true
         },
         lootTable: {
             "iris": 0.2,
@@ -493,7 +494,7 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 1.5,
         speed: 5,
         images: {
-            spiderLeg: true
+            legs: true
         },
         lootTable: {
             "iris": 0.2,
@@ -515,7 +516,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 40,
         category: MobCategory.Enemy,
         aggroRadius: 20,
-        hitboxRadius: 1.5,
+        hitboxRadius: 0.8,
         speed: 3,
         images: {
             mouth: true
@@ -538,7 +539,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 25,
         category: MobCategory.Passive,
         aggroRadius: 10,
-        hitboxRadius: 1.5,
+        hitboxRadius: 0.8,
         speed: 3,
         images: {
             mouth: true,
@@ -562,7 +563,10 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 250,
         category: MobCategory.Enemy,
         aggroRadius: 50,
-        hitboxRadius: 3,
+        hitboxRadius: 1,
+        images: {
+            mouth: true,
+        },
         speed: 3,
         lootTable: {
             "sand": 0.8,
@@ -603,7 +607,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 10,
         health: 10,
         category: MobCategory.Unactive,
-        hitboxRadius: 1,
+        hitboxRadius: 0.8,
         speed: 3,
         images: {
             mouth: true,
@@ -796,6 +800,9 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 30,
         health: 1500,
         category: MobCategory.Enemy,
+        images: {
+            legs: true
+        },
         movement: {
             reachingAway: true,
         },
@@ -1016,7 +1023,7 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 7,
         shootable: true,
         images: {
-            spiderLeg: true
+            legs: true
         },
         shoot: {
             hitboxRadius: 6,
@@ -1057,7 +1064,7 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 20,
         shootable: true,
         images: {
-            spiderLeg: true
+            legs: true
         },
         shoot: {
             hitboxRadius: 6.5,
@@ -1124,7 +1131,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 40,
         health: 1000,
         category: MobCategory.Passive,
-        hitboxRadius: 4,
+        hitboxRadius: 5,
         aggroRadius: 20,
         speed: 3,
         images: {
@@ -1149,10 +1156,13 @@ export const Mobs = new Definitions<MobDefinition>([
         displayName: "Queen Ant",
         damage: 60,
         health: 5000,
-        category: MobCategory.Passive,
-        hitboxRadius: 8,
+        category: MobCategory.Enemy,
+        hitboxRadius: 10,
         aggroRadius: 45,
         speed: 3,
+        images: {
+            mouth: true,
+        },
         lootTable: {
             "twin": 1,
             "triplet": 0.2,
@@ -1169,7 +1179,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 10,
         health: 1000,
         category: MobCategory.Unactive,
-        hitboxRadius: 6,
+        hitboxRadius: 5,
         speed: 3,
         images: {
             mouth: true,
@@ -1203,7 +1213,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "myt_queen_ant": [0.1]
         },
         onGround: true,
-        hitboxRadius: 6,
+        hitboxRadius: 10,
         lootTable: {
             "sand": 0.66,
             "fast": 0.92,
@@ -1243,7 +1253,7 @@ export const Mobs = new Definitions<MobDefinition>([
         usingAssets: "bee"
     },{
         idString: "myt_evil_centipede",
-        displayName: "Centipede",
+        displayName: "Devourer of Peas",
         damage: 50,
         health: 22500,
         category: MobCategory.Enemy,
@@ -1299,7 +1309,7 @@ export const Mobs = new Definitions<MobDefinition>([
         usingAssets: "evil_centipede"
     }, {
         idString: "myt_evil_centipede_body",
-        displayName: "Centipede",
+        displayName: "Devourer of Peas",
         damage: 50,
         health: 22500,
         category: MobCategory.Enemy,
