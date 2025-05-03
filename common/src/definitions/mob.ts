@@ -167,7 +167,7 @@ export const Mobs = new Definitions<MobDefinition>([
         lootTable: {
             "tri_rose": 0.36,
             "epic_rose": 0.002,
-            "yinyang": 0.02,
+            "yinyang": 0.009,
             "bubble": 0.1,
             "wing": 0.08,
             "leg_bubble": 0.00012,
@@ -348,8 +348,9 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 4,
         lootTable: {
             "dandelion": 0.14,
-            "bubble": 0.085,
+            "bubble": 0.02,
             "missile": 0.18,
+            "honey": 0.02,
             "big_missile": 0.005,
             "leg_bubble": 0.00006,
             "wing": 0.06,
@@ -384,6 +385,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "dandelion": 1,
             "bubble": 0.2,
             "missile": 1,
+            "honey": 1,
             "big_missile": 0.8,
             "leg_bubble": 0.0009,
             "faster_wing": 0.025,
