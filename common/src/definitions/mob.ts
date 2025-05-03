@@ -135,6 +135,29 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         rarity: RarityName.unique,
         exp: 500
+    },
+    {
+        idString: "massiver_shiny_ladybug",
+        displayName: "Ladybug",
+        damage: 20,
+        health: 2000,
+        category: MobCategory.Passive,
+        aggroRadius: 1000,
+        hitboxRadius: 50,
+        speed: 3,
+        usingAssets: "ladybug",
+        lootTable: {
+            "rose": 1,
+            "tri_rose": 1,
+            "triplet": 0.25,
+            "epic_rose": 1,
+            "bubble": 1,
+            "leg_bubble": 0.06,
+            "penta": 0.000006,
+            "myt_tri_rose": 0.000005
+        },
+        rarity: RarityName.unique,
+        exp: 500
     },{
         idString: "shiny_ladybug",
         displayName: "Ladybug",
@@ -451,7 +474,7 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         shootSpeed: 1.3,
         aggroRadius: 30,
-        hitboxRadius: 2,
+        hitboxRadius: 4,
         speed: 3.5,
         lootTable: {
             "peas": 1,
@@ -470,7 +493,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 25,
         category: MobCategory.Enemy,
         aggroRadius: 20,
-        hitboxRadius: 1.5,
+        hitboxRadius: 1,
         speed: 4,
         images: {
             legs: true
@@ -493,7 +516,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 1050,
         category: MobCategory.Passive,
         aggroRadius: 20,
-        hitboxRadius: 1.5,
+        hitboxRadius: 3,
         speed: 5,
         images: {
             legs: true
@@ -1279,7 +1302,7 @@ export const Mobs = new Definitions<MobDefinition>([
                     health: 100,
                     damage: 10,
                     despawnTime: 3,
-                    speed: 6,
+                    speed: 15,
                     poison: {
                         duration: 1,
                         damagePerSecond: 10
@@ -1336,7 +1359,7 @@ export const Mobs = new Definitions<MobDefinition>([
                     health: 100,
                     damage: 10,
                     despawnTime: 3,
-                    speed: 6,
+                    speed: 15,
                     poison: {
                         duration: 1,
                         damagePerSecond: 10
