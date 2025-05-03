@@ -11,6 +11,7 @@ import { EntityType, GameConstants } from "@common/constants.ts";
 import { Petals } from "@common/definitions/petal.ts";
 import { Random } from "@common/utils/random.ts";
 import { getGameAssetsFile, getGameAssetsPath } from "@/scripts/utils/assets.ts";
+import { Gallery } from "@/scripts/petalGallery.ts";
 
 const version = `0.2.8.1`
 
@@ -69,6 +70,11 @@ export class UI {
     readonly creditButton = $<HTMLDivElement>("#btn-credit");
     readonly creditDialog = $<HTMLDivElement>("#credit-dialog");
 
+    readonly petalGalleryButton = $<HTMLDivElement>("#btn-petal-gallery");
+    readonly petalGalleryDialog = $<HTMLDivElement>("#petal-gallery-dialog");
+
+    readonly petalGalleryContents = $<HTMLDivElement>("#petal-gallery-contents");
+
     readonly keyboardMovement = $<HTMLDivElement>("#keyboard-movement");
     readonly newControl = $<HTMLDivElement>("#new-control");
     readonly lowResolution = $<HTMLDivElement>("#low-resolution");
@@ -89,6 +95,8 @@ export class UI {
     private transitionRunning: boolean = false;
 
     private animationInterval: number | null = null;
+
+    readonly gallery = new Gallery(this);
 
     constructor(app: ClientApplication) {
         this.app = app;
@@ -111,6 +119,10 @@ export class UI {
 
         this.creditButton.on("click", (e: Event) => {
             this.toggleDialog(this.creditDialog);
+        })
+
+        this.petalGalleryButton.on("click", (e: Event) => {
+            this.toggleDialog(this.petalGalleryDialog);
         })
 
         this.nameInput.val(this.app.settings.data.playerName);
@@ -176,7 +188,9 @@ export class UI {
 
         const content  = `floer.io ${getVersion()}`;
         this.version.text(content);
-        this.version.attr("textStroke", content)
+        this.version.attr("textStroke", content);
+
+        this.gallery.renderPetalGallery();
     }
 
     initSettingsDialog() {
@@ -216,14 +230,6 @@ export class UI {
         }
     }
 
-    private availablePetals: string[] = [
-        'basic', 'faster', 'stinger', 'bubble', 'yinyang', 'rose',
-        'wing', 'heavy', 'iris', 'web', 'antennae', 'pollen',
-        'leaf', 'cactus', 'rock', 'honey', 'dandelion', 'egg', 'chip', 'dice',
-        'rice', 'salt', 'sand', 'talisman', 'uranium', 'shell', 'starfish',
-        'jelly'
-    ];
-
     spawnRandomEntity(): void {
         if (this.game.running) {
             // stop spawning if in game
@@ -232,15 +238,16 @@ export class UI {
 
         // Select a random entity from the appropriate array
         const petalType =
-            this.availablePetals[Random.int(0, this.availablePetals.length - 1)]
+            this.gallery.petalGallery[Random.int(0, this.gallery.petalGallery.length - 1)]
 
-        const entity = $(`<div class="floating-entity"></div>`);
+        const entity = $(`<div class="floating-entity
+            petal-${petalType}-bkg"></div>`);
 
         // Set random vertical position (between 5% and 95% of screen height)
         const topPosition = Math.random() * 90 + 5;
 
         // Set random size (between 50px and 70px) mob is 1.5x
-        const size = Random.int(25, 50);
+        const size = Random.int(25, 50) * 3;
 
         // Set random speed in seconds (between 8 and 12 seconds to cross the screen)
         const speed = Math.random() * 4 + 8;
@@ -258,10 +265,6 @@ export class UI {
             'left': '-100px',
             'width': `${size}px`,
             'height': `${size}px`,
-            'background-image': `url(./img/game/petal/${petalType}.svg)`,
-            'background-size': 'contain',
-            'background-repeat': 'no-repeat',
-            'background-position': 'center',
             'z-index': '-6',
             'opacity': 1,
             'transform': `rotate(${rotation}deg)`,

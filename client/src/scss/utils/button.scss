@@ -88,10 +88,18 @@
     background-size: 50px 50px;
 }
 
+.btn-very-big-block {
+    width: 55px;
+    height: 55px;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 60px 60px;
+}
+
 #bottom-left-buttons {
     position: absolute;
     left: 5px;
-    bottom: 5px;
+    bottom: 30px;
     display: flex;
     flex-direction: column;
 }
@@ -112,17 +120,21 @@
 }
 
 #btn-inventory {
-    background-image: url('../../public/img/ui/inventory.svg');
+    background-image: url('/img/ui/inventory.svg');
 }
 
 #btn-craft {
-    background-image: url('../../public/img/ui/craft.svg');
+    background-image: url('/img/ui/craft.svg');
 }
 
 #btn-settings {
-    background-image: url('../../public/img/ui/settings.svg');
+    background-image: url('/img/ui/settings.svg');
 }
 
 #btn-credit {
-    background-image: url('../../public/img/ui/wooden-sign.svg');
+    background-image: url('/img/ui/wooden-sign.svg');
+}
+
+#btn-petal-gallery {
+    background-image: url('/img/ui/petal_gallery.svg');
 }

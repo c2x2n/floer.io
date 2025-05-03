@@ -59,13 +59,14 @@ function ICON_drawPetalPiece(
 export function ICON_drawPetal(
     ctx: CanvasRenderingContext2D,
     petal: PetalDefinition,
-    fontSize: number = 11
+    fontSize: number = 11,
+    nonMore?: boolean
 ) {
     const displaySize = petal.images?.slotDisplaySize ?? 25;
     const offsetX = petal.images?.centerXOffset ?? 0;
     const offsetY = petal.images?.centerYOffset ?? 0;
 
-    if (!petal.equipment && petal.isDuplicate) {
+    if (!nonMore && !petal.equipment && petal.isDuplicate) {
         let radiansNow = 0;
         const count = petal.pieceAmount;
         let radians = 0;

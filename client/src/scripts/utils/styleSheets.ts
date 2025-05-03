@@ -14,26 +14,32 @@ export function loadStyleSheet() {
     ctx.scale(5, 5)
 
     for (const definition of Petals.definitions) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
         const name = getGameAssetsName(definition);
 
         if (petalAssets.hasOwnProperty(name)) {
             ctx.save();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.translate(25, 25);
-
             let fontSize = 12;
-
             if (definition.images?.fontSizeMultiplier) {
                 fontSize *= definition.images.fontSizeMultiplier;
             }
-
-            ICON_drawPetal(ctx, definition, fontSize)
-            ctx.restore()
+            ICON_drawPetal(ctx, definition, fontSize);
             const dataURL = canvas.toDataURL('image/png');
             styleSheet += `.petal-${definition.idString} {
                 background-image: url(${dataURL})
             }`
+            ctx.restore();
+
+            ctx.save();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.translate(25, 25);
+            ICON_drawPetal(ctx, definition, 0, true);
+            const noTextDataURL = canvas.toDataURL('image/png');
+            styleSheet += `.petal-${definition.idString}-bkg {
+                background-image: url(${noTextDataURL})
+            }`
+            ctx.restore();
         } else {
             console.log(`[!] ${definition.idString} doesnt have an asset. Skipping...`)
         }

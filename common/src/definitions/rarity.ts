@@ -28,9 +28,10 @@ type RarityDefinition = ObjectDefinition & {
     petalMaxCount?: number;
     globalMessage?: boolean;
     notCollideWithOther?: boolean;
+    hideInPetalGallery?: boolean;
 };
 
-export const Rarity = new Definitions<RarityDefinition>([
+export const Rarity = new Definitions<RarityDefinition>(([
     {
         idString: RarityName.common,
         displayName: "Common",
@@ -96,7 +97,8 @@ export const Rarity = new Definitions<RarityDefinition>([
         expWhenAbsorb: 25000,
         level: 8,
         showParticle: true,
-        petalMaxCount: 0
+        petalMaxCount: 0,
+        hideInPetalGallery: true
     },
     {
         idString: RarityName.ethereal,
@@ -106,7 +108,8 @@ export const Rarity = new Definitions<RarityDefinition>([
         level: 9,
         showParticle: true,
         petalMaxCount: 0,
-        globalMessage: true
+        globalMessage: true,
+        hideInPetalGallery: true
     },
     {
         idString: RarityName.phantasmagoric,
@@ -116,7 +119,8 @@ export const Rarity = new Definitions<RarityDefinition>([
         level: 10,
         showParticle: true,
         petalMaxCount: 0,
-        globalMessage: true
+        globalMessage: true,
+        hideInPetalGallery: true
     },
     {
         idString: RarityName.arcane,
@@ -126,7 +130,8 @@ export const Rarity = new Definitions<RarityDefinition>([
         level: 11,
         showParticle: true,
         petalMaxCount: 0,
-        globalMessage: true
+        globalMessage: true,
+        hideInPetalGallery: true
     },
     {
         idString: RarityName.empyrean,
@@ -136,9 +141,10 @@ export const Rarity = new Definitions<RarityDefinition>([
         level: 12,
         showParticle: true,
         petalMaxCount: 0,
-        globalMessage: true
+        globalMessage: true,
+        hideInPetalGallery: true
     }
-].map(def => ({
+] satisfies Partial<RarityDefinition>[]).map(def => ({
     ...def,
     border: strokeColor(def.color)
 })) as RarityDefinition[]);

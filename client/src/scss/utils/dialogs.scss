@@ -16,6 +16,14 @@
     border-radius: 9px;
 }
 
+.bottom-left-dialog {
+    width: max-content;
+    height: max-content;
+    left: 80px;
+    bottom: 37px;
+    border-radius: 9px;
+}
+
 input[type="checkbox"] {
     width: 25px;
     height: 25px;
@@ -50,6 +58,14 @@ input[type="checkbox"]:checked {
 #credit-dialog {
     border: #8a8a8a 6px solid;
     background-color: #aaaaaa;
+    display: flex;
+    align-items: center;
+    min-width: 300px;
+}
+
+#petal-gallery-dialog {
+    border: #b3814a 6px solid;
+    background-color: #db9d5a;
     display: flex;
     align-items: center;
     min-width: 300px;

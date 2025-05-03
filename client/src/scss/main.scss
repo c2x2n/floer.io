@@ -520,6 +520,7 @@ input::placeholder {
 .chat-message {
     color: white;
 }
+
 ::-webkit-scrollbar-track-piece {
     display: none;
 }
@@ -534,16 +535,52 @@ input::placeholder {
 }
 
 #qq-btn {
-    background-image: url("../../public/img/ui/qq.svg");
+    background-image: url("/img/ui/qq.svg");
     background-size: 35px 35px;
 }
 
 #dis-btn {
-    background-image: url("../../public/img/ui/discord.svg");
+    background-image: url("/img/ui/discord.svg");
     background-size: 35px 35px;
 }
 
 #gth-btn {
-    background-image: url("../../public/img/ui/github.svg");
+    background-image: url("/img/ui/github.svg");
     background-size: 35px 35px;
+}
+
+#petal-gallery-contents {
+    width: 350px;
+    height: 400px;
+    background: #e3a96d;
+    overflow: auto;
+    overflow-x: hidden;
+    padding: 5px;
+}
+
+#petal-gallery-contents > div {
+    display: inline-block;
+    margin: 5px;
+}
+
+.unknown-petal {
+    background-image: url("/img/ui/unknown.svg");
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 45px;
+    height: 45px;
+    border-radius: 5px;
+}
+
+.petal-gallery-content {
+    width: 45px;
+    height: 45px;
+    border-radius: 5px;
+    position: relative;
+}
+
+.petal-gallery-content > .petal {
+    position: relative;
+    top: -4.4px;
+    left: -4.4px;
+    pointer-events: none;
 }

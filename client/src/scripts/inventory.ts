@@ -893,12 +893,22 @@ export class Inventory{
         this.updatePetalRows();
     }
 
+    oldInventory: PetalContainer[] = [];
+
     updatePetalRows() {
         mouseSelectingPetal = undefined;
         mouseDeletingPetal = false;
 
         this.renderPetalRow(this.equippedPetals, this.ui.equippedPetalRow);
         this.renderPetalRow(this.preparationPetals, this.ui.preparationPetalRow);
+
+        if (this.oldInventory != this.inventory) {
+            for (const cont of this.inventory) {
+                if (cont.petalDefinition)
+                    this.ui.gallery.addGallery(cont.petalDefinition);
+            }
+            this.oldInventory = this.inventory;
+        }
 
         if (this.game.running) {
             this.ui.hud.append(this.ui.petalColumn);
@@ -1028,7 +1038,6 @@ export class Inventory{
         $("body").append(box);
         container.informationBox = box;
         container.showingInformation = true;
-
 
         const offset = slot.offset();
         if (offset){
@@ -1250,3 +1259,4 @@ export class PetalContainer {
         return this;
     }
 }
+
