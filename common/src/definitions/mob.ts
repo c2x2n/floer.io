@@ -307,7 +307,7 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Enemy,
         aggroRadius: 20,
         hitboxRadius: 5,
-        speed: 4,
+        speed: 3.75,
         images: {
             mouth: true,
             mouthXPosition: 1.2
@@ -485,8 +485,8 @@ export const Mobs = new Definitions<MobDefinition>([
     },{
         idString: "leg_spider",
         displayName: "Spider",
-        damage: 25,
-        health: 1675,
+        damage: 17,
+        health: 1000,
         category: MobCategory.Enemy,
         aggroRadius: 20,
         hitboxRadius: 1.5,
