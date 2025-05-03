@@ -304,10 +304,10 @@ export const Mobs = new Definitions<MobDefinition>([
         displayName: "Beetle",
         damage: 50,
         health: 2000,
-        category: MobCategory.Enemy,
+        category: MobCategory.Passive,
         aggroRadius: 20,
         hitboxRadius: 5,
-        speed: 3.75,
+        speed: 3.8,
         images: {
             mouth: true,
             mouthXPosition: 1.2
@@ -315,7 +315,7 @@ export const Mobs = new Definitions<MobDefinition>([
         lootTable: {
             "iris": 1,
             "salt": 0.8,
-            "triplet": 0.5,
+            "triplet": 0.8,
             "wing": 0.6,
             "powder": 0.015,
             "leg_egg": 0.055,
@@ -362,7 +362,7 @@ export const Mobs = new Definitions<MobDefinition>([
         displayName: "Hornet",
         damage: 75,
         health: 1250,
-        category: MobCategory.Enemy,
+        category: MobCategory.Passive,
         movement: {
             reachingAway: true,
         },
@@ -373,7 +373,7 @@ export const Mobs = new Definitions<MobDefinition>([
             damage: 20,
             health: 100,
             despawnTime: 3,
-            speed: 7,
+            speed: 8,
             definition: Projectile.fromString("missile")
         },
         shootSpeed: 1.25,
@@ -432,7 +432,7 @@ export const Mobs = new Definitions<MobDefinition>([
         displayName: "Mantis",
         damage: 30,
         health: 1500,
-        category: MobCategory.Enemy,
+        category: MobCategory.Passive,
         movement: {
             reachingAway: true,
         },
@@ -442,13 +442,13 @@ export const Mobs = new Definitions<MobDefinition>([
             damage: 15,
             health: 30,
             despawnTime: 3,
-            speed: 10,
+            speed: 11.5,
             definition: Projectile.fromString("peas")
         },
         shootSpeed: 1.3,
         aggroRadius: 30,
         hitboxRadius: 2,
-        speed: 3,
+        speed: 3.5,
         lootTable: {
             "peas": 1,
             "poison_peas": 1,
@@ -485,9 +485,9 @@ export const Mobs = new Definitions<MobDefinition>([
     },{
         idString: "leg_spider",
         displayName: "Spider",
-        damage: 17,
-        health: 1000,
-        category: MobCategory.Enemy,
+        damage: 25,
+        health: 1050,
+        category: MobCategory.Passive,
         aggroRadius: 20,
         hitboxRadius: 1.5,
         speed: 5,
