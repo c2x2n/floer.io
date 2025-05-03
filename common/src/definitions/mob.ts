@@ -478,7 +478,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "stinger": 0.24,
             "triangle": 0.0024,
             "web": 0.09,
-            "pincer": 0.01,
+            "pincer": 0.001,
             "faster": 0.04,
             "tri_web": 0.0002
         },
