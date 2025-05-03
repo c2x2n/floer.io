@@ -298,7 +298,7 @@ export let Petals = new Definitions<PetalDefinition>([
         reloadTime: 1.25,
         moreExtendDistance: 2.6,
         images:{
-            slotDisplaySize: 45,
+            slotDisplaySize: 60,
             selfGameRotation: 240
         },
         modifiers: {
@@ -361,7 +361,7 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 10,
         extendable: true,
         images: {
-            slotDisplaySize: 40,
+            slotDisplaySize: 60,
             slotRotation: -0.1,
             selfGameRotation: 18
         },
@@ -387,7 +387,7 @@ export let Petals = new Definitions<PetalDefinition>([
         reloadTime: 4,
         images: {
             selfGameRotation: 18,
-            slotDisplaySize: 25,
+            slotDisplaySize: 25
         },
         usable: false,
         hitboxRadius: 0.3,
@@ -445,12 +445,13 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 2,
         reloadTime: 1,
         images: {
-            selfGameRotation: 18
+            selfGameRotation: 18,
+            slotDisplaySize: 45,
         },
         extendable: true,
         usable: false,
         distanceToCenter: 0.45,
-        hitboxRadius: 0.3,
+        hitboxRadius: 0.35,
         isDuplicate: true,
         pieceAmount: 4,
         isShowedInOne: true,
@@ -508,7 +509,7 @@ export let Petals = new Definitions<PetalDefinition>([
         usable: true,
         useTime: 1,
         images: {
-            slotDisplaySize: 40,
+            slotDisplaySize: 45,
             selfGameRotation: 18,
             slotRotation: 0.6
         },
@@ -686,7 +687,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         images: {
             selfGameRotation: 0.02,
-            slotDisplaySize: 45,
+            slotDisplaySize: 60,
             slotRotation: 0.8,
             facingOut: true,
             fontSizeMultiplier: 0.8
@@ -869,7 +870,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 52,
+            slotDisplaySize: 68,
             selfGameRotation: 18
         },
         modifiers: {
@@ -888,7 +889,7 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 15,
         extendable: true,
         images: {
-            slotDisplaySize: 52,
+            slotDisplaySize: 68,
             selfGameRotation: 18
         },
         usable: false,
@@ -942,7 +943,7 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 10,
         extendable: true,
         images: {
-            slotDisplaySize: 40,
+            slotDisplaySize: 60,
             selfGameRotation: 15,
         },
         usable: false,
@@ -1321,7 +1322,7 @@ export let Petals = new Definitions<PetalDefinition>([
         usable: true,
         useTime: 0.1,
         images: {
-            slotDisplaySize: 45,
+            slotDisplaySize: 40,
             selfGameRotation: 18
         },
         attributes: {
@@ -1417,7 +1418,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 45,
+            slotDisplaySize: 65,
             selfGameRotation: 0.01
         },
         attributes: {
@@ -1441,7 +1442,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 40,
+            slotDisplaySize: 55,
             selfGameRotation: 18
         },
         attributes: {
@@ -1469,7 +1470,7 @@ export let Petals = new Definitions<PetalDefinition>([
             images
     :
         {
-            slotDisplaySize: 35,
+            slotDisplaySize: 46,
                 selfGameRotation
         :
             0.01
@@ -2012,7 +2013,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 40,
+            slotDisplaySize: 60,
             selfGameRotation: 0.01
         },
         modifiers: {
@@ -2086,7 +2087,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 45,
+            slotDisplaySize: 65,
             selfGameRotation: 18
         },
         attributes: {
@@ -2112,7 +2113,7 @@ export let Petals = new Definitions<PetalDefinition>([
         usable: true,
         useTime: 1.5,
         images: {
-            slotDisplaySize: 40,
+            slotDisplaySize: 65,
             selfGameRotation: 18
         },
         attributes: {
@@ -2218,7 +2219,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 65/0.94,
+            slotDisplaySize: 78,
             slotRotation: -(90-32.5)*(Math.PI/180),
             facingOut:true,
 
@@ -2268,7 +2269,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 45,
+            slotDisplaySize: 60,
             selfGameRotation: 0.15
         },
         attributes: {
