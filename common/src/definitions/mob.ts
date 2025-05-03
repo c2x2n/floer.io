@@ -715,9 +715,9 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         lootTable: {
             "iris": 0.82,
-            "peas": 0.18,
+            "peas": 0.58,
             "chip": 0.028,
-            "poison_peas": 0.01,
+            "poison_peas": 0.012,
             "leg_poison_peas": 0.001
         },
         rarity: RarityName.rare,
@@ -739,7 +739,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "iris": 0.82,
             "peas": 0.58,
             "chip": 0.28,
-            "poison_peas": 0.2,
+            "poison_peas": 0.012,
             "leg_poison_peas": 0.001
         },
         rarity: RarityName.rare,
@@ -757,10 +757,10 @@ export const Mobs = new Definitions<MobDefinition>([
             width: 242.874,
         },
         lootTable: {
-            "iris": 0.82,
+            "iris": 1,
             "peas": 0.85,
             "chip": 0.028,
-            "poison_peas": 0.2,
+            "poison_peas": 0.5,
             "leg_poison_peas": 0.01
         },
         rarity: RarityName.legendary,
@@ -781,9 +781,9 @@ export const Mobs = new Definitions<MobDefinition>([
         hideInformation: true,
         lootTable: {
             "iris": 0.82,
-            "peas": 0.18,
+            "peas": 0.5,
             "chip": 0.028,
-            "poison_peas": 0.5,
+            "poison_peas": 0.2,
             "leg_poison_peas": 0.005
         },
         rarity: RarityName.legendary,
