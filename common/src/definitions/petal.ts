@@ -491,9 +491,10 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         reloadTime: 3.5,
         images: {
-            selfGameRotation: 18
+            selfGameRotation: 18,
+            lotDisplaySize: 28,
         },
-        hitboxRadius: 0.34,
+        hitboxRadius: 0.3,
         isDuplicate: true,
         isShowedInOne: true,
         pieceAmount: 3,
