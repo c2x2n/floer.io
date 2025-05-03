@@ -168,7 +168,7 @@ export const Mobs = new Definitions<MobDefinition>([
         lootTable: {
             "tri_rose": 0.36,
             "epic_rose": 0.002,
-            "yinyang": 0.02,
+            "yinyang": 0.009,
             "bubble": 0.1,
             "wing": 0.08,
             "leg_bubble": 0.00012,
@@ -305,10 +305,10 @@ export const Mobs = new Definitions<MobDefinition>([
         displayName: "Beetle",
         damage: 50,
         health: 2000,
-        category: MobCategory.Enemy,
+        category: MobCategory.Passive,
         aggroRadius: 20,
         hitboxRadius: 5,
-        speed: 4,
+        speed: 3.8,
         images: {
             mouth: true,
             mouthXPosition: 1.2
@@ -316,7 +316,7 @@ export const Mobs = new Definitions<MobDefinition>([
         lootTable: {
             "iris": 1,
             "salt": 0.8,
-            "triplet": 0.5,
+            "triplet": 0.8,
             "wing": 0.6,
             "powder": 0.015,
             "leg_egg": 0.055,
@@ -349,8 +349,9 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 4,
         lootTable: {
             "dandelion": 0.14,
-            "bubble": 0.085,
+            "bubble": 0.02,
             "missile": 0.18,
+            "honey": 0.02,
             "big_missile": 0.005,
             "leg_bubble": 0.00006,
             "wing": 0.06,
@@ -363,7 +364,7 @@ export const Mobs = new Definitions<MobDefinition>([
         displayName: "Hornet",
         damage: 75,
         health: 1250,
-        category: MobCategory.Enemy,
+        category: MobCategory.Passive,
         movement: {
             reachingAway: true,
         },
@@ -374,7 +375,7 @@ export const Mobs = new Definitions<MobDefinition>([
             damage: 20,
             health: 100,
             despawnTime: 3,
-            speed: 7,
+            speed: 8,
             definition: Projectile.fromString("missile")
         },
         shootSpeed: 1.25,
@@ -385,6 +386,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "dandelion": 1,
             "bubble": 0.2,
             "missile": 1,
+            "honey": 1,
             "big_missile": 0.8,
             "leg_bubble": 0.0009,
             "faster_wing": 0.025,
@@ -434,7 +436,7 @@ export const Mobs = new Definitions<MobDefinition>([
         displayName: "Mantis",
         damage: 30,
         health: 1500,
-        category: MobCategory.Enemy,
+        category: MobCategory.Passive,
         movement: {
             reachingAway: true,
         },
@@ -444,13 +446,13 @@ export const Mobs = new Definitions<MobDefinition>([
             damage: 15,
             health: 30,
             despawnTime: 3,
-            speed: 10,
+            speed: 11.5,
             definition: Projectile.fromString("peas")
         },
         shootSpeed: 1.3,
         aggroRadius: 30,
         hitboxRadius: 2,
-        speed: 3,
+        speed: 3.5,
         lootTable: {
             "peas": 1,
             "poison_peas": 1,
@@ -478,7 +480,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "stinger": 0.24,
             "triangle": 0.0024,
             "web": 0.09,
-            "pincer": 0.01,
+            "pincer": 0.001,
             "faster": 0.04,
             "tri_web": 0.0002
         },
@@ -488,8 +490,8 @@ export const Mobs = new Definitions<MobDefinition>([
         idString: "leg_spider",
         displayName: "Spider",
         damage: 25,
-        health: 1675,
-        category: MobCategory.Enemy,
+        health: 1050,
+        category: MobCategory.Passive,
         aggroRadius: 20,
         hitboxRadius: 1.5,
         speed: 5,
@@ -720,9 +722,9 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         lootTable: {
             "iris": 0.82,
-            "peas": 0.18,
+            "peas": 0.58,
             "chip": 0.028,
-            "poison_peas": 0.01,
+            "poison_peas": 0.012,
             "leg_poison_peas": 0.001
         },
         rarity: RarityName.rare,
@@ -744,7 +746,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "iris": 0.82,
             "peas": 0.58,
             "chip": 0.28,
-            "poison_peas": 0.2,
+            "poison_peas": 0.012,
             "leg_poison_peas": 0.001
         },
         rarity: RarityName.rare,
@@ -762,10 +764,10 @@ export const Mobs = new Definitions<MobDefinition>([
             width: 242.874,
         },
         lootTable: {
-            "iris": 0.82,
+            "iris": 1,
             "peas": 0.85,
             "chip": 0.028,
-            "poison_peas": 0.2,
+            "poison_peas": 0.5,
             "leg_poison_peas": 0.01
         },
         rarity: RarityName.legendary,
@@ -786,9 +788,9 @@ export const Mobs = new Definitions<MobDefinition>([
         hideInformation: true,
         lootTable: {
             "iris": 0.82,
-            "peas": 0.18,
+            "peas": 0.5,
             "chip": 0.028,
-            "poison_peas": 0.5,
+            "poison_peas": 0.2,
             "leg_poison_peas": 0.005
         },
         rarity: RarityName.legendary,
