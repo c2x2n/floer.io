@@ -42,6 +42,7 @@ export class ClientPlayer extends ClientEntity {
         if (isNew && data.full) {
             this.container.position = Camera.vecToScreen(data.position);
             this.admin = data.full.isAdmin;
+            this.container.zIndex = 1;
         }
 
         if (data.full) {

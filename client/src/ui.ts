@@ -11,7 +11,7 @@ import { EntityType, GameConstants } from "@common/constants.ts";
 import { Petals } from "@common/definitions/petal.ts";
 import { Random } from "@common/utils/random.ts";
 import { getGameAssetsFile, getGameAssetsPath } from "@/scripts/utils/assets.ts";
-import { Gallery } from "@/scripts/petalGallery.ts";
+import { Gallery } from "@/scripts/gallery.ts";
 
 const version = `0.2.8.1`
 
@@ -61,9 +61,6 @@ export class UI {
 
     readonly deletePetal = $<HTMLDivElement>("<div id='delete-petal'></div>");
 
-    readonly petalInformation =
-        $<HTMLDivElement>("<div class='petal-information'></div>");
-
     readonly settingsButton = $<HTMLDivElement>("#btn-settings");
     readonly settingsDialog = $<HTMLDivElement>("#settings-dialog");
 
@@ -72,8 +69,11 @@ export class UI {
 
     readonly petalGalleryButton = $<HTMLDivElement>("#btn-petal-gallery");
     readonly petalGalleryDialog = $<HTMLDivElement>("#petal-gallery-dialog");
-
     readonly petalGalleryContents = $<HTMLDivElement>("#petal-gallery-contents");
+
+    readonly mobGalleryButton = $<HTMLDivElement>("#btn-mob-gallery");
+    readonly mobGalleryDialog = $<HTMLDivElement>("#mob-gallery-dialog");
+    readonly mobGalleryContents = $<HTMLDivElement>("#mob-gallery-contents");
 
     readonly keyboardMovement = $<HTMLDivElement>("#keyboard-movement");
     readonly newControl = $<HTMLDivElement>("#new-control");
@@ -123,6 +123,10 @@ export class UI {
 
         this.petalGalleryButton.on("click", (e: Event) => {
             this.toggleDialog(this.petalGalleryDialog);
+        })
+
+        this.mobGalleryButton.on("click", (e: Event) => {
+            this.toggleDialog(this.mobGalleryDialog);
         })
 
         this.nameInput.val(this.app.settings.data.playerName);
@@ -191,6 +195,7 @@ export class UI {
         this.version.attr("textStroke", content);
 
         this.gallery.renderPetalGallery();
+        this.gallery.renderMobGallery();
     }
 
     initSettingsDialog() {
@@ -311,13 +316,16 @@ export class UI {
     }
 
     toggleDialog(dialog: JQuery<HTMLDivElement>): void {
+        const isVDialog = dialog.hasClass("bottom-left-dialog");
+
         if (this.openedDialog === dialog) {
-            dialog.css("animation", "close_dialog 0.5s cubic-bezier(0,0,.2,1) forwards");
+            dialog.css("animation", `close_dialog${isVDialog ? "_v" : ""} 0.5s cubic-bezier(0,0,.2,1) forwards`);
         } else if (!this.openedDialog) {
-            dialog.css("animation", "open_dialog 0.5s cubic-bezier(0,.85,0,1) forwards");
+            dialog.css("animation", `open_dialog${isVDialog ? "_v" : ""} 0.5s cubic-bezier(0,.85,0,1) forwards`);
         } else if (this.openedDialog) {
-            this.openedDialog.css("animation", "close_dialog 0.5s cubic-bezier(0,0,.2,1) forwards");
-            dialog.css("animation", "open_dialog 0.5s cubic-bezier(0,.85,0,1) forwards");
+            const isVOpenedDialog = this.openedDialog.hasClass("bottom-left-dialog");
+            this.openedDialog.css("animation", `close_dialog${isVOpenedDialog ? "_v" : ""} 0.5s cubic-bezier(0,0,.2,1) forwards`);
+            dialog.css("animation", `open_dialog${isVDialog ? "_v" : ""} 0.5s cubic-bezier(0,.85,0,1) forwards`);
         }
         this.openedDialog =
             this.openedDialog === dialog ? undefined : dialog;

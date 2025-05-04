@@ -181,6 +181,8 @@ export class Game {
         this.tweens.clear();
 
         this.ui.startTransition(false);
+        this.ui.gallery.renderPetalGallery();
+        this.ui.gallery.renderMobGallery();
 
         this.inventory.updatePetalRows();
         this.inventory.keyboardSelectingPetal = undefined;
@@ -242,6 +244,12 @@ export class Game {
             this.ui.showOverleveled(packet.playerData.overleveled);
         }else {
             this.ui.showOverleveled();
+        }
+
+        if (packet.playerDataDirty.collect) {
+            packet.playerData.collect.forEach(e => {
+                this.ui.gallery.addMobGallery(e);
+            })
         }
 
         for (const id of packet.deletedEntities) {

@@ -16,6 +16,7 @@ export type MobDefinition = ObjectDefinition & {
     readonly damage: number
     readonly health: number
     readonly hitboxRadius: number
+    readonly description?: string
     readonly lootTable: Record<string, number>
     readonly rarity: RarityName;
     readonly exp: number
@@ -27,6 +28,9 @@ export type MobDefinition = ObjectDefinition & {
         mouthYPosition?: number
         legs?: boolean
         rotation?: number
+        slotDisplaySize?: number
+        centerXOffset?: number
+        centerYOffset?: number
     }
     readonly movement?: {
         readonly reachingAway?: boolean
@@ -39,6 +43,7 @@ export type MobDefinition = ObjectDefinition & {
     readonly hideInformation?: boolean
     readonly despawnTime?: number
     readonly noSpawnMessage?: boolean
+    readonly hideInGallery?: boolean
 } & MobSegmentType & MobCategoryType & MobShootType;
 
 export type MobCategoryType =  {
@@ -206,6 +211,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 50,
         health: 15,
         category: MobCategory.Unactive,
+        description: "It stings. Don't touch it.",
         hitboxRadius: 1,
         speed: 3,
         lootTable: {
@@ -280,6 +286,9 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Unactive,
         speed: 0.2,
         hitboxRadius: 1.5,
+        images: {
+            slotDisplaySize: 70
+        },
         lootTable: {
             "square": 1,
         },
@@ -313,7 +322,8 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 3,
         images: {
             mouth: true,
-            mouthXPosition: 1.2
+            slotDisplaySize: 90,
+            centerXOffset: 5
         },
         lootTable: {
             "iris": 0.09,
@@ -334,7 +344,8 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 3.8,
         images: {
             mouth: true,
-            mouthXPosition: 1.2
+            slotDisplaySize: 90,
+            centerXOffset: 5
         },
         lootTable: {
             "iris": 1,
@@ -496,7 +507,8 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 1,
         speed: 4,
         images: {
-            legs: true
+            legs: true,
+            slotDisplaySize: 50
         },
         lootTable: {
             "iris": 0.2,
@@ -519,7 +531,8 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 3,
         speed: 5,
         images: {
-            legs: true
+            legs: true,
+            slotDisplaySize: 50
         },
         lootTable: {
             "iris": 0.2,
@@ -544,7 +557,8 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 0.8,
         speed: 3,
         images: {
-            mouth: true
+            mouth: true,
+            slotDisplaySize: 50
         },
         lootTable: {
             "sand": 0.09,
@@ -568,6 +582,7 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 3,
         images: {
             mouth: true,
+            slotDisplaySize: 50
         },
         lootTable: {
             "sand": 0.06,
@@ -591,6 +606,7 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 1,
         images: {
             mouth: true,
+            slotDisplaySize: 80
         },
         speed: 3,
         lootTable: {
@@ -636,6 +652,7 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 3,
         images: {
             mouth: true,
+            slotDisplaySize: 50
         },
         lootTable: {
             "sand": 0.08,
@@ -656,7 +673,7 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 1,
         hitboxRadius: 1.5,
         images: {
-            width: 242.874,
+            slotDisplaySize: 80
         },
         lootTable: {
             "fast": 0.09,
@@ -680,6 +697,9 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 1,
         hitboxRadius: 1.5,
         hideInformation: true,
+        images: {
+            slotDisplaySize: 80
+        },
         lootTable:  {
             "fast": 0.09,
             "leaf": 0.05,
@@ -689,7 +709,8 @@ export const Mobs = new Definitions<MobDefinition>([
             "poison_peas": 0.0006
         },
         rarity: RarityName.unusual,
-        exp: 4
+        exp: 4,
+        hideInGallery: true
     },{
         idString: "desert_centipede",
         displayName: "Centipede",
@@ -699,7 +720,7 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 5,
         hitboxRadius: 1.5,
         images: {
-            width: 242.874,
+            slotDisplaySize: 80
         },
         lootTable: {
             "fast": 0.08,
@@ -722,6 +743,9 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 5,
         hitboxRadius: 1.5,
         hideInformation: true,
+        images: {
+            slotDisplaySize: 80
+        },
         lootTable: {
             "fast": 0.08,
             "twin": 0.18,
@@ -730,7 +754,8 @@ export const Mobs = new Definitions<MobDefinition>([
             "talisman": 0.0056
         },
         rarity: RarityName.unusual,
-        exp: 4
+        exp: 4,
+        hideInGallery: true
     },{
         idString: "evil_centipede",
         displayName: "Evil Centipede",
@@ -741,7 +766,7 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 3,
         hitboxRadius: 1.5,
         images: {
-            width: 242.874
+            slotDisplaySize: 80
         },
         lootTable: {
             "iris": 0.82,
@@ -765,6 +790,9 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 3,
         hitboxRadius: 1.5,
         hideInformation: true,
+        images: {
+            slotDisplaySize: 80
+        },
         lootTable: {
             "iris": 0.82,
             "peas": 0.58,
@@ -773,7 +801,8 @@ export const Mobs = new Definitions<MobDefinition>([
             "leg_poison_peas": 0.001
         },
         rarity: RarityName.rare,
-        exp: 4
+        exp: 4,
+        hideInGallery: true
     },{
         idString: "leg_evil_centipede",
         displayName: "Evil Centipede",
@@ -784,7 +813,7 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 3.5,
         hitboxRadius: 2.2,
         images: {
-            width: 242.874,
+            slotDisplaySize: 80
         },
         lootTable: {
             "iris": 1,
@@ -809,6 +838,9 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 3.5,
         hitboxRadius: 2.2,
         hideInformation: true,
+        images: {
+            slotDisplaySize: 80
+        },
         lootTable: {
             "iris": 0.82,
             "peas": 0.5,
@@ -818,7 +850,8 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         rarity: RarityName.legendary,
         exp: 100,
-        usingAssets: "evil_centipede_body"
+        usingAssets: "evil_centipede_body",
+        hideInGallery: true
     },{
         idString: "mega_mantis",
         displayName: "Mantis",
@@ -938,7 +971,8 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 8,
         images: {
             mouth: true,
-            mouthXPosition: 1.2 / 2 / 1.5
+            slotDisplaySize: 90,
+            centerXOffset: 5
         },
         speed: 3.35,
         lootTable: {
@@ -1011,7 +1045,8 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         rarity: RarityName.common,
         exp: 5,
-        usingAssets: "shiny_ladybug"
+        usingAssets: "shiny_ladybug",
+        hideInGallery: true
     },
     {
         idString: "massive_dark_ladybug",
@@ -1048,7 +1083,8 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 7,
         shootable: true,
         images: {
-            legs: true
+            legs: true,
+            slotDisplaySize: 50
         },
         shoot: {
             hitboxRadius: 6,
@@ -1089,7 +1125,8 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 20,
         shootable: true,
         images: {
-            legs: true
+            legs: true,
+            slotDisplaySize: 50
         },
         shoot: {
             hitboxRadius: 6.5,
@@ -1131,7 +1168,8 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 5,
         speed: 3.25,
         images: {
-            mouth: true
+            mouth: true,
+            slotDisplaySize: 50
         },
         lootTable: {
             "sand": 0.66,
@@ -1161,6 +1199,7 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 3,
         images: {
             mouth: true,
+            slotDisplaySize: 50
         },
         lootTable: {
             "sand": 0.66,
@@ -1187,6 +1226,7 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 3,
         images: {
             mouth: true,
+            slotDisplaySize: 80
         },
         lootTable: {
             "twin": 1,
@@ -1208,6 +1248,7 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 3,
         images: {
             mouth: true,
+            slotDisplaySize: 50
         },
         lootTable: {
             "sand": 0.66,
@@ -1313,8 +1354,7 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         shootSpeed: { min: 3, max: 6 },
         images: {
-            width: 242.874,
-            height: 226
+            slotDisplaySize: 80
         },
         lootTable: {
             "iris": 1,
@@ -1370,8 +1410,7 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         shootSpeed: { min: 3, max: 6 },
         images: {
-            width: 242.874,
-            height: 226
+            slotDisplaySize: 80
         },
         lootTable: {
             "iris": 0.82,
@@ -1383,7 +1422,8 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         rarity: RarityName.mythic,
         exp: 1000,
-        usingAssets: "evil_centipede_body"
+        usingAssets: "evil_centipede_body",
+        hideInGallery: true
     },{
         idString: "myt_boulder",
         displayName: "Boulder",

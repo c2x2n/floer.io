@@ -273,6 +273,7 @@ body {
     border-style: solid;
     border-width: 4.4px;
     border-radius: 3px;
+    position: relative;
 }
 
 .dragging-petal {
@@ -285,7 +286,6 @@ body {
 }
 
 .dragging-petal>.petal {
-    position: relative;
     top: -5px;
     left: -5px;
     cursor: pointer;
@@ -294,7 +294,6 @@ body {
 }
 
 .petal-slot>.petal {
-    position: relative;
     top: -4px;
     left: -4px;
     cursor: pointer;
@@ -366,7 +365,7 @@ img {
     border: #9a7661 4px solid;
 }
 
-.petal-information {
+.information {
     position: absolute;
     padding: 7px;
     transform: translate(-35%, -100%);
@@ -378,15 +377,15 @@ img {
     z-index: 10;
 }
 
-.petal-information > div {
+.information > div {
     margin: 0.1em 0;
 }
 
-.petal-information > div > p {
+.information > div > p {
     margin: 0;
 }
 
-.petal-information > p {
+.information > p {
     margin: 0;
 }
 
@@ -534,21 +533,6 @@ input::placeholder {
     background-clip: padding-box;
 }
 
-#qq-btn {
-    background-image: url("/img/ui/qq.svg");
-    background-size: 35px 35px;
-}
-
-#dis-btn {
-    background-image: url("/img/ui/discord.svg");
-    background-size: 35px 35px;
-}
-
-#gth-btn {
-    background-image: url("/img/ui/github.svg");
-    background-size: 35px 35px;
-}
-
 #petal-gallery-contents {
     width: 350px;
     height: 400px;
@@ -558,16 +542,39 @@ input::placeholder {
     padding: 5px;
 }
 
+#mob-gallery-contents {
+    width: 350px;
+    height: 400px;
+    background: #eae65f;
+    overflow: auto;
+    overflow-x: hidden;
+    padding: 5px;
+}
+
+
 #petal-gallery-contents > div {
     display: inline-block;
     margin: 5px;
 }
 
-.unknown-petal {
-    background-image: url("/img/ui/unknown.svg");
-    background-color: rgba(0, 0, 0, 0.5);
+#mob-gallery-contents > div {
+    display: inline-block;
+    margin: 5px;
+}
+
+#petal-gallery-contents > .unknown {
+    background-color: rgba(0, 0, 0, 0.2);
+    background-size: 100% 100%;
     width: 45px;
     height: 45px;
+    border-radius: 5px;
+}
+
+#mob-gallery-contents > .unknown {
+    background-color: rgba(0, 0, 0, 0.2);
+    background-size: 100% 100%;
+    width: 58px;
+    height: 58px;
     border-radius: 5px;
 }
 
@@ -579,8 +586,56 @@ input::placeholder {
 }
 
 .petal-gallery-content > .petal {
-    position: relative;
     top: -4.4px;
     left: -4.4px;
     pointer-events: none;
+}
+
+.mob-gallery-content {
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+    position: relative;
+    background-size: 100% 100%;
+    border-width: 4px;
+    border-style: solid;
+}
+
+.mob-loots {
+    display: flex;
+    max-width: 300px;
+    flex-wrap: wrap;
+}
+
+.mob-loot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.mob-loot > .drop-rate {
+    font-size: 12px;
+    margin: 0;
+}
+
+.mob-loot > .petal {
+    width: 40px;
+    height: 40px;
+    margin: 0 5px;
+    border-width: 3px;
+}
+
+.mob-loot > .unknown {
+    background-color: rgba(0, 0, 0, 0.2);
+    background-size: 100% 100%;
+    width: 46px;
+    height: 46px;
+    margin: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.information > .br{
+    margin: 15px 0;
 }

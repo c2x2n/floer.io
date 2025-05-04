@@ -25,7 +25,7 @@ import { ServerFriendlyMob } from "./serverMob";
 import { ChatChannel, ChatPacket } from "../../../common/src/packets/chatPacket";
 import { PoisonEffect } from "../utils/effects";
 import { Rarity, RarityName } from "../../../common/src/definitions/rarity";
-import { Mobs } from "../../../common/src/definitions/mob";
+import { MobDefinition, Mobs } from "../../../common/src/definitions/mob";
 import { ZoneData, ZoneName, Zones } from "../../../common/src/zones";
 import { ServerWall } from "./serverWall";
 
@@ -105,9 +105,13 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         if (maxHealth === this._maxHealth) return;
         this._health = MathNumeric.clamp(this._health  * maxHealth / this._maxHealth, 0, maxHealth);
         this._maxHealth = maxHealth;
+        this.maxShield = this.maxHealth * 0.75;
+        this.shield = MathNumeric.clamp(this.shield, 0, this.maxShield);
 
         this.setFullDirty();
     }
+
+    maxShield = this._maxHealth * 0.75;
 
     private _shield: number = 0;
 
@@ -136,7 +140,8 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         inventory: false,
         slot: true,
         exp: false,
-        overleveled: false
+        overleveled: false,
+        collect: false
     };
 
     private _zoom = 45;
@@ -171,6 +176,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     overleveledTimeRemains: number = GameConstants.player.overleveledTime;
 
     chatMessagesToSend: ChatData[] = [];
+    collected: MobDefinition[] = [];
 
     killedBy?: ServerPlayer;
 
@@ -444,6 +450,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         updatePacket.playerData.slot = this.inventory.slot;
         updatePacket.playerData.exp = this.exp;
         updatePacket.playerData.overleveled = this.overleveledTimeRemains;
+        updatePacket.playerData.collect = this.collected;
 
         updatePacket.playerDataDirty = this.dirty;
 
@@ -938,7 +945,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             gotDamage: this.gotDamage,
             full: {
                 healthPercent: this.health / this.maxHealth,
-                shieldPercent: this.shield / (this.maxHealth * 0.75), // 最大护盾为最大生命值的75%
+                shieldPercent: this.shield / this.maxShield, // 最大护盾为最大生命值的75%
                 isAdmin: this.isAdmin
             }
         };

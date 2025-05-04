@@ -157,6 +157,7 @@ export class ClientPetal extends ClientEntity {
                 this.container.radius = Camera.unitToScreen(this.hitboxRadius);
                 this.container.visible = !data.isReloading;
                 this.container.position = Camera.vecToScreen(data.position);
+                this.container.zIndex = 2;
             }
 
             this.ownerId = data.full.ownerId;

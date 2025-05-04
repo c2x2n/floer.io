@@ -6,7 +6,7 @@ import { Projectile, ProjectileDefinition, ProjectileParameters } from "./projec
 import { MobDefinition, Mobs } from "./mob";
 import { MobCategory } from "./mob";
 import { EntityType } from "../constants";
-import { P2 } from "../utils/math";
+import { halfPI, P2 } from "../utils/math";
 
 export type SavedPetalDefinitionData = PetalDefinition | null
 
@@ -214,7 +214,7 @@ export let Petals = new Definitions<PetalDefinition>([
             distance: 2.6
         },
         images:{
-            slotDisplaySize: 45,
+            slotDisplaySize: 60,
             selfGameRotation: 240
         },
         extendable: true,
@@ -298,7 +298,7 @@ export let Petals = new Definitions<PetalDefinition>([
         reloadTime: 1.25,
         moreExtendDistance: 2.6,
         images:{
-            slotDisplaySize: 45,
+            slotDisplaySize: 60,
             selfGameRotation: 240
         },
         modifiers: {
@@ -869,7 +869,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 52,
+            slotDisplaySize: 65,
             selfGameRotation: 18
         },
         modifiers: {
@@ -888,7 +888,7 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 15,
         extendable: true,
         images: {
-            slotDisplaySize: 52,
+            slotDisplaySize: 65,
             selfGameRotation: 18
         },
         usable: false,
@@ -942,7 +942,7 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 10,
         extendable: true,
         images: {
-            slotDisplaySize: 40,
+            slotDisplaySize: 55,
             selfGameRotation: 15,
         },
         usable: false,
@@ -1047,7 +1047,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         reloadTime: 0.04,
         images:{
-            slotDisplaySize: 45,
+            slotDisplaySize: 60,
             selfGameRotation: 18
         },
         usable: false,
@@ -1399,7 +1399,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 45,
+            slotDisplaySize: 60,
             selfGameRotation: 18
         },
         reloadTime: 8,
@@ -1417,8 +1417,9 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 45,
-            selfGameRotation: 0.01
+            slotDisplaySize: 60,
+            selfGameRotation: 0.01,
+            slotRotation: halfPI / 2
         },
         attributes: {
             critical_hit: {
@@ -1805,7 +1806,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: false,
         usable: true,
         images: {
-            slotDisplaySize: 45
+            slotDisplaySize: 60
         },
         useTime: 1,
         attributes: {
@@ -1826,7 +1827,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: false,
         usable: true,
         images: {
-            slotDisplaySize: 45
+            slotDisplaySize: 60
         },
         useTime: 1.5,
         attributes: {
@@ -1848,7 +1849,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: false,
         usable: true,
         images: {
-            slotDisplaySize: 45
+            slotDisplaySize: 60
         },
         useTime: 1.5,
         attributes: {
@@ -2112,7 +2113,7 @@ export let Petals = new Definitions<PetalDefinition>([
         usable: true,
         useTime: 1.5,
         images: {
-            slotDisplaySize: 40,
+            slotDisplaySize: 60,
             selfGameRotation: 18
         },
         attributes: {
@@ -2268,7 +2269,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 45,
+            slotDisplaySize: 65,
             selfGameRotation: 0.15
         },
         attributes: {

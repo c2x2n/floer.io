@@ -527,7 +527,10 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
             })
         }
 
-        highestPlayer[0].addExp(this.definition.exp)
+        highestPlayer[0].addExp(this.definition.exp);
+
+        highestPlayer[0].collected.push(this.definition);
+        highestPlayer[0].dirty.collect = true;
     }
 }
 

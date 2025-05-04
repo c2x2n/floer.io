@@ -80,6 +80,12 @@
   border: #af7e48 solid 4px;
 }
 
+.btn-yellow-color {
+    color: white;
+    background-color: #dbd74b;
+    border: #adae41 solid 4px;
+}
+
 .btn-big-block {
     width: 45px;
     height: 45px;
@@ -137,4 +143,23 @@
 
 #btn-petal-gallery {
     background-image: url('/img/ui/petal_gallery.svg');
+}
+
+#btn-mob-gallery {
+    background-image: url('/img/ui/mob_gallery.svg');
+}
+
+#qq-btn {
+    background-image: url("/img/ui/qq.svg");
+    background-size: 35px 35px;
+}
+
+#dis-btn {
+    background-image: url("/img/ui/discord.svg");
+    background-size: 35px 35px;
+}
+
+#gth-btn {
+    background-image: url("/img/ui/github.svg");
+    background-size: 35px 35px;
 }

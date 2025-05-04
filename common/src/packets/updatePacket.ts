@@ -240,7 +240,8 @@ export interface PlayerData {
     inventory: SavedPetalDefinitionData[],
     slot: number,
     exp: number,
-    overleveled: number
+    overleveled: number,
+    collect: MobDefinition[]
 }
 
 enum UpdateFlags {
@@ -270,7 +271,8 @@ export class UpdatePacket implements Packet {
         inventory: false,
         slot: false,
         exp: false,
-        overleveled: false
+        overleveled: false,
+        collect: false
     };
 
     playerData: PlayerData = {
@@ -279,7 +281,8 @@ export class UpdatePacket implements Packet {
         inventory: [],
         slot: 0,
         exp: 0,
-        overleveled: 0
+        overleveled: 0,
+        collect: []
     };
 
     chatDirty = false;
@@ -375,6 +378,13 @@ export class UpdatePacket implements Packet {
             if (this.playerDataDirty.overleveled) {
                 if (this.playerData.overleveled <= 0) stream.writeUint16(0);
                 else stream.writeUint16(this.playerData.overleveled);
+            }
+
+            stream.writeBoolean(this.playerDataDirty.collect);
+            if (this.playerDataDirty.collect) {
+                stream.writeArray(this.playerData.collect, 8, (mob) => {
+                    Mobs.writeToStream(stream, mob);
+                })
             }
 
             stream.writeAlignToNextByte();
@@ -487,6 +497,13 @@ export class UpdatePacket implements Packet {
             if (stream.readBoolean()) {
                 this.playerDataDirty.overleveled = true;
                 this.playerData.overleveled = stream.readUint16();
+            }
+
+            if (stream.readBoolean()) {
+                this.playerDataDirty.collect = true;
+                stream.readArray(this.playerData.collect, 8, () => {
+                    return Mobs.readFromStream(stream);
+                })
             }
 
             stream.readAlignToNextByte();
