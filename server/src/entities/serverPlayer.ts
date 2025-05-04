@@ -2,6 +2,7 @@ import { type WebSocket } from "ws";
 import { ServerEntity } from "./serverEntity";
 import { Vec2, Vector } from "../../../common/src/utils/vector";
 import { GameBitStream, type Packet, PacketStream } from "../../../common/src/net";
+import { createHash } from "crypto"
 import { type Game } from "../game";
 import {
     ChatData,
@@ -934,7 +935,9 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
         console.log(`Game | "${this.name}" joined the game`);
 
-        if (packet.secret && packet.secret === this.game.adminSecret) {
+
+        if (packet.secret &&
+            createHash("sha256").update(packet.secret).digest("hex") === this.game.adminSecret) {
             this.isAdmin = true;
         }
 
