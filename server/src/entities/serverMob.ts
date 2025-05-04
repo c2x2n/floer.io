@@ -498,7 +498,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
         let loots: PetalDefinition[] = []
 
-        const randomMax = 10000000;
+        const randomMax = 10000000000;
 
         for (const lootsKey in lootTable) {
             if (!Petals.hasString(lootsKey)) continue;
