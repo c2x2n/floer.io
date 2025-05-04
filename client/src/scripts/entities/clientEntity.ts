@@ -4,7 +4,7 @@ import { Vec2, Vector } from "@common/utils/vector";
 import { Game } from "@/scripts/game";
 import { EntitiesNetData } from "@common/packets/updatePacket.ts";
 import { Tween } from "@tweenjs/tween.js";
-import { MathNumeric } from "@common/utils/math.ts";
+import { MathNumeric, P2 } from "@common/utils/math.ts";
 import { Camera } from "@/scripts/render/camera.ts";
 import { RenderContainer } from "@/scripts/utils/renderContainer.ts";
 
@@ -82,7 +82,6 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
         );
     }
 
-    staticRender(dt: number): void {}
 
     updateContainerPosition(n?: number): void {
         if (n) {
@@ -144,7 +143,33 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
         )
     }
 
+    staticRender(dt: number): void {
+        if (this.game.app.settings.data.hitbox) this.renderHitbox();
+        else if (this.drawedHitbox) this.renderHitbox(true);
+    }
+
     drawedHitbox: boolean = false;
+
+    renderHitbox(hide?: boolean): void {
+        this.drawedHitbox = !hide;
+        if (!hide && this.hitboxRadius > 0) {
+            const screenRadius = Camera.unitToScreen(this.hitboxRadius);
+            const { ctx } = this;
+            ctx.save();
+            ctx.strokeStyle = "#ff0000";
+            ctx.lineWidth = 1.5;
+            ctx.globalAlpha = 0.8;
+            ctx.beginPath();
+            ctx.arc(
+                0, 0,
+                screenRadius,
+                0, P2
+            )
+            ctx.stroke()
+            ctx.restore();
+            ctx.globalAlpha = 1;
+        }
+    }
 
     destroy() {
         this.game.app.renderer.removeContainer(this.container);

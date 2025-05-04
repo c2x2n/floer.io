@@ -1,6 +1,6 @@
 import { EntityType, GameConstants, PlayerState } from "../constants";
 import { type GameBitStream, type Packet } from "../net";
-import { type Vector } from "../utils/vector";
+import { Vec2, type Vector } from "../utils/vector";
 import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../definitions/petal";
 import { MobDefinition, Mobs } from "../definitions/mob";
 import { Projectile, ProjectileDefinition } from "../definitions/projectile";
@@ -251,6 +251,7 @@ enum UpdateFlags {
     Players = 1 << 3,
     ChatMessage = 1 << 4,
     PlayerData = 1 << 5,
+    PetalData = 1 << 6,
     Map = 1 << 8
 }
 
@@ -286,7 +287,9 @@ export class UpdatePacket implements Packet {
     };
 
     chatDirty = false;
-    chatMessages: ChatData[] = []
+    chatMessages: ChatData[] = [];
+
+    petalData: PetalData[] = [];
 
     mapDirty = false;
     map = {
@@ -399,6 +402,14 @@ export class UpdatePacket implements Packet {
             })
 
             flags |= UpdateFlags.ChatMessage;
+        }
+
+        if (this.petalData.length) {
+            stream.writeArray(this.petalData, 8, petal => {
+                petal.writeToStream(stream);
+            })
+
+            flags |= UpdateFlags.PetalData;
         }
 
         if (this.mapDirty) {
@@ -520,10 +531,39 @@ export class UpdatePacket implements Packet {
             })
         }
 
+        if (flags & UpdateFlags.PetalData) {
+            this.petalData = [];
+            stream.readArray(this.petalData, 8, () => {
+                const petal = new PetalData();
+                petal.readFromStream(stream);
+                return petal;
+            })
+        }
+
         if (flags & UpdateFlags.Map) {
             this.mapDirty = true;
             this.map.width = stream.readUint16();
             this.map.height = stream.readUint16();
         }
+    }
+}
+
+export enum PetalState {
+    Reloading,
+    Normal
+}
+
+export class PetalData {
+    state: PetalState = PetalState.Normal;
+    percent: number = 1;
+
+    writeToStream(stream: GameBitStream) {
+        stream.writeUint8(this.state);
+        stream.writeFloat(this.percent, 0.0, 1.0, 8);
+    }
+
+    readFromStream(stream: GameBitStream) {
+        this.state = stream.readUint8() as PetalState;
+        this.percent = stream.readFloat(0, 1, 8);
     }
 }

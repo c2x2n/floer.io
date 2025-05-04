@@ -25,7 +25,6 @@ export class ClientMob extends ClientEntity {
 
     }
 
-    image?: HTMLImageElement;
     selfRotation: number = 0;
 
     render(dt: number): void {
@@ -67,6 +66,8 @@ export class ClientMob extends ClientEntity {
     }
 
     staticRender(dt: number): void {
+        super.staticRender(dt);
+
         this.drawHealthBar();
     }
 

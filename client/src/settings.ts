@@ -4,7 +4,6 @@ import { ClientApplication } from "@/main.ts";
 export interface SettingsData {
     keyboardMovement: boolean
     newControl: boolean
-    lowResolution: boolean
     blockMytAnn: boolean
     playerName: string
     screenShake: boolean
@@ -16,7 +15,6 @@ export class Settings {
     data: SettingsData = {
         keyboardMovement : false,
         newControl : false,
-        lowResolution : false,
         blockMytAnn: false,
         screenShake: true,
         playerName : "",

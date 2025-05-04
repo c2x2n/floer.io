@@ -3,7 +3,13 @@ import { ServerEntity } from "./serverEntity";
 import { Vec2, Vector } from "../../../common/src/utils/vector";
 import { GameBitStream, type Packet, PacketStream } from "../../../common/src/net";
 import { type Game } from "../game";
-import { ChatData, type EntitiesNetData, UpdatePacket } from "../../../common/src/packets/updatePacket";
+import {
+    ChatData,
+    type EntitiesNetData,
+    PetalData,
+    PetalState,
+    UpdatePacket
+} from "../../../common/src/packets/updatePacket";
 import { CircleHitbox, RectHitbox } from "../../../common/src/utils/hitbox";
 import { Random } from "../../../common/src/utils/random";
 import { MathNumeric } from "../../../common/src/utils/math";
@@ -26,7 +32,6 @@ import { ChatChannel, ChatPacket } from "../../../common/src/packets/chatPacket"
 import { PoisonEffect } from "../utils/effects";
 import { Rarity, RarityName } from "../../../common/src/definitions/rarity";
 import { MobDefinition, Mobs } from "../../../common/src/definitions/mob";
-import { ZoneData, ZoneName, Zones } from "../../../common/src/zones";
 import { ServerWall } from "./serverWall";
 
 // 闪避
@@ -178,7 +183,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     chatMessagesToSend: ChatData[] = [];
     collected: MobDefinition[] = [];
 
-    killedBy?: ServerPlayer;
+    killedBy?: damageSource;
 
     isAdmin: boolean = false;
 
@@ -292,6 +297,9 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                     this.inventory.switchPetal(i, i + this.inventory.slot)
                 }
                 break;
+            case ActionType.Left:
+                this.destroy()
+                break;
         }
     }
 
@@ -382,19 +390,15 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             }
             if (source instanceof ServerPlayer) {
                 source.kills++;
-                this.killedBy = source;
             }
+
+            this.killedBy = source;
 
             this.destroy();
 
             if (source instanceof ServerPlayer) {
                 source.addExp(this.exp / 2)
             }
-
-            const gameOverPacket = new GameOverPacket();
-            gameOverPacket.kills = this.kills;
-            gameOverPacket.murderer = source.name;
-            this.addPacketToSend(gameOverPacket);
         }
     }
 
@@ -405,6 +409,9 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
     sendPackets() {
         if (!this.joined) return;
+
+        if (this.destroyed && this.killedBy && !this.killedBy.destroyed)
+            this.position = this.killedBy.position
 
         // calculate visible, deleted, and dirty entities
         // and send them to the client
@@ -450,9 +457,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         updatePacket.playerData.slot = this.inventory.slot;
         updatePacket.playerData.exp = this.exp;
         updatePacket.playerData.overleveled = this.overleveledTimeRemains;
-        updatePacket.playerData.collect = this.collected;
-
-        this.collected = [];
+        updatePacket.playerData.collect = this.collected.concat([]);
 
         updatePacket.playerDataDirty = this.dirty;
 
@@ -462,9 +467,66 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         updatePacket.map.height = this.game.height;
         updatePacket.mapDirty = this.firstPacket ?? this.game.mapDirty;
 
-
         updatePacket.chatDirty = this.chatMessagesToSend.length > 0;
         updatePacket.chatMessages = this.chatMessagesToSend.concat([]);
+
+        const datas: PetalData[] = [];
+
+        this.inventory.petalBunches.forEach(e => {
+            const data = new PetalData();
+
+            if (e.definition) {
+                if (e.definition.equipment) {
+                    data.state = PetalState.Normal;
+                    data.percent = 1;
+                } else if (e.definition.isDuplicate) {
+                    let reloading = true;
+                    let maxHealth = 1;
+                    let health = 1;
+                    let reloadingTime = 0;
+                    for (const im of e.petals) {
+                        if (!im.isReloading){
+                            reloading = false;
+                            if (e.definition.health && typeof im.health === "number") {
+                                maxHealth += e.definition.health;
+                                health += im.health;
+                            }
+                        } else if (e.definition.reloadTime) {
+                            reloadingTime = e.definition.reloadTime - im.reloadTime;
+                            if (e.definition.health && typeof im.health === "number") {
+                                maxHealth += e.definition.health;
+                            }
+                        }
+                    }
+
+                    data.state = reloading ? PetalState.Reloading : PetalState.Normal;
+                    if (data.state === PetalState.Reloading && e.definition.reloadTime) {
+                        data.percent = reloadingTime / e.definition.reloadTime;
+                    } else {
+                        data.percent = health / maxHealth;
+                    }
+                } else {
+                    const im = e.petals[0];
+                    if (im.isReloading) {
+                        data.state = PetalState.Reloading;
+                        if (e.definition.reloadTime) {
+                            data.percent = (e.definition.reloadTime - im.reloadTime) / e.definition.reloadTime;
+                        }
+                    } else {
+                        data.state = PetalState.Normal;
+                        if (e.definition.health && typeof im.health === "number") {
+                            data.percent = im.health / e.definition.health;
+                        }
+                    }
+                }
+            }
+
+            data.percent = MathNumeric.clamp(data.percent, 0, 1)
+
+            datas.push(data);
+        })
+
+        updatePacket.petalData = datas;
 
         this.firstPacket = false;
 
@@ -472,6 +534,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         this.send();
 
         this.chatMessagesToSend = [];
+        this.collected = [];
     }
 
     packetStream = new PacketStream(GameBitStream.create(1 << 16));
@@ -582,7 +645,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                 spawnLoot(this.game,pArr,pVec, true); // pass array, true to make it bypass room limitations
                 this.sendDirectMessage(`Dropped ${count} of ${pDef.idString}.`);
             }
-        } else if (rest.startsWith('give')) {
+        } else if (rest.startsWith('give ')) {
             const params = rest.substring('give'.length).trim();
             const args = params.split(' ').filter(arg => arg.length > 0);
             if (args.length < 3) {
@@ -1053,14 +1116,23 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
         if (this.game.leaderboard()[0] == this){
             let content = `The Leader ${this.name} with ${this.exp.toFixed(0)} scores was killed`
-            if (this.killedBy) {
+            if (this.killedBy instanceof ServerPlayer)
                 content += ` by ${this.killedBy.name}`
-            }
             this.game.sendGlobalMessage({
                 content: content + `!`,
                 color: 0x9f5c4b
             });
         }
+
+        const gameOverPacket = new GameOverPacket();
+        gameOverPacket.kills = this.kills;
+
+        if (this.killedBy) {
+            gameOverPacket.murderer = this.killedBy.name;
+            gameOverPacket.killerID = this.killedBy.id;
+        }
+
+        this.addPacketToSend(gameOverPacket);
 
         super.destroy();
         for (const i of this.petalEntities){

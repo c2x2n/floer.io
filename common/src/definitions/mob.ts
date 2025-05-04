@@ -323,7 +323,8 @@ export const Mobs = new Definitions<MobDefinition>([
         images: {
             mouth: true,
             slotDisplaySize: 90,
-            centerXOffset: 5
+            centerXOffset: 5,
+            centerYOffset: 5
         },
         lootTable: {
             "iris": 0.09,
@@ -345,7 +346,8 @@ export const Mobs = new Definitions<MobDefinition>([
         images: {
             mouth: true,
             slotDisplaySize: 90,
-            centerXOffset: 5
+            centerXOffset: 5,
+            centerYOffset: 5
         },
         lootTable: {
             "iris": 1,
@@ -603,7 +605,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 250,
         category: MobCategory.Enemy,
         aggroRadius: 50,
-        hitboxRadius: 1,
+        hitboxRadius: 2,
         images: {
             mouth: true,
             slotDisplaySize: 80
@@ -972,7 +974,8 @@ export const Mobs = new Definitions<MobDefinition>([
         images: {
             mouth: true,
             slotDisplaySize: 90,
-            centerXOffset: 5
+            centerXOffset: 5,
+            centerYOffset: 5
         },
         speed: 3.35,
         lootTable: {

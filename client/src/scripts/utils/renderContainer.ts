@@ -55,7 +55,7 @@ export class RenderContainer {
 
     constructor(public ctx: CanvasRenderingContext2D) {}
 
-    render(dt: number) {
+    render(dt: number, noStatic?: boolean) {
         const { alpha, rotation, position, visible, scale, ctx } = this;
 
         ctx.translate(position.x, position.y);
@@ -75,7 +75,7 @@ export class RenderContainer {
         ctx.scale(1 / scale, 1 / scale);
         ctx.rotate(-rotation);
 
-        if (this.staticRenderFunc) this.staticRenderFunc(dt);
+        if (this.staticRenderFunc && !noStatic) this.staticRenderFunc(dt);
 
         ctx.translate(-position.x, -position.y);
 

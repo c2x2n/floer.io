@@ -36,22 +36,28 @@ export class Minimap {
     private minimapHeight: number = 0;
     private gameWidth: number = 0;
     private gameHeight: number = 0;
+    sized: boolean = false;
 
-    constructor(private game: Game) {
-    }
+    constructor(private game: Game) {}
 
     resize(): void {
+        const screenWidth = this.game.screenWidth;
+        const screenHeight = this.game.screenHeight;
+
+        this.minimapPositionX = screenWidth - this.minimapWidth - 45;
+        this.minimapPositionY = screenHeight - this.minimapHeight - 75;
+    }
+
+    update(): void {
+        if (this.sized) return;
+
         this.gameWidth = this.game.gameWidth;
         this.gameHeight = this.game.gameHeight;
 
         this.minimapWidth = this.gameWidth / widthDiv;
         this.minimapHeight = this.gameHeight / heightDiv;
 
-        const screenWidth = this.game.screenWidth;
-        const screenHeight = this.game.screenHeight;
-
-        this.minimapPositionX = screenWidth - this.minimapWidth - 45;
-        this.minimapPositionY = screenHeight - this.minimapHeight - 75;
+        this.sized = true;
     }
 
     render(ctx: CanvasRenderingContext2D): void {

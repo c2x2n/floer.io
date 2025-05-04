@@ -34,6 +34,8 @@ export class Renderer {
     }
 
     renderOffscreen() {
+        if (!this.app.game.running) return;
+
         const ctx = this.ctx;
 
         ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -85,7 +87,7 @@ export class Renderer {
 
         for (const container of this.oldSortedContainer) {
             ctx.save();
-            container.render(dt);
+            container.render(dt, !this.app.game.running);
             ctx.restore();
         }
     }

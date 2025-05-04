@@ -42,10 +42,11 @@ export class ClientPlayer extends ClientEntity {
         if (isNew && data.full) {
             this.container.position = Camera.vecToScreen(data.position);
             this.admin = data.full.isAdmin;
-            this.container.zIndex = 1;
+            this.container.zIndex = 3;
         }
 
         if (data.full) {
+            this.hitboxRadius = GameConstants.player.radius;
             if (data.full.healthPercent != this.healthPercent
                 || data.full.shieldPercent != this.shieldPercent) {
                 this.healthPercent = data.full.healthPercent;
@@ -251,6 +252,8 @@ export class ClientPlayer extends ClientEntity {
     }
 
     staticRender(dt: number) {
+        super.staticRender(dt);
+
         const name = this.game.playerData.get(this.id)?.name ?? GameConstants.player.defaultName;
 
         this.drawHealthBar()

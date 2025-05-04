@@ -12,7 +12,8 @@ export enum EntityType {
 export enum ActionType {
     SwitchPetal,
     DeletePetal,
-    TransformLoadout
+    TransformLoadout,
+    Left
 }
 
 export enum PlayerState {

@@ -13,6 +13,8 @@ export type InputAction = {
     petalIndex: number;
 } | {
     type: ActionType.TransformLoadout;
+} | {
+    type: ActionType.Left;
 })
 
 export class InputPacket implements Packet {
@@ -44,6 +46,7 @@ export class InputPacket implements Packet {
                     stream.writeUint8(action.petalIndex);
                     break;
                 case ActionType.TransformLoadout:
+                case ActionType.Left:
                     break
             }
         })
@@ -72,6 +75,7 @@ export class InputPacket implements Packet {
                         petalIndex: stream.readUint8()
                     }
                 case ActionType.TransformLoadout:
+                case ActionType.Left:
                     return {
                         type
                     }

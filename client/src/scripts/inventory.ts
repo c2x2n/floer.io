@@ -1,13 +1,13 @@
 import { Game } from "@/scripts/game.ts";
 import $ from "jquery";
-import { MathNumeric } from "@common/utils/math.ts";
+import { MathNumeric, P2 } from "@common/utils/math.ts";
 import { PetalDefinition, Petals, SavedPetalDefinitionData } from "@common/definitions/petal.ts";
 import { UI } from "@/ui.ts";
 import { Rarity } from "@common/definitions/rarity.ts";
 import { ActionType } from "@common/constants";
 import { showPetalInformation, unShowInformation } from "@/scripts/shown/information.ts";
-import { ObjectDefinition } from "@common/utils/definitions.ts";
 import { MobDefinition } from "@common/definitions/mob.ts";
+import { PetalData, PetalState } from "@common/packets/updatePacket.ts";
 
 interface EasingData {
     x: number,
@@ -70,6 +70,8 @@ export class Inventory{
     swingAngle: number = 0;
     swingProgress: number = 0;
 
+    petalData: PetalData[] = [];
+
     inventoryAnimation() {
         if (draggingData.item && draggingData.container && !this.isDraggingReturningToSlot) {
             const petalElement = draggingData.item.find('.petal');
@@ -125,6 +127,56 @@ export class Inventory{
             }
 
             this.swingProgress = swingProgress;
+        }
+
+        if (this.petalData.length) {
+            let index = 0;
+            this.petalData.forEach((data) => {
+                if (index >= this.equippedPetals.length) return;
+
+                const container = this.equippedPetals[index];
+
+                if (container.canvas && container.ui_slot) {
+                    const canvas = container.canvas;
+                    const ctx = canvas.getContext("2d");
+                    const petal = canvas.parentElement;
+                    if (petal) {
+                        const e = $(petal);
+                        canvas.width = e.width() ?? 50;
+                        canvas.height = e.height() ?? 50;
+                    }
+
+                    if (ctx) {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
+                        ctx.beginPath()
+                        if (this.game.running) {
+                            if (data.state === PetalState.Reloading) {
+                                ctx.moveTo(canvas.width / 2, canvas.height / 2);
+                                const start = P2 * (1 - data.percent) * 1.8;
+
+                                ctx.arc(
+                                    canvas.width / 2, canvas.height / 2,
+                                    canvas.width,
+                                    start, start + P2 * data.percent
+                                )
+
+                                ctx.closePath()
+
+                                ctx.fill()
+                            } else if (data.state === PetalState.Normal) {
+                                ctx.rect(
+                                    0, 0, canvas.width, canvas.height * (1 - data.percent)
+                                )
+
+                                ctx.fill()
+                            }
+                        }
+                    }
+                }
+
+                index ++;
+            })
         }
 
         window.requestAnimationFrame(this.inventoryAnimation.bind(this));
@@ -681,7 +733,11 @@ export class Inventory{
                 const petal =
                     renderPetal(petalContainer.petalDefinition, fontSize);
 
+                const canvas = document.createElement("canvas");
+
                 petal_slot.append(petal);
+                petal.append(canvas);
+                petalContainer.canvas = canvas;
 
                 petal.on("mousedown", (ev) => {
                     if (!this.game.running) return;
@@ -758,6 +814,7 @@ export class PetalContainer {
     petalDefinition: SavedPetalDefinitionData = null;
     showingInformation: boolean = false;
     informationBox?: JQuery;
+    canvas?: HTMLCanvasElement;
 
     constructor() {}
 

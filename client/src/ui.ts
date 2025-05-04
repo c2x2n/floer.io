@@ -1,19 +1,16 @@
 import $ from "jquery";
-import { ClientApplication} from "@/main.ts";
+import { ClientApplication } from "@/main.ts";
 import { GameOverPacket } from "@common/packets/gameOverPacket.ts";
 import { Game } from "@/scripts/game.ts";
 import { SettingsData } from "@/settings.ts";
 import { ChatData } from "@common/packets/updatePacket.ts";
 import { ChatChannel } from "@common/packets/chatPacket.ts";
-import { Rarity, RarityName } from "@common/definitions/rarity.ts";
 import { MathNumeric } from "@common/utils/math.ts";
-import { EntityType, GameConstants } from "@common/constants.ts";
-import { Petals } from "@common/definitions/petal.ts";
+import { ActionType, EntityType, GameConstants } from "@common/constants.ts";
 import { Random } from "@common/utils/random.ts";
-import { getGameAssetsFile, getGameAssetsPath } from "@/scripts/utils/assets.ts";
 import { Gallery } from "@/scripts/gallery.ts";
 
-const version = `0.2.8.1`
+const version = `0.3.TEST !!! TEST VERSION`
 
 export function getVersion() {
     return `v${version}`;
@@ -48,15 +45,15 @@ export class UI {
     readonly debugInfo = $<HTMLDivElement>("#debug-info");
 
     readonly gameOverScreen = $<HTMLDivElement>("#game-over-screen");
-
     readonly gameOverMurderer = $<HTMLDivElement>("#game-over-murderer");
-
     readonly gameOverKills = $<HTMLDivElement>("#game-over-kills");
-
     readonly continueButton = $<HTMLDivElement>("#btn-continue");
+    readonly closeButton = $<HTMLDivElement>("#btn-close");
+    readonly abandon= $<HTMLDivElement>("#abandon");
+
+    readonly topLeftButton = $<HTMLDivElement>("#top-left-buttons");
 
     readonly moveHigh = $<HTMLDivElement>("#move-high");
-
     readonly moveHighTime = $<HTMLDivElement>("#move-high-time");
 
     readonly deletePetal = $<HTMLDivElement>("<div id='delete-petal'></div>");
@@ -77,7 +74,6 @@ export class UI {
 
     readonly keyboardMovement = $<HTMLDivElement>("#keyboard-movement");
     readonly newControl = $<HTMLDivElement>("#new-control");
-    readonly lowResolution = $<HTMLDivElement>("#low-resolution");
     readonly blockMytAnn = $<HTMLDivElement>("#block-myt-ann");
     readonly screenShake = $<HTMLDivElement>("#screen-shake");
 
@@ -196,12 +192,27 @@ export class UI {
 
         this.gallery.renderPetalGallery();
         this.gallery.renderMobGallery();
+
+        this.closeButton.on("click", () => {
+            this.gameOverScreen.animate({
+                opacity: "0"
+            }, () => {this.gameOverScreen.css("display", "none")})
+        })
+
+        this.abandon.on("click", () => {
+            if (!this.transitionRunning) {
+                this.game.input.actionsToSend.add({
+                    type: ActionType.Left
+                })
+                this.game.sendInput()
+                this.game.endGame();
+            }
+        })
     }
 
     initSettingsDialog() {
         this.initCheckbox(this.keyboardMovement, "keyboardMovement");
         this.initCheckbox(this.newControl, "newControl");
-        this.initCheckbox(this.lowResolution, "lowResolution");
         this.initCheckbox(this.blockMytAnn, "blockMytAnn");
         this.initCheckbox(this.screenShake, "screenShake");
     }
@@ -310,7 +321,7 @@ export class UI {
         const t = `floer.io BETA ${getVersion()}`;
         this.gameInfo.attr("textStroke", t);
         this.gameInfo.text(t);
-        const text = `${debug.fps} FPS / ${debug.particles} Particles / ${debug.entities.loot} Loot / ${debug.entities.mobs} Mobs / ${debug.entities.petals} Petals / ${debug.entities.projectiles} Projectiles / ${debug.entities.players} Players`;
+        const text = `${debug.ping.toFixed(2)}ms | ${debug.fps} FPS / ${debug.particles} Particles / ${debug.entities.loot} Loot / ${debug.entities.mobs} Mobs / ${debug.entities.petals} Petals / ${debug.entities.projectiles} Projectiles / ${debug.entities.players} Players`;
         this.debugInfo.text(text)
         this.debugInfo.attr("textStroke", text);
     }
@@ -333,12 +344,21 @@ export class UI {
 
     showGameOverScreen(packet: GameOverPacket) {
         this.gameOverScreen.css("display", "flex");
+        this.gameOverScreen.css("opacity", "0");
 
         this.gameOverMurderer.attr("textStroke", packet.murderer);
         this.gameOverMurderer.text(packet.murderer);
         const kills = `You killed ${packet.kills} flower${packet.kills != 1 ? "s" : ""} this run.`
         this.gameOverKills.attr("textStroke", kills);
         this.gameOverKills.text(kills);
+
+        this.gameOverScreen.animate({
+            opacity: "1"
+        }, () => {
+            if (
+                this.game.playerData.has(this.game.activePlayerID)
+            ) this.gameOverScreen.css("display", "none");
+        })
     }
 
     showOverleveled(time?: number) {
@@ -441,9 +461,8 @@ export class UI {
         }
     }
     startTransition(expanding: boolean = true) {
-        if (this.transitionRunning) {
+        if (this.transitionRunning)
             return;
-        }
 
         if (!this.inGameScreen || !this.transitionRing) return;
         this.transitionRing.css("opacity", "1"); // this need to show up nomatter what
@@ -451,9 +470,9 @@ export class UI {
         this.transitionRunning = true;
 
         // Common animation setup
-        let radius = expanding ? 0 : window.innerWidth * 1; // Start from 0 or maxRadius
+        let radius = expanding ? 0 : window.innerWidth; // Start from 0 or maxRadius
 
-        const maxRadius = window.innerWidth * 1;
+        const maxRadius = window.innerWidth;
         const duration = expanding ? 1500 : 1200; // Slightly faster for collapsing
         const startTime = performance.now();
 
@@ -469,7 +488,7 @@ export class UI {
             this.transitionRing.removeClass("expand");
             // initialize out game screen with 0 opacity so that it can fade in after animation is finished.
             this.outGameScreen.css({"display": "block"});
-            this.outGameScreen.css({"z-index": "-5"});
+            this.outGameScreen.css({"z-index": "4"});
             // it seems like you cant perfectly sort their zLayer so fade gameover screen out.
             // opacity needs to be set back to 1 so that it shows up next death
             this.gameOverScreen.animate({"opacity": 0}, 250, ()=>{

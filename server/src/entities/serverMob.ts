@@ -585,7 +585,7 @@ export class ServerFriendlyMob extends ServerMob {
 
     tick() {
         const distanceToOwner = Vec2.distance(this.position, this.owner.position);
-        if (distanceToOwner > 8 * this.definition.hitboxRadius) {
+        if (distanceToOwner > Math.max(8 * this.definition.hitboxRadius, 25)) {
             this.gettingBackToOwner = true;
         }
 

@@ -34,9 +34,21 @@
 }
 
 .btn-green {
-  color: white;
-  background-color: #31c901;
-  border: #228c01 solid 4px;
+    color: white;
+    background-color: #31c901;
+    border: #228c01 solid 4px;
+}
+
+.btn-grayer {
+    color: white;
+    background-color: #666666;
+    border: #535353 solid 4px;
+}
+
+.btn-abandon {
+    color: white;
+    background-color: #bb5555;
+    border: solid 4px #974545;
 }
 
 .btn-blue {
@@ -135,6 +147,12 @@
 
 #btn-settings {
     background-image: url('/img/ui/settings.svg');
+}
+
+#hud > #btn-settings {
+    position: absolute;
+    top: 5px;
+    left: 120px;
 }
 
 #btn-credit {

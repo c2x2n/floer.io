@@ -28,6 +28,7 @@ import { Leaderboard } from "@/scripts/render/leaderboard.ts";
 import { ExpUI } from "@/scripts/render/expUI.ts";
 import { ParticleManager } from "@/scripts/utils/particle.ts";
 import { Bossbar } from "@/scripts/render/bossbar.ts";
+import $ from "jquery"
 
 const typeToEntity = {
     [EntityType.Player]: ClientPlayer,
@@ -79,9 +80,6 @@ export class Game {
             petals: 0,
         }
     }
-
-    private lastPingTime: number = 0;
-    private pingSentTime: number = 0;
 
     tweens = new Set<Tween>;
     private lastUpdateTime: number = 0;
@@ -158,7 +156,26 @@ export class Game {
     startGame(loggedInPacket: LoggedInPacket): void {
         if (this.running) return;
 
+        for (const entity of this.entityPool) {
+            entity.destroy();
+        }
+
         this.running = true;
+
+        if(this.ui.openedDialog) this.ui.toggleDialog(this.ui.openedDialog);
+
+        this.ui.hud.append(this.ui.settingsButton);
+        this.ui.canvas.insertBefore(this.ui.hud)
+        this.ui.canvas.css("opacity", 1);
+
+        this.app.renderer.containers.clear();
+        this.entityPool.clear();
+        this.playerData.clear();
+        this.needUpdateEntities.clear();
+        this.tweens.clear();
+        this.followID = -1;
+
+        this.input.actionsToSend.clear();
 
         this.ui.startTransition(true);
         this.inventory.loadInventoryData(loggedInPacket.inventory)
@@ -169,16 +186,14 @@ export class Game {
     endGame() {
         this.running = false;
 
-        for (const entity of this.entityPool) {
-            entity.destroy();
-        }
+        this.ui.settingsButton.insertBefore(this.ui.creditButton)
+        this.ui.canvas.css("opacity", 0.8);
+        const body = $("body");
 
-        this.app.renderer.containers.clear();
-        this.entityPool.clear();
-        this.activePlayerID = -1;
-        this.playerData.clear();
-        this.needUpdateEntities.clear();
-        this.tweens.clear();
+        body.append(this.ui.canvas);
+        body.css("background-size", "0");
+        this.ui.stopRandomEntityAnimation()
+        $(".floating-entity").remove()
 
         this.ui.startTransition(false);
         this.ui.gallery.renderPetalGallery();
@@ -187,6 +202,13 @@ export class Game {
         this.inventory.updatePetalRows();
         this.inventory.keyboardSelectingPetal = undefined;
     }
+
+    get follower(): ClientEntity | undefined {
+        if (this.followID)
+            return this.entityPool.get(this.followID) as ClientEntity;
+        return undefined;
+    }
+    followID: number = -1;
 
     onMessage(data: ArrayBuffer): void {
         const packetStream = new PacketStream(data);
@@ -205,6 +227,7 @@ export class Game {
                 }
                 case packet instanceof GameOverPacket: {
                     this.ui.showGameOverScreen(packet);
+                    this.followID = packet.killerID;
                     break;
                 }
             }
@@ -214,13 +237,15 @@ export class Game {
     needUpdateEntities = new Map<ClientEntity, EntitiesNetData[EntityType]>();
 
     updateFromPacket(packet: UpdatePacket): void {
-        if (!this.running) return;
-
         this.serverDt = (Date.now() - this.lastUpdateTime) / 1000;
         this.lastUpdateTime = Date.now();
 
+        this.debug.ping = performance.now() - this.lastPingTime;
+        this.lastPingTime = performance.now();
+
         if (packet.playerDataDirty.id) {
             this.activePlayerID = packet.playerData.id;
+            this.followID = this.activePlayerID;
         }
 
         if (packet.playerDataDirty.zoom) {
@@ -294,11 +319,16 @@ export class Game {
             })
         }
 
+        if (packet.petalData.length) {
+            this.inventory.petalData = packet.petalData
+        }
+
         if (packet.mapDirty) {
             this.gameWidth = packet.map.width;
             this.gameHeight = packet.map.height;
 
             this.app.renderer.initWorldMap();
+            this.miniMap.update();
             this.miniMap.resize();
         }
     }
@@ -366,16 +396,29 @@ export class Game {
     lastRenderTime = Date.now();
     dt: number = 0;
 
-    render() {
-        if (!this.running) return;
+    lastFPSCountingTime: number = performance.now();
+    FPS: number = 0;
 
+    private lastPingTime: number = 0;
+    // private pingSentTime: number = 0;
+
+    render() {
         this.dt = (Date.now() - this.lastRenderTime) / 1000;
-        this.debug.fps = Math.round(0);
+
         this.lastRenderTime = Date.now();
 
-        if (this.activePlayer) {
-            this.camera.position = this.activePlayer.container.position;
+        if (performance.now() - this.lastFPSCountingTime >= 1000) {
+            this.debug.fps = this.FPS;
+            this.FPS = 0;
+            this.lastFPSCountingTime = performance.now();
         }
+        this.FPS ++;
+
+        if (this.follower)
+            this.camera.position = this.follower.container.position;
+
+        if (this.app.settings.data.debug)
+            this.ui.renderDebug()
 
         this.camera.render();
         this.app.renderer.render();

@@ -9,10 +9,13 @@
   <body>
     <div id="loader" style="width: 100%; height: 100%; position: fixed; top: 0; left: 0; background-color: #333333; color: #FFFFFF; font-family: sans-serif; font-size: 100px; z-index: 1000; display: grid; place-content: center;">Loading...</div>
     <div id="transition-ring" class=""></div>
+    <canvas id="canvas"></canvas>
     <div id="in-game-screen">
-        <canvas id="canvas"></canvas>
         <div id="hud">
             <div id="floer-logo" textStroke="floer.io">floer.io</div>
+
+            <div id="abandon" class="btn btn-abandon">X</div>
+
             <div id="move-high" style="display: none">
                 <div style="font-size: 25px" textStroke="MOVE TO HARDER ZONE!">MOVE TO HARDER ZONE!</div>
                 <div style="font-size: 15px" textStroke="You are overleveled for this zone.">You are overleveled for this zone.</div>
@@ -38,6 +41,7 @@
         <div id="game-over-murderer" textStroke="Ohio">Ohio</div>
         <div id="game-over-kills" textStroke="You killed 0 flowers this run.">You killed 0 flowers this run.</div>
         <div id="btn-continue" class="btn btn-green" textStroke="Continue">Continue</div>
+        <div id="btn-close" class="btn btn-grayer" textStroke="Close">Close</div>
     </div>
     <div id="out-game-screen">
         <div id="floer-version"></div>
@@ -52,59 +56,6 @@
                 <div class="preparation-petals-row"></div>
             </div>
         </div>
-        <div id="dialog-container">
-            <div class="dialog top-left-dialog" id="settings-dialog">
-                <div class="dialog-content">
-                    <input type="checkbox" id="keyboard-movement"/>
-                    <div textStroke="Keyboard Movement">Keyboard Movement</div>
-                </div>
-
-                <div class="dialog-content">
-                    <input type="checkbox" id="new-control"/>
-                    <div textStroke="Enable New Control System">Enable New Control System</div>
-                </div>
-
-                <div class="dialog-content">
-                    <input type="checkbox" id="low-resolution"/>
-                    <div textStroke="Low Resolution Graphics (Refresh the page to enable)">Low Resolution Graphics (Refresh the page to enable)</div>
-                </div>
-
-                <div class="dialog-content">
-                    <input type="checkbox" id="block-myt-ann"/>
-                    <div textStroke="Block Mythic Announcement">Block Mythic Announcement</div>
-                </div>
-
-                <div class="dialog-content">
-                    <input type="checkbox" id="screen-shake"/>
-                    <div textStroke="Screen Shake">Screen Shake</div>
-                </div>
-            </div>
-
-            <div class="dialog top-left-dialog" id="credit-dialog">
-                <div textStroke="Credits">Credits</div>
-                <div textStroke="Game made by c2x2n, aragami070, Camvanaa and Nyar_7">
-                    Game made by c2x2n, aragami070, Camvanaa and Nyar_7
-                </div>
-                <div></div>
-                <div textStroke="Special thanks">Special thanks</div>
-                <div textStroke="The Floer.io Community">The Floer.io Community</div>
-                <div></div>
-                <div textStroke="Some Icons from game-icons.net">Some Icons from game-icons.net</div>
-                <div textStroke="Some SVGs from florr.io">Some SVGs from florr.io</div>
-            </div>
-
-            <div class="dialog bottom-left-dialog" id="petal-gallery-dialog">
-                <div textStroke="Petal Gallery"
-                    style="font-size: 20px;">Petal Gallery</div>
-                <div id="petal-gallery-contents"></div>
-            </div>
-
-            <div class="dialog bottom-left-dialog" id="mob-gallery-dialog">
-                <div textStroke="Mob Gallery"
-                     style="font-size: 20px;">Mob Gallery</div>
-                <div id="mob-gallery-contents"></div>
-            </div>
-        </div>
         <div id="bottom-left-buttons">
             <div id="btn-mob-gallery" class="btn btn-yellow-color btn-very-big-block"></div>
             <div id="btn-petal-gallery" class="btn btn-craft-color btn-very-big-block"></div>
@@ -113,11 +64,59 @@
             <div id="btn-settings" class="btn btn-gray btn-big-block"></div>
             <div id="btn-credit" class="btn btn-gray btn-big-block"></div>
             <div id="qq-btn" class="qq-color btn btn-big-block"
-            onclick='window.open("https://qm.qq.com/q/qbtteJj1Ly", "_blank");'></div>
+                 onclick='window.open("https://qm.qq.com/q/qbtteJj1Ly", "_blank");'></div>
             <div id="dis-btn" class="discord-color btn btn-big-block"
-            onclick='window.open("https://discord.gg/bFFfkAUZxQ", "_blank");'></div>
+                 onclick='window.open("https://discord.gg/bFFfkAUZxQ", "_blank");'></div>
             <div id="gth-btn" class="gth-color btn btn-big-block"
                  onclick='window.open("https://github.com/c2x2n/floer.io", "_blank");'></div>
+        </div>
+    </div>
+    <div id="dialog-container">
+        <div class="dialog top-left-dialog" id="settings-dialog">
+            <div class="dialog-content">
+                <input type="checkbox" id="keyboard-movement"/>
+                <div textStroke="Keyboard Movement">Keyboard Movement</div>
+            </div>
+
+            <div class="dialog-content">
+                <input type="checkbox" id="new-control"/>
+                <div textStroke="Enable New Control System">Enable New Control System</div>
+            </div>
+
+            <div class="dialog-content">
+                <input type="checkbox" id="block-myt-ann"/>
+                <div textStroke="Block Mythic Announcement">Block Mythic Announcement</div>
+            </div>
+
+            <div class="dialog-content">
+                <input type="checkbox" id="screen-shake"/>
+                <div textStroke="Screen Shake">Screen Shake</div>
+            </div>
+        </div>
+
+        <div class="dialog top-left-dialog" id="credit-dialog">
+            <div textStroke="Credits">Credits</div>
+            <div textStroke="Game made by c2x2n, aragami070, Camvanaa and Nyar_7">
+                Game made by c2x2n, aragami070, Camvanaa and Nyar_7
+            </div>
+            <div></div>
+            <div textStroke="Special thanks">Special thanks</div>
+            <div textStroke="The Floer.io Community">The Floer.io Community</div>
+            <div></div>
+            <div textStroke="Some Icons from game-icons.net">Some Icons from game-icons.net</div>
+            <div textStroke="Some SVGs from florr.io">Some SVGs from florr.io</div>
+        </div>
+
+        <div class="dialog bottom-left-dialog" id="petal-gallery-dialog">
+            <div textStroke="Petal Gallery"
+                 style="font-size: 20px;">Petal Gallery</div>
+            <div id="petal-gallery-contents"></div>
+        </div>
+
+        <div class="dialog bottom-left-dialog" id="mob-gallery-dialog">
+            <div textStroke="Mob Gallery"
+                 style="font-size: 20px;">Mob Gallery</div>
+            <div id="mob-gallery-contents"></div>
         </div>
     </div>
     <script type="module" src="src/main.ts"></script>
