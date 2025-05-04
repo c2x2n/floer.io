@@ -148,12 +148,12 @@ export const Zones:
             //         "giant_spider": 0.0001,
             //     }
             // }
-            {
-                timer: { min: 30 * 60, max: 45 * 60 },
-                spawn: {
-                    "myt_evil_centipede": 0.1
-                }
-            }
+            // {
+            //     timer: { min: 30 * 60, max: 45 * 60 },
+            //     spawn: {
+            //         "myt_evil_centipede": 0.1
+            //     }
+            // }
         ]
     }
 }

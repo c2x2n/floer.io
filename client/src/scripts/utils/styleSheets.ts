@@ -11,9 +11,9 @@ export function loadStyleSheet() {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    canvas.height = 500;
-    canvas.width = 500;
-    ctx.scale(10, 10)
+    canvas.height = screen.width * 0.1;
+    canvas.width = screen.width * 0.1;
+    ctx.scale(screen.width * 0.1 / 50, screen.width * 0.1 / 50)
 
     for (const definition of Petals.definitions) {
         const name = getGameAssetsName(definition);

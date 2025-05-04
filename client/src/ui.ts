@@ -10,7 +10,7 @@ import { ActionType, EntityType, GameConstants } from "@common/constants.ts";
 import { Random } from "@common/utils/random.ts";
 import { Gallery } from "@/scripts/gallery.ts";
 
-const version = `0.3.TEST !!! TEST VERSION`
+const version = `0.3.0`
 
 export function getVersion() {
     return `v${version}`;
