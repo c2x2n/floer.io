@@ -1359,7 +1359,7 @@ export const mobAssets: { [K: string]: AssetsDrawer } = {
         ctx.lineJoin = "round";
 
         ctx.save();
-        ctx.translate(radius * 1.2, radius * 0.22);
+        ctx.translate(radius * 1.1, radius * 0.22);
         ctx.rotate(rotation);
         loadPathFromSVG({
             containerToDraw,
@@ -1372,7 +1372,7 @@ export const mobAssets: { [K: string]: AssetsDrawer } = {
         })
         ctx.restore();
 
-        ctx.translate(radius * 1.2, -radius * 0.22);
+        ctx.translate(radius * 1.1, -radius * 0.22);
 
         ctx.scale(1, -1);
         ctx.rotate(rotation);
