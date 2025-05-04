@@ -1044,16 +1044,16 @@ export let Petals = new Definitions<PetalDefinition>([
         idString: "rice",
         displayName: "Rice",
         description: "Spawns instantly, but not very strong",
-        damage: 10,
-        health: 1,
+        damage: 8,
+        health: 5,
         extendable: true,
         reloadTime: 0.04,
         images:{
-            slotDisplaySize: 45,
+            slotDisplaySize: 57,
             selfGameRotation: 18
         },
         usable: false,
-        hitboxRadius: 1,
+        hitboxRadius: 0.9,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.epic
