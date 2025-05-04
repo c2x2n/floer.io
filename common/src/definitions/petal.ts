@@ -2093,8 +2093,8 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         attributes: {
             paralyze: {
-                duration: 5,
-                speedReduction: 0.20,
+                duration: 4.5,
+                speedReduction: 0.15,
                 revolutionReduction: 0.30
             }
         },
