@@ -2093,7 +2093,7 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         attributes: {
             paralyze: {
-                duration: 4.5,
+                duration: 4,
                 speedReduction: 0.15,
                 revolutionReduction: 0.30
             }
@@ -2198,14 +2198,14 @@ export let Petals = new Definitions<PetalDefinition>([
         displayName: "Rock",
         description: "Extremely durable, but takes a bit longer to recharge.",
         damage: 15,
-        health: 50,
+        health: 45,
         extendable: true,
         usable: false,
         images: {
             slotDisplaySize: 55,
             selfGameRotation: 18
         },
-        reloadTime: 4,
+        reloadTime: 4.5,
         hitboxRadius: 0.7,
         isDuplicate: false,
         pieceAmount: 1,
