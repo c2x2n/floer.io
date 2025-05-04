@@ -46,7 +46,7 @@ export const Zones:
             "ladybug": 10,
             "rock": 20,
             "boulder": 1,
-            "massive_ladybug": 0.1,
+            "massive_ladybug": 0.05,
             "bee": 10,
             "baby_ant": 20,
             "soldier_ant": 1,
