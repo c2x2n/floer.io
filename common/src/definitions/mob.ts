@@ -114,7 +114,8 @@ export const Mobs = new Definitions<MobDefinition>([
             "triplet": 0.25,
             "epic_rose": 1,
             "bubble": 1,
-            "leg_bubble": 0.06
+            "leg_bubble": 0.06,
+            "myt_tri_rose": 0.000001
         },
         rarity: RarityName.legendary,
         exp: 500
@@ -356,6 +357,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "wing": 0.6,
             "powder": 0.015,
             "leg_egg": 0.055,
+            "tri_wing": 0.000001
         },
         rarity: RarityName.legendary,
         exp: 500,
@@ -428,6 +430,9 @@ export const Mobs = new Definitions<MobDefinition>([
             "faster_wing": 0.025,
             "wing": 0.5,
             "antennae": 0.035,
+            "myt_big_missile": 0.00000033,
+            "myt_antennae": 0.00000033,
+            "myt_egg": 0.00000033
         },
         rarity: RarityName.legendary,
         exp: 500,
@@ -494,7 +499,9 @@ export const Mobs = new Definitions<MobDefinition>([
             "poison_peas": 1,
             "leg_poison_peas": 0.02,
             "leg_bubble": 0.00006,
-            "wing": 1
+            "wing": 1,
+            "tri_triangle": 0.0000005,
+            "pinger": 0.0000005
         },
         rarity: RarityName.legendary,
         exp: 500,
@@ -544,7 +551,9 @@ export const Mobs = new Definitions<MobDefinition>([
             "pincer": 0.8,
             "faster": 1,
             "tri_web": 0.03,
-            "faster_wing": 0.02
+            "faster_wing": 0.02,
+            "myt_tri_web": 0.0000005,
+            "tri_faster": 0.0000005
         },
         rarity: RarityName.legendary,
         exp: 500,
@@ -822,7 +831,8 @@ export const Mobs = new Definitions<MobDefinition>([
             "peas": 0.85,
             "chip": 0.028,
             "poison_peas": 0.5,
-            "leg_poison_peas": 0.01
+            "leg_poison_peas": 0.01,
+            "myt_poison_peas": 0.000001
         },
         rarity: RarityName.legendary,
         exp: 100,
