@@ -452,6 +452,8 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         updatePacket.playerData.overleveled = this.overleveledTimeRemains;
         updatePacket.playerData.collect = this.collected;
 
+        this.collected = [];
+
         updatePacket.playerDataDirty = this.dirty;
 
         updatePacket.players = [...this.game.activePlayers];
