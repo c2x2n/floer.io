@@ -935,7 +935,6 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
         console.log(`Game | "${this.name}" joined the game`);
 
-
         if (packet.secret &&
             createHash("sha256").update(packet.secret).digest("hex") === this.game.adminSecret) {
             this.isAdmin = true;
