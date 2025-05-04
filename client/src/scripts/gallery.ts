@@ -8,7 +8,7 @@ import { MobDefinition, Mobs } from "@common/definitions/mob.ts";
 
 export class Gallery{
     petalGallery: string[] = [];
-    mobGallery: string[] = ["bee"];
+    mobGallery: string[] = [];
 
     petalContainers: PetalContainer[] = [];
     mobContainers: MobContainer[] = [];
