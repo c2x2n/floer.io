@@ -1053,7 +1053,7 @@ export let Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 18
         },
         usable: false,
-        hitboxRadius: 0.9,
+        hitboxRadius: 0.55,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.epic
@@ -1452,7 +1452,7 @@ export let Petals = new Definitions<PetalDefinition>([
             }
         },
         reloadTime: 2.5,
-        hitboxRadius: 0.55,
+        hitboxRadius: 0.65,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.rare,
@@ -2083,8 +2083,8 @@ export let Petals = new Definitions<PetalDefinition>([
         idString: "honey",
         displayName: "Honey",
         description: "Slows enemies and reduces their rotation speed.",
-        damage: 10,
-        health: 10,
+        damage: 5,
+        health: 20,
         extendable: true,
         usable: false,
         images: {
@@ -2094,8 +2094,8 @@ export let Petals = new Definitions<PetalDefinition>([
         attributes: {
             paralyze: {
                 duration: 5,
-                speedReduction: 0.25,
-                revolutionReduction: 0.25
+                speedReduction: 0.20,
+                revolutionReduction: 0.30
             }
         },
         reloadTime: 1.7,
