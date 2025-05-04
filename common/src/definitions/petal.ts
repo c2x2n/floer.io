@@ -446,7 +446,7 @@ export let Petals = new Definitions<PetalDefinition>([
         reloadTime: 1,
         images: {
             selfGameRotation: 18,
-            slotDisplaySize: 45,
+            slotDisplaySize: 25,
         },
         extendable: true,
         usable: false,
@@ -722,6 +722,86 @@ export let Petals = new Definitions<PetalDefinition>([
         rarity: RarityName.rare,
     },
     {
+        idString: "super_dandelion",
+        displayName: "Dandelion",
+        description: "It's interesting properties prevent healing effects on affected units",
+        damage: 5,
+        health: 15,
+        extendable: true,
+        images: {
+            selfGameRotation: 0.02,
+            slotDisplaySize: 60,
+            slotRotation: 0.8,
+            facingOut: true,
+            fontSizeMultiplier: 0.8
+        },
+        usable: true,
+        attributes: {
+            healing_debuff: {
+                healing: 0,
+                duration: 1,
+            },
+            shoot: {
+                hitboxRadius: 1,
+                despawnTime: 3,
+                speed: 8,
+                definition: Projectile.fromString("dandelion"),
+                modifiersWhenDamage: {
+                    modifier: {
+                        healing: 0
+                    },
+                    duration: 1
+                }
+            }
+        },
+        useTime: 0.2,
+        reloadTime: 0.5,
+        hitboxRadius: 1,
+        isDuplicate: true,
+        isShowedInOne: false,
+        pieceAmount: 50,
+        usingAssets: "dandelion",
+        rarity: RarityName.super,
+    },
+    {
+        idString: "op_missile",
+        displayName: "Missile",
+        description: "It's interesting properties prevent healing effects on affected units",
+        damage: 5,
+        health: 15,
+        extendable: true,
+        images: {
+            selfGameRotation: 0.02,
+            slotDisplaySize: 60,
+            slotRotation: 0.8,
+            facingOut: true,
+            fontSizeMultiplier: 0.8
+        },
+        usable: true,
+        attributes: {
+            shoot: {
+                hitboxRadius: 1,
+                despawnTime: 3,
+                speed: 8,
+                definition: Projectile.fromString("missile"),
+                modifiersWhenDamage: {
+                    modifier: {
+                        speed: 0
+                    },
+                    duration: 1
+                }
+            }
+        },
+        useTime: 0.2,
+        reloadTime: 0.5,
+        hitboxRadius: 1,
+        isDuplicate: true,
+        isShowedInOne: false,
+        pieceAmount: 50,
+        usingAssets: "missile",
+        rarity: RarityName.super,
+    },
+    {
         idString: "missile",
         displayName: "Missile",
         description: "You can actually shoot this one",
@@ -944,7 +1024,7 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 10,
         extendable: true,
         images: {
-            slotDisplaySize: 60,
+            slotDisplaySize: 50,
             selfGameRotation: 15,
         },
         usable: false,
@@ -1444,7 +1524,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 55,
+            slotDisplaySize: 45,
             selfGameRotation: 18
         },
         attributes: {
@@ -2068,7 +2148,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 65,
+            slotDisplaySize: 55,
             selfGameRotation: 18
         },
         attributes: {

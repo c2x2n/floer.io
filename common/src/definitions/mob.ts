@@ -1308,6 +1308,29 @@ export const Mobs = new Definitions<MobDefinition>([
         exp: 25000,
         usingAssets: "ant_hole"
     },{
+        idString: "bee_hive",
+        displayName: "Bee Hive",
+        damage: 20,
+        health: 10000,
+        category: MobCategory.Fixed,
+        pop: {
+            "bee": [1, 1, 0.95, 0.9, 0.9, 0.9, 0.9, 0.9, 0.8, 0.8, 0.8, 0.7, 0.6, 0.5, 0.45, 0.4, 0.35, 0.3, 0.2, 0.15, 0.1, 0.1, 0.1, 0, 0,  0, 0, 0, 0, ],
+            "hornet": [1, 0.95, 0.9, 0.8, 0.7, 0.55, 0.4, 0.25, 0.2, 0.15, 0, 0,1, 0.9, 0.7, 0.4, 0.2, 0.15, 0, 1, 0.9, 0.8, 0, 0],
+            "leg_hornet": [0.9, 0.8, 0.6, 0.45, 0.3, 0.15, 0.1, 0.1, 0, 0],
+        },
+        onGround: true,
+        hitboxRadius: 10,
+        lootTable: {
+            "sand": 0.66,
+            "fast": 0.92,
+            "leaf": 0.56,
+            "twin": 0.24,
+            "rice": 0.01,
+        },
+        rarity: RarityName.legendary,
+        exp: 1,
+        hideInGallery: true
+    },{
         idString: "passive_bee",
         displayName: "Bee",
         damage: 100,

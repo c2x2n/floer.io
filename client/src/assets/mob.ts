@@ -715,6 +715,39 @@ export const mobAssets: { [K: string]: AssetsDrawer } = {
 
         ctx.restore();
     },
+    "bee_hive": (containerToDraw) => {
+        const { ctx, radius } = containerToDraw;
+
+        ctx.save();
+
+        ctx.rotate(halfPI)
+
+        ctx.fillStyle = containerToDraw.getRenderColor("#ffd363");
+        ctx.beginPath()
+        ctx.roundRect(
+            -radius, -radius,
+            radius * 2, radius * 2, 20
+        )
+        ctx.fill();
+
+        ctx.fillStyle = containerToDraw.getRenderColor("#d3ae4d");
+        ctx.beginPath()
+        ctx.roundRect(
+            -radius * 0.68, -radius  * 0.68,
+            radius  * 0.68 * 2, radius * 0.68 *2, 20
+        )
+        ctx.fill();
+
+        ctx.fillStyle = containerToDraw.getRenderColor("#a2852e");
+        ctx.beginPath()
+        ctx.roundRect(
+            -radius  * 0.33, -radius * 0.33,
+            radius * 0.33 * 2, radius * 0.33 * 2, 20
+        )
+        ctx.fill();
+
+        ctx.restore();
+    },
 
     "baby_ant": (containerToDraw) => {
         const { ctx, radius } = containerToDraw;

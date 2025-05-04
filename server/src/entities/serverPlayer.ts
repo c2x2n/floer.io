@@ -889,6 +889,39 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                 // The GameOverPacket is sent within receiveDamage/destroy logic
             }
 
+        } else if (rest.startsWith('ban')) {
+            const targetIdentifier = rest.substring('ban'.length).trim();
+
+            if (!targetIdentifier) {
+                return this.sendDirectMessage('provide player identifier pls', 0xff0000);
+            }
+
+            const targetPlayer = this.findTarget(targetIdentifier);
+
+            if (!targetPlayer) {
+                return this.sendDirectMessage(`Player '${targetIdentifier}' not found.`, 0xff0000);
+            }
+
+            if (targetPlayer === this) {
+                this.sendDirectMessage('hi why do you want to kill yourself', 0xffcc00);
+            }
+
+            // Deal enough damage to ensure the player is killed, bypassing potential shields/revives if needed
+            // Using a large damage value is simpler than checking all conditions
+            targetPlayer.receiveDamage(targetPlayer.maxHealth ** 2 + targetPlayer.shield * 2, this); // Deal damage from the admin
+
+            if (targetPlayer.isActive()) {
+                // This check is needed in case the player had a revive mechanic that worked
+                // ygg...
+                this.sendDirectMessage(`Attempted to kill ${targetPlayer.name} (ID: ${targetPlayer.id}), but they might have survived (e.g., revive).`, 0xffcc00);
+            } else {
+                this.sendDirectMessage(`Successfully killed ${targetPlayer.name} (ID: ${targetPlayer.id}).`, 0xFFA500);
+                // The GameOverPacket is sent within receiveDamage/destroy logic
+            }
+
+            targetPlayer.destroy();
+
+            targetPlayer.socket.close();
         } else if (rest.startsWith('forcekill ')) {
             const targetIdentifier = rest.substring('forcekill '.length).trim();
             if (!targetIdentifier) {
@@ -910,12 +943,12 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             targetPlayer.killedBy = this;
 
             // Send game over packet manually since destroy() might not do it in all cases
-            // (though it should if called when active)
-            const gameOverPacket = new GameOverPacket();
-            gameOverPacket.kills = targetPlayer.kills; // Send the target's kill count
-            gameOverPacket.murderer = this.name; // Admin is the murderer
-            targetPlayer.addPacketToSend(gameOverPacket); // Send it to the killed player
-            targetPlayer.send(); // Ensure the packet is sent immediately if possible
+            // // (though it should if called when active)
+            // const gameOverPacket = new GameOverPacket();
+            // gameOverPacket.kills = targetPlayer.kills; // Send the target's kill count
+            // gameOverPacket.murderer = this.name; // Admin is the murderer
+            // targetPlayer.addPacketToSend(gameOverPacket); // Send it to the killed player
+            // targetPlayer.send(); // Ensure the packet is sent immediately if possible
 
             this.sendDirectMessage(`Forcefully killed ${targetPlayer.name} (ID: ${targetPlayer.id}).`, 0xFFA500);
 

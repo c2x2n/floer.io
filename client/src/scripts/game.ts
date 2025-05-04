@@ -180,7 +180,11 @@ export class Game {
         this.ui.startTransition(true);
         this.inventory.loadInventoryData(loggedInPacket.inventory)
         this.inventory.updatePetalRows();
-        this.render();
+
+        if (!this.alreadyStartedRender) {
+            this.render();
+            this.alreadyStartedRender = true;
+        }
     }
 
     endGame() {
@@ -401,6 +405,8 @@ export class Game {
 
     private lastPingTime: number = 0;
     // private pingSentTime: number = 0;
+
+    alreadyStartedRender = false;
 
     render() {
         this.dt = (Date.now() - this.lastRenderTime) / 1000;
