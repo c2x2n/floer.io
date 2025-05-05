@@ -211,14 +211,13 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 15,
         swinging: {
             time: 0.5,
-            distance: 3
+            distance: 5
         },
         images:{
             slotDisplaySize: 45,
             selfGameRotation: 360
         },
         extendable: true,
-        moreExtendDistance: 3,
         reloadTime: 1.25,
         usable: false,
         hitboxRadius: 0.6,
@@ -234,7 +233,7 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 20,
         swinging: {
             time: 0.7,
-            distance: 3.5
+            distance: 5
         },
         images:{
             slotDisplaySize: 45,
@@ -242,7 +241,7 @@ export let Petals = new Definitions<PetalDefinition>([
             slotRevolution: P2 / 3
         },
         extendable: true,
-        moreExtendDistance: 3.5,
+        moreExtendDistance: 2,
         reloadTime: 1.25,
         usable: false,
         hitboxRadius: 0.5,
@@ -294,11 +293,10 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 15,
         swinging: {
             time: 0.5,
-            distance: 3
+            distance: 5
         },
         extendable: true,
         reloadTime: 1.25,
-        moreExtendDistance: 3,
         images:{
             slotDisplaySize: 60,
             selfGameRotation: 360
