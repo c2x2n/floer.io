@@ -325,6 +325,7 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         usable: false,
         hitboxRadius: 0.3,
+        distanceToCenter: 0.55,
         isDuplicate: true,
         pieceAmount: 3,
         isShowedInOne: true,
