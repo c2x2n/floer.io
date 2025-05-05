@@ -195,7 +195,6 @@ export const Mobs = new Definitions<MobDefinition>([
             "yinyang": 0.009,
             "bubble": 0.1,
             "wing": 0.08,
-            "leg_bubble": 0.00012,
             "triplet": 0.002,
             "shell": 0.002
         },
@@ -379,7 +378,6 @@ export const Mobs = new Definitions<MobDefinition>([
             "missile": 0.18,
             "honey": 0.02,
             "big_missile": 0.005,
-            "leg_bubble": 0.00006,
             "wing": 0.06,
             "antennae": 0.0003,
         },
