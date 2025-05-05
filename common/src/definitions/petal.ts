@@ -465,14 +465,14 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 3,
         extendable: false,
         usable: true,
-        useTime: 1,
+        useTime: 1.5,
         images: {
             slotDisplaySize: 35,
         },
         attributes: {
             absorbing_heal: 12
         },
-        reloadTime: 3.5,
+        reloadTime: 3,
         hitboxRadius: 0.5,
         isDuplicate: false,
         pieceAmount: 1,
@@ -485,11 +485,11 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 5,
         extendable: false,
         usable: true,
-        useTime: 1,
+        useTime: 1.5,
         attributes: {
             absorbing_heal: 4.5
         },
-        reloadTime: 3.5,
+        reloadTime: 3,
         images: {
             selfGameRotation: 18,
             lotDisplaySize: 17.5,
@@ -508,7 +508,7 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 5,
         extendable: false,
         usable: true,
-        useTime: 1,
+        useTime: 1.5,
         images: {
             slotDisplaySize: 45,
             selfGameRotation: 18,
