@@ -211,13 +211,14 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 15,
         swinging: {
             time: 0.5,
-            distance: 2.6
+            distance: 3.5
         },
         images:{
             slotDisplaySize: 45,
-            selfGameRotation: 240
+            selfGameRotation: 360
         },
         extendable: true,
+        moreExtendDistance: 3.5,
         reloadTime: 1.25,
         usable: false,
         hitboxRadius: 0.6,
@@ -233,7 +234,7 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 20,
         swinging: {
             time: 0.7,
-            distance: 2.6
+            distance: 3.5
         },
         images:{
             slotDisplaySize: 45,
@@ -241,6 +242,7 @@ export let Petals = new Definitions<PetalDefinition>([
             slotRevolution: P2 / 3
         },
         extendable: true,
+        moreExtendDistance: 3.5,
         reloadTime: 1.25,
         usable: false,
         hitboxRadius: 0.5,
@@ -277,7 +279,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         reloadTime: 0.5,
         modifiers: {
-            revolutionSpeed: 0.8
+            revolutionSpeed: 1.0
         },
         usable: false,
         hitboxRadius: 0.3,
@@ -292,7 +294,7 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 15,
         swinging: {
             time: 0.5,
-            distance: 2.6
+            distance: 3.5
         },
         extendable: true,
         reloadTime: 1.25,
@@ -302,7 +304,7 @@ export let Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 240
         },
         modifiers: {
-            revolutionSpeed: 1
+            revolutionSpeed: 1.25
         },
         usable: false,
         hitboxRadius: 0.6,
@@ -321,7 +323,7 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         reloadTime: 0.5,
         modifiers: {
-            revolutionSpeed: 0.9
+            revolutionSpeed: 1.0
         },
         usable: false,
         hitboxRadius: 0.3,
