@@ -684,11 +684,11 @@ export let Petals = new Definitions<PetalDefinition>([
         displayName: "Dandelion",
         description: "It's interesting properties prevent healing effects on affected units",
         damage: 5,
-        health: 15,
+        health: 20,
         extendable: true,
         images: {
             selfGameRotation: 0.02,
-            slotDisplaySize: 60,
+            slotDisplaySize: 75,
             slotRotation: 0.8,
             facingOut: true,
             fontSizeMultiplier: 0.8
@@ -1000,7 +1000,7 @@ export let Petals = new Definitions<PetalDefinition>([
         displayName: "Stinger",
         description: "It really hurts, but it's very fragile",
         damage: 75,
-        health: 8,
+        health: 10,
         extendable: true,
         images: {
             slotRotation: 3.14,
@@ -1053,7 +1053,7 @@ export let Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 18
         },
         usable: false,
-        hitboxRadius: 0.55,
+        hitboxRadius: 0.75,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.epic
@@ -1396,16 +1396,16 @@ export let Petals = new Definitions<PetalDefinition>([
         idString: "corn",
         displayName: "Corn",
         description: "You can actually eat it",
-        damage: 12,
+        damage: 8,
         health: 200,
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 45,
+            slotDisplaySize: 50,
             selfGameRotation: 18
         },
-        reloadTime: 8,
-        hitboxRadius: 0.6,
+        reloadTime: 12,
+        hitboxRadius: 0.75,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.epic
