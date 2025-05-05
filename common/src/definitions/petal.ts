@@ -563,11 +563,11 @@ export let Petals = new Definitions<PetalDefinition>([
         attributes: {
             health_percent_damage: {
                 percent: 0.3,
-                maxDamage: 150
+                maxDamage: 200
             }
         },
         reloadTime: 2.5,
-        hitboxRadius: 0.5,
+        hitboxRadius: 0.45,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.epic,
@@ -591,7 +591,7 @@ export let Petals = new Definitions<PetalDefinition>([
             }
         },
         reloadTime: 2.5,
-        hitboxRadius: 0.5,
+        hitboxRadius: 0.45,
         isDuplicate: true,
         pieceAmount: 3,
         isShowedInOne: true,
