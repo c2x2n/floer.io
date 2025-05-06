@@ -118,9 +118,7 @@ export class Game {
 
         const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
 
-        const isTouchScreen = ('ontouchstart' in window) ||
-            (navigator.maxTouchPoints > 0) ||
-            ((navigator as any).msMaxTouchPoints > 0);
+        const isTouchScreen = ('ontouchstart' in window) || ((navigator as any).msMaxTouchPoints > 0);
 
         this.playerIsOnMobile =  mobileRegex.test(userAgent) || isTouchScreen;
 
