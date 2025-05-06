@@ -41,6 +41,13 @@ export class Minimap {
     constructor(private game: Game) {}
 
     resize(): void {
+        if (this.game.playerIsOnMobile) {
+            const screenWidth = this.game.screenWidth;
+            this.minimapPositionX = screenWidth / 2;
+            this.minimapPositionY = 30;
+
+            return
+        }
         const screenWidth = this.game.screenWidth;
         const screenHeight = this.game.screenHeight;
 
@@ -61,6 +68,9 @@ export class Minimap {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
+        if (this.game.playerIsOnMobile && this.game.leaderboard.on)
+            return;
+
         ctx.save()
 
         ctx.translate(

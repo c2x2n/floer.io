@@ -83,6 +83,15 @@ export class UI {
 
     readonly loader = $<HTMLDivElement>("#loader");
 
+    readonly mobileControls = $<HTMLDivElement>("#mobile-controls");
+    readonly joystickArea = $<HTMLDivElement>("#joystick-area");
+
+    readonly buttonA = $<HTMLDivElement>("#mobile-button-a");
+    readonly buttonB = $<HTMLDivElement>("#mobile-button-b");
+
+    joystick : JQuery | null = null;
+    joystickHandle  : JQuery | null = null;
+
     openedDialog?: JQuery<HTMLDivElement>;
     get game(): Game {
         return this.app.game;
@@ -93,6 +102,19 @@ export class UI {
     private animationInterval: number | null = null;
 
     readonly gallery = new Gallery(this);
+
+    private joystickPosition = { x: 0, y: 0 };
+    private joystickRadius = 60;
+    private handleRadius = 30;
+
+    private activePointerId: number | null = null;
+
+    buttonAPressed = false;
+    buttonBPressed = false;
+
+    private joystickActive = false;
+    private joystickDirection = 0;
+    private joystickDistance = 0;
 
     constructor(app: ClientApplication) {
         this.app = app;
@@ -208,6 +230,143 @@ export class UI {
                 this.game.endGame();
             }
         })
+    }
+
+    mobileInit() {
+        $("#floer-logo").remove();
+        this.abandon.css("top", "10px");
+        this.abandon.css("left", "10px");
+        this.abandon.css("width", "20px");
+        this.abandon.css("height", "20px");
+        this.petalColumn.addClass("mobile");
+        $("#chat-box").addClass("mobile");
+
+        this.mobileControls.addClass("active");
+        this.joystickArea.addClass("active");
+        this.setupButtonEvents();
+        this.setupJoystickEvents();
+    }
+
+    private setupButtonEvents(): void {
+        this.buttonA.on("touchstart", () => {
+            this.buttonAPressed = true;
+            this.game.input.setVirtualInput("Mouse0", true);
+        });
+
+        this.buttonA.on("touchend touchcancel", () => {
+            this.buttonAPressed = false;
+            this.game.input.setVirtualInput("Mouse0", false);
+        });
+
+        this.buttonB.on("touchstart", () => {
+            this.buttonBPressed = true;
+            this.game.input.setVirtualInput("Mouse2", true);
+        });
+
+        this.buttonB.on("touchend touchcancel", () => {
+            this.buttonBPressed = false;
+            this.game.input.setVirtualInput("Mouse2", false);
+        });
+    }
+
+    private setupJoystickEvents(): void {
+        this.canvas.on("touchstart", (e: any) => {
+            if (this.joystick || this.activePointerId !== null) return;
+            if (!this.game.running) return;
+            const touch = e.originalEvent?.touches[0];
+            if (!touch) return;
+            this.activePointerId = touch.identifier;
+            const touchX = touch.clientX;
+            const touchY = touch.clientY;
+            this.joystickPosition = { x: touchX, y: touchY };
+            this.createJoystick(touchX, touchY);
+            this.joystickActive = true;
+        });
+
+        this.canvas.on("touchmove", (e: any) => {
+            if (!this.joystick || !this.joystickHandle || this.activePointerId === null) return;
+
+            e.preventDefault();
+            const touchList = e.originalEvent?.touches;
+            if (!touchList) return;
+
+            let touch = null;
+            for (let i = 0; i < touchList.length; i++) {
+                if (touchList[i].identifier === this.activePointerId) {
+                    touch = touchList[i];
+                    break;
+                }
+            }
+
+            if (!touch) return;
+            const deltaX = touch.clientX - this.joystickPosition.x;
+            const deltaY = touch.clientY - this.joystickPosition.y;
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            const angle = Math.atan2(deltaY, deltaX);
+            const actualDistance = Math.min(distance, this.joystickRadius - this.handleRadius);
+            const x = Math.cos(angle) * actualDistance;
+            const y = Math.sin(angle) * actualDistance;
+            this.joystickHandle.css({
+                transform: `translate(${x}px, ${y}px)`
+            });
+            this.joystickDirection = angle;
+            this.joystickDistance = Math.min(distance, this.joystickRadius - this.handleRadius);
+            this.updateVirtualMousePosition();
+        });
+
+        this.canvas.on("touchend touchcancel", (e: any) => {
+            const touchList = e.originalEvent?.changedTouches;
+            if (!touchList) return;
+
+            for (let i = 0; i < touchList.length; i++) {
+                if (touchList[i].identifier === this.activePointerId) {
+                    this.removeJoystick();
+                    this.activePointerId = null;
+                    this.joystickActive = false;
+
+                    this.joystickDirection = 0;
+                    this.joystickDistance = 0;
+
+                    this.updateVirtualMousePosition();
+                    break;
+                }
+            }
+        });
+    }
+
+    private createJoystick(x: number, y: number): void {
+        this.joystick = $("<div class='joystick'></div>");
+        this.joystickHandle = $("<div class='joystick-handle'></div>");
+        this.joystick.append(this.joystickHandle);
+        this.joystick.css({
+            left: `${x - this.joystickRadius}px`,
+            top: `${y - this.joystickRadius}px`
+        });
+        this.joystickArea.append(this.joystick);
+    }
+
+    private removeJoystick(): void {
+        if (this.joystick) {
+            this.joystick.remove();
+            this.joystick = null;
+            this.joystickHandle = null;
+        }
+    }
+
+    private updateVirtualMousePosition(): void {
+        if (!this.joystickActive) {
+            this.game.input.setVirtualMousePosition(
+                window.innerWidth / 2,
+                window.innerHeight / 2
+            );
+            return;
+        }
+        const scale = 5;
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        const mouseX = centerX + Math.cos(this.joystickDirection) * this.joystickDistance * scale;
+        const mouseY = centerY + Math.sin(this.joystickDirection) * this.joystickDistance * scale;
+        this.game.input.setVirtualMousePosition(mouseX, mouseY);
     }
 
     initSettingsDialog() {

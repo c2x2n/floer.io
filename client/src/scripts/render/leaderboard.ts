@@ -1,5 +1,8 @@
 import { Game } from "@/scripts/game.ts";
 import { MathNumeric } from "@common/utils/math.ts";
+import { Collision } from "@common/utils/collision.ts";
+import { RectHitbox } from "@common/utils/hitbox.ts";
+import { Vec2 } from "@common/utils/vector.ts";
 
 export class Leaderboard {
     width: number = 200;
@@ -8,11 +11,37 @@ export class Leaderboard {
     readonly contentHeight: number = 19;
     readonly maxLength = 10;
 
+    on: boolean = true;
+    eventLoaded: boolean = false;
+
     constructor(private game: Game) {}
 
     render(ctx: CanvasRenderingContext2D){
-        ctx.save();
+        if (!this.on) {
+            ctx.save();
+            ctx.translate(
+                this.game.screenWidth - 60,
+                10
+            );
 
+            ctx.fillStyle = "#55bb55";
+            ctx.strokeStyle = "#459745";
+            ctx.lineWidth = 4;
+
+            ctx.beginPath()
+
+            ctx.roundRect(
+                0, 0, 40, 40, 5
+            )
+
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
+
+            return;
+        }
+
+        ctx.save();
 
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
@@ -160,6 +189,9 @@ export class Leaderboard {
     positionX: number = 0;
     positionY: number = 0;
 
+    buttonHbx?: RectHitbox;
+    leaderboardHbx?: RectHitbox;
+
     resize(): void {
         const screenWidth = this.game.screenWidth;
 
@@ -168,5 +200,55 @@ export class Leaderboard {
 
         this.positionX = positionX
         this.positionY = positionY;
+
+        this.buttonHbx = new RectHitbox(
+            Vec2.new(
+                this.game.screenWidth - 60, 10
+            ),
+            Vec2.new(
+                this.game.screenWidth - 20, 30
+            )
+        );
+
+        this.leaderboardHbx = new RectHitbox(
+            Vec2.new(
+                this.positionX, this.positionY
+            ),
+            Vec2.new(
+                this.positionX + this.width, this.positionY + this.height
+            )
+        )
+
+        if (!this.eventLoaded) {
+            this.eventLoaded = true;
+            const canvas = this.game.ui.canvas;
+            canvas.on("touchstart",(e) => {
+                if (!this.game.playerIsOnMobile) return;
+                if (!this.leaderboardHbx || !this.buttonHbx) return;
+                if (!e.touches.length) return;
+
+                for (let touch of e.touches) {
+                    const position =  {
+                        x: touch.clientX,
+                        y: touch.clientY
+                    }
+
+                    switch (this.on) {
+                        case true:
+                            if (this.leaderboardHbx.isPointInside(position)) {
+                                this.on = false;
+                                e.preventDefault()
+                            }
+                            return;
+                        case false:
+                            if (this.buttonHbx.isPointInside(position)) {
+                                this.on = true;
+                                e.preventDefault()
+                            }
+                            return;
+                    }
+                }
+            })
+        }
     }
 }

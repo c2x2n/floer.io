@@ -193,7 +193,60 @@ export class Inventory{
             this.swingProgress = 0;
         });
 
+        $(document).on("touchstart", (ev) => {
+            this.swingAngle = 0;
+            this.swingProgress = 0;
+        })
+
         $(document).on("mouseup", (ev) => {
+            // DO NOT let users swap petals if a swap anim is in progress... need a lot more effort if you want two animations and swaps
+            // happen simultaneously AND not break the animation WHEN not fucking up the logics
+            if (this.isDraggingReturningToSlot) return;
+            if (draggingData.item && draggingData.container) {
+                this.processInventoryChanges(draggingData);
+            }
+        })
+
+        $(document).on("touchmove", (ev) => {
+            const position = {
+                x: ev.touches[0].clientX,
+                y: ev.touches[0].clientY
+            }
+
+            mouseSelectingPetal = undefined;
+
+            const eqpetals = $(".equipped-petals-row > .petal-slot");
+            const pppetals = $(".preparation-petals-row > .petal-slot");
+
+            const here = document.elementsFromPoint(position.x, position.y);
+
+            if (here.includes(this.ui.deletePetal[0])) {
+                mouseDeletingPetal = true;
+                return;
+            }
+
+            eqpetals.toArray().forEach((e) => {
+                if (here.includes(e)) {
+                    const find = this.equippedPetals.find(v => {
+                        if (!v.ui_slot) return false;
+                        return v.ui_slot[0] === e
+                    });
+                    if (find) mouseSelectingPetal = find;
+                }
+            })
+
+            pppetals.toArray().forEach((e) => {
+                if (here.includes(e)) {
+                    const find = this.preparationPetals.find(v => {
+                        if (!v.ui_slot) return false;
+                        return v.ui_slot[0] === e
+                    });
+                    if (find) mouseSelectingPetal = find;
+                }
+            })
+        })
+
+        $(document).on("touchend", (ev) => {
             // DO NOT let users swap petals if a swap anim is in progress... need a lot more effort if you want two animations and swaps
             // happen simultaneously AND not break the animation WHEN not fucking up the logics
             if (this.isDraggingReturningToSlot) return;
@@ -762,6 +815,33 @@ export class Inventory{
 
                     dragging.append(petal);
                     $("body").append(dragging);
+                })
+
+                petal.on("touchstart", (ev) => {
+                    if (!this.game.running) return;
+                    if (draggingData.item) return;
+
+                    const dragging = $(`<div class="dragging-petal"></div>`);
+
+                    const scale = draggingBoxSize / (petal.width() ?? draggingBoxSize);
+                    const finalFontSize = parseFloat(petal.css('--x')) || parseFloat(petal.css('font-size'));
+
+                    dragging.css("--x",
+                        (finalFontSize * scale).toString())
+                    const {clientX, clientY} = ev;
+                    draggingData = {
+                        item: dragging,
+                        container: petalContainer
+                    }
+                    dragging.css(
+                        "transform",
+                        `translateX(${clientX}px) translateY(${clientY}px)`
+                    );
+
+                    dragging.append(petal);
+                    $("body").append(dragging);
+
+                    ev.preventDefault();
                 })
 
                 petal.on("mouseover",(ev) => {

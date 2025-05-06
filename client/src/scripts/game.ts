@@ -123,6 +123,12 @@ export class Game {
             ((navigator as any).msMaxTouchPoints > 0);
 
         this.playerIsOnMobile =  mobileRegex.test(userAgent) || isTouchScreen;
+
+        if (this.playerIsOnMobile) {
+            this.ui.mobileInit();
+
+            this.leaderboard.on = false;
+        }
     }
 
     inventory: Inventory;
@@ -176,7 +182,7 @@ export class Game {
 
         if(this.ui.openedDialog) this.ui.toggleDialog(this.ui.openedDialog);
 
-        this.ui.hud.append(this.ui.settingsButton);
+        if (!this.playerIsOnMobile) this.ui.hud.append(this.ui.settingsButton);
         this.ui.canvas.insertBefore(this.ui.hud)
         this.ui.canvas.css("opacity", 1);
 
