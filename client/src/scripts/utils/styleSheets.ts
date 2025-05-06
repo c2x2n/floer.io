@@ -11,17 +11,18 @@ export function loadStyleSheet() {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    canvas.height = screen.width * 0.1;
-    canvas.width = screen.width * 0.1;
-    ctx.scale(screen.width * 0.1 / 50, screen.width * 0.1 / 50)
+    const DIM = Math.max(screen.width, screen.height);
+    canvas.height = DIM * 0.1;
+    canvas.width = DIM * 0.1;
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    const scale = Math.max(canvas.width / 50, 1);
+    ctx.scale(scale, scale);
 
     for (const definition of Petals.definitions) {
         const name = getGameAssetsName(definition);
 
         if (petalAssets.hasOwnProperty(name)) {
-            ctx.save();
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.translate(25, 25);
+            ctx.clearRect(-canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
             let fontSize = 12;
             if (definition.images?.fontSizeMultiplier) {
                 fontSize *= definition.images.fontSizeMultiplier;
@@ -31,11 +32,8 @@ export function loadStyleSheet() {
             styleSheet += `.petal-${definition.idString} {
                 background-image: url(${dataURL})
             }`
-            ctx.restore();
 
-            ctx.save();
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.translate(25, 25);
+            ctx.clearRect(-canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
             ICON_drawPetal(ctx, definition, 0, false, true);
             const silhouetteDataURL = canvas.toDataURL('image/png');
             styleSheet += `.petal-${definition.idString}-silhouette{
@@ -53,17 +51,13 @@ export function loadStyleSheet() {
                 left: 0;
                 background-size: 100% 100%;
             }`
-            ctx.restore();
 
-            ctx.save();
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.translate(25, 25);
+            ctx.clearRect(-canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
             ICON_drawPetal(ctx, definition, 0, true);
             const noTextDataURL = canvas.toDataURL('image/png');
             styleSheet += `.petal-${definition.idString}-bkg {
                 background-image: url(${noTextDataURL})
             }`
-            ctx.restore();
         } else {
             console.log(`[!] ${definition.idString} doesnt have an asset. Skipping...`)
         }
@@ -73,19 +67,14 @@ export function loadStyleSheet() {
         const name = getGameAssetsName(definition);
 
         if (mobAssets.hasOwnProperty(name)) {
-            ctx.save();
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.translate(25, 25);
+            ctx.clearRect(-canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
             ICON_drawMob(ctx, definition);
             const dataURL = canvas.toDataURL('image/png');
             styleSheet += `.mob-${definition.idString} {
                 background-image: url(${dataURL})
             }`
-            ctx.restore();
 
-            ctx.save();
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.translate(25, 25);
+            ctx.clearRect(-canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
             ICON_drawMob(ctx, definition, true);
             const silhouetteDataURL = canvas.toDataURL('image/png');
             styleSheet += `.mob-${definition.idString}-silhouette{
@@ -103,7 +92,6 @@ export function loadStyleSheet() {
                 left: 0;
                 background-size: 100% 100%;
             }`
-            ctx.restore();
         } else {
             console.log(`[!] ${definition.idString} doesnt have an asset. Skipping...`)
         }

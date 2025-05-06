@@ -5,7 +5,9 @@ import { Settings } from "@/settings.ts";
 import { loadStyleSheet } from "@/scripts/utils/styleSheets.ts";
 import { Renderer } from "@/scripts/renderer.ts";
 
-loadStyleSheet();
+document.fonts.ready.then(() => {
+    loadStyleSheet();
+})
 
 export class ClientApplication {
     settings = new Settings(this);
