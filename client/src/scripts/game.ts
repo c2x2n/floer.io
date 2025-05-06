@@ -106,11 +106,23 @@ export class Game {
     readonly particles = new ParticleManager(this);
     readonly bossbar = new Bossbar(this);
 
+    readonly playerIsOnMobile: boolean = false;
+
     constructor(app: ClientApplication) {
         this.app = app;
         this.ui = app.ui;
         this.inventory = new Inventory(this);
         this.settings = app.settings;
+
+        const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+
+        const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+
+        const isTouchScreen = ('ontouchstart' in window) ||
+            (navigator.maxTouchPoints > 0) ||
+            ((navigator as any).msMaxTouchPoints > 0);
+
+        this.playerIsOnMobile =  mobileRegex.test(userAgent) || isTouchScreen;
     }
 
     inventory: Inventory;

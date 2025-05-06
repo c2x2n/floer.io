@@ -1,4 +1,3 @@
-import { Game } from "@/scripts/game.ts";
 import { ClientApplication } from "@/main.ts";
 
 export interface SettingsData {

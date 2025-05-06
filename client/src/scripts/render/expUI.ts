@@ -94,18 +94,23 @@ export class ExpUI {
         ctx.strokeText(
             name,
             this.width / 2,
-            -22.5
+            -18.5
         )
         ctx.fillText(
             name,
             this.width / 2,
-            -22.5
+            -18.5
         )
 
         ctx.restore();
     }
 
     resize(): void {
+        if (this.game.playerIsOnMobile){
+            this.positionX = 10;
+            this.positionY = 40;
+            return
+        }
         const screenHeight = this.game.screenHeight;
 
         const positionX = 10;
