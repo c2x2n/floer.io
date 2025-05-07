@@ -311,7 +311,7 @@ export let Petals = new Definitions<PetalDefinition>([
         rarity: RarityName.legendary,
     },{
         idString: "tri_faster",
-        displayName: "Faster",
+        displayName: "Fastest",
         description: "Quickly.",
         damage: 15,
         health: 15,
