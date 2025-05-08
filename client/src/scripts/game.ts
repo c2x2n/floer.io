@@ -19,7 +19,7 @@ import { ClientLoot } from "@/scripts/entities/clientLoot.ts";
 import { ClientProjectile } from "@/scripts/entities/clientProjectile.ts";
 import { Config } from "@/config.ts";
 import { LoggedInPacket } from "@common/packets/loggedInPacket.ts";
-import { Petals, SavedPetalDefinitionData } from "@common/definitions/petal.ts";
+import { Petals, SavedPetalDefinitionData } from "@common/definitions/petals.ts";
 import { ChatChannel, ChatPacket } from "@common/packets/chatPacket.ts";
 import { ClientWall } from "@/scripts/entities/clientWall.ts";
 import { Settings } from "@/settings.ts";

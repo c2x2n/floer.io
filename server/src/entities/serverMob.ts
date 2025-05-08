@@ -4,12 +4,11 @@ import { type EntitiesNetData } from "../../../common/src/packets/updatePacket";
 import { CircleHitbox } from "../../../common/src/utils/hitbox";
 import { EntityType, GameConstants } from "../../../common/src/constants";
 import { Game } from "../game";
-import { MobCategory, MobDefinition, Mobs } from "../../../common/src/definitions/mob";
+import { MobCategory, MobDefinition, Mobs } from "../../../common/src/definitions/mobs";
 import { MathGraphics, MathNumeric, P2 } from "../../../common/src/utils/math";
 import { ServerPlayer } from "./serverPlayer";
 import { Random } from "../../../common/src/utils/random";
-import { PetalDefinition, Petals } from "../../../common/src/definitions/petal";
-import { spawnLoot } from "../utils/loot";
+import { PetalDefinition, Petals } from "../../../common/src/definitions/petals";
 import { ServerProjectile } from "./serverProjectile";
 import {
     collideableEntity,
@@ -18,10 +17,11 @@ import {
     isDamageableEntity,
     isDamageSourceEntity
 } from "../typings";
-import { ProjectileParameters } from "../../../common/src/definitions/projectile";
+import { ProjectileParameters } from "../../../common/src/definitions/projectiles";
 import { Modifiers } from "../../../common/src/typings";
-import { Rarity, RarityName } from "../../../common/src/definitions/rarity";
+import { Rarity, RarityName } from "../../../common/src/definitions/rarities";
 import { ServerWall } from "./serverWall";
+import { spawnLoot } from "../misc/spawning";
 
 export class ServerMob extends ServerEntity<EntityType.Mob> {
     type: EntityType.Mob = EntityType.Mob;
@@ -291,8 +291,8 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         }
 
         if (this.modifiers.healPerSecond) {
-            if (this.definition.skill?.healUnder) {
-                if (this.health < this.definition.skill.healUnder * this.definition.health) {
+            if (this.definition.skills?.healUnder) {
+                if (this.health < this.definition.skills.healUnder * this.definition.health) {
                     this.healingToFull = true;
                 }
                 if (this.healingToFull) {

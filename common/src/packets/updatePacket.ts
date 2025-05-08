@@ -1,9 +1,9 @@
 import { EntityType, GameConstants, PlayerState } from "../constants";
 import { type GameBitStream, type Packet } from "../net";
 import { Vec2, type Vector } from "../utils/vector";
-import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../definitions/petal";
-import { MobDefinition, Mobs } from "../definitions/mob";
-import { Projectile, ProjectileDefinition } from "../definitions/projectile";
+import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../definitions/petals";
+import { MobDefinition, Mobs } from "../definitions/mobs";
+import { Projectiles, ProjectileDefinition } from "../definitions/projectiles";
 import { P2 } from "../utils/math";
 
 export interface EntitiesNetData {
@@ -185,7 +185,7 @@ export const EntitySerializations: { [K in EntityType]: EntitySerialization<K> }
             stream.writeUnit(data.direction, 8);
         },
         serializeFull(stream, data): void {
-            Projectile.writeToStream(stream, data.definition);
+            Projectiles.writeToStream(stream, data.definition);
             stream.writeFloat(data.hitboxRadius, 0, 10, 8);
         },
         deserializePartial(stream) {
@@ -196,7 +196,7 @@ export const EntitySerializations: { [K in EntityType]: EntitySerialization<K> }
         },
         deserializeFull(stream) {
             return {
-                definition: Projectile.readFromStream(stream),
+                definition: Projectiles.readFromStream(stream),
                 hitboxRadius: stream.readFloat(0, 10, 8)
             };
         }

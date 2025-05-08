@@ -61,7 +61,7 @@ export const GameConstants = {
             damageAvoidanceChance: 0,
             damageAvoidanceByDamage: false,
             selfPoison: 0,
-            yinYangs: 0,
+            yinYangAmount: 0,
             conditionalHeal: undefined,
             controlRotation: false,
             extraSlot: 0,

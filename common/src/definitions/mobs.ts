@@ -1,6 +1,6 @@
 import { Definitions, ObjectDefinition } from "../utils/definitions";
-import { Projectile, ProjectileParameters } from "./projectile";
-import { RarityName } from "./rarity";
+import { Projectiles, ProjectileParameters } from "./projectiles";
+import { RarityName } from "./rarities";
 import { Modifiers } from "../typings";
 import { EntityType } from "../constants";
 
@@ -36,7 +36,7 @@ export type MobDefinition = ObjectDefinition & {
         readonly reachingAway?: boolean
         readonly sandstormLike?: boolean
     }
-    readonly skill?: {
+    readonly skills?: {
         readonly healUnder?: number
     }
     readonly modifiers?: Partial<Modifiers>
@@ -376,7 +376,7 @@ export const Mobs = new Definitions<MobDefinition>([
             health: 10,
             despawnTime: 3,
             speed: 6,
-            definition: Projectile.fromString("missile")
+            definition: Projectiles.fromString("missile")
         },
         movement: {
             reachingAway: true,
@@ -413,7 +413,7 @@ export const Mobs = new Definitions<MobDefinition>([
             health: 100,
             despawnTime: 3,
             speed: 8,
-            definition: Projectile.fromString("missile")
+            definition: Projectiles.fromString("missile")
         },
         shootSpeed: 1.25,
         aggroRadius: 30,
@@ -457,7 +457,7 @@ export const Mobs = new Definitions<MobDefinition>([
             health: 10,
             despawnTime: 3,
             speed: 7,
-            definition: Projectile.fromString("peas")
+            definition: Projectiles.fromString("peas")
         },
         shootSpeed: 1.5,
         aggroRadius: 30,
@@ -487,7 +487,7 @@ export const Mobs = new Definitions<MobDefinition>([
             health: 30,
             despawnTime: 3,
             speed: 11.5,
-            definition: Projectile.fromString("peas")
+            definition: Projectiles.fromString("peas")
         },
         shootSpeed: 1.3,
         aggroRadius: 30,
@@ -880,7 +880,7 @@ export const Mobs = new Definitions<MobDefinition>([
             health: 80,
             despawnTime: 3,
             speed: 12,
-            definition: Projectile.fromString("peas")
+            definition: Projectiles.fromString("peas")
         },
         shootSpeed: 1,
         aggroRadius: 30,
@@ -920,7 +920,7 @@ export const Mobs = new Definitions<MobDefinition>([
             health: 2300,
             despawnTime: 5,
             speed: 15,
-            definition: Projectile.fromString("peas")
+            definition: Projectiles.fromString("peas")
         },
         shootSpeed: 0.5,
         aggroRadius: 90,
@@ -948,7 +948,7 @@ export const Mobs = new Definitions<MobDefinition>([
             health: 100,
             despawnTime: 3,
             speed: 9,
-            definition: Projectile.fromString("missile")
+            definition: Projectiles.fromString("missile")
         },
         shootSpeed: 0.9,
         aggroRadius: 60,
@@ -1100,7 +1100,7 @@ export const Mobs = new Definitions<MobDefinition>([
             hitboxRadius: 6,
             despawnTime: 5,
             speed: 0,
-            definition: Projectile.fromString("web"),
+            definition: Projectiles.fromString("web"),
             modifiersWhenOn: {
                 speed: 0.6
             }
@@ -1142,7 +1142,7 @@ export const Mobs = new Definitions<MobDefinition>([
             hitboxRadius: 6.5,
             despawnTime: 7,
             speed: 0,
-            definition: Projectile.fromString("web"),
+            definition: Projectiles.fromString("web"),
             modifiersWhenOn: {
                 speed: 0.6
             }
@@ -1361,7 +1361,7 @@ export const Mobs = new Definitions<MobDefinition>([
         hitboxRadius: 3,
         shootable: true,
         shoot: {
-            definition: Projectile.fromString("red_peas"),
+            definition: Projectiles.fromString("red_peas"),
             health: 20,
             damage: 0,
             despawnTime: 2,
@@ -1372,7 +1372,7 @@ export const Mobs = new Definitions<MobDefinition>([
                 amount: 4,
                 type: EntityType.Projectile,
                 spawn: {
-                    definition: Projectile.fromString("poison_peas"),
+                    definition: Projectiles.fromString("poison_peas"),
                     health: 100,
                     damage: 10,
                     despawnTime: 3,
@@ -1417,7 +1417,7 @@ export const Mobs = new Definitions<MobDefinition>([
         hideInformation: true,
         shootable: true,
         shoot: {
-            definition: Projectile.fromString("red_peas"),
+            definition: Projectiles.fromString("red_peas"),
             health: 20,
             damage: 0,
             despawnTime: 2,
@@ -1428,7 +1428,7 @@ export const Mobs = new Definitions<MobDefinition>([
                 amount: 4,
                 type: EntityType.Projectile,
                 spawn: {
-                    definition: Projectile.fromString("poison_peas"),
+                    definition: Projectiles.fromString("poison_peas"),
                     health: 100,
                     damage: 10,
                     despawnTime: 3,
@@ -1512,7 +1512,7 @@ export const Mobs = new Definitions<MobDefinition>([
         images: {
             rotation: 1
         },
-        skill: {
+        skills: {
             healUnder: 0.5
         },
         modifiers: {
@@ -1539,7 +1539,7 @@ export const Mobs = new Definitions<MobDefinition>([
         images: {
             rotation: 1
         },
-        skill: {},
+        skills: {},
         modifiers: {
             healPerSecond: 50
         },

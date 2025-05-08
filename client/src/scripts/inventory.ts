@@ -1,12 +1,12 @@
 import { Game } from "@/scripts/game.ts";
 import $ from "jquery";
 import { MathNumeric, P2 } from "@common/utils/math.ts";
-import { PetalDefinition, Petals, SavedPetalDefinitionData } from "@common/definitions/petal.ts";
+import { PetalDefinition, Petals, SavedPetalDefinitionData } from "@common/definitions/petals.ts";
 import { UI } from "@/ui.ts";
-import { Rarity } from "@common/definitions/rarity.ts";
+import { Rarity } from "@common/definitions/rarities.ts";
 import { ActionType } from "@common/constants";
 import { showPetalInformation, unShowInformation } from "@/scripts/shown/information.ts";
-import { MobDefinition } from "@common/definitions/mob.ts";
+import { MobDefinition } from "@common/definitions/mobs.ts";
 import { PetalData, PetalState } from "@common/packets/updatePacket.ts";
 
 interface EasingData {

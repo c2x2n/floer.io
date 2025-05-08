@@ -1,9 +1,9 @@
-import { ZoneData, ZoneName, Zones } from "../../../common/src/zones";
-import { Vec2, Vector } from "../../../common/src/utils/vector";
-import { Random } from "../../../common/src/utils/random";
-import { Game } from "../game";
-import { CircleHitbox, RectHitbox } from "../../../common/src/utils/hitbox";
-import { EntityType } from "../../../common/src/constants";
+import { ZoneDefinition, ZoneName, Zones } from "../../common/src/definitions/zones";
+import { Vec2, Vector } from "../../common/src/utils/vector";
+import { Random } from "../../common/src/utils/random";
+import { Game } from "./game";
+import { CircleHitbox, RectHitbox } from "../../common/src/utils/hitbox";
+import { EntityType } from "../../common/src/constants";
 
 export class ZonesManager {
     zones = new Map<ZoneName, Zone>();
@@ -12,13 +12,6 @@ export class ZonesManager {
             const zoneName = name as ZoneName;
             this.zones.set(zoneName, new Zone(this.game, Zones[zoneName]))
         })
-    }
-
-    getByData(zoneData: ZoneData): Zone | undefined {
-        for (const zone of this.zones.values()) {
-            if (zone.data == zoneData) return zone;
-        }
-        return ;
     }
 
     inWhichZone(position: Vector): Zone | undefined {
@@ -32,7 +25,7 @@ export class ZonesManager {
 const lagDowner = 1;
 
 export class Zone {
-    hitbox: RectHitbox;
+    public hitbox: RectHitbox;
 
     get y(): number {
         return this.data.y?? 0;
@@ -46,13 +39,13 @@ export class Zone {
         return this.data.density / 15 * this.data.width * this.height / 20 / lagDowner
     }
 
-    constructor(private game: Game, public data: ZoneData) {
+    constructor(private game: Game, public data: ZoneDefinition) {
         this.hitbox = new RectHitbox(
             Vec2.new(data.x, this.y), Vec2.new(data.x + data.width, this.y + this.height)
         )
     }
 
-    randomPoint(): Vector {
+    public randomPoint(): Vector {
         const randomX =
             Random.int(this.data.x, this.data.x + this.data.width)
         const randomY =
@@ -63,7 +56,7 @@ export class Zone {
         }
     }
 
-    randomSafePosition(hitboxRadius: number): Vector {
+    public randomSafePosition(hitboxRadius: number): Vector {
         let collidedNumber = 0;
         let position = this.randomPoint();
         let attempt = 0;
@@ -91,7 +84,7 @@ export class Zone {
         return position;
     }
 
-    countEntity(type?: EntityType): number {
+    public countEntity(type?: EntityType): number {
         const collided = this.game.grid.intersectsHitbox(this.hitbox);
 
         let count = 0;

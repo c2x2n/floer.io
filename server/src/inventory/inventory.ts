@@ -1,12 +1,12 @@
 import { ServerPlayer } from "../entities/serverPlayer";
 import { PetalBunch } from "./petalBunch";
 import { Game } from "../game";
-import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../../../common/src/definitions/petal";
+import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../../../common/src/definitions/petals";
 import { P2 } from "../../../common/src/utils/math";
 import { Vector } from "../../../common/src/utils/vector";
 import { GameConstants } from "../../../common/src/constants";
-import { AttributeEventManager } from "../utils/eventManager";
-import { Rarity } from "../../../common/src/definitions/rarity";
+import { AttributeEventManager } from "../utils/petalEventManager";
+import { Rarity } from "../../../common/src/definitions/rarities";
 import { Random } from "../../../common/src/utils/random";
 
 export class Inventory {
@@ -270,7 +270,7 @@ export class Inventory {
                 this.player.direction.mouseDirection.x
             );
         } else {
-            const yyEffects = this.getYinYangEffects(this.player.modifiers.yinYangs);
+            const yyEffects = this.getYinYangEffects(this.player.modifiers.yinYangAmount);
 
             if (yyEffects==='rev') {
                 finalRevSpeed = -finalRevSpeed;

@@ -4,10 +4,10 @@ import { getGameAssetsFile, getGameAssetsName } from "@/scripts/utils/assets.ts"
 import { Game } from "@/scripts/game";
 import { EntitiesNetData } from "@common/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
-import { MobDefinition } from "@common/definitions/mob.ts";
+import { MobDefinition } from "@common/definitions/mobs.ts";
 import { Vec2 } from "@common/utils/vector.ts";
-import { Rarity } from "@common/definitions/rarity.ts";
-import { mobAssets } from "@/assets/mob.ts";
+import { Rarity } from "@common/definitions/rarities.ts";
+import { mobAssets } from "@/assets/mobs.ts";
 import { Tween, Easing } from "@tweenjs/tween.js";
 import { MathGraphics, MathNumeric } from "@common/utils/math.ts";
 

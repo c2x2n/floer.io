@@ -2,10 +2,10 @@ import { ServerEntity } from "./serverEntity";
 import { type EntitiesNetData } from "../../../common/src/packets/updatePacket";
 import { CircleHitbox } from "../../../common/src/utils/hitbox";
 import { EntityType } from "../../../common/src/constants";
-import { PetalDefinition } from "../../../common/src/definitions/petal";
+import { PetalDefinition } from "../../../common/src/definitions/petals";
 import { ServerPlayer } from "./serverPlayer";
 import { CollisionResponse } from "../../../common/src/utils/collision";
-import { AttributeEvents, PetalUsingAnimations, } from "../utils/attribute";
+import { AttributeEvents, PetalUsingAnimations, } from "../utils/attributeRealizes";
 import { collideableEntity, damageableEntity, damageSource } from "../typings";
 import { PetalBunch } from "../inventory/petalBunch";
 import { ServerFriendlyMob, ServerMob } from "./serverMob";
@@ -143,7 +143,7 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
                 if (this.definition.usable) {
                     this.useReload += this.game.dt;
                     if (this.canUse) {
-                        this.owner.sendEvent(AttributeEvents.CAN_USE, undefined, this)
+                        this.owner.sendEvent(AttributeEvents.USABLE, undefined, this)
                     }
                 }
             }
@@ -195,15 +195,15 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
             const owner = this.owner;
             const originalIsPetalAttack = owner.isPetalAttack;
             owner.isPetalAttack = true;
-            
+
             to.receiveDamage(this.damage, owner);
-            
+
             owner.sendEvent(
                 AttributeEvents.PETAL_DEAL_DAMAGE,
                 to,
                 this
             );
-            
+
             owner.isPetalAttack = originalIsPetalAttack;
         }
     }

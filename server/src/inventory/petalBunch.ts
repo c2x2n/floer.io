@@ -1,11 +1,11 @@
-import { getDisplayedPieces, SavedPetalDefinitionData } from "../../../common/src/definitions/petal";
+import { getDisplayedPieces, SavedPetalDefinitionData } from "../../../common/src/definitions/petals";
 import { ServerPetal } from "../entities/serverPetal";
 import { MathGraphics, MathNumeric, P2 } from "../../../common/src/utils/math";
 import { Vec2, Vector } from "../../../common/src/utils/vector";
 import { Inventory } from "./inventory";
 import { GameConstants } from "../../../common/src/constants";
 import { ServerPlayer } from "../entities/serverPlayer";
-import { PetalUsingAnimations } from "../utils/attribute";
+import { PetalUsingAnimations } from "../utils/attributeRealizes";
 
 export class PetalBunch {
     position: Vector;

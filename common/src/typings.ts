@@ -1,5 +1,3 @@
-import { GameConstants } from "./constants";
-
 export type PlayerModifiers = Modifiers & {
     healing: number;
     maxHealth: number;
@@ -7,7 +5,7 @@ export type PlayerModifiers = Modifiers & {
     zoom: number;
     damageAvoidanceChance: number;
 	damageAvoidanceByDamage: boolean;
-    yinYangs: number;
+    yinYangAmount: number;
     conditionalHeal?: {
         healthPercent: number;
         healAmount: number;

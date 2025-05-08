@@ -3,10 +3,10 @@ import { Vector } from "../../../common/src/utils/vector";
 import { type EntitiesNetData } from "../../../common/src/packets/updatePacket";
 import { CircleHitbox } from "../../../common/src/utils/hitbox";
 import { EntityType, GameConstants } from "../../../common/src/constants";
-import { PetalDefinition } from "../../../common/src/definitions/petal";
+import { PetalDefinition } from "../../../common/src/definitions/petals";
 import { ServerPlayer } from "./serverPlayer";
 import { Game } from "../game";
-import { Rarity } from "../../../common/src/definitions/rarity";
+import { Rarity } from "../../../common/src/definitions/rarities";
 import { CollisionResponse } from "../../../common/src/utils/collision";
 import { collideableEntity } from "../typings";
 

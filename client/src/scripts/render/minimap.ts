@@ -1,7 +1,8 @@
 import { Game } from "@/scripts/game.ts";
 import { MathNumeric, P2 } from "@common/utils/math.ts";
 
-import { Walls, ZoneName, Zones } from "@common/zones.ts";
+import { ZoneName, Zones } from "@common/definitions/zones.ts";
+import { Walls } from "@common/definitions/walls.ts";
 
 const widthDiv = 10;
 const heightDiv = 8;

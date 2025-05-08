@@ -147,4 +147,4 @@ export const Rarity = new Definitions<RarityDefinition>(([
 ] satisfies Partial<RarityDefinition>[]).map(def => ({
     ...def,
     border: strokeColor(def.color)
-})) as RarityDefinition[]);
+})) satisfies RarityDefinition[]);

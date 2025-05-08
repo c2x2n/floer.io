@@ -1,6 +1,6 @@
 import { type GameBitStream, type Packet } from "../net";
 import { GameConstants } from "../constants";
-import { Petals, SavedPetalDefinitionData } from "../definitions/petal";
+import { Petals, SavedPetalDefinitionData } from "../definitions/petals";
 
 export class JoinPacket implements Packet {
     name = "";

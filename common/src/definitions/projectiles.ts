@@ -1,7 +1,7 @@
 import { Definitions, ObjectDefinition } from "../utils/definitions";
 import { Modifiers, PlayerModifiers } from "../typings";
 import { EntityType } from "../constants";
-import { MobDefinition } from "./mob";
+import { MobDefinition } from "./mobs";
 
 export type ProjectileDefinition = ObjectDefinition & {
     readonly onGround?: boolean;
@@ -9,7 +9,7 @@ export type ProjectileDefinition = ObjectDefinition & {
     readonly showingXBackground?: number;
 };
 
-export const Projectile = new Definitions<ProjectileDefinition>([
+export const Projectiles = new Definitions<ProjectileDefinition>([
     {
         idString: "dandelion",
         displayName: "Dandelion",

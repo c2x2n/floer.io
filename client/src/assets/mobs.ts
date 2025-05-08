@@ -1,4 +1,4 @@
-import { AssetsDrawer } from "@/assets/asset.ts";
+import { AssetsDrawer } from "@/assets/assets.ts";
 import { Dot, RenderContainer } from "@/scripts/utils/renderContainer.ts";
 import { Random } from "@common/utils/random.ts";
 import { halfPI, MathGraphics, MathNumeric, P2, PI } from "@common/utils/math.ts";

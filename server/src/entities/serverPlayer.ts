@@ -20,20 +20,20 @@ import { ActionType, EntityType, GameConstants, PlayerState } from "../../../com
 import { GameOverPacket } from "../../../common/src/packets/gameOverPacket";
 import { Inventory } from "../inventory/inventory";
 import { ServerPetal } from "./serverPetal";
-import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../../../common/src/definitions/petal";
-import { spawnLoot } from "../utils/loot";
-import { AttributeEvents } from "../utils/attribute";
+import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../../../common/src/definitions/petals";
+import { AttributeEvents } from "../utils/attributeRealizes";
 import { PlayerModifiers } from "../../../common/src/typings";
-import { EventFunctionArguments } from "../utils/eventManager";
+import { EventFunctionArguments } from "../utils/petalEventManager";
 import { getLevelExpCost, getLevelInformation } from "../../../common/src/utils/levels";
 import { damageableEntity, damageSource } from "../typings";
 import { LoggedInPacket } from "../../../common/src/packets/loggedInPacket";
 import { ServerFriendlyMob } from "./serverMob";
 import { ChatChannel, ChatPacket } from "../../../common/src/packets/chatPacket";
 import { PoisonEffect } from "../utils/effects";
-import { Rarity, RarityName } from "../../../common/src/definitions/rarity";
-import { MobDefinition, Mobs } from "../../../common/src/definitions/mob";
+import { Rarity, RarityName } from "../../../common/src/definitions/rarities";
+import { MobDefinition, Mobs } from "../../../common/src/definitions/mobs";
 import { ServerWall } from "./serverWall";
+import { spawnLoot } from "../misc/spawning";
 
 // 闪避
 enum curveType {
@@ -177,7 +177,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     persistentSpeedModifier: number = 1;
     // 无敌模式
     godMode: boolean = false;
-    
+
     // 观察者模式
     spectatorMode: boolean = false;
 
@@ -200,14 +200,14 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     canCollideWith(entity: ServerEntity): boolean {
         // 观察者模式下禁用碰撞
         if (this.spectatorMode) return false;
-        
+
         return super.canCollideWith(entity);
     }
 
     canReceiveDamageFrom(source: damageableEntity): boolean {
         // 观察者模式下不能受到伤害
         if (this.spectatorMode) return false;
-        
+
         switch (source.type) {
             case EntityType.Player:
                 return source != this
@@ -334,7 +334,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     dealDamageTo(to: damageableEntity): void{
         // 观察者模式下不造成伤害
         if (this.spectatorMode) return;
-        
+
         if (to.canReceiveDamageFrom(this)) {
             to.receiveDamage(this.damage, this);
             this.sendEvent(
@@ -868,29 +868,29 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             this.sendDirectMessage('-------------------');
         } else if (rest.startsWith('tp ')) {
             const targetIdentifier = rest.substring('tp '.length).trim();
-            
+
             if (!targetIdentifier) {
                 return this.sendDirectMessage('Please provide a player ID or name', 0xff0000);
             }
-            
+
             const targetPlayer = this.findTarget(targetIdentifier);
-            
+
             if (!targetPlayer) {
                 return this.sendDirectMessage(`Player '${targetIdentifier}' not found`, 0xff0000);
             }
-            
+
             if (targetPlayer === this) {
                 return this.sendDirectMessage('Cannot teleport to yourself', 0xff0000);
             }
-            
+
             const angle = Math.random() * Math.PI * 2;
             const distance = 10;
             const offsetX = Math.cos(angle) * distance;
             const offsetY = Math.sin(angle) * distance;
-            
+
             this.position.x = targetPlayer.position.x + offsetX;
             this.position.y = targetPlayer.position.y + offsetY;
-            
+
             this.sendDirectMessage(`Teleported to player ${targetPlayer.name} (ID: ${targetPlayer.id})`, 0x00ff00);
         } else if (rest.startsWith('help')) {
             this.sendDirectMessage('--- Admin Command List ---', 0x00ffff);
@@ -919,11 +919,11 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             this.sendDirectMessage('-------------------', 0x00ffff);
         } else if (rest.startsWith('spectator')) {
             const targetIdentifier = rest.substring('spectator'.length).trim();
-            
+
             // 如果没有指定目标，则切换自己的观察者模式
             if (!targetIdentifier) {
                 this.spectatorMode = !this.spectatorMode;
-                
+
                 if (this.spectatorMode) {
                     this.sendDirectMessage('Spectator mode enabled', 0x00ff00);
                 } else {
@@ -935,17 +935,17 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                 this.petalEntities.forEach(petal => petal.setFullDirty());
                 return;
             }
-            
+
             // 查找目标玩家
             const targetPlayer = this.findTarget(targetIdentifier);
-            
+
             if (!targetPlayer) {
                 return this.sendDirectMessage(`Player '${targetIdentifier}' not found`, 0xff0000);
             }
-            
+
             // 切换目标玩家的观察者模式
             targetPlayer.spectatorMode = !targetPlayer.spectatorMode;
-            
+
             if (targetPlayer.spectatorMode) {
                 this.sendDirectMessage(`Enabled spectator mode for ${targetPlayer.name} (ID: ${targetPlayer.id})`, 0x00ff00);
                 targetPlayer.sendDirectMessage('An admin enabled spectator mode for you', 0x00ff00);
@@ -953,7 +953,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                 this.sendDirectMessage(`Disabled spectator mode for ${targetPlayer.name} (ID: ${targetPlayer.id})`, 0x00ff00);
                 targetPlayer.sendDirectMessage('An admin disabled spectator mode for you', 0x00ff00);
             }
-            
+
             // 设置为全局脏标记，以便客户端更新显示
             targetPlayer.setFullDirty();
             // 强制花瓣更新状态
@@ -961,7 +961,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         } else if (rest.startsWith('god')) {
             // 切换无敌模式
             this.godMode = !this.godMode;
-            
+
             if (this.godMode) {
                 this.sendDirectMessage('God mode enabled', 0x00ff00);
             } else {
@@ -970,36 +970,36 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         } else if (rest.startsWith('speed')) {
             const params = rest.substring('speed'.length).trim();
             const args = params.split(' ').filter(arg => arg.length > 0);
-            
+
             if (args.length === 0) {
                 return this.sendDirectMessage('Please provide a speed multiplier', 0xff0000);
             }
-            
+
             const speedValue = parseFloat(args[0]);
             if (isNaN(speedValue) || speedValue <= 0) {
                 return this.sendDirectMessage('Please provide a valid speed multiplier (greater than 0)', 0xff0000);
             }
-            
+
             // 如果提供了玩家参数
             if (args.length > 1) {
                 const targetIdentifier = args[1];
                 const targetPlayer = this.findTarget(targetIdentifier);
-                
+
                 if (!targetPlayer) {
                     return this.sendDirectMessage(`Player '${targetIdentifier}' not found`, 0xff0000);
                 }
-                
+
                 // 设置目标玩家的速度
                 targetPlayer.persistentSpeedModifier = speedValue;
                 targetPlayer.updateModifiers();
-                
+
                 this.sendDirectMessage(`Set ${targetPlayer.name}'s (ID: ${targetPlayer.id}) speed multiplier to ${speedValue}`, 0x00ff00);
                 targetPlayer.sendDirectMessage(`An admin set your speed multiplier to ${speedValue}`, 0x00ff00);
             } else {
                 // 设置自己的速度
                 this.persistentSpeedModifier = speedValue;
                 this.updateModifiers();
-                
+
                 this.sendDirectMessage(`Speed multiplier set to ${speedValue}`, 0x00ff00);
             }
         } else if (rest.startsWith('whisper ') || rest.startsWith('w ')) {
@@ -1116,7 +1116,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
         } else if (rest.startsWith('heal')) {
             const targetIdentifier = rest.substring('heal'.length).trim();
-            
+
             // 如果没有指定目标，则治疗自己
             if (!targetIdentifier) {
                 this.health = this.maxHealth;
@@ -1124,47 +1124,47 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                 this.sendDirectMessage('Health and shield restored', 0x00ff00);
                 return;
             }
-            
+
             // 查找目标玩家
             const targetPlayer = this.findTarget(targetIdentifier);
-            
+
             if (!targetPlayer) {
                 return this.sendDirectMessage(`Player '${targetIdentifier}' not found`, 0xff0000);
             }
-            
+
             // 恢复目标玩家的生命值和护盾
             targetPlayer.health = targetPlayer.maxHealth;
             targetPlayer.shield = targetPlayer.maxShield;
-            
+
             this.sendDirectMessage(`Restored ${targetPlayer.name}'s (ID: ${targetPlayer.id}) health and shield`, 0x00ff00);
             targetPlayer.sendDirectMessage('An admin restored your health and shield', 0x00ff00);
         } else if (rest.startsWith('teleport')) {
             const params = rest.substring('teleport'.length).trim();
             const args = params.split(' ').filter(arg => arg.length > 0);
-            
+
             if (args.length < 2) {
                 return this.sendDirectMessage('Please provide valid coordinates (x y)', 0xff0000);
             }
-            
+
             const x = parseFloat(args[0]);
             const y = parseFloat(args[1]);
-            
+
             if (isNaN(x) || isNaN(y)) {
                 return this.sendDirectMessage('Please provide valid coordinates', 0xff0000);
             }
-            
+
             // 检查坐标是否在地图范围内
             const mapWidth = this.game.width;
             const mapHeight = this.game.height;
-            
+
             if (x < 0 || x > mapWidth || y < 0 || y > mapHeight) {
                 return this.sendDirectMessage(`Coordinates out of map bounds (0-${mapWidth}, 0-${mapHeight})`, 0xff0000);
             }
-            
+
             // 设置新位置
             this.position.x = x;
             this.position.y = y;
-            
+
             this.sendDirectMessage(`Teleported to coordinates (${x}, ${y})`, 0x00ff00);
         } else {
              this.sendDirectMessage(`Unknown command: /${rest.split(' ')[0]}`, 0xff0000);
@@ -1279,7 +1279,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         now.damageAvoidanceChance += extra.damageAvoidanceChance ?? 0;
 		now.damageAvoidanceByDamage = extra.damageAvoidanceByDamage ?? now.damageAvoidanceByDamage;
         now.selfPoison += extra.selfPoison ?? 0;
-        now.yinYangs += extra.yinYangs ?? 0;
+        now.yinYangAmount += extra.yinYangAmount ?? 0;
         now.extraDistance += extra.extraDistance ?? 0;
         now.controlRotation = extra.controlRotation ?? now.controlRotation;
         now.revive = extra.revive ?? now.revive;

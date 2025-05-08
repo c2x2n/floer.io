@@ -1,9 +1,8 @@
 import { ServerPetal } from "../entities/serverPetal";
 import { MathGraphics, P2 } from "../../../common/src/utils/math";
 import { Vec2 } from "../../../common/src/utils/vector";
-import { AttributeName } from "../../../common/src/definitions/attribute";
-import { AttributeParameters } from "../../../common/src/definitions/petal";
-import { EventInitializer } from "./eventManager";
+import { AttributeNames, AttributeParameters } from "../../../common/src/definitions/petals";
+import { EventInitializer } from "./petalEventManager";
 import { Effect } from "./effects";
 import { EntityType } from "../../../common/src/constants";
 import { ServerPlayer } from "../entities/serverPlayer";
@@ -13,10 +12,6 @@ import { isDamageableEntity } from "../typings";
 import { CircleHitbox } from "../../../common/src/utils/hitbox";
 import { ServerEntity } from "../entities/serverEntity";
 
-// 创建一个更精确的映射来存储花瓣攻击信息
-// 键: "攻击者ID-目标ID" 形式的字符串，值: {时间戳, 伤害量}
-const petalAttacks = new Map<string, {timestamp: number, damage: number}>();
-
 export enum AttributeEvents {
     HEALING = "HEALING",
     DEFEND = "DEFEND",
@@ -25,24 +20,23 @@ export enum AttributeEvents {
     FLOWER_DEAL_DAMAGE = "FLOWER_DEAL_DAMAGE",
     FLOWER_GET_DAMAGE = "FLOWER_GET_DAMAGE",
     PROJECTILE_DEAL_DAMAGE = "PROJECTILE_DEAL_DAMAGE",
-    CAN_USE = "CAN_USE"
+    USABLE = "USABLE"
 }
 
 export enum PetalUsingAnimations {
     ABSORB = "ABSORB",
     NORMAL = "NORMAL",
-    HATCH = "HATCH",
-    SHIELD = "SHIELD"
+    HATCH = "HATCH"
 }
 
-export interface AttributeRealize<T extends AttributeName = AttributeName> {
+export interface AttributeRealize<T extends AttributeNames = AttributeNames> {
     readonly unstackable?: boolean;
     readonly callback: (
         on: EventInitializer, petal: ServerPetal, data: AttributeParameters[T]
     ) => void
 }
 
-export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>} = {
+export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>} = {
     absorbing_heal: {
         callback: (on, petal, data) => {
 
@@ -57,7 +51,7 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
 
     absorbing_shield: {
         callback: (on, petal, data) => {
-            on(AttributeEvents.CAN_USE,
+            on(AttributeEvents.USABLE,
                 () => {
                     if (data) {
                         const maxShield = petal.owner.modifiers.maxHealth * 0.75;
@@ -67,7 +61,7 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
                         );
                     }
                 }
-            , PetalUsingAnimations.SHIELD);
+            , PetalUsingAnimations.ABSORB);
         }
     },
 
@@ -102,9 +96,7 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
                             knockbackMultiplier = 1.0;
                         }
                         else {
-                            const entityRadius = entity.hitbox instanceof CircleHitbox ?
-                                entity.hitbox.radius : 1;
-
+                            const entityRadius = entity.hitbox.radius;
                             const baseRadius = 1;
 
                             // 计算倍率: 基础半径/实体半径 (半径越大，倍率越小)
@@ -275,7 +267,7 @@ export const PetalAttributeRealizes: {[K in AttributeName]: AttributeRealize<K>}
 
     spawner: {
         callback: (on, petal, data) => {
-            on(AttributeEvents.CAN_USE,() => {
+            on(AttributeEvents.USABLE,() => {
                 if (!data) return;
 
                 const isSandstorm = data.idString === "sandstorm";

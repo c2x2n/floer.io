@@ -1,4 +1,4 @@
-import { AssetsDrawer } from "@/assets/asset.ts";
+import { AssetsDrawer } from "@/assets/assets.ts";
 import { MathNumeric, P2 } from "@common/utils/math.ts";
 
 const web = new Image();

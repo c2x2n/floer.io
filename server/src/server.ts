@@ -15,8 +15,6 @@ export interface ProcessMessage {
     req: IncomingMessage
 }
 
-export const SECRET_KEY = process.env.TOKEN_SECRET_KEY as string;
-
 function cors(res: ServerResponse) {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");

@@ -1,10 +1,8 @@
 import { Definitions, ObjectDefinition } from "../utils/definitions";
-import { AttributeName } from "./attribute";
-import { Rarity, RarityName } from "./rarity";
+import { RarityName } from "./rarities";
 import { PlayerModifiers } from "../typings";
-import { Projectile, ProjectileDefinition, ProjectileParameters } from "./projectile";
-import { MobDefinition, Mobs } from "./mob";
-import { MobCategory } from "./mob";
+import { ProjectileParameters, Projectiles } from "./projectiles";
+import { MobCategory, MobDefinition, Mobs } from "./mobs";
 import { EntityType } from "../constants";
 import { halfPI, P2 } from "../utils/math";
 
@@ -78,67 +76,65 @@ type PetalUsageType = {
 }
 
 export type AttributeParameters = {
-    [K in AttributeName] ?: unknown
-} & ({
-    absorbing_heal?: number
-    absorbing_shield?: number
-    boost?: number,
-    poison?: {
-        damagePerSecond: number
-        duration: number
+    readonly absorbing_heal?: number
+    readonly absorbing_shield?: number
+    readonly boost?: number,
+    readonly poison?: {
+        readonly damagePerSecond: number
+        readonly duration: number
     }
-    healing_debuff?: {
-        healing: number
-        duration: number
+    readonly healing_debuff?: {
+        readonly healing: number
+        readonly duration: number
     }
-    body_poison?: {
-        damagePerSecond: number
-        duration: number
+    readonly body_poison?: {
+        readonly damagePerSecond: number
+        readonly duration: number
     }
-    damage_reflection?: number
-    self_damage?: number
-    shoot?: ProjectileParameters
-    around_circle_shoot?: ProjectileParameters
-    peas_shoot?: {
-        radius?: number
-        amount: number
-        para: ProjectileParameters
+    readonly damage_reflection?: number
+    readonly self_damage?: number
+    readonly shoot?: ProjectileParameters
+    readonly around_circle_shoot?: ProjectileParameters
+    readonly peas_shoot?: {
+        readonly radius?: number
+        readonly amount: number
+        readonly para: ProjectileParameters
     }
-    place_projectile?: ProjectileParameters
-    spawner?: MobDefinition
-    critical_hit?: {
-        chance: number
-        multiplier: number
+    readonly place_projectile?: ProjectileParameters
+    readonly spawner?: MobDefinition
+    readonly critical_hit?: {
+        readonly chance: number
+        readonly multiplier: number
     }
-    health_percent_damage?: {
-        percent: number
-        maxDamage?: number
+    readonly health_percent_damage?: {
+        readonly percent: number
+        readonly maxDamage?: number
     }
-    damage_avoidance?: {
-        chance: number
+    readonly damage_avoidance?: {
+        readonly chance: number
     }
-    paralyze?: {
-        duration: number
-        speedReduction: number
-        revolutionReduction?: number
+    readonly paralyze?: {
+        readonly duration: number
+        readonly speedReduction: number
+        readonly revolutionReduction?: number
     }
-    area_poison?: {
-        radius: number
-        damagePerSecond: number
-        tickInterval?: number
+    readonly area_poison?: {
+        readonly radius: number
+        readonly damagePerSecond: number
+        readonly tickInterval?: number
     }
-    damage_heal?: {
-        healPercent: number
-        maximumHeal?: number // meaningless, because now it uses petal.damage to calculate not damage dealt
+    readonly damage_heal?: {
+        readonly healPercent: number
+        readonly maximumHeal?: number // meaningless, because now it uses petal.damage to calculate not damage dealt
     }
-    armor?: number
-    lightning?: {
-        attenuation: number
-        range: number
-        bounces: number
+    readonly armor?: number
+    readonly lightning?: {
+        readonly attenuation: number
+        readonly range: number
+        readonly bounces: number
     }
-    damage_reduction_percent?: number
-})
+    readonly damage_reduction_percent?: number
+}
 
 export function getDisplayedPieces(petal: PetalDefinition): number {
     if (petal.equipment) return 0;
@@ -706,7 +702,7 @@ export let Petals = new Definitions<PetalDefinition>([
                 health: 20,
                 despawnTime: 3,
                 speed: 8,
-                definition: Projectile.fromString("dandelion"),
+                definition: Projectiles.fromString("dandelion"),
                 modifiersWhenDamage: {
                     modifier: {
                         healing: 0
@@ -746,7 +742,7 @@ export let Petals = new Definitions<PetalDefinition>([
                 hitboxRadius: 1,
                 despawnTime: 3,
                 speed: 8,
-                definition: Projectile.fromString("dandelion"),
+                definition: Projectiles.fromString("dandelion"),
                 modifiersWhenDamage: {
                     modifier: {
                         healing: 0
@@ -784,7 +780,7 @@ export let Petals = new Definitions<PetalDefinition>([
                 hitboxRadius: 1,
                 despawnTime: 3,
                 speed: 8,
-                definition: Projectile.fromString("missile"),
+                definition: Projectiles.fromString("missile"),
                 modifiersWhenDamage: {
                     modifier: {
                         speed: 0
@@ -825,7 +821,7 @@ export let Petals = new Definitions<PetalDefinition>([
                 health: 10,
                 despawnTime: 3,
                 speed: 7.5,
-                definition: Projectile.fromString("missile")
+                definition: Projectiles.fromString("missile")
             }
         },
         useTime: 0.2,
@@ -858,7 +854,7 @@ export let Petals = new Definitions<PetalDefinition>([
                 health: 20,
                 despawnTime: 3,
                 speed: 7,
-                definition: Projectile.fromString("missile")
+                definition: Projectiles.fromString("missile")
             }
         },
         useTime: 0.2,
@@ -892,7 +888,7 @@ export let Petals = new Definitions<PetalDefinition>([
                 health: 20,
                 despawnTime: 3,
                 speed: 12,
-                definition: Projectile.fromString("missile")
+                definition: Projectiles.fromString("missile")
             }
         },
         useTime: 0.1,
@@ -1197,7 +1193,7 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         attributes: {
             shoot: {
-                definition: Projectile.fromString("web"),
+                definition: Projectiles.fromString("web"),
                 speed: 0,
                 hitboxRadius: 3,
                 despawnTime: 5,
@@ -1227,7 +1223,7 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         attributes: {
             shoot: {
-                definition: Projectile.fromString("web"),
+                definition: Projectiles.fromString("web"),
                 speed: 0,
                 hitboxRadius: 5,
                 despawnTime: 5,
@@ -1259,7 +1255,7 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         attributes: {
             shoot: {
-                definition: Projectile.fromString("web"),
+                definition: Projectiles.fromString("web"),
                 speed: 0,
                 hitboxRadius: 10,
                 despawnTime: 5,
@@ -1294,7 +1290,7 @@ export let Petals = new Definitions<PetalDefinition>([
             peas_shoot: {
                 amount: 4,
                 para: {
-                    definition: Projectile.fromString("peas"),
+                    definition: Projectiles.fromString("peas"),
                     speed: 6.25,
                     damage: 8,
                     health: 5,
@@ -1328,7 +1324,7 @@ export let Petals = new Definitions<PetalDefinition>([
             peas_shoot: {
                 amount: 4,
                 para: {
-                    definition: Projectile.fromString("poison_peas"),
+                    definition: Projectiles.fromString("poison_peas"),
                     speed: 6.25,
                     damage: 8,
                     health: 5,
@@ -1370,7 +1366,7 @@ export let Petals = new Definitions<PetalDefinition>([
             peas_shoot: {
                 amount: 4,
                 para: {
-                    definition: Projectile.fromString("poison_peas"),
+                    definition: Projectiles.fromString("poison_peas"),
                     speed: 6.25,
                     damage: 10,
                     health: 5,
@@ -1409,7 +1405,7 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         attributes: {
             around_circle_shoot: {
-                definition: Projectile.fromString("poison_peas"),
+                definition: Projectiles.fromString("poison_peas"),
                 speed: 6.25,
                 damage: 15,
                 health: 10,
@@ -1447,7 +1443,7 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         attributes: {
             around_circle_shoot: {
-                definition: Projectile.fromString("speas"),
+                definition: Projectiles.fromString("speas"),
                 speed: 7.5,
                 damage: 0.1,
                 health: 26,
@@ -1815,7 +1811,7 @@ export let Petals = new Definitions<PetalDefinition>([
         useTime: 0.2,
         attributes: {
             place_projectile: {
-                definition: Projectile.fromString("pollen"),
+                definition: Projectiles.fromString("pollen"),
                 speed: 0,
                 damage: 8,
                 health: 5,
@@ -1842,7 +1838,7 @@ export let Petals = new Definitions<PetalDefinition>([
         useTime: 0.2,
         attributes: {
             place_projectile: {
-                definition: Projectile.fromString("pollen"),
+                definition: Projectiles.fromString("pollen"),
                 speed: 0,
                 damage: 13,
                 health: 10,
@@ -2103,7 +2099,7 @@ export let Petals = new Definitions<PetalDefinition>([
             fontSizeMultiplier: 0.9
         },
         modifiers: {
-            yinYangs: 1
+            yinYangAmount: 1
         },
         reloadTime: 1,
         hitboxRadius: 0.55,
@@ -2397,88 +2393,4 @@ export let Petals = new Definitions<PetalDefinition>([
     }
 ] satisfies PetalDefinition[]);
 
-// if  u use this to generate iris s tats, remember to remove the 'siris' up there
-/*
-let rnameArr = ['c','un','r','e','l','m','u','s','eth','phas','arc','em'];
-let rrrrrrr = [
-    RarityName.common,
-    RarityName.unusual,
-    RarityName.rare,
-    RarityName.epic,
-    RarityName.legendary,
-    RarityName.mythic,
-    RarityName.unique,
-    RarityName.super,
-    RarityName.ethereal,
-    RarityName.phantasmagoric,
-    RarityName.arcane,
-    RarityName.empyrean,
-]
-let i=0;
-const rrrrrrrrrrrrrrrrrrrrr: PetalDefinition[] = [];
-for (let r in rnameArr) {
-    if (i<2) {
-        i++
-        continue;
-    }
-    const xxx: PetalDefinition = {
-        idString: rnameArr[i]+'iris',
-        displayName: "Iris",
-        description: "uhmm",
-        damage: 5*(3**i),
-        health: 5*(3**i),
-        extendable: true,
-        usable: false,
-        attributes: {
-            poison: {
-                damagePerSecond: 30*(3**i),
-                duration: 5
-            }
-        },
-        reloadTime: 0.5,
-        hitboxRadius: 0.35,
-        isDuplicate: false,
-        pieceAmount: 1,
-        rarity: rrrrrrr[i],
-        undroppable: true,
-        usingAssets: "iris"
-    };
-    const asd: PetalDefinition = {
-        idString: rnameArr[i]+'basic',
-        displayName: "Basic",
-        description: "uhmm",
-        damage: 10*(3**i),
-        health: 10*(3**i),
-        extendable: true,
-        usable: false,
-        attributes: {
-            self_damage: 5*(3**i),
-            armor: 5*(3**i),
-            critical_hit: {
-                chance: 0.03,
-                multiplier: 40
-            },
-            damage_reflection: i*5,
-            damage_heal: {
-                healPercent: 0.5
-            },
-            damage_avoidance: {
-                chance: 0.99,
-            }
-        },
-        modifiers: {
-            speed: 1.2
-        },
-        reloadTime: 2.5,
-        hitboxRadius: 0.55,
-        isDuplicate: false,
-        pieceAmount: 1,
-        rarity: rrrrrrr[i],
-        undroppable: true,
-        usingAssets: "basic"
-    };
-    rrrrrrrrrrrrrrrrrrrrr.push(xxx);
-    rrrrrrrrrrrrrrrrrrrrr.push(asd);
-    i++
-}
-Petals = new Definitions<PetalDefinition>([...Petals.definitions, ...rrrrrrrrrrrrrrrrrrrrr]);*/
+export type AttributeNames = keyof AttributeParameters;

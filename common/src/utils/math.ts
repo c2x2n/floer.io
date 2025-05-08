@@ -15,6 +15,7 @@ export const MathGraphics = {
     degreesToRadians(degrees: number): number {
         return degrees * (Math.PI / 180);
     },
+
     radiansToDegrees(radians: number): number {
         return (radians / Math.PI) * 180;
     },

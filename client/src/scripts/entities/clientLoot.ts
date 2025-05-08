@@ -3,8 +3,8 @@ import { EntityType } from "@common/constants";
 import { Game } from "@/scripts/game";
 import { EntitiesNetData } from "@common/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
-import { PetalDefinition } from "@common/definitions/petal.ts";
-import { Rarity } from "@common/definitions/rarity.ts";
+import { PetalDefinition } from "@common/definitions/petals.ts";
+import { Rarity } from "@common/definitions/rarities.ts";
 import { Tween } from "@tweenjs/tween.js";
 import { ICON_drawPetal } from "@/scripts/utils/assets.ts";
 

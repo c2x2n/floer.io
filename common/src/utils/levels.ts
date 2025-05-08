@@ -1,6 +1,6 @@
-import { ZoneData, ZoneName, Zones } from "../zones";
+import { ZoneName } from "../definitions/zones";
 
-interface CurrentLevelInformation {
+interface LevelInformation {
     level: number;
     remainsExp: number;
     toNextLevelExp: number;
@@ -10,11 +10,9 @@ interface CurrentLevelInformation {
     spawnAt: ZoneName;
 }
 
-export function getLevelInformation(exp: number): CurrentLevelInformation {
+export function getLevelInformation(exp: number): LevelInformation {
     let levelNow: number = 0;
-
     let expRemains: number = exp;
-
     let levelExpCost: number = 0;
 
     while (expRemains >= levelExpCost) {
@@ -28,7 +26,7 @@ export function getLevelInformation(exp: number): CurrentLevelInformation {
     let extraSlot = 0;
 
     let spawnAt: ZoneName = ZoneName.SpawnZone;
-    let currentStat: LevelStat | undefined = undefined;
+    let currentStat: LevelStatDefinition | undefined = undefined;
     let nextExtraSlotLevel = 0;
 
     let i = 0;
@@ -72,13 +70,13 @@ export function getLevelExpCost(level: number): number {
     return levelExpCost;
 }
 
-export interface LevelStat {
+export interface LevelStatDefinition {
     level: number;
     spawnAt?: ZoneName;
     extraSlot: number;
 }
 
-export const levelStats : LevelStat[] = [
+export const levelStats : LevelStatDefinition[] = [
     {
         level: 1,
         spawnAt: ZoneName.SpawnZone,

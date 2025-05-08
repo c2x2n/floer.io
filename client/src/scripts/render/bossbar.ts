@@ -1,6 +1,6 @@
 import { Game } from "@/scripts/game.ts";
-import { MobDefinition } from "@common/definitions/mob.ts";
-import { Rarity } from "@common/definitions/rarity.ts";
+import { MobDefinition } from "@common/definitions/mobs.ts";
+import { Rarity } from "@common/definitions/rarities.ts";
 
 // export class BossbarContent {
 //     bossbarGraphics: Graphics = new Graphics();

@@ -1,28 +1,28 @@
 import { MathNumeric } from "./math";
 import { Vec2, type Vector } from "./vector";
 
-export const Random = {
+export const Random = Object.freeze({
     /**
-    * Generate a random floating-point value.
-    * @param min The minimum value that can be generated.
-    * @param max The maximum value that can be generated.
-    */
+     * Generate a random floating-point value.
+     * @param min The minimum value that can be generated.
+     * @param max The maximum value that can be generated.
+     */
     float(min: number, max: number): number {
         return (Math.random() * (max - min) + min);
     },
 
     /**
-    * Generate a random integer.
-    * @param min The minimum value that can be generated.
-    * @param max The maximum value that can be generated.
-    */
+     * Generate a random integer.
+     * @param min The minimum value that can be generated.
+     * @param max The maximum value that can be generated.
+     */
     int(min: number, max: number): number {
         return Math.floor(Random.float(min, max + 1));
     },
 
     /**
-    * @return A random boolean.
-    */
+     * @return A random boolean.
+     */
     boolean(): boolean {
         return Math.random() < 0.5;
     },
@@ -42,12 +42,12 @@ export const Random = {
     },
 
     /**
-    * Generate a random point inside of a circle.
-    * @link https://stackoverflow.com/a/51727716/5905216
-    * @param position The center of the circle.
-    * @param radius The radius of the circle.
-    * @returns A random point inside the circle radius.
-    */
+     * Generate a random point inside of a circle.
+     * @link https://stackoverflow.com/a/51727716/5905216
+     * @param position The center of the circle.
+     * @param radius The radius of the circle.
+     * @returns A random point inside the circle radius.
+     */
     pointInsideCircle(position: Vector, radius: number): Vector {
         let x: number,
             y: number;
@@ -62,10 +62,10 @@ export const Random = {
     },
 
     /**
-    * Pick a random element from a weighted series of elements.
-    * @param items The elements to choose from.
-    * @param weights A legend of the elements' relative weights.
-    */
+     * Pick a random element from a weighted series of elements.
+     * @param items The elements to choose from.
+     * @param weights A legend of the elements' relative weights.
+     */
     weightedRandom<T>(items: T[], weights: number[]): T {
         let i: number;
         for (i = 1; i < weights.length; i++) weights[i] += weights[i - 1];
@@ -73,8 +73,13 @@ export const Random = {
         const random = Math.random() * weights[weights.length - 1];
         for (i = 0; i < weights.length; i++) { if (weights[i] > random) break; }
         return items[i];
+    },
+
+    pickRandomInArray<T>(array: T[], weights?: number[]): T {
+        if (weights) return Random.weightedRandom(array, weights);
+        return array[Random.int(0, array.length - 1)];
     }
-};
+});
 
 export class SeededRandom {
     rng = 0;

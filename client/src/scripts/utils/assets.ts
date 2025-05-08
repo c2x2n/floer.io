@@ -1,12 +1,12 @@
 import { ObjectDefinition } from "@common/utils/definitions.ts";
 import { Vec2 } from "@common/utils/vector.ts";
-import { PetalDefinition } from "@common/definitions/petal.ts";
+import { PetalDefinition } from "@common/definitions/petals.ts";
 import { RenderContainer } from "@/scripts/utils/renderContainer.ts";
 import { Camera } from "@/scripts/render/camera.ts";
-import { petalAssets } from "@/assets/petal.ts";
+import { petalAssets } from "@/assets/petals.ts";
 import { MathGraphics, P2, PI } from "@common/utils/math.ts";
-import { MobDefinition, Mobs } from "@common/definitions/mob.ts";
-import { mobAssets } from "@/assets/mob.ts";
+import { MobDefinition, Mobs } from "@common/definitions/mobs.ts";
+import { mobAssets } from "@/assets/mobs.ts";
 
 export function getGameAssetsName(
     reify: ObjectDefinition

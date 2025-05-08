@@ -5,10 +5,10 @@ import { Game } from "@/scripts/game";
 import { EntitiesNetData } from "@common/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
 import { Tween } from '@tweenjs/tween.js';
-import { PetalDefinition } from "@common/definitions/petal.ts";
+import { PetalDefinition } from "@common/definitions/petals.ts";
 import { EasingFunctions, MathGraphics } from "@common/utils/math.ts";
-import { Rarity } from "@common/definitions/rarity.ts";
-import { petalAssets } from "@/assets/petal.ts";
+import { Rarity } from "@common/definitions/rarities.ts";
+import { petalAssets } from "@/assets/petals.ts";
 import { Vec2 } from "@common/utils/vector.ts";
 
 export class ClientPetal extends ClientEntity {

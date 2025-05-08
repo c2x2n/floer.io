@@ -1,7 +1,7 @@
-import { AttributeEvents, AttributeRealize, PetalAttributeRealizes, PetalUsingAnimations } from "./attribute";
-import { AttributeName } from "../../../common/src/definitions/attribute";
+import { AttributeEvents, AttributeRealize, PetalAttributeRealizes, PetalUsingAnimations } from "./attributeRealizes";
 import { ServerPetal } from "../entities/serverPetal";
 import { ServerEntity } from "../entities/serverEntity";
+import { AttributeNames } from "../../../common/src/definitions/petals";
 
 export type EventFunctionArguments = {
     [K in AttributeEvents] ?: unknown;
@@ -27,9 +27,9 @@ export type EventInitializer =
 
 interface EventData {
     petal: ServerPetal;
-    attributeName: AttributeName;
+    attributeName: AttributeNames;
     event: AttributeEvents;
-    func: EventFunction;
+    callback: EventFunction;
     use?: PetalUsingAnimations;
 }
 
@@ -45,11 +45,11 @@ export class AttributeEventManager {
 
     loadPetal(petal: ServerPetal) {
         for (const name in petal.definition.attributes) {
-            this.addAttribute(petal, name as AttributeName);
+            this.addAttribute(petal, name as AttributeNames);
         }
     }
 
-    addAttribute(petal: ServerPetal, name: AttributeName) {
+    addAttribute(petal: ServerPetal, name: AttributeNames) {
         if (!petal.definition.attributes) return
         const realize = PetalAttributeRealizes[name] as AttributeRealize<typeof name>;
         if (realize.unstackable){
@@ -64,7 +64,7 @@ export class AttributeEventManager {
         );
     }
 
-    getEventInitializer(petal: ServerPetal, name: AttributeName){
+    getEventInitializer(petal: ServerPetal, name: AttributeNames){
         let em: AttributeEventManager = this;
         return function<T extends AttributeEvents>(
             on: AttributeEvents,
@@ -75,7 +75,7 @@ export class AttributeEventManager {
                 petal: petal,
                 attributeName: name,
                 event: on,
-                func: func as EventFunction,
+                callback: func as EventFunction,
                 use: use
             });
         };
@@ -118,7 +118,7 @@ export class AttributeEventManager {
         e: EventData, data: EventFunctionArguments[T]
     ){
         if (e.petal.isLoadingFirstTime || e.use && (!e.petal.canUse || !e.petal.isActive())) return;
-        e.func(data)
+        e.callback(data)
         if (e.use){ e.petal.startUsing(e.use)}
     }
 }

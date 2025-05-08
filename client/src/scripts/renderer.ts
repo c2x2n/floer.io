@@ -1,5 +1,5 @@
 import { ClientApplication } from "@/main.ts";
-import { ZoneName, Zones } from "@common/zones.ts";
+import { ZoneName, Zones } from "@common/definitions/zones.ts";
 import { Camera } from "@/scripts/render/camera.ts";
 import { RenderContainer } from "@/scripts/utils/renderContainer.ts";
 

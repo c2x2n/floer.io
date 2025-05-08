@@ -1,10 +1,9 @@
-import { Rarity } from "@common/definitions/rarity.ts";
-import { AttributeParameters, PetalDefinition, Petals } from "@common/definitions/petal.ts";
+import { Rarity } from "@common/definitions/rarities.ts";
+import { AttributeNames, AttributeParameters, PetalDefinition, Petals } from "@common/definitions/petals.ts";
 import { Modifiers, PlayerModifiers } from "@common/typings.ts";
-import { AttributeName } from "@common/definitions/attribute.ts";
 import { MobContainer, PetalContainer, renderPetal } from "@/scripts/inventory.ts";
 import $ from "jquery";
-import { MobDefinition, Mobs } from "@common/definitions/mob.ts";
+import { MobDefinition, Mobs } from "@common/definitions/mobs.ts";
 import { Gallery } from "@/scripts/gallery.ts";
 import Big from "big.js";
 
@@ -25,7 +24,7 @@ interface DefinitionShowingConfig {
     percent?: boolean
 }
 
-type AttributeShowingFunction<K extends AttributeName> =
+type AttributeShowingFunction<K extends AttributeNames> =
     (data: Required<AttributeParameters>[K]) => (DefinitionShowingConfig & { value: string })[];
 
 
@@ -101,7 +100,7 @@ const petalDefinitionShowingConfigs: { [key: string] : DefinitionShowingConfig }
         }
     }
 
-const attributesShowingConfigs: { [K in AttributeName] : AttributeShowingFunction<K>} =
+const attributesShowingConfigs: { [K in AttributeNames] : AttributeShowingFunction<K>} =
     {
         absorbing_heal: (data) => {
             return [{
@@ -448,7 +447,7 @@ export function showPetalInformation(container: PetalContainer) {
     }
 
     if (definition.attributes) {
-        let attributesDefinitionKey: AttributeName;
+        let attributesDefinitionKey: AttributeNames;
         for (attributesDefinitionKey in definition.attributes) {
             const data = definition.attributes[attributesDefinitionKey];
             if (!data) return attributesDefinitionKey;

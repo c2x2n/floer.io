@@ -1,4 +1,4 @@
-import { AssetsDrawer } from "@/assets/asset.ts";
+import { AssetsDrawer } from "@/assets/assets.ts";
 import { P2 } from "@common/utils/math.ts";
 import { loadPathFromSVG } from "@/assets/pathLoader.ts";
 

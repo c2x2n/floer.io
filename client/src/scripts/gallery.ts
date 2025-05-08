@@ -1,10 +1,10 @@
 import { UI } from "@/ui.ts";
-import { PetalDefinition, Petals } from "@common/definitions/petal.ts";
-import { Rarity } from "@common/definitions/rarity.ts";
+import { PetalDefinition, Petals } from "@common/definitions/petals.ts";
+import { Rarity } from "@common/definitions/rarities.ts";
 import { MobContainer, PetalContainer, renderPetal } from "@/scripts/inventory.ts";
 import $ from "jquery";
 import { showMobInformation, showPetalInformation, unShowInformation } from "@/scripts/shown/information.ts";
-import { MobDefinition, Mobs } from "@common/definitions/mob.ts";
+import { MobDefinition, Mobs } from "@common/definitions/mobs.ts";
 
 export class Gallery{
     petalGallery: string[] = [];

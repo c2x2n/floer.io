@@ -1,0 +1,84 @@
+// if u use this to generate iris s tats, remember to remove the 'siris' up there
+let rnameArr = ['c','un','r','e','l','m','u','s','eth','phas','arc','em'];
+let rrrrrrr = [
+    RarityName.common,
+    RarityName.unusual,
+    RarityName.rare,
+    RarityName.epic,
+    RarityName.legendary,
+    RarityName.mythic,
+    RarityName.unique,
+    RarityName.super,
+    RarityName.ethereal,
+    RarityName.phantasmagoric,
+    RarityName.arcane,
+    RarityName.empyrean,
+]
+let i=0;
+const rrrrrrrrrrrrrrrrrrrrr: PetalDefinition[] = [];
+for (let r in rnameArr) {
+    if (i<2) {
+        i++
+        continue;
+    }
+    const xxx: PetalDefinition = {
+        idString: rnameArr[i]+'iris',
+        displayName: "Iris",
+        description: "uhmm",
+        damage: 5*(3**i),
+        health: 5*(3**i),
+        extendable: true,
+        usable: false,
+        attributes: {
+            poison: {
+                damagePerSecond: 30*(3**i),
+                duration: 5
+            }
+        },
+        reloadTime: 0.5,
+        hitboxRadius: 0.35,
+        isDuplicate: false,
+        pieceAmount: 1,
+        rarity: rrrrrrr[i],
+        undroppable: true,
+        usingAssets: "iris"
+    };
+    const asd: PetalDefinition = {
+        idString: rnameArr[i]+'basic',
+        displayName: "Basic",
+        description: "uhmm",
+        damage: 10*(3**i),
+        health: 10*(3**i),
+        extendable: true,
+        usable: false,
+        attributes: {
+            self_damage: 5*(3**i),
+            armor: 5*(3**i),
+            critical_hit: {
+                chance: 0.03,
+                multiplier: 40
+            },
+            damage_reflection: i*5,
+            damage_heal: {
+                healPercent: 0.5
+            },
+            damage_avoidance: {
+                chance: 0.99,
+            }
+        },
+        modifiers: {
+            speed: 1.2
+        },
+        reloadTime: 2.5,
+        hitboxRadius: 0.55,
+        isDuplicate: false,
+        pieceAmount: 1,
+        rarity: rrrrrrr[i],
+        undroppable: true,
+        usingAssets: "basic"
+    };
+    rrrrrrrrrrrrrrrrrrrrr.push(xxx);
+    rrrrrrrrrrrrrrrrrrrrr.push(asd);
+    i++
+}
+Petals = new Definitions<PetalDefinition>([...Petals.definitions, ...rrrrrrrrrrrrrrrrrrrrr]);

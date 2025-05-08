@@ -1,0 +1,16 @@
+if (!this.image) {
+    this.image = new Image();
+    const image = this.image;
+    image.src = `/img/game/mob/${getGameAssetsFile(this.definition)}`;
+} else {
+    if (!this.image.complete) return;
+    const scalePercent =
+        Camera.unitToScreen(this.hitboxRadius) * 2 / defaultImageSize;
+    this.ctx.drawImage(
+        this.image,
+        -this.image.width * scalePercent / 2,
+        -this.image.height * scalePercent / 2,
+        this.image.width * scalePercent,
+        this.image.height * scalePercent
+    )
+}

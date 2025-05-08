@@ -1,5 +1,5 @@
 import { type GameBitStream, type Packet } from "../net";
-import { SavedPetalDefinitionData, Petals } from "../definitions/petal";
+import { SavedPetalDefinitionData, Petals } from "../definitions/petals";
 
 export class LoggedInPacket implements Packet {
     inventory: SavedPetalDefinitionData[] = [];
