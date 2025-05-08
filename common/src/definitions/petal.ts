@@ -211,11 +211,11 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 15,
         swinging: {
             time: 0.5,
-            distance: 2.6
+            distance: 6
         },
         images:{
             slotDisplaySize: 60,
-            selfGameRotation: 240
+            selfGameRotation: 360
         },
         extendable: true,
         reloadTime: 1.25,
@@ -232,15 +232,16 @@ export let Petals = new Definitions<PetalDefinition>([
         damage: 25,
         health: 20,
         swinging: {
-            time: 0.7,
-            distance: 2.6
+            time: 0.5,
+            distance: 6
         },
         images:{
             slotDisplaySize: 45,
-            selfGameRotation: 240,
+            selfGameRotation: 360,
             slotRevolution: P2 / 3
         },
         extendable: true,
+        moreExtendDistance: 2,
         reloadTime: 1.25,
         usable: false,
         hitboxRadius: 0.5,
@@ -277,7 +278,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         reloadTime: 0.5,
         modifiers: {
-            revolutionSpeed: 0.8
+            revolutionSpeed: 1.0
         },
         usable: false,
         hitboxRadius: 0.3,
@@ -291,18 +292,17 @@ export let Petals = new Definitions<PetalDefinition>([
         damage: 20,
         health: 15,
         swinging: {
-            time: 0.5,
-            distance: 2.6
+            time: 0.25,
+            distance: 6
         },
         extendable: true,
         reloadTime: 1.25,
-        moreExtendDistance: 2.6,
         images:{
             slotDisplaySize: 60,
-            selfGameRotation: 240
+            selfGameRotation: 360
         },
         modifiers: {
-            revolutionSpeed: 1
+            revolutionSpeed: 1.25
         },
         usable: false,
         hitboxRadius: 0.6,
@@ -311,7 +311,7 @@ export let Petals = new Definitions<PetalDefinition>([
         rarity: RarityName.legendary,
     },{
         idString: "tri_faster",
-        displayName: "Faster",
+        displayName: "Fastest",
         description: "Quickly.",
         damage: 15,
         health: 15,
@@ -321,10 +321,11 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         reloadTime: 0.5,
         modifiers: {
-            revolutionSpeed: 0.9
+            revolutionSpeed: 1.0
         },
         usable: false,
         hitboxRadius: 0.3,
+        distanceToCenter: 0.55,
         isDuplicate: true,
         pieceAmount: 3,
         isShowedInOne: true,
@@ -465,14 +466,14 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 3,
         extendable: false,
         usable: true,
-        useTime: 1,
+        useTime: 1.5,
         images: {
             slotDisplaySize: 35,
         },
         attributes: {
             absorbing_heal: 12
         },
-        reloadTime: 3.5,
+        reloadTime: 3,
         hitboxRadius: 0.5,
         isDuplicate: false,
         pieceAmount: 1,
@@ -485,7 +486,7 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 5,
         extendable: false,
         usable: true,
-        useTime: 1,
+        useTime: 1.5,
         attributes: {
             absorbing_heal: 4.5
         },
@@ -508,7 +509,7 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 5,
         extendable: false,
         usable: true,
-        useTime: 1,
+        useTime: 1.5,
         images: {
             slotDisplaySize: 45,
             selfGameRotation: 18,
@@ -561,11 +562,11 @@ export let Petals = new Definitions<PetalDefinition>([
         attributes: {
             health_percent_damage: {
                 percent: 0.3,
-                maxDamage: 150
+                maxDamage: 200
             }
         },
         reloadTime: 2.5,
-        hitboxRadius: 0.5,
+        hitboxRadius: 0.45,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.epic,
@@ -684,11 +685,11 @@ export let Petals = new Definitions<PetalDefinition>([
         displayName: "Dandelion",
         description: "It's interesting properties prevent healing effects on affected units",
         damage: 5,
-        health: 15,
+        health: 20,
         extendable: true,
         images: {
             selfGameRotation: 0.02,
-            slotDisplaySize: 60,
+            slotDisplaySize: 75,
             slotRotation: 0.8,
             facingOut: true,
             fontSizeMultiplier: 0.8
@@ -916,7 +917,7 @@ export let Petals = new Definitions<PetalDefinition>([
             }
         },
         reloadTime: 6,
-        hitboxRadius: 0.35,
+        hitboxRadius: 0.3,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.unusual,
@@ -1024,7 +1025,7 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 10,
         extendable: true,
         images: {
-            slotDisplaySize: 50,
+            slotDisplaySize: 60,
             selfGameRotation: 15,
         },
         usable: false,
@@ -1080,7 +1081,7 @@ export let Petals = new Definitions<PetalDefinition>([
         displayName: "Stinger",
         description: "It really hurts, but it's very fragile",
         damage: 75,
-        health: 8,
+        health: 10,
         extendable: true,
         images: {
             slotRotation: 3.14,
@@ -1129,11 +1130,11 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         reloadTime: 0.04,
         images:{
-            slotDisplaySize: 60,
+            slotDisplaySize: 57,
             selfGameRotation: 18
         },
         usable: false,
-        hitboxRadius: 0.55,
+        hitboxRadius: 0.75,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.epic
@@ -1476,7 +1477,7 @@ export let Petals = new Definitions<PetalDefinition>([
         idString: "corn",
         displayName: "Corn",
         description: "You can actually eat it",
-        damage: 12,
+        damage: 8,
         health: 200,
         extendable: true,
         usable: false,
@@ -1484,8 +1485,8 @@ export let Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 60,
             selfGameRotation: 18
         },
-        reloadTime: 8,
-        hitboxRadius: 0.6,
+        reloadTime: 12,
+        hitboxRadius: 0.75,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.epic
@@ -2148,7 +2149,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 55,
+            slotDisplaySize: 65,
             selfGameRotation: 18
         },
         attributes: {

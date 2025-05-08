@@ -73,7 +73,7 @@ export const Zones:
             "baby_ant": 5,
             "soldier_ant": 5,
             "centipede": 1,
-            "desert_centipede": 1,
+            "desert_centipede": 10,
         }
     },
     [ZoneName.Hard]: {
@@ -113,11 +113,11 @@ export const Zones:
         normalSpawning: {
             "dark_ladybug": 30,
             "hornet": 20,
-            "leg_hornet": 0.08,
-            "leg_beetle": 0.1,
-            "leg_spider": 0.1,
-            "leg_mantis": 0.08,
-            "leg_evil_centipede": 0.01,
+            "leg_hornet": 0.22,
+            "leg_beetle": 0.35,
+            "leg_spider": 0.35,
+            "leg_mantis": 0.22,
+            "leg_evil_centipede": 0.035,
             "spider": 15,
             "beetle": 20,
             "boulder": 10,

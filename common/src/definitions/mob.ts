@@ -180,8 +180,8 @@ export const Mobs = new Definitions<MobDefinition>([
             "bubble": 0.16,
             "wing": 0.16,
             "leg_bubble": 0.00006,
-            "epic_rose": 0.051,
-            "triplet": 0.02
+            "epic_rose": 0.005,
+            "triplet": 0.01
         },
         rarity: RarityName.unusual,
         exp: 10
@@ -200,7 +200,6 @@ export const Mobs = new Definitions<MobDefinition>([
             "yinyang": 0.009,
             "bubble": 0.1,
             "wing": 0.08,
-            "leg_bubble": 0.00012,
             "triplet": 0.002,
             "shell": 0.002
         },
@@ -316,7 +315,7 @@ export const Mobs = new Definitions<MobDefinition>([
         idString: "beetle",
         displayName: "Beetle",
         damage: 40,
-        health: 35,
+        health: 60,
         category: MobCategory.Enemy,
         aggroRadius: 20,
         hitboxRadius: 2,
@@ -330,8 +329,9 @@ export const Mobs = new Definitions<MobDefinition>([
         lootTable: {
             "iris": 0.09,
             "salt": 0.06,
-            "triplet": 0.008,
+            "triplet": 0.004,
             "wing": 0.006,
+            "pincer": 0.0001
         },
         rarity: RarityName.unusual,
         exp: 5
@@ -366,7 +366,7 @@ export const Mobs = new Definitions<MobDefinition>([
         idString: "hornet",
         displayName: "Hornet",
         damage: 50,
-        health: 35,
+        health: 50,
         category: MobCategory.Enemy,
         shootable: true,
         turningHead: true,
@@ -391,7 +391,6 @@ export const Mobs = new Definitions<MobDefinition>([
             "missile": 0.18,
             "honey": 0.02,
             "big_missile": 0.005,
-            "leg_bubble": 0.00006,
             "wing": 0.06,
             "antennae": 0.0003,
         },
@@ -575,8 +574,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "sand": 0.09,
             "iris": 0.12,
             "twin": 0.8,
-            "wing": 0.014,
-            "triplet": 0.0004,
+            "wing": 0.05,
             "faster": 0.04,
             "faster_wing": 0.0001
         },
@@ -602,7 +600,6 @@ export const Mobs = new Definitions<MobDefinition>([
             "twin": 0.15,
             "rice": 0.006,
             "tri_leaf": 0.00008,
-            "triplet": 0.0006,
             "corn": 0.0006
         },
         rarity: RarityName.unusual,
@@ -649,7 +646,7 @@ export const Mobs = new Definitions<MobDefinition>([
             "iris": 1,
             "wing": 0.5,
             "egg": 0.07,
-            "dice": 0.6
+            "dice": 0.009
         },
         rarity: RarityName.rare,
         exp: 40
