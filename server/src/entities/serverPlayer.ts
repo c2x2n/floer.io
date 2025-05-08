@@ -840,6 +840,52 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                 this.sendDirectMessage(`ID: ${player.id}, Name: ${player.name}, XP: ${player.exp}`);
             }
             this.sendDirectMessage('-------------------');
+        } else if (rest.startsWith('tp ')) {
+            const targetIdentifier = rest.substring('tp '.length).trim();
+            
+            if (!targetIdentifier) {
+                return this.sendDirectMessage('请提供玩家ID或名称', 0xff0000);
+            }
+            
+            const targetPlayer = this.findTarget(targetIdentifier);
+            
+            if (!targetPlayer) {
+                return this.sendDirectMessage(`找不到玩家 '${targetIdentifier}'`, 0xff0000);
+            }
+            
+            if (targetPlayer === this) {
+                return this.sendDirectMessage('无法传送到自己的位置', 0xff0000);
+            }
+            
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 10;
+            const offsetX = Math.cos(angle) * distance;
+            const offsetY = Math.sin(angle) * distance;
+            
+            this.position.x = targetPlayer.position.x + offsetX;
+            this.position.y = targetPlayer.position.y + offsetY;
+            
+            this.sendDirectMessage(`已传送到玩家 ${targetPlayer.name} (ID: ${targetPlayer.id}) 附近`, 0x00ff00);
+        } else if (rest.startsWith('help')) {
+            this.sendDirectMessage('--- 管理员命令列表 ---', 0x00ffff);
+            this.sendDirectMessage('/name - 修改自己的名称', 0x00ffff);
+            this.sendDirectMessage('/xp [数量] - 给自己增加经验', 0x00ffff);
+            this.sendDirectMessage('/drop [花瓣ID] [数量] - 在当前位置掉落花瓣', 0x00ffff);
+            this.sendDirectMessage('/give [玩家ID/名称] [花瓣ID] [数量] - 给指定玩家掉落花瓣', 0x00ffff);
+            this.sendDirectMessage('/spawn [怪物ID] [数量] - 在当前位置生成怪物', 0x00ffff);
+            this.sendDirectMessage('/cleanup - 清理地图上的怪物和非法花瓣', 0x00ffff);
+            this.sendDirectMessage('/rmwall - 移除所有墙壁', 0x00ffff);
+            this.sendDirectMessage('/wallat [x] [y] [宽度] [高度] - 在指定位置创建墙壁', 0x00ffff);
+            this.sendDirectMessage('/wallhere [宽度] [高度] - 在当前位置创建墙壁', 0x00ffff);
+            this.sendDirectMessage('/givexp [玩家ID/名称] [数量] - 给指定玩家增加经验', 0x00ffff);
+            this.sendDirectMessage('/list - 列出所有在线玩家', 0x00ffff);
+            this.sendDirectMessage('/whisper(或/w) [玩家ID/名称] [消息] - 给指定玩家发送私信', 0x00ffff);
+            this.sendDirectMessage('/kill [玩家ID/名称] - 杀死指定玩家', 0x00ffff);
+            this.sendDirectMessage('/ban [玩家ID/名称] - 杀死并踢出指定玩家', 0x00ffff);
+            this.sendDirectMessage('/forcekill [玩家ID/名称] - 强制杀死指定玩家', 0x00ffff);
+            this.sendDirectMessage('/tp [玩家ID/名称] - 传送到指定玩家附近', 0x00ffff);
+            this.sendDirectMessage('/help - 显示此帮助信息', 0x00ffff);
+            this.sendDirectMessage('-------------------', 0x00ffff);
         } else if (rest.startsWith('whisper ') || rest.startsWith('w ')) {
             const commandPrefix = rest.startsWith('whisper ') ? 'whisper ' : 'w ';
             const params = rest.substring(commandPrefix.length).trim();
