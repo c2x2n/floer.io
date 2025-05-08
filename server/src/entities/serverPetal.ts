@@ -105,7 +105,7 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
     }
 
     tick(): void{
-        if (this.owner.overleveled) {
+        if (this.owner.overleveled || this.owner.spectatorMode) {
             this.isReloading = true;
             this.isLoadingFirstTime = true;
             this.spawned?.destroy()
@@ -188,6 +188,9 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
         if (this.definition.doesNotDamage?.includes(to.type)) {
             return;
         };
+        if (this.owner.spectatorMode) {
+            return;
+        }
         if (this.damage && to.canReceiveDamageFrom(this)) {
             const owner = this.owner;
             const originalIsPetalAttack = owner.isPetalAttack;

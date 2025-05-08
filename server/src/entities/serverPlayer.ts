@@ -173,6 +173,13 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
     modifiers: PlayerModifiers = GameConstants.player.defaultModifiers();
     otherModifiers: Partial<PlayerModifiers>[] = [];
+    // 持久的速度修改器
+    persistentSpeedModifier: number = 1;
+    // 无敌模式
+    godMode: boolean = false;
+    
+    // 观察者模式
+    spectatorMode: boolean = false;
 
     exp: number = 0;
     level: number = 1;
@@ -190,7 +197,17 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
     knockback: number = 3;
 
+    canCollideWith(entity: ServerEntity): boolean {
+        // 观察者模式下禁用碰撞
+        if (this.spectatorMode) return false;
+        
+        return super.canCollideWith(entity);
+    }
+
     canReceiveDamageFrom(source: damageableEntity): boolean {
+        // 观察者模式下不能受到伤害
+        if (this.spectatorMode) return false;
+        
         switch (source.type) {
             case EntityType.Player:
                 return source != this
@@ -229,6 +246,9 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             this.direction.direction,
             MathNumeric.remap(this.distance, 0, 150, 0, GameConstants.player.maxSpeed) * this.modifiers.speed
         ));
+
+        // 观察者模式下只处理移动，不处理花瓣和其他功能
+        if (this.spectatorMode) return;
 
         let targetRange = GameConstants.player.defaultPetalDistance;
 
@@ -312,6 +332,9 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     }
 
     dealDamageTo(to: damageableEntity): void{
+        // 观察者模式下不造成伤害
+        if (this.spectatorMode) return;
+        
         if (to.canReceiveDamageFrom(this)) {
             to.receiveDamage(this.damage, this);
             this.sendEvent(
@@ -322,6 +345,9 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
     receiveDamage(amount: number, source: damageSource, disableEvent?: boolean) {
         if (!this.isActive()) return;
+
+        // 无敌模式下不接受任何伤害
+        if (this.godMode) return;
 
         if ( (this.modifiers.damageAvoidanceChance > 0 && Math.random() < this.modifiers.damageAvoidanceChance)
 			|| (this.modifiers.damageAvoidanceByDamage && Math.random() < curve(amount / 100, curveType.CBRT)) ) {
@@ -844,17 +870,17 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             const targetIdentifier = rest.substring('tp '.length).trim();
             
             if (!targetIdentifier) {
-                return this.sendDirectMessage('请提供玩家ID或名称', 0xff0000);
+                return this.sendDirectMessage('Please provide a player ID or name', 0xff0000);
             }
             
             const targetPlayer = this.findTarget(targetIdentifier);
             
             if (!targetPlayer) {
-                return this.sendDirectMessage(`找不到玩家 '${targetIdentifier}'`, 0xff0000);
+                return this.sendDirectMessage(`Player '${targetIdentifier}' not found`, 0xff0000);
             }
             
             if (targetPlayer === this) {
-                return this.sendDirectMessage('无法传送到自己的位置', 0xff0000);
+                return this.sendDirectMessage('Cannot teleport to yourself', 0xff0000);
             }
             
             const angle = Math.random() * Math.PI * 2;
@@ -865,27 +891,117 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             this.position.x = targetPlayer.position.x + offsetX;
             this.position.y = targetPlayer.position.y + offsetY;
             
-            this.sendDirectMessage(`已传送到玩家 ${targetPlayer.name} (ID: ${targetPlayer.id}) 附近`, 0x00ff00);
+            this.sendDirectMessage(`Teleported to player ${targetPlayer.name} (ID: ${targetPlayer.id})`, 0x00ff00);
         } else if (rest.startsWith('help')) {
-            this.sendDirectMessage('--- 管理员命令列表 ---', 0x00ffff);
-            this.sendDirectMessage('/name - 修改自己的名称', 0x00ffff);
-            this.sendDirectMessage('/xp [数量] - 给自己增加经验', 0x00ffff);
-            this.sendDirectMessage('/drop [花瓣ID] [数量] - 在当前位置掉落花瓣', 0x00ffff);
-            this.sendDirectMessage('/give [玩家ID/名称] [花瓣ID] [数量] - 给指定玩家掉落花瓣', 0x00ffff);
-            this.sendDirectMessage('/spawn [怪物ID] [数量] - 在当前位置生成怪物', 0x00ffff);
-            this.sendDirectMessage('/cleanup - 清理地图上的怪物和非法花瓣', 0x00ffff);
-            this.sendDirectMessage('/rmwall - 移除所有墙壁', 0x00ffff);
-            this.sendDirectMessage('/wallat [x] [y] [宽度] [高度] - 在指定位置创建墙壁', 0x00ffff);
-            this.sendDirectMessage('/wallhere [宽度] [高度] - 在当前位置创建墙壁', 0x00ffff);
-            this.sendDirectMessage('/givexp [玩家ID/名称] [数量] - 给指定玩家增加经验', 0x00ffff);
-            this.sendDirectMessage('/list - 列出所有在线玩家', 0x00ffff);
-            this.sendDirectMessage('/whisper(或/w) [玩家ID/名称] [消息] - 给指定玩家发送私信', 0x00ffff);
-            this.sendDirectMessage('/kill [玩家ID/名称] - 杀死指定玩家', 0x00ffff);
-            this.sendDirectMessage('/ban [玩家ID/名称] - 杀死并踢出指定玩家', 0x00ffff);
-            this.sendDirectMessage('/forcekill [玩家ID/名称] - 强制杀死指定玩家', 0x00ffff);
-            this.sendDirectMessage('/tp [玩家ID/名称] - 传送到指定玩家附近', 0x00ffff);
-            this.sendDirectMessage('/help - 显示此帮助信息', 0x00ffff);
+            this.sendDirectMessage('--- Admin Command List ---', 0x00ffff);
+            this.sendDirectMessage('/name - Modify your name', 0x00ffff);
+            this.sendDirectMessage('/xp [amount] - Give yourself XP', 0x00ffff);
+            this.sendDirectMessage('/drop [petalID] [count] - Drop petals at your location', 0x00ffff);
+            this.sendDirectMessage('/give [playerID/name] [petalID] [count] - Drop petals for a player', 0x00ffff);
+            this.sendDirectMessage('/spawn [mobID] [count] - Spawn mobs at your location', 0x00ffff);
+            this.sendDirectMessage('/cleanup - Clean up mobs and invalid petals', 0x00ffff);
+            this.sendDirectMessage('/rmwall - Remove all walls', 0x00ffff);
+            this.sendDirectMessage('/wallat [x] [y] [width] [height] - Create a wall at specified location', 0x00ffff);
+            this.sendDirectMessage('/wallhere [width] [height] - Create a wall at your location', 0x00ffff);
+            this.sendDirectMessage('/givexp [playerID/name] [amount] - Give a player XP', 0x00ffff);
+            this.sendDirectMessage('/list - List all online players', 0x00ffff);
+            this.sendDirectMessage('/whisper(or/w) [playerID/name] [message] - Send a private message', 0x00ffff);
+            this.sendDirectMessage('/kill [playerID/name] - Kill a player', 0x00ffff);
+            this.sendDirectMessage('/ban [playerID/name] - Kill and ban a player', 0x00ffff);
+            this.sendDirectMessage('/forcekill [playerID/name] - Forcefully kill a player', 0x00ffff);
+            this.sendDirectMessage('/tp [playerID/name] - Teleport to a player', 0x00ffff);
+            this.sendDirectMessage('/help - Display this help information', 0x00ffff);
+            this.sendDirectMessage('/speed [multiplier] [playerID/name] - Adjust movement speed', 0x00ffff);
+            this.sendDirectMessage('/god - Toggle god mode', 0x00ffff);
+            this.sendDirectMessage('/heal [playerID/name] - Restore health and shield', 0x00ffff);
+            this.sendDirectMessage('/teleport [x] [y] - Teleport to specified coordinates', 0x00ffff);
+            this.sendDirectMessage('/spectator [playerID/name] - Toggle spectator mode (no collisions, transparent, no petals)', 0x00ffff);
             this.sendDirectMessage('-------------------', 0x00ffff);
+        } else if (rest.startsWith('spectator')) {
+            const targetIdentifier = rest.substring('spectator'.length).trim();
+            
+            // 如果没有指定目标，则切换自己的观察者模式
+            if (!targetIdentifier) {
+                this.spectatorMode = !this.spectatorMode;
+                
+                if (this.spectatorMode) {
+                    this.sendDirectMessage('Spectator mode enabled', 0x00ff00);
+                } else {
+                    this.sendDirectMessage('Spectator mode disabled', 0x00ff00);
+                }
+                // 设置为全局脏标记，以便客户端更新显示
+                this.setFullDirty();
+                // 强制花瓣更新状态
+                this.petalEntities.forEach(petal => petal.setFullDirty());
+                return;
+            }
+            
+            // 查找目标玩家
+            const targetPlayer = this.findTarget(targetIdentifier);
+            
+            if (!targetPlayer) {
+                return this.sendDirectMessage(`Player '${targetIdentifier}' not found`, 0xff0000);
+            }
+            
+            // 切换目标玩家的观察者模式
+            targetPlayer.spectatorMode = !targetPlayer.spectatorMode;
+            
+            if (targetPlayer.spectatorMode) {
+                this.sendDirectMessage(`Enabled spectator mode for ${targetPlayer.name} (ID: ${targetPlayer.id})`, 0x00ff00);
+                targetPlayer.sendDirectMessage('An admin enabled spectator mode for you', 0x00ff00);
+            } else {
+                this.sendDirectMessage(`Disabled spectator mode for ${targetPlayer.name} (ID: ${targetPlayer.id})`, 0x00ff00);
+                targetPlayer.sendDirectMessage('An admin disabled spectator mode for you', 0x00ff00);
+            }
+            
+            // 设置为全局脏标记，以便客户端更新显示
+            targetPlayer.setFullDirty();
+            // 强制花瓣更新状态
+            targetPlayer.petalEntities.forEach(petal => petal.setFullDirty());
+        } else if (rest.startsWith('god')) {
+            // 切换无敌模式
+            this.godMode = !this.godMode;
+            
+            if (this.godMode) {
+                this.sendDirectMessage('God mode enabled', 0x00ff00);
+            } else {
+                this.sendDirectMessage('God mode disabled', 0xff0000);
+            }
+        } else if (rest.startsWith('speed')) {
+            const params = rest.substring('speed'.length).trim();
+            const args = params.split(' ').filter(arg => arg.length > 0);
+            
+            if (args.length === 0) {
+                return this.sendDirectMessage('Please provide a speed multiplier', 0xff0000);
+            }
+            
+            const speedValue = parseFloat(args[0]);
+            if (isNaN(speedValue) || speedValue <= 0) {
+                return this.sendDirectMessage('Please provide a valid speed multiplier (greater than 0)', 0xff0000);
+            }
+            
+            // 如果提供了玩家参数
+            if (args.length > 1) {
+                const targetIdentifier = args[1];
+                const targetPlayer = this.findTarget(targetIdentifier);
+                
+                if (!targetPlayer) {
+                    return this.sendDirectMessage(`Player '${targetIdentifier}' not found`, 0xff0000);
+                }
+                
+                // 设置目标玩家的速度
+                targetPlayer.persistentSpeedModifier = speedValue;
+                targetPlayer.updateModifiers();
+                
+                this.sendDirectMessage(`Set ${targetPlayer.name}'s (ID: ${targetPlayer.id}) speed multiplier to ${speedValue}`, 0x00ff00);
+                targetPlayer.sendDirectMessage(`An admin set your speed multiplier to ${speedValue}`, 0x00ff00);
+            } else {
+                // 设置自己的速度
+                this.persistentSpeedModifier = speedValue;
+                this.updateModifiers();
+                
+                this.sendDirectMessage(`Speed multiplier set to ${speedValue}`, 0x00ff00);
+            }
         } else if (rest.startsWith('whisper ') || rest.startsWith('w ')) {
             const commandPrefix = rest.startsWith('whisper ') ? 'whisper ' : 'w ';
             const params = rest.substring(commandPrefix.length).trim();
@@ -998,6 +1114,58 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
             this.sendDirectMessage(`Forcefully killed ${targetPlayer.name} (ID: ${targetPlayer.id}).`, 0xFFA500);
 
+        } else if (rest.startsWith('heal')) {
+            const targetIdentifier = rest.substring('heal'.length).trim();
+            
+            // 如果没有指定目标，则治疗自己
+            if (!targetIdentifier) {
+                this.health = this.maxHealth;
+                this.shield = this.maxShield;
+                this.sendDirectMessage('Health and shield restored', 0x00ff00);
+                return;
+            }
+            
+            // 查找目标玩家
+            const targetPlayer = this.findTarget(targetIdentifier);
+            
+            if (!targetPlayer) {
+                return this.sendDirectMessage(`Player '${targetIdentifier}' not found`, 0xff0000);
+            }
+            
+            // 恢复目标玩家的生命值和护盾
+            targetPlayer.health = targetPlayer.maxHealth;
+            targetPlayer.shield = targetPlayer.maxShield;
+            
+            this.sendDirectMessage(`Restored ${targetPlayer.name}'s (ID: ${targetPlayer.id}) health and shield`, 0x00ff00);
+            targetPlayer.sendDirectMessage('An admin restored your health and shield', 0x00ff00);
+        } else if (rest.startsWith('teleport')) {
+            const params = rest.substring('teleport'.length).trim();
+            const args = params.split(' ').filter(arg => arg.length > 0);
+            
+            if (args.length < 2) {
+                return this.sendDirectMessage('Please provide valid coordinates (x y)', 0xff0000);
+            }
+            
+            const x = parseFloat(args[0]);
+            const y = parseFloat(args[1]);
+            
+            if (isNaN(x) || isNaN(y)) {
+                return this.sendDirectMessage('Please provide valid coordinates', 0xff0000);
+            }
+            
+            // 检查坐标是否在地图范围内
+            const mapWidth = this.game.width;
+            const mapHeight = this.game.height;
+            
+            if (x < 0 || x > mapWidth || y < 0 || y > mapHeight) {
+                return this.sendDirectMessage(`Coordinates out of map bounds (0-${mapWidth}, 0-${mapHeight})`, 0xff0000);
+            }
+            
+            // 设置新位置
+            this.position.x = x;
+            this.position.y = y;
+            
+            this.sendDirectMessage(`Teleported to coordinates (${x}, ${y})`, 0x00ff00);
         } else {
              this.sendDirectMessage(`Unknown command: /${rest.split(' ')[0]}`, 0xff0000);
         }
@@ -1091,8 +1259,9 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             gotDamage: this.gotDamage,
             full: {
                 healthPercent: this.health / this.maxHealth,
-                shieldPercent: this.shield / this.maxShield, // 最大护盾为最大生命值的75%
-                isAdmin: this.isAdmin
+                shieldPercent: this.shield / this.maxShield,
+                isAdmin: this.isAdmin,
+                spectator: this.spectatorMode
             }
         };
 
@@ -1175,6 +1344,13 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         })
 
         this.otherModifiers = [];
+
+        // 应用持久的速度修改器
+        if (this.persistentSpeedModifier !== 1) {
+            modifiersNow = this.calcModifiers(modifiersNow, {
+                speed: this.persistentSpeedModifier
+            });
+        }
 
         modifiersNow.damageAvoidanceChance = 1 - avoidanceFailureChance;
 
