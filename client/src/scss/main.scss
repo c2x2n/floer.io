@@ -538,6 +538,7 @@ input::placeholder {
 .opened#chat-messages {
     overflow-y: auto;
     pointer-events: all;
+    max-width: 506px;
 }
 
 .chat-message {

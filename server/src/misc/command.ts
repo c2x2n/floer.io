@@ -354,7 +354,7 @@ export function applyCommand(
     function toBoolean(value: string, index: number) {
         const parsed = value.toLowerCase();
         if (parsed !== 'true' && parsed !== 'false')
-            resolve.reject(`Parameter "${value}" of index ${index} is not a valid boolean.`);
+            resolve.reject(`Parameter "${value}" of index ${index} is not a valid boolean. Must be a "true" or "false".`);
         return parsed === 'true';
     }
 
