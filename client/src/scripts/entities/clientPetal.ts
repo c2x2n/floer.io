@@ -2,7 +2,7 @@ import { ClientEntity } from "./clientEntity";
 import { EntityType } from "@common/constants";
 import { getGameAssetsFile, getGameAssetsName } from "@/scripts/utils/assets.ts";
 import { Game } from "@/scripts/game";
-import { EntitiesNetData } from "@common/packets/updatePacket.ts";
+import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
 import { Tween } from '@tweenjs/tween.js';
 import { PetalDefinition } from "@common/definitions/petals.ts";

@@ -1,10 +1,8 @@
 export interface WallDefinition {
-    x: number
-    y: number
-    width: number
-    height: number
+    readonly x: number
+    readonly y: number
+    readonly width: number
+    readonly height: number
 }
 
-export const Walls: WallDefinition[] = [
-
-]
+export const Walls: WallDefinition[] = []

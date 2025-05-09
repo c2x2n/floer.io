@@ -6,7 +6,7 @@ import { MobCategory, MobDefinition, Mobs } from "./mobs";
 import { EntityType } from "../constants";
 import { halfPI, P2 } from "../utils/math";
 
-export type SavedPetalDefinitionData = PetalDefinition | null
+export type SavedPetalDefinitionData = PetalDefinition | null;
 
 export type PetalDefinition = ObjectDefinition & {
     readonly description?: string
@@ -98,7 +98,7 @@ export type AttributeParameters = {
     readonly peas_shoot?: {
         readonly radius?: number
         readonly amount: number
-        readonly para: ProjectileParameters
+        readonly parameters: ProjectileParameters
     }
     readonly place_projectile?: ProjectileParameters
     readonly spawner?: MobDefinition
@@ -1289,7 +1289,7 @@ export let Petals = new Definitions<PetalDefinition>([
         attributes: {
             peas_shoot: {
                 amount: 4,
-                para: {
+                parameters: {
                     definition: Projectiles.fromString("peas"),
                     speed: 6.25,
                     damage: 8,
@@ -1323,7 +1323,7 @@ export let Petals = new Definitions<PetalDefinition>([
         attributes: {
             peas_shoot: {
                 amount: 4,
-                para: {
+                parameters: {
                     definition: Projectiles.fromString("poison_peas"),
                     speed: 6.25,
                     damage: 8,
@@ -1365,7 +1365,7 @@ export let Petals = new Definitions<PetalDefinition>([
         attributes: {
             peas_shoot: {
                 amount: 4,
-                para: {
+                parameters: {
                     definition: Projectiles.fromString("poison_peas"),
                     speed: 6.25,
                     damage: 10,

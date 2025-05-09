@@ -1,7 +1,7 @@
 import { type GameEntity } from "../../../common/src/utils/entityPool";
 import { EntityType, GameConstants } from "../../../common/src/constants";
-import { GameBitStream } from "../../../common/src/net";
-import { type EntitiesNetData, EntitySerializations } from "../../../common/src/packets/updatePacket";
+import { GameBitStream } from "../../../common/src/net/net";
+import { type EntitiesNetData, EntitySerializations } from "../../../common/src/net/packets/updatePacket";
 import { CircleHitbox, type Hitbox } from "../../../common/src/utils/hitbox";
 import { Vec2, type Vector } from "../../../common/src/utils/vector";
 import { type Game } from "../game";

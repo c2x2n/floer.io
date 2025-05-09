@@ -6,7 +6,7 @@ import { MobDefinition } from "./mobs";
 export type ProjectileDefinition = ObjectDefinition & {
     readonly onGround?: boolean;
     readonly doesNotDamage?: EntityType[];
-    readonly showingXBackground?: number;
+    readonly showingCrossBackground?: number;
 };
 
 export const Projectiles = new Definitions<ProjectileDefinition>([
@@ -29,7 +29,7 @@ export const Projectiles = new Definitions<ProjectileDefinition>([
     },{
         idString: "red_peas",
         displayName: "Peas",
-        showingXBackground: 4
+        showingCrossBackground: 4
     },
     {
         idString: "blueberries",
@@ -47,7 +47,7 @@ export const Projectiles = new Definitions<ProjectileDefinition>([
         idString: "speas",
         displayName: "Grapes",
         usingAssets: "poison_peas",
-        doesNotDamage: [EntityType.Player],
+        doesNotDamage: [EntityType.Player]
     },
 ] as ProjectileDefinition[]);
 

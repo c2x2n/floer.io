@@ -4,7 +4,7 @@ import { Game } from "@/scripts/game";
 import { Camera } from "@/scripts/render/camera.ts";
 import { MathNumeric, P2 } from "@common/utils/math.ts";
 import { Vec2 } from "@common/utils/vector.ts";
-import { EntitiesNetData } from "@common/packets/updatePacket.ts";
+import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
 
 export class ClientPlayer extends ClientEntity {
     type = EntityType.Player;

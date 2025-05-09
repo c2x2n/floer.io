@@ -3,7 +3,7 @@ import { EntityType } from "@common/constants";
 import { Game } from "@/scripts/game";
 import { Camera } from "@/scripts/render/camera.ts";
 import { Vector } from "@common/utils/vector.ts";
-import { EntitiesNetData } from "@common/packets/updatePacket.ts";
+import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
 
 
 export class ClientWall extends ClientEntity {

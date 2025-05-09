@@ -2,7 +2,7 @@ import { ServerPetal } from "../entities/serverPetal";
 import { MathGraphics, P2 } from "../../../common/src/utils/math";
 import { Vec2 } from "../../../common/src/utils/vector";
 import { AttributeNames, AttributeParameters } from "../../../common/src/definitions/petals";
-import { EventInitializer } from "./petalEventManager";
+import { EventInitializer } from "./petalEvents";
 import { Effect } from "./effects";
 import { EntityType } from "../../../common/src/constants";
 import { ServerPlayer } from "../entities/serverPlayer";
@@ -215,7 +215,7 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
         callback: (on, petal, data) => {
             on(AttributeEvents.ATTACK,() => {
                 if (!data) return;
-                const para = data.para;
+                const para = data.parameters;
                 const amount = data.amount;
 
                 const radius = data.radius ?? 0.2;

@@ -33,7 +33,7 @@ interface EventData {
     use?: PetalUsingAnimations;
 }
 
-export class AttributeEventManager {
+export class PetalEventManager {
     private _attributes_event = new Set<EventData>;
     private _by_event = new Map<string, Set<EventData>>;
 
@@ -58,14 +58,14 @@ export class AttributeEventManager {
             if (finding) return;
         }
         realize.callback(
-            this.getEventInitializer(petal, name),
+            this.createEventInitializer(petal, name),
             petal,
             petal.definition.attributes[name]
         );
     }
 
-    getEventInitializer(petal: ServerPetal, name: AttributeNames){
-        let em: AttributeEventManager = this;
+    createEventInitializer(petal: ServerPetal, name: AttributeNames){
+        let em: PetalEventManager = this;
         return function<T extends AttributeEvents>(
             on: AttributeEvents,
             func: EventFunction<T>,

@@ -7,7 +7,7 @@ import { Rarity } from "@common/definitions/rarities.ts";
 import { ActionType } from "@common/constants";
 import { showPetalInformation, unShowInformation } from "@/scripts/shown/information.ts";
 import { MobDefinition } from "@common/definitions/mobs.ts";
-import { PetalData, PetalState } from "@common/packets/updatePacket.ts";
+import { PetalData, PetalState } from "@common/net/packets/updatePacket.ts";
 
 interface EasingData {
     x: number,

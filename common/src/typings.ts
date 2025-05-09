@@ -25,3 +25,16 @@ export interface Modifiers {
     speed: number;
     selfPoison: number;
 }
+
+export type StTypeMapping = {
+    string: string;
+    number: number;
+    boolean: boolean;
+}
+
+export type StType = keyof StTypeMapping;
+export type StTyped = StTypeMapping[StType];
+export type StTypeToRealType<H extends StType> =
+    StTypeMapping[H];
+
+export type StringToNumber<S extends string> = S extends `${infer N extends number}` ? N : never;

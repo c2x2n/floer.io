@@ -1,7 +1,7 @@
 import { BitStream } from "bit-buffer";
-import { type Vector } from "./utils/vector";
-import { GameConstants } from "./constants";
-import { MathNumeric } from "./utils/math";
+import { type Vector } from "../utils/vector";
+import { GameConstants } from "../constants";
+import { MathNumeric } from "../utils/math";
 import { JoinPacket } from "./packets/joinPacket";
 import { InputPacket } from "./packets/inputPacket";
 import { UpdatePacket } from "./packets/updatePacket";

@@ -5,7 +5,7 @@ import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../../../comm
 import { P2 } from "../../../common/src/utils/math";
 import { Vector } from "../../../common/src/utils/vector";
 import { GameConstants } from "../../../common/src/constants";
-import { AttributeEventManager } from "../utils/petalEventManager";
+import { PetalEventManager } from "../utils/petalEvents";
 import { Rarity } from "../../../common/src/definitions/rarities";
 import { Random } from "../../../common/src/utils/random";
 
@@ -37,7 +37,7 @@ export class Inventory {
         this.petalBunches.forEach(e => e.updateRange(this._range));
     }
 
-    eventManager = new AttributeEventManager();
+    eventManager = new PetalEventManager();
 
     absorbedBefore = new Set<{
         definition: PetalDefinition,

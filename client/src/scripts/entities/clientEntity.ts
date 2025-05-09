@@ -2,7 +2,7 @@ import { type GameEntity } from "@common/utils/entityPool";
 import { EntityType } from "@common/constants";
 import { Vec2, Vector } from "@common/utils/vector";
 import { Game } from "@/scripts/game";
-import { EntitiesNetData } from "@common/packets/updatePacket.ts";
+import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
 import { Tween } from "@tweenjs/tween.js";
 import { MathNumeric, P2 } from "@common/utils/math.ts";
 import { Camera } from "@/scripts/render/camera.ts";

@@ -1,7 +1,7 @@
 import { ClientEntity } from "./clientEntity";
 import { EntityType } from "@common/constants";
 import { Game } from "@/scripts/game";
-import { EntitiesNetData } from "@common/packets/updatePacket.ts";
+import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
 import { ProjectileDefinition } from "@common/definitions/projectiles.ts";
 import { petalAssets } from "@/assets/petals.ts";
 import { projectileAssets } from "@/assets/projectiles.ts";
@@ -51,8 +51,8 @@ export class ClientProjectile extends ClientEntity {
                     this.container.zIndex = -999
                 }
 
-                if (this.definition.showingXBackground) {
-                    const amount = this.definition.showingXBackground;
+                if (this.definition.showingCrossBackground) {
+                    const amount = this.definition.showingCrossBackground;
                     this.container.dotsData = []
                     let radiansNow = 0;
                     console.log(this.id, radiansNow)

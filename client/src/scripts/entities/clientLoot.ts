@@ -1,7 +1,7 @@
 import { ClientEntity } from "./clientEntity";
 import { EntityType } from "@common/constants";
 import { Game } from "@/scripts/game";
-import { EntitiesNetData } from "@common/packets/updatePacket.ts";
+import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
 import { PetalDefinition } from "@common/definitions/petals.ts";
 import { Rarity } from "@common/definitions/rarities.ts";

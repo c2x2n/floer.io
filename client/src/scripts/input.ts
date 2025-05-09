@@ -1,7 +1,7 @@
 import { Vec2 } from "@common/utils/vector.ts";
 import { type Game } from "./game";
 import { halfPI, PI } from "@common/utils/math.ts";
-import { InputAction } from "@common/packets/inputPacket.ts";
+import { InputAction } from "@common/net/packets/inputPacket.ts";
 
 
 export class Input {

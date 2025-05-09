@@ -24,7 +24,7 @@ export enum PlayerState {
     Normal
 }
 
-export const GameConstants = {
+export const GameConstants = Object.freeze({
     defaultModifiers: (): Modifiers => ({
         healPerSecond: 0,
         speed: 1,
@@ -85,4 +85,4 @@ export const GameConstants = {
         walkingTime: 1
     },
     maxTokenLength: 20
-};
+});

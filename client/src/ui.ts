@@ -1,10 +1,10 @@
 import $ from "jquery";
 import { ClientApplication } from "@/main.ts";
-import { GameOverPacket } from "@common/packets/gameOverPacket.ts";
+import { GameOverPacket } from "@common/net/packets/gameOverPacket.ts";
 import { Game } from "@/scripts/game.ts";
 import { SettingsData } from "@/settings.ts";
-import { ChatData } from "@common/packets/updatePacket.ts";
-import { ChatChannel } from "@common/packets/chatPacket.ts";
+import { ChatData } from "@common/net/packets/updatePacket.ts";
+import { ChatChannel } from "@common/net/packets/chatPacket.ts";
 import { MathNumeric } from "@common/utils/math.ts";
 import { ActionType, EntityType, GameConstants } from "@common/constants.ts";
 import { Random } from "@common/utils/random.ts";
@@ -541,13 +541,20 @@ export class UI {
             (msg.content.startsWith("The Mythic") || msg.content.startsWith("A Mythic"))
         ) return;
 
+        const content =
+            msg.content.replace(/"/g, '&quot;')
+                .replace(/\[/g, '&lsqb;')
+                .replace(/]/g, '&rsqb;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+
         const jq = $(
             `<div
                 class="chat-message"
-                textStroke="${msg.content}"
+                textStroke="${content}"
                 style="color: #${msg.color.toString(16)}; transform: translateX(-150%);"
             >
-                ${msg.content}
+                ${content}
             </div>`
         );
 

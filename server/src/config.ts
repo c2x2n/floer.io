@@ -1,8 +1,8 @@
-export const Config: ServerConfig = {
+export const Config: Readonly<ServerConfig> = Object.freeze({
     host: "0.0.0.0",
     port: 12563,
     tps: 30
-};
+});
 
 export interface ServerConfig {
     readonly host: string

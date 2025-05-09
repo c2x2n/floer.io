@@ -1,10 +1,10 @@
-import { EntityType, GameConstants, PlayerState } from "../constants";
+import { EntityType, GameConstants, PlayerState } from "../../constants";
 import { type GameBitStream, type Packet } from "../net";
-import { Vec2, type Vector } from "../utils/vector";
-import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../definitions/petals";
-import { MobDefinition, Mobs } from "../definitions/mobs";
-import { Projectiles, ProjectileDefinition } from "../definitions/projectiles";
-import { P2 } from "../utils/math";
+import { Vec2, type Vector } from "../../utils/vector";
+import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../../definitions/petals";
+import { MobDefinition, Mobs } from "../../definitions/mobs";
+import { Projectiles, ProjectileDefinition } from "../../definitions/projectiles";
+import { P2 } from "../../utils/math";
 
 export interface EntitiesNetData {
     [EntityType.Player]: {

@@ -1,6 +1,6 @@
 import { ServerEntity } from "./serverEntity";
 import { Vec2, Vector } from "../../../common/src/utils/vector";
-import { type EntitiesNetData } from "../../../common/src/packets/updatePacket";
+import { type EntitiesNetData } from "../../../common/src/net/packets/updatePacket";
 import { CircleHitbox } from "../../../common/src/utils/hitbox";
 import { EntityType } from "../../../common/src/constants";
 import { ProjectileDefinition, ProjectileParameters } from "../../../common/src/definitions/projectiles";
