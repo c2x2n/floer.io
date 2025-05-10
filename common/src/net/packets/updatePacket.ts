@@ -17,6 +17,9 @@ export interface EntitiesNetData {
             healthPercent: number
             shieldPercent?: number
             isAdmin: boolean
+            spectator: boolean
+            invisible: boolean
+            frozen: boolean
         }
     }
     [EntityType.Petal]: {
@@ -85,6 +88,9 @@ export const EntitySerializations: { [K in EntityType]: EntitySerialization<K> }
         serializeFull(stream, data): void {
             stream.writeFloat(data.healthPercent, 0.0, 1.0, 16);
             stream.writeBoolean(data.isAdmin);
+            stream.writeBoolean(data.spectator);
+            stream.writeBoolean(data.invisible);
+            stream.writeBoolean(data.frozen);
             // Shield check
             stream.writeBoolean(!!data.shieldPercent);
             if (data.shieldPercent) {
@@ -103,6 +109,9 @@ export const EntitySerializations: { [K in EntityType]: EntitySerialization<K> }
             return {
                 healthPercent: stream.readFloat(0.0, 1.0, 16),
                 isAdmin: stream.readBoolean(),
+                spectator: stream.readBoolean(),
+                invisible: stream.readBoolean(),
+                frozen: stream.readBoolean(),
                 shieldPercent: stream.readBoolean() ? stream.readFloat(0.0, 1.0, 8) : undefined
             };
         }

@@ -174,13 +174,18 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
     modifiers: PlayerModifiers = GameConstants.player.defaultModifiers();
     otherModifiers: Partial<PlayerModifiers>[] = [];
-    // 持久的速度修改器
+
     persistentSpeedModifier: number = 1;
-    // 无敌模式
+
+    persistentZoomModifier: number = 1;
+
     godMode: boolean = false;
 
-    // 观察者模式
     spectatorMode: boolean = false;
+
+    invisible: boolean = false;
+
+    frozen: boolean = false;
 
     exp: number = 0;
     level: number = 1;
@@ -199,14 +204,15 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     knockback: number = 3;
 
     canCollideWith(entity: ServerEntity): boolean {
-        // 观察者模式下禁用碰撞
+
         if (this.spectatorMode) return false;
+
+        if (this.invisible) return false;
 
         return super.canCollideWith(entity);
     }
 
     canReceiveDamageFrom(source: damageableEntity): boolean {
-        // 观察者模式下不能受到伤害
         if (this.spectatorMode) return false;
 
         switch (source.type) {
@@ -679,7 +685,16 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     }
 
     processInput(packet: InputPacket): void {
-        if (!this.isActive()) return;
+        if (!this.isActive() || this.frozen) {
+            this.direction = {
+                direction: Vec2.new(0, 0),
+                mouseDirection: Vec2.new(0, 0)
+            };
+            this.distance = 0;
+            this.isAttacking = false;
+            this.isDefending = false;
+            return;
+        }
 
         // if the direction changed set to dirty
         if (!Vec2.equals(this.direction.direction, Vec2.radiansToDirection(packet.direction.direction))) {
@@ -727,7 +742,9 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                 healthPercent: this.health / this.maxHealth,
                 shieldPercent: this.shield / this.maxShield,
                 isAdmin: this.isAdmin,
-                spectator: this.spectatorMode
+                spectator: this.spectatorMode,
+                invisible: this.invisible,
+                frozen: this.frozen
             }
         };
 
@@ -811,10 +828,14 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
         this.otherModifiers = [];
 
-        // 应用持久的速度修改器
         if (this.persistentSpeedModifier !== 1) {
             modifiersNow = this.calcModifiers(modifiersNow, {
                 speed: this.persistentSpeedModifier
+            });
+        }
+        if (this.persistentZoomModifier !== 1) {
+            modifiersNow = this.calcModifiers(modifiersNow, {
+                zoom: this.persistentZoomModifier
             });
         }
 
