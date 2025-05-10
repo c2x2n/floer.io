@@ -154,6 +154,92 @@ export const CommandDefinitions = {
     "help": {
         description: "Show this help menu.",
         parameters: []
+    },
+    "spectator": {
+        description: "Toggle spectator mode for yourself or another player. In spectator mode, you can't collide, take damage, or use petals.",
+        parameters: [
+            {
+                type: "string",
+                displayName: "player",
+                optional: true,
+                default: ""
+            }
+        ]
+    },
+    "speed": {
+        description: "Set movement speed multiplier for yourself or another player.",
+        parameters: [
+            {
+                type: "number",
+                displayName: "multiplier",
+                optional: false
+            },
+            {
+                type: "string",
+                displayName: "player",
+                optional: true,
+                default: ""
+            }
+        ]
+    },
+    "zoom": {
+        description: "Set zoom level (field of view) for yourself or another player. Higher values mean you can see further.",
+        parameters: [
+            {
+                type: "number",
+                displayName: "multiplier",
+                optional: false
+            },
+            {
+                type: "string",
+                displayName: "player",
+                optional: true,
+                default: ""
+            }
+        ]
+    },
+    "god": {
+        description: "Toggle god mode for yourself or another player. In god mode, you cannot take any damage.",
+        parameters: [
+            {
+                type: "string",
+                displayName: "player",
+                optional: true,
+                default: ""
+            }
+        ]
+    },
+    "invisible": {
+        description: "Toggle invisibility for yourself or another player.",
+        parameters: [
+            {
+                type: "string",
+                displayName: "player",
+                optional: true,
+                default: ""
+            }
+        ]
+    },
+    "freeze": {
+        description: "Freeze or unfreeze a player.",
+        parameters: [
+            {
+                type: "string",
+                displayName: "player",
+                optional: false
+            }
+        ]
+    },
+    "heal": {
+        description: "Restore health and shield to full for yourself or another player.",
+        parameters: [
+            {
+                type: "string",
+                displayName: "player",
+                optional: true,
+                default: ""
+            }
+        ]
     }
 } as const satisfies Readonly<{ [K: string]: CommandDefinition}>;
 

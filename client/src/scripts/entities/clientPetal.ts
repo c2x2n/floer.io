@@ -106,6 +106,18 @@ export class ClientPetal extends ClientEntity {
 
     changeVisibleTo(visible: boolean): void {
         if (!this.definition) return;
+        
+        if (this.ownerId !== -1) {
+            const owner = this.game.entityPool.get(this.ownerId);
+            if (owner?.type === EntityType.Player && (owner as any).invisible) {
+                if (this.visible || this.container.visible) {
+                    this.visible = false;
+                    this.container.visible = false;
+                }
+                return;
+            }
+        }
+
         if (this.visible !== visible) {
             this.visible = visible;
             if (visible || this.definition.equipment) {

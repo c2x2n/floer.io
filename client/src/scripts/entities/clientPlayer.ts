@@ -15,6 +15,8 @@ export class ClientPlayer extends ClientEntity {
 
     lastGettingDamage: number = 0;
 
+    invisible: boolean = false;
+
     constructor(game: Game, id: number) {
         super(game, id)
         this.hitboxRadius = GameConstants.player.radius;
@@ -52,6 +54,28 @@ export class ClientPlayer extends ClientEntity {
                 this.healthPercent = data.full.healthPercent;
                 this.shieldPercent = data.full.shieldPercent ?? 0;
             }
+            
+            // 只在隐身状态真正改变时才更新
+            if (data.full.invisible !== this.invisible) {
+                const newInvisible = data.full.invisible;
+                this.invisible = newInvisible;
+                this.container.visible = !newInvisible;
+                
+                // 使用 Set 来存储已更新的花瓣，避免重复更新
+                const updatedPetals = new Set<number>();
+                
+                // 只在状态改变时更新花瓣可见性
+                if (this.game.entityPool) {
+                    for (const entity of this.game.entityPool) {
+                        if (entity.type === EntityType.Petal && 
+                            (entity as any).ownerId === this.id && 
+                            !updatedPetals.has(entity.id)) {
+                            entity.container.visible = !newInvisible;
+                            updatedPetals.add(entity.id);
+                        }
+                    }
+                }
+            }
         }
 
         this.state = data.state;
@@ -88,7 +112,9 @@ export class ClientPlayer extends ClientEntity {
 
         this.updateContainerPosition(4)
 
-        this.drawFlower()
+        if (!this.invisible) {
+            this.drawFlower()
+        }
     }
 
     drawFlower() {
@@ -254,20 +280,22 @@ export class ClientPlayer extends ClientEntity {
     staticRender(dt: number) {
         super.staticRender(dt);
 
-        const name = this.game.playerData.get(this.id)?.name ?? GameConstants.player.defaultName;
+        if (!this.invisible) {
+            const name = this.game.playerData.get(this.id)?.name ?? GameConstants.player.defaultName;
 
-        this.drawHealthBar()
+            this.drawHealthBar()
 
-        const { ctx } = this;
+            const { ctx } = this;
 
-        ctx.font = "14px Ubuntu";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = this.admin ? "#d95e5e" : "#ffffff";
-        ctx.strokeStyle = "#000000";
-        ctx.lineWidth = 2;
-        ctx.strokeText(name, 0, -50);
-        ctx.fillText(name, 0, -50);
+            ctx.font = "14px Ubuntu";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillStyle = this.admin ? "#d95e5e" : "#ffffff";
+            ctx.strokeStyle = "#000000";
+            ctx.lineWidth = 2;
+            ctx.strokeText(name, 0, -50);
+            ctx.fillText(name, 0, -50);
+        }
     }
 
     drawHealthBar() {
