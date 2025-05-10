@@ -1,6 +1,6 @@
 import { ClientEntity } from "./clientEntity";
 import { EntityType } from "@common/constants";
-import { getGameAssetsFile, getGameAssetsName } from "@/scripts/utils/assets.ts";
+import { getGameAssetsFile } from "@/scripts/utils/assets.ts";
 import { Game } from "@/scripts/game";
 import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
@@ -10,6 +10,7 @@ import { EasingFunctions, MathGraphics } from "@common/utils/math.ts";
 import { Rarity } from "@common/definitions/rarities.ts";
 import { petalAssets } from "@/assets/petals.ts";
 import { Vec2 } from "@common/utils/vector.ts";
+import { getGameAssetsName } from "@/assets/assets.ts";
 
 export class ClientPetal extends ClientEntity {
     type = EntityType.Petal;
@@ -39,25 +40,7 @@ export class ClientPetal extends ClientEntity {
         if (this.container.visible && petalAssets.hasOwnProperty(name)) {
             petalAssets[name](this.container)
         } else {
-            const scalePercent =
-                Camera.unitToScreen(this.hitboxRadius) * 2 / 200;
-            if (!this.image) {
-                const image = new Image();
 
-                image.src = `/img/game/petal/${getGameAssetsFile(this.definition)}`;
-
-                image.onload = () => {
-                    this.image = image;
-                }
-            } else if (this.image){
-                this.ctx.drawImage(
-                    this.image,
-                    -this.image.width * scalePercent / 2,
-                    -this.image.height * scalePercent / 2,
-                    this.image.width * scalePercent,
-                    this.image.height * scalePercent,
-                )
-            }
         }
 
         if (this.definition && this.visible) {

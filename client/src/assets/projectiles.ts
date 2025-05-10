@@ -1,10 +1,10 @@
-import { AssetsDrawer } from "@/assets/assets.ts";
+import { AssetsBunch, AssetsDrawer } from "@/assets/assets.ts";
 import { MathNumeric, P2 } from "@common/utils/math.ts";
 
 const web = new Image();
 web.src = "img/game/web.svg";
 
-export const projectileAssets: { [K: string]: AssetsDrawer } = {
+export const projectileAssets: AssetsBunch = {
     "missile": (containerToDraw) => {
         const { ctx, radius } = containerToDraw;
 

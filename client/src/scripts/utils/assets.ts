@@ -7,13 +7,7 @@ import { petalAssets } from "@/assets/petals.ts";
 import { MathGraphics, P2, PI } from "@common/utils/math.ts";
 import { MobDefinition, Mobs } from "@common/definitions/mobs.ts";
 import { mobAssets } from "@/assets/mobs.ts";
-
-export function getGameAssetsName(
-    reify: ObjectDefinition
-): string {
-    if (reify.usingAssets) return `${reify.usingAssets}`;
-    return `${reify.idString}`;
-}
+import { getGameAssetsName } from "@/assets/assets.ts";
 
 export function getGameAssetsFile(
     reify: ObjectDefinition

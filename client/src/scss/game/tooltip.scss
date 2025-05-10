@@ -1,0 +1,27 @@
+.information {
+    position: absolute;
+    padding: 7px;
+    transform: translate(-35%, -100%);
+    background: rgba(0, 0, 0, 0.6);
+    height: max-content;
+    width: max-content;
+    border-radius: 5px;
+    color: white;
+    z-index: 100;
+}
+
+.information > div {
+    margin: 0.1em 0;
+}
+
+.information > div > p {
+    margin: 0;
+}
+
+.information > p {
+    margin: 0;
+}
+
+.information > .br{
+    margin: 15px 0;
+}

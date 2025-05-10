@@ -1,9 +1,10 @@
 import { Petals } from "@common/definitions/petals.ts";
-import { ICON_drawPetal, getGameAssetsName, ICON_drawMob } from "@/scripts/utils/assets.ts";
+import { ICON_drawPetal, ICON_drawMob } from "@/scripts/utils/assets.ts";
 import $ from "jquery";
 import { petalAssets } from "@/assets/petals.ts";
 import { mobAssets } from "@/assets/mobs.ts";
 import { Mobs } from "@common/definitions/mobs.ts";
+import { getGameAssetsName } from "@/assets/assets.ts";
 
 export function loadStyleSheet() {
     let styleSheet = "";

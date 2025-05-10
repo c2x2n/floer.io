@@ -10,17 +10,19 @@
 @use './game/gallery.scss';
 @use './game/petal.scss';
 @use './game/chat.scss';
-
-$none_bg: #fff;
-$none_bd: #ccc;
+@use './game/tooltip.scss';
+@use './game/hud.scss';
 
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap');
-// Ubuntu fonts here.
 
 * {
-    font-family: 'Ubuntu', sans-serif; // Apply fonts
+    font-family: 'Ubuntu', sans-serif;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
+}
+
+input::placeholder {
+    color: white;
 }
 
 #loader {
@@ -37,7 +39,6 @@ $none_bd: #ccc;
     place-content: center;
     display: grid;
 }
-
 
 body {
     background-color: #1ea761;
@@ -136,6 +137,7 @@ body {
     z-index: 10010;
     white-space: nowrap;
 }
+
 #game-info {
   bottom: 18px;
 }
@@ -228,126 +230,6 @@ body {
     pointer-events: all;
 }
 
-#hud {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: flex;
-    justify-content: center;
-    pointer-events: none;
-}
-
-#hud > * {
-    pointer-events: auto;
-}
-
-#hud > .petal-column {
-    position: absolute;
-    bottom: 15px;
-}
-
-#hud > .petal-column.mobile{
-    left: 1px;
-    display: flex;
-    align-items: start;
-}
-
-.equipped-petals-row {
-    margin-top: 15px;
-    display: flex;
-}
-
-.preparation-petals-row {
-    margin-top: 8px;
-    display: flex;
-}
-
-.petal {
-    width: 100%;
-    height: 100%;
-    border-style: solid;
-    border-width: 4.4px;
-    border-radius: 3px;
-    position: relative;
-}
-
-.dragging-petal {
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    z-index: 9;
-    pointer-events: none;
-    transform-origin: center center;
-}
-
-.dragging-petal>.petal {
-    top: -5px;
-    left: -5px;
-    cursor: pointer;
-    border-width: 5px;
-    transform: translate(-50%, -50%); /* Center the petal within the dragging container */
-}
-
-.petal-slot>.petal {
-    top: -4px;
-    left: -4px;
-    cursor: pointer;
-    pointer-events: all;
-}
-
-.equipped-petals-row>.petal-slot{
-    --x: 13.2px;
-    width: 55px;
-    height: 55px;
-}
-
-.preparation-petals-row>.petal-slot{
-    --x: 8.8px;
-    width: 38.5px;
-    height: 38.5px;
-}
-
-.petal-slot {
-    position: relative;
-    border-style: solid;
-    border-width: 4.4px;
-    border-radius: 3px;
-    margin: 0 4px;
-    opacity: 0.85;
-    background: $none_bg;
-    border-color: $none_bd;
-}
-
-.piece-petal {
-    position: absolute;
-    background-repeat: no-repeat;
-    pointer-events: none;
-}
-
-[petalName]:before{
-    content: attr(petalName);
-    position: absolute;
-    transform: translate(-50%, -50%);
-    font-size: var(--x);
-    top: 80%;
-    left: var(--name-left, 50%);
-    white-space: nowrap;
-    -webkit-text-stroke: 1.65px #000;
-}
-
-[petalName]:after{
-    content: attr(petalName);
-    position: absolute;
-    transform: translate(-50%, -50%);
-    font-size: var(--x);
-    color: white;
-    top: 80%;
-    white-space: nowrap;
-    left: var(--name-left, 50%);
-}
-
 img {
     pointer-events: none;
 }
@@ -361,42 +243,6 @@ img {
     background: #b7816d;
     border: #9a7661 4px solid;
 }
-
-.information {
-    position: absolute;
-    padding: 7px;
-    transform: translate(-35%, -100%);
-    background: rgba(0, 0, 0, 0.6);
-    height: max-content;
-    width: max-content;
-    border-radius: 5px;
-    color: white;
-    z-index: 100;
-}
-
-.information > div {
-    margin: 0.1em 0;
-}
-
-.information > div > p {
-    margin: 0;
-}
-
-.information > p {
-    margin: 0;
-}
-
-.preparation-petals-row > .selecting-petal > .petal {
-    z-index: 2;
-    width: 130%;
-    height: 130%;
-    top: -8px;
-    left: -8px;
-    --x: 13.2px;
-    animation: shaking 1.6s infinite;
-}
-
-
 
 #move-high{
     position: absolute;
@@ -431,16 +277,6 @@ img {
     color: white;
     opacity: 0.5;
     z-index: 999;
-}
-
-
-input::placeholder {
-    color: white;
-}
-
-
-.information > .br{
-    margin: 15px 0;
 }
 
 #abandon {

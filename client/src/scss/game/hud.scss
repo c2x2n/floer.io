@@ -1,0 +1,27 @@
+
+
+#hud {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+}
+
+#hud > * {
+    pointer-events: auto;
+}
+
+#hud > .petal-column {
+    position: absolute;
+    bottom: 15px;
+}
+
+#hud > .petal-column.mobile{
+    left: 1px;
+    display: flex;
+    align-items: start;
+}

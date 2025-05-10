@@ -12,6 +12,10 @@ export const Config: ClientConfig = {
             name: "Singapore",
             address: "wss://floer.xyz/floer/",
             fetchAddress: "http://floer.xyz/floer/"
+        }, "sy": {
+            name: "Shiyan",
+            address: "ws://211.154.18.48:12563/floer/",
+            fetchAddress: "http://211.154.18.48:12563/floer/"
         }
     }
 };

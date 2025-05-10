@@ -1,8 +1,8 @@
-import { AssetsDrawer } from "@/assets/assets.ts";
+import { AssetsBunch, AssetsDrawer } from "@/assets/assets.ts";
 import { P2 } from "@common/utils/math.ts";
 import { loadPathFromSVG } from "@/assets/pathLoader.ts";
 
-export const petalAssets: { [K: string]: AssetsDrawer } = {
+export const petalAssets: AssetsBunch = {
     "basic": (containerToDraw) => {
         const { ctx, radius } = containerToDraw;
 

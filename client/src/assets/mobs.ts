@@ -1,4 +1,4 @@
-import { AssetsDrawer } from "@/assets/assets.ts";
+import { AssetsBunch, AssetsDrawer } from "@/assets/assets.ts";
 import { Dot, RenderContainer } from "@/scripts/utils/renderContainer.ts";
 import { Random } from "@common/utils/random.ts";
 import { halfPI, MathGraphics, MathNumeric, P2, PI } from "@common/utils/math.ts";
@@ -23,7 +23,7 @@ const spiderLeg2 = "m 99.950255,117.36744 c 31.092575,29.06285 51.735135,59.1822
 const spiderLeg3 = "M 99.950255,117.36744 C 86.286006,153.81167 79.061687,189.60426 78.277298,224.74522 M 99.950255,117.36744 C 102.09667,80.633021 102.06589,44.118908 99.857943,7.8250999";
 const spiderLeg4 = "M 99.950255,117.36744 C 49.81462,139.0878 19.106235,158.84237 7.8250999,176.63115 M 99.950255,117.36744 C 143.1957,90.178277 169.36722,64.716788 178.46482,40.982971";
 
-export const mobAssets: { [K: string]: AssetsDrawer } = {
+export const mobAssets: AssetsBunch = {
     "rock": (containerToDraw: RenderContainer) => {
         const { ctx, radius } = containerToDraw;
 

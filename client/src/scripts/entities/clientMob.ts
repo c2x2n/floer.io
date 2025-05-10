@@ -1,6 +1,6 @@
 import { ClientEntity } from "./clientEntity";
 import { EntityType } from "@common/constants";
-import { getGameAssetsFile, getGameAssetsName } from "@/scripts/utils/assets.ts";
+import { getGameAssetsFile } from "@/scripts/utils/assets.ts";
 import { Game } from "@/scripts/game";
 import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
@@ -10,6 +10,7 @@ import { Rarity } from "@common/definitions/rarities.ts";
 import { mobAssets } from "@/assets/mobs.ts";
 import { Tween, Easing } from "@tweenjs/tween.js";
 import { MathGraphics, MathNumeric } from "@common/utils/math.ts";
+import { getGameAssetsName } from "@/assets/assets.ts";
 
 export class ClientMob extends ClientEntity {
     type = EntityType.Mob;

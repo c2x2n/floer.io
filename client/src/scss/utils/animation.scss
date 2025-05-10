@@ -49,3 +49,23 @@
         transform: rotate(0deg);
     }
 }
+
+@keyframes bright {
+    from {
+        filter: brightness(100%);
+    }
+
+    to {
+        filter: brightness(110%);
+    }
+}
+
+@keyframes brighter {
+    from {
+        filter: brightness(100%);
+    }
+
+    to {
+        filter: brightness(160%);
+    }
+}
