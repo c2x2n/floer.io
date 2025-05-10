@@ -1,15 +1,13 @@
 import { createServer, ServerResponse, IncomingMessage } from "node:http";
 import Cluster from "node:cluster";
 import { Config } from "./config";
-import { WebSocketServer } from "ws";
-import { Socket } from "node:net";
-import { Game } from "./game";
-import * as jwt from "jsonwebtoken";
-import { WebhookClient } from "discord.js";
 
 // LOAD ENV //
 import { config } from "dotenv";
+import { GameContainer, games } from "./gameContainer";
 config();
+
+const BUILD_VERSION = "0.3.0";
 
 export interface ProcessMessage {
     req: IncomingMessage
@@ -29,7 +27,7 @@ function showNotFound(res: ServerResponse) {
 
 if (Cluster.isPrimary) {
     const app = createServer();
-    const worker = Cluster.fork();
+    const worker = new GameContainer();
 
     app.on("request", (req, res) => {
         cors(res);
@@ -46,7 +44,17 @@ if (Cluster.isPrimary) {
         *
         * */
         if (req.url?.startsWith("/floer/server_info")) {
-            res.setHeader("Content-Type", "application/json").end(JSON.stringify({}))
+            if (games.length > 0) {
+                const game = games[0]
+                res.setHeader("Content-Type", "application/json").end(
+                    JSON.stringify({
+                        playerCount: game.data.playerCount,
+                        build: BUILD_VERSION
+                    })
+                )
+            } else {
+                res.setHeader("Content-Type", "application/json").end(JSON.stringify({}))
+            }
             return;
         }
 
@@ -73,27 +81,4 @@ if (Cluster.isPrimary) {
     });
 
     app.listen(Config.port, Config.host);
-} else {
-
-    const ws = new WebSocketServer({ noServer: true });
-
-    const game = new Game(Config);
-
-    process.on("message", (data: ProcessMessage, socket?: Socket) => {
-        const { req } = data;
-        // @ts-ignore Handling by using this way will make sure we can create the connection
-        ws.handleUpgrade(req, socket, req.headers, wssocket => {
-            wssocket.binaryType = "arraybuffer";
-
-            // let player = game.newPlayer(wssocket);
-
-            wssocket.on("message", (msg: ArrayBuffer) => {
-                game.handleMessage(msg, wssocket);
-            })
-
-            wssocket.on("close", () => {
-                game.removePlayer(wssocket);
-            })
-        });
-    });
 }

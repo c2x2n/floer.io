@@ -9,6 +9,7 @@ import { MathNumeric } from "@common/utils/math.ts";
 import { ActionType, EntityType, GameConstants } from "@common/constants.ts";
 import { Random } from "@common/utils/random.ts";
 import { Gallery } from "@/scripts/gallery.ts";
+import { Config } from "@/config.ts";
 
 const version = `0.3.0`
 
@@ -88,6 +89,11 @@ export class UI {
 
     readonly buttonA = $<HTMLDivElement>("#mobile-button-a");
     readonly buttonB = $<HTMLDivElement>("#mobile-button-b");
+
+    readonly serverButton = $<HTMLDivElement>("#server-seleceted");
+    readonly serverName = $<HTMLDivElement>("#server-name");
+    readonly serverPlayerCount = $<HTMLDivElement>("#server-player-count");
+    readonly serverList = $<HTMLDivElement>("#server-list");
 
     joystick : JQuery | null = null;
     joystickHandle  : JQuery | null = null;
@@ -230,6 +236,85 @@ export class UI {
                 this.game.endGame();
             }
         })
+
+        this.serverButton.on("click", () => {
+            if (this.serverList.hasClass("active")) {
+                this.serverList.removeClass("active");
+            } else {
+                this.serverList.addClass("active");
+            }
+        })
+
+        this.fetchServerInfo()
+    }
+
+    serverInfo: {
+        [K: string] : { playerCount: number, build: string };
+    } = {};
+
+    fetchServerInfo() {
+        for (const server in Config.servers) {
+            const data = Config.servers[server];
+            fetch(data.fetchAddress + "server_info").then(r => r.json())
+            .then((data) => {
+                this.serverInfo[server] = {
+                    playerCount: data.playerCount ?? 0,
+                    build: data.build ?? "0"
+                }
+
+                if (server === this.app.settings.data.server) {
+                    this.updateServerInfo()
+                }
+                this.updateServerList()
+            })
+        }
+    }
+
+    updateServerList() {
+        this.serverList.empty();
+        for (const server in Config.servers) {
+            if (!this.serverInfo.hasOwnProperty(server)) break;
+            const data = Config.servers[server];
+            const serverInfo = this.serverInfo[server];
+            const serverElement = $("<li class='server-item'></li>");
+            const serverItem = $("<div class='server-item-content'></div>");
+            const serverName = $("<div class='server-name'></div>");
+            const serverPlayerCount = $("<div class='server-info'></div>");
+            serverName.text(data.name);
+            serverPlayerCount.text(`${serverInfo.playerCount} Player${serverInfo.playerCount != 1 ? "s" : ""}`);
+            serverItem.append(serverName);
+            serverItem.append(serverPlayerCount);
+            serverElement.append(serverItem);
+            this.serverList.append(serverElement);
+            if (serverInfo.build != version) {
+                serverElement.addClass("unavailable");
+                const status = $("<div class='server-item-status'></div>");
+                serverElement.append(status);
+                const unavailable = $("<div></div>");
+                unavailable.text("Unavailable");
+                unavailable.attr("textStroke", "Unavailable")
+                status.append(unavailable);
+            }
+
+            serverElement.on("click", () => {
+                this.app.settings.changeSettings("server", server);
+                this.updateServerInfo();
+                this.serverList.removeClass("active");
+                this.game.reconnect()
+            })
+        }
+    }
+
+    updateServerInfo() {
+        const serverSelected = this.app.settings.data.server;
+        if (Config.servers.hasOwnProperty(serverSelected)) {
+            const data = Config.servers[serverSelected];
+            this.serverName.text(data.name);
+            this.serverName.attr("textStroke", data.name);
+            const info = this.serverInfo[serverSelected];
+            this.serverPlayerCount.text(`${info.playerCount} Player${info.playerCount != 1? "s" : ""}`);
+            this.serverPlayerCount.attr("textStroke", `${info.playerCount} Player${info.playerCount != 1? "s" : ""}`);
+        }
     }
 
     mobileInit() {
@@ -541,22 +626,15 @@ export class UI {
             (msg.content.startsWith("The Mythic") || msg.content.startsWith("A Mythic"))
         ) return;
 
-        const content =
-            msg.content.replace(/"/g, '&quot;')
-                .replace(/\[/g, '&lsqb;')
-                .replace(/]/g, '&rsqb;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;');
-
         const jq = $(
             `<div
                 class="chat-message"
-                textStroke="${content}"
                 style="color: #${msg.color.toString(16)}; transform: translateX(-150%);"
-            >
-                ${content}
-            </div>`
+            ></div>`
         );
+
+        jq.text(msg.content);
+        jq.attr("textStroke", msg.content);
 
         this.chatMessagesBox.append(jq)
 

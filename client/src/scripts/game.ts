@@ -156,7 +156,7 @@ export class Game {
 
         this.inventory.updatePetalRows();
 
-        this.connect(Config.address);
+        this.reconnect();
     }
 
     getDOMCanvas() {
@@ -353,9 +353,16 @@ export class Game {
         }
     }
 
+    reconnect() {
+        this.socket?.close();
+        if (Config.servers.hasOwnProperty(this.app.settings.data.server)){
+            this.connect(Config.servers[this.app.settings.data.server].address + "play");
+        }
+    }
+
     sendPacket(packet: Packet) {
-        if (!this.socket) {
-            this.connect(Config.address);
+        if (!this.socket || this.socket.readyState === this.socket.CLOSED) {
+            this.reconnect();
         }
 
         if (this.socket && this.socket.readyState === this.socket.OPEN) {

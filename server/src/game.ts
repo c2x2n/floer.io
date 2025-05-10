@@ -27,6 +27,7 @@ import { ServerWall } from "./entities/serverWall";
 import { CircleHitbox, RectHitbox } from "../../common/src/utils/hitbox";
 import { spawnSegmentMobs } from "./misc/spawning";
 import { Walls } from "../../common/src/definitions/walls";
+import { GameData } from "./gameContainer";
 
 type SpecialSpawningTimer = { timer: number, toNextTimer: number, spawned?: ServerMob };
 
@@ -64,6 +65,10 @@ export class Game {
 
     private readonly deltaMs: number;
 
+    data: GameData = {
+        playerCount: 0
+    }
+
     constructor(config: ServerConfig) {
         this.deltaMs = 1000 / config.tps;
         this.timer.setInterval(this.tick.bind(this), "", `${this.deltaMs}m`);
@@ -94,6 +99,7 @@ export class Game {
         this.removePlayer(socket);
 
         this.wsPlayerMap.set(socket, player);
+        this.updateGameData()
 
         return player;
     }
@@ -146,6 +152,11 @@ export class Game {
             return oldPlayer.processMessage(packet);
         }
         return;
+    }
+
+    updateGameData() {
+        this.data.playerCount = this.players.size;
+        process.send?.(this.data)
     }
 
     specialSpawnTimer = new Map<

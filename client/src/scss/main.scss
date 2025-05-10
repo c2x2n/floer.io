@@ -1,6 +1,7 @@
 @use './utils/button.scss';
 @use './utils/rarity.scss';
 @use './utils/dialogs.scss';
+@use './utils/dropdowns.scss';
 
 $none_bg: #fff;
 $none_bd: #ccc;
@@ -758,4 +759,79 @@ input::placeholder {
         position: relative;
         touch-action: none;
     }
+}
+
+#server-choose {
+    margin-top: 4px;
+}
+
+#server-seleceted {
+    width: 300px;
+    height: 38.5px;
+    position: relative;
+    justify-content: start;
+}
+
+#server-player-count {
+    position: absolute;
+    right: 5px;
+}
+
+#server-name {
+    position: relative;
+    left: 5px;
+}
+
+#server-list {
+    padding: 10px;
+    width: 294px;
+    height: 194px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border: rgb(72, 127, 175) 3px solid;
+    border-radius: 5px;
+}
+
+.server-item {
+    list-style-type: none;
+    width: calc(100% - 4px);
+    height: 30px;
+    display: flex;
+    position: relative;
+    align-items: center;
+    margin-bottom: 4px;
+    padding-left: 4px;
+    color: white;
+    font-size: 12px;
+    background-color: rgba(90, 159, 219, 0.9);
+    border-radius: 5px;
+    pointer-events: all;
+    user-select: none;
+    cursor: pointer;
+    filter: brightness(1);
+}
+
+.server-item:hover {
+    animation: darker 0.2s normal;
+    filter: brightness(0.8);
+}
+
+.server-item.unavailable {
+    filter: brightness(0.5);
+    animation: none;
+    pointer-events: none;
+}
+
+@keyframes darker {
+    from {
+        filter: brightness(1);
+    }
+
+    to {
+        filter: brightness(0.8);
+    }
+}
+
+.server-item-status {
+    position: absolute;
+    right: 5px;
 }

@@ -1,4 +1,5 @@
 import { ClientApplication } from "@/main.ts";
+import { Config } from "@/config.ts";
 
 export interface SettingsData {
     keyboardMovement: boolean
@@ -8,6 +9,7 @@ export interface SettingsData {
     screenShake: boolean
     hitbox: boolean
     debug: boolean
+    server: string
 }
 
 export class Settings {
@@ -18,7 +20,8 @@ export class Settings {
         screenShake: true,
         playerName : "",
         hitbox: false,
-        debug: false
+        debug: false,
+        server: "sh"
     };
 
     constructor(public app: ClientApplication) {
@@ -27,6 +30,10 @@ export class Settings {
         if (data) {
             const json = JSON.parse(data);
             Object.assign(this.data, json);
+        }
+
+        if (!Config.servers.hasOwnProperty(this.data.server)) {
+            this.data.server = "sh";
         }
 
         this.saveData();

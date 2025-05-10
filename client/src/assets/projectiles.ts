@@ -2,7 +2,7 @@ import { AssetsDrawer } from "@/assets/assets.ts";
 import { MathNumeric, P2 } from "@common/utils/math.ts";
 
 const web = new Image();
-web.src = "img/game/projectile/web.svg";
+web.src = "img/game/web.svg";
 
 export const projectileAssets: { [K: string]: AssetsDrawer } = {
     "missile": (containerToDraw) => {
