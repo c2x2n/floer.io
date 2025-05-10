@@ -3,18 +3,12 @@ import { EntityType, GameConstants } from "../../../common/src/constants";
 import { GameBitStream } from "../../../common/src/net/net";
 import { type EntitiesNetData, EntitySerializations } from "../../../common/src/net/packets/updatePacket";
 import { CircleHitbox, type Hitbox } from "../../../common/src/utils/hitbox";
-import { Vec2, type Vector } from "../../../common/src/utils/vector";
+import { Vec2, type Vector, Velocity } from "../../../common/src/utils/vector";
 import { type Game } from "../game";
 import { CollisionResponse } from "../../../common/src/utils/collision";
 import { EffectManager, PoisonEffect } from "../utils/effects";
-import { Modifiers, PlayerModifiers } from "../../../common/src/typings";
+import { Modifiers } from "../../../common/src/typings";
 import { collideableEntity, damageSource } from "../typings";
-
-export interface Velocity {
-    vector: Vector;
-    downing: number;
-}
-
 
 export abstract class ServerEntity<T extends EntityType = EntityType> implements GameEntity{
     abstract type: T;

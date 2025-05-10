@@ -69,6 +69,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     hitbox = new CircleHitbox(GameConstants.player.radius);
 
     name = "";
+
     direction: {
         direction: Vector,
         mouseDirection: Vector
@@ -76,6 +77,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         direction: Vec2.new(0, 0),
         mouseDirection: Vec2.new(0, 0)
     };
+
     distance: number = 0;
     isAttacking = false;
     isDefending = false;
@@ -598,20 +600,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             console.error("Error sending data:", error);
         }
     }
-    /**
-         * Sends a chat message directly to this player instance.
-         * The message will appear in their chat box, typically formatted as a system message.
-         * @param message The content of the message to send.
-         * @param color Optional color for the message text (default: 0xffcc00 - yellow).
-         */
-    sendDirectMessage(message: string, color: number = 0xffcc00): void {
-        const chatData: ChatData = {
-            content: `[System] ${message}`, // Prefix to identify as system message
-            color: color
-        };
-        this.chatMessagesToSend.push(chatData);
-        // The message will be sent during the next call to sendPackets()
-    }
+
     processMessage(packet: Packet): void {
         switch (true) {
             case packet instanceof JoinPacket: {

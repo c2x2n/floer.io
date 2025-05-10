@@ -1,7 +1,7 @@
 import { Vec2 } from "@common/utils/vector.ts";
 import { type Game } from "./game";
 import { halfPI, PI } from "@common/utils/math.ts";
-import { InputAction } from "@common/net/packets/inputPacket.ts";
+import { DirectionIn, InputAction } from "@common/net/packets/inputPacket.ts";
 
 
 export class Input {
@@ -11,53 +11,42 @@ export class Input {
 
     actionsToSend = new Set<InputAction>();
 
-    /**
-     * The angle between the mouse pointer and the screen center
-     */
-    mouseDirection = 0;
-
-    /**
-     * The distance between the mouse pointer and the screen center
-     */
-    mouseDistance = 0;
-
-    /**
-     * Gets if an input is down
-     * @param input The input key or mouse button
-     * Single keys must be upper case
-     * Mouse buttons are `Mouse${ButtonNumber}`
-     * @returns true if the bind is pressed
-     */
+    clientDirection = 0;
+    mouseMovementDistance = 0;
     isInputDown(input: string): boolean {
         return this._inputsDown[input] ?? false;
     }
 
-    /**
-     * 设置虚拟输入状态，用于移动设备控制
-     * @param input 输入类型
-     * @param down 是否按下
-     */
     setVirtualInput(input: string, down: boolean): void {
         this._inputsDown[input] = down;
     }
 
-    /**
-     * 设置虚拟鼠标位置，用于移动设备的虚拟摇杆
-     * @param x 鼠标X坐标
-     * @param y 鼠标Y坐标
-     */
     setVirtualMousePosition(x: number, y: number): void {
-        // 更新鼠标方向和距离
-        this.mouseDirection = Math.atan2(y - window.innerHeight / 2, x - window.innerWidth / 2);
+        this.clientDirection = Math.atan2(y - window.innerHeight / 2, x - window.innerWidth / 2);
 
-        this.mouseDistance = Vec2.length(
+        this.mouseMovementDistance = Vec2.length(
             Vec2.new(
                 y - window.innerHeight / 2, x - window.innerWidth / 2
             )
         );
     }
 
-    get moveDirection(): {direction: number, mouseDirection: number} | undefined {
+    oldDirection: DirectionIn = {
+        direction: 0,
+        mouseDirection: 0
+    };
+
+    get direction(): DirectionIn {
+        const direction = this.moveDirection ?? this.oldDirection.direction;
+        const oldDirection = {
+            direction,
+                mouseDirection: this.clientDirection
+        }
+        this.oldDirection = oldDirection;
+        return oldDirection;
+    }
+
+    get moveDirection(): number | undefined {
         if (this.game.app.settings.data.keyboardMovement && !this.game.playerIsOnMobile) {
             let hMove = 0;
             let vMove = 0;
@@ -73,28 +62,16 @@ export class Input {
             const vDir = Vec2.radiansToDirection(vRad);
 
             if (hMove != 0 && vMove != 0) {
-                return {
-                    direction: Vec2.directionToRadians(Vec2.add(vDir, hDir)),
-                    mouseDirection: this.mouseDirection
-                };
+                return Vec2.directionToRadians(Vec2.add(vDir, hDir))
             } else if (hMove != 0) {
-                return {
-                    direction: hRad,
-                    mouseDirection: this.mouseDirection
-                };
+                return hRad
             } else if (vMove != 0) {
-                return {
-                    direction: vRad,
-                    mouseDirection: this.mouseDirection
-                };
+                return vRad
             }
 
             return;
         }else {
-            return {
-                direction: this.mouseDirection,
-                mouseDirection: this.mouseDirection
-            };
+            return this.clientDirection
         }
     }
 
@@ -105,14 +82,14 @@ export class Input {
             if (this.moveDirection != undefined) distance = maxDistance;
             else distance = 0;
         }else {
-            distance = this.mouseDistance;
+            distance = this.mouseMovementDistance;
         }
 
         if (distance > maxDistance) return maxDistance;
         return distance;
     }
 
-    mousePosition: {
+    clientPosition: {
         clientX: number,
         clientY: number
     } = {
@@ -142,22 +119,22 @@ export class Input {
         window.addEventListener("mousemove", e => {
             if (this.game.playerIsOnMobile) return;
 
-            this.mouseDirection = Math.atan2(e.clientY - window.innerHeight / 2, e.clientX - window.innerWidth / 2);
+            this.clientDirection = Math.atan2(e.clientY - window.innerHeight / 2, e.clientX - window.innerWidth / 2);
 
-            this.mouseDistance = Vec2.length(
+            this.mouseMovementDistance = Vec2.length(
                 Vec2.new(
                     e.clientY - window.innerHeight / 2, e.clientX - window.innerWidth / 2
                 )
             );
 
-            this.mousePosition = {
+            this.clientPosition = {
                 clientX: e.clientX,
                 clientY: e.clientY
             }
         });
 
         window.addEventListener("touchmove", e => {
-            this.mousePosition = {
+            this.clientPosition = {
                 clientX: e.touches[0].clientX,
                 clientY: e.touches[0].clientY
             }

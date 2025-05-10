@@ -83,3 +83,8 @@ export class InputPacket implements Packet {
         })
     }
 }
+
+export interface DirectionIn {
+    direction: number;
+    mouseDirection: number
+}

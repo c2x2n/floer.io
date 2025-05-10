@@ -235,3 +235,8 @@ export const Vec2 = {
         }
     }
 };
+
+export interface Velocity {
+    vector: Vector;
+    downing: number;
+}

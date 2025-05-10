@@ -1,16 +1,14 @@
 import { ClientEntity } from "./clientEntity";
 import { EntityType } from "@common/constants";
-import { getGameAssetsFile } from "@/scripts/utils/icons.ts";
 import { Game } from "@/scripts/game";
 import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
 import { Tween } from '@tweenjs/tween.js';
 import { PetalDefinition } from "@common/definitions/petals.ts";
-import { EasingFunctions, MathGraphics } from "@common/utils/math.ts";
+import { EasingFunctions, MathGraphics, MathNumeric } from "@common/utils/math.ts";
 import { Rarity } from "@common/definitions/rarities.ts";
-import { petalAssets } from "@/assets/petals.ts";
-import { Vec2 } from "@common/utils/vector.ts";
-import { getAssets, getGameAssetsName } from "@/assets/assets.ts";
+import { Vec2, Vector, Velocity } from "@common/utils/vector.ts";
+import { getAssets } from "@/assets/assets.ts";
 
 export class ClientPetal extends ClientEntity {
     type = EntityType.Petal;
@@ -28,7 +26,7 @@ export class ClientPetal extends ClientEntity {
         super(game, id);
     }
 
-    image?: HTMLImageElement
+    velocity: Velocity[] = [];
 
     render(dt: number) {
         super.render(dt);
@@ -40,8 +38,9 @@ export class ClientPetal extends ClientEntity {
             if (assets) assets(this.container);
         }
 
+        const owner = this.game.entityPool.get(this.ownerId);
+
         if (this.definition && this.visible) {
-            const owner = this.game.entityPool.get(this.ownerId);
 
             if (this.definition.equipment) {
                 if (this.definition.images?.equipmentStyles?.noRender) {
@@ -97,13 +96,47 @@ export class ClientPetal extends ClientEntity {
         if (this.reloadAnimation) {
             this.reloadAnimation.update();
         } else {
-            this.updateContainerPosition(6)
+            const newVelocity = this.velocity.concat([]);
+
+            let position = Vec2.clone(this.toCenterPosition);
+
+            for (const aVelocity of newVelocity) {
+                const index = newVelocity.indexOf(aVelocity);
+
+                position = Vec2.add(position, Vec2.mul(aVelocity.vector, this.game.dt))
+
+                aVelocity.vector = Vec2.mul(aVelocity.vector, aVelocity.downing);
+
+                if (Vec2.length(aVelocity.vector) < 1) {
+                    newVelocity.splice(index, 1);
+                }
+            }
+
+            this.velocity = newVelocity;
+            this.toCenterPosition = position;
+            this.appliedToCenterPosition = Vec2.targetEasing(
+                this.appliedToCenterPosition,
+                this.toCenterPosition,
+                1.5
+            )
+
+            if (owner) {
+                this.ownerPosition = Vec2.targetEasing(
+                    this.ownerPosition,
+                    owner.position,
+                    6
+                )
+            }
+
+            this.position = Vec2.add(this.appliedToCenterPosition, this.ownerPosition)
+
+            this.updateContainerPosition(4.5);
         }
     }
 
     changeVisibleTo(visible: boolean): void {
         if (!this.definition) return;
-        
+
         if (this.ownerId !== -1) {
             const owner = this.game.entityPool.get(this.ownerId);
             if (owner?.type === EntityType.Player && (owner as any).invisible) {
@@ -139,26 +172,39 @@ export class ClientPetal extends ClientEntity {
         }
     }
 
+    ownerPosition: Vector = Vec2.new(0, 0);
+    toCenterPosition: Vector = Vec2.new(0, 0);
+    appliedToCenterPosition: Vector = Vec2.new(0, 0);
+
     updateFromData(data: EntitiesNetData[EntityType.Petal], isNew: boolean): void {
-        this.position = data.position;
-
-        if (data.full) {
-            if (isNew){
-                this.definition = data.full.definition;
-                this.hitboxRadius = this.definition.hitboxRadius;
-                this.container.radius = Camera.unitToScreen(this.hitboxRadius);
-                this.container.visible = !data.isReloading;
-                this.container.position = Camera.vecToScreen(data.position);
-                this.container.zIndex = 2;
-            }
-
+        if (data.full && isNew) {
+            this.toCenterPosition = data.position;
+            this.definition = data.full.definition;
+            this.hitboxRadius = this.definition.hitboxRadius;
+            this.container.radius = Camera.unitToScreen(this.hitboxRadius);
+            this.container.visible = !data.isReloading;
+            this.container.position = Camera.vecToScreen(data.position);
+            this.container.zIndex = 2;
             this.ownerId = data.full.ownerId;
+        }
+        const length =
+            Vec2.distance(this.toCenterPosition, data.position);
+        const vector = Vec2.mul(MathGraphics.directionBetweenPoints(
+            data.position, this.toCenterPosition
+        ), length)
+        const downer = MathNumeric.clamp(
+            length, 0, 0.75
+        )
+
+        if (length > 0.1) {
+            this.velocity.push({
+                vector: Vec2.mul(vector, 1 / this.game.dt * downer),
+                downing: downer
+            })
         }
 
         if (data.gotDamage) this.getDamageAnimation(true);
 
         this.changeVisibleTo(!data.isReloading);
-
-        super.updateFromData(data, isNew);
     }
 }

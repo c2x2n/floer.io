@@ -9,6 +9,7 @@ import { AttributeEvents, PetalUsingAnimations, } from "../utils/attributeRealiz
 import { collideableEntity, damageableEntity, damageSource } from "../typings";
 import { PetalBunch } from "../inventory/petalBunch";
 import { ServerFriendlyMob, ServerMob } from "./serverMob";
+import { Vec2 } from "../../../common/src/utils/vector";
 
 export class ServerPetal extends ServerEntity<EntityType.Petal> {
     type: EntityType.Petal = EntityType.Petal;
@@ -225,7 +226,7 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
 
     get data(): Required<EntitiesNetData[EntityType.Petal]>{
         const data = {
-            position: this.position,
+            position: Vec2.sub(this.position, this.owner.position),
             isReloading: this.isReloading || this.hidden,
             gotDamage: this.gotDamage,
             full: {

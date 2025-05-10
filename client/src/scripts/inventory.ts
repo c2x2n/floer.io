@@ -81,7 +81,7 @@ export class Inventory{
                 parseFloat(draggingData.item.css('--x')) * sizeNow / draggingBoxSize
             }px`);
 
-            const { clientX, clientY } = this.game.input.mousePosition;
+            const { clientX, clientY } = this.game.input.clientPosition;
 
             const where = draggingData.item.offset();
 
@@ -152,7 +152,7 @@ export class Inventory{
                         if (this.game.running) {
                             if (data.state === PetalState.Reloading) {
                                 ctx.moveTo(canvas.width / 2, canvas.height / 2);
-                                const start = P2 * (1 - data.percent) * 1.8;
+                                const start = P2 * (1 - data.percent) * 5;
 
                                 ctx.arc(
                                     canvas.width / 2, canvas.height / 2,
@@ -817,6 +817,7 @@ export class Inventory{
                 petal.on("touchstart", (ev) => {
                     if (!this.game.running) return;
                     if (draggingData.item) return;
+                    if (!ev.touches.length) return;
 
                     const dragging = $(`<div class="dragging-petal"></div>`);
 
@@ -825,7 +826,7 @@ export class Inventory{
 
                     dragging.css("--x",
                         (finalFontSize * scale).toString())
-                    const {clientX, clientY} = ev;
+                    const {clientX, clientY} = ev.touches[0];
                     draggingData = {
                         item: dragging,
                         container: petalContainer

@@ -39,7 +39,6 @@ const typeToEntity = {
     [EntityType.Wall]: ClientWall
 }
 
-
 export class Game {
     socket?: WebSocket | undefined;
 
@@ -470,11 +469,6 @@ export class Game {
         window.requestAnimationFrame(() => this.render());
     }
 
-    lastDirection: {
-        direction: number;
-        mouseDirection: number
-    } = {direction:0,mouseDirection:0};
-
     sendInput() {
         const inputPacket = new InputPacket();
         inputPacket.isAttacking = this.input.isInputDown("Mouse0")
@@ -483,9 +477,7 @@ export class Game {
             || this.input.isInputDown("ShiftLeft")
             || this.input.isInputDown("ShiftRight");
 
-        const direction = this.input.moveDirection;
-        inputPacket.direction = direction ?? this.lastDirection;
-        this.lastDirection = inputPacket.direction;
+        inputPacket.direction = this.input.direction;
         inputPacket.movementDistance = this.input.moveDistance;
 
         inputPacket.actions = Array.from(this.input.actionsToSend);
