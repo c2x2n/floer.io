@@ -1,6 +1,6 @@
 import { ClientEntity } from "./clientEntity";
 import { EntityType } from "@common/constants";
-import { getGameAssetsFile } from "@/scripts/utils/assets.ts";
+import { getGameAssetsFile } from "@/scripts/utils/icons.ts";
 import { Game } from "@/scripts/game";
 import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
@@ -10,7 +10,7 @@ import { EasingFunctions, MathGraphics } from "@common/utils/math.ts";
 import { Rarity } from "@common/definitions/rarities.ts";
 import { petalAssets } from "@/assets/petals.ts";
 import { Vec2 } from "@common/utils/vector.ts";
-import { getGameAssetsName } from "@/assets/assets.ts";
+import { getAssets, getGameAssetsName } from "@/assets/assets.ts";
 
 export class ClientPetal extends ClientEntity {
     type = EntityType.Petal;
@@ -35,12 +35,9 @@ export class ClientPetal extends ClientEntity {
 
         if (!this.definition) return;
 
-        const name = getGameAssetsName(this.definition);
-
-        if (this.container.visible && petalAssets.hasOwnProperty(name)) {
-            petalAssets[name](this.container)
-        } else {
-
+        if (this.container.visible) {
+            const assets = getAssets("petal", this.definition);
+            if (assets) assets(this.container);
         }
 
         if (this.definition && this.visible) {

@@ -1,7 +1,7 @@
 import { ClientApplication } from "@/main.ts";
 import { ZoneName, Zones } from "@common/definitions/zones.ts";
 import { Camera } from "@/scripts/render/camera.ts";
-import { RenderContainer } from "@/scripts/utils/renderContainer.ts";
+import { RenderContainer } from "@/scripts/utils/render.ts";
 
 export class Renderer {
     containers = new Set<RenderContainer>();

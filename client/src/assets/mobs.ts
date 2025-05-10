@@ -1,5 +1,5 @@
 import { AssetsBunch, AssetsDrawer } from "@/assets/assets.ts";
-import { Dot, RenderContainer } from "@/scripts/utils/renderContainer.ts";
+import { Dot, RenderContainer } from "@/scripts/utils/render.ts";
 import { Random } from "@common/utils/random.ts";
 import { halfPI, MathGraphics, MathNumeric, P2, PI } from "@common/utils/math.ts";
 import { loadPathFromSVG } from "@/assets/pathLoader.ts";

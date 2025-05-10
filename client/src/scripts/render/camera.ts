@@ -1,5 +1,5 @@
-import { Vec2, type Vector } from "@common/utils/vector";
-import { type Game } from "@/scripts/game";
+import { Vec2, type Vector } from "@common/utils/vector.ts";
+import { type Game } from "@/scripts/game.ts";
 import { MathNumeric } from "@common/utils/math.ts";
 import { Tween } from "@tweenjs/tween.js"
 

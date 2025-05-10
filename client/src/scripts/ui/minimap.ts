@@ -8,29 +8,6 @@ const widthDiv = 10;
 const heightDiv = 8;
 
 export class Minimap {
-    // mapBackground = new Graphics({
-    //     zIndex: 1
-    // });
-    //
-    // playerPosition = new Graphics({
-    //     zIndex: 9
-    // })
-    //
-    // container = new Container();
-    //
-    // mapNames: Text[] = [];
-    //
-    // mapTitle: Text = new Text({
-    //     text: 'Map',
-    //     alpha: 0.8,
-    //     style: {
-    //         fontFamily: 'Ubuntu',
-    //         fontSize: 25,
-    //         fill: "#fff",
-    //         stroke: {color: "#000", width: 2}
-    //     }
-    // });
-
     private minimapPositionX: number = 0;
     private minimapPositionY: number = 0;
     private minimapWidth: number = 0;

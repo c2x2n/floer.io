@@ -2,7 +2,7 @@ import { EasingFunctions, MathNumeric, P2 } from "@common/utils/math.ts";
 import { Random } from "@common/utils/random.ts";
 import { Vec2, type Vector } from "@common/utils/vector.ts";
 import { type Game } from "../game.ts";
-import { RenderContainer } from "@/scripts/utils/renderContainer.ts";
+import { RenderContainer } from "@/scripts/utils/render.ts";
 
 export class ParticleManager {
     particles: Particle[] = [];

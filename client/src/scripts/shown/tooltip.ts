@@ -1,11 +1,13 @@
 import { Rarity } from "@common/definitions/rarities.ts";
 import { AttributeNames, AttributeParameters, PetalDefinition, Petals } from "@common/definitions/petals.ts";
 import { Modifiers, PlayerModifiers } from "@common/typings.ts";
-import { MobContainer, PetalContainer, renderPetal } from "@/scripts/inventory.ts";
+import { renderPetal } from "@/scripts/inventory.ts";
 import $ from "jquery";
 import { MobDefinition, Mobs } from "@common/definitions/mobs.ts";
 import { Gallery } from "@/scripts/gallery.ts";
 import Big from "big.js";
+
+const tooltipTemplate = $("<div class='tooltip information'></div>");
 
 interface InformationLineParameters {
     startsWith?: string
@@ -26,7 +28,6 @@ interface DefinitionShowingConfig {
 
 type AttributeShowingFunction<K extends AttributeNames> =
     (data: Required<AttributeParameters>[K]) => (DefinitionShowingConfig & { value: string })[];
-
 
 const petalDefinitionShowingConfigs: { [key: string] : DefinitionShowingConfig } =
     {
@@ -281,22 +282,8 @@ const attributesShowingConfigs: { [K in AttributeNames] : AttributeShowingFuncti
     }
 
 
-export function showPetalInformation(container: PetalContainer) {
-    const slot = container.ui_slot;
-    const definition = container.petalDefinition;
-    if (!definition || !slot) return;
-
-    const box = $<HTMLDivElement>("<div class='information'></div>").clone();
-
-    $("body").append(box);
-    container.informationBox = box;
-    container.showingInformation = true;
-
-    const offset = slot.offset();
-    if (offset){
-        box.css("left", offset.left + "px");
-        box.css("top", offset.top - 10 + "px");
-    }
+export function createPetalTooltip(definition: PetalDefinition): JQuery {
+    const box = tooltipTemplate.clone();
 
     function addLine(args: InformationLineParameters){
         let {
@@ -450,7 +437,7 @@ export function showPetalInformation(container: PetalContainer) {
         let attributesDefinitionKey: AttributeNames;
         for (attributesDefinitionKey in definition.attributes) {
             const data = definition.attributes[attributesDefinitionKey];
-            if (!data) return attributesDefinitionKey;
+            if (!data) continue;
             const config =
                 (attributesShowingConfigs[attributesDefinitionKey] as AttributeShowingFunction<typeof attributesDefinitionKey>)
                 (data);
@@ -480,6 +467,8 @@ export function showPetalInformation(container: PetalContainer) {
     box.append(occupy)
 
     box.css("opacity", "0").animate({ opacity: 1 }, 100);
+
+    return box;
 }
 
 const mobDefinitionShowingConfigs: { [key: string] : DefinitionShowingConfig } =
@@ -498,23 +487,8 @@ const mobDefinitionShowingConfigs: { [key: string] : DefinitionShowingConfig } =
     },
 }
 
-export function showMobInformation(gallery: Gallery, container: MobContainer) {
-    const slot = container.ui_slot;
-    const definition = container.mobDefinition;
-    if (!definition || !slot) return;
-
-    const box =
-        $<HTMLDivElement>("<div class='information'></div>").clone();
-
-    $("body").append(box);
-    container.informationBox = box;
-    container.showingInformation = true;
-
-    const offset = slot.offset();
-    if (offset){
-        box.css("left", offset.left + "px");
-        box.css("top", offset.top - 10 + "px");
-    }
+export function createMobTooltip(gallery: Gallery, definition: MobDefinition): JQuery {
+    const box = tooltipTemplate.clone();
 
     function addLine(args: InformationLineParameters){
         let {
@@ -708,15 +682,37 @@ export function showMobInformation(gallery: Gallery, container: MobContainer) {
     box.append(occupy);
 
     box.css("opacity", "0").animate({ opacity: 1 }, 100);
+
+    return box;
 }
 
-export function unShowInformation(container: PetalContainer | MobContainer) {
-    const boxToFade = container.informationBox;
-    if (!container.showingInformation || !boxToFade) return;
-    boxToFade.animate({ opacity: 0 }, 100);
-    setTimeout(() => {
-        boxToFade.remove();
-        container.showingInformation = false;
-        container.informationBox = undefined;
-    }, 100)
+export function applyTooltip(follow: JQuery, tooltip: JQuery) {
+    let on = false;
+
+    follow.on("mouseover", () => {
+        if (!follow.is(":visible")) return;
+        $("body").append(tooltip);
+        const offset = follow.offset();
+        if (offset){
+            let left = offset.left;
+            left = Math.max(left, 20 + (tooltip.width() ?? 0) * 0.35);
+            tooltip.css("left", left + "px");
+            tooltip.css("top", offset.top - 10 + "px");
+        }
+        tooltip.css("opacity", "0");
+        tooltip.animate({ opacity: 1 }, 100);
+        on = true;
+        const observer = setInterval(() => {
+            if (!on || !follow.is(":visible")) {
+                tooltip.animate({ opacity: 0 }, 200, () => {
+                    tooltip.remove()
+                });
+                clearInterval(observer);
+            }
+        }, 100)
+    })
+
+    follow.on("mouseout", () => {
+        on = false;
+    })
 }
