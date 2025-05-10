@@ -1,4 +1,4 @@
-import "./scss/main.scss";
+import "./scss/client.scss";
 import { Game } from "./scripts/game";
 import { UI } from "@/ui.ts";
 import { Settings } from "@/settings.ts";

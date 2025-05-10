@@ -1,0 +1,12 @@
+::-webkit-scrollbar-track-piece {
+    display: none;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.6);
+    background-clip: padding-box;
+}

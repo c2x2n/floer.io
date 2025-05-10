@@ -58,16 +58,6 @@
     pointer-events: none;
 }
 
-@keyframes darker {
-    from {
-        filter: brightness(1);
-    }
-
-    to {
-        filter: brightness(0.8);
-    }
-}
-
 .server-item-status {
     position: absolute;
     right: 5px;

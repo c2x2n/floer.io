@@ -1,0 +1,102 @@
+#petal-gallery-contents {
+    width: 350px;
+    height: 400px;
+    background: #e3a96d;
+    overflow: auto;
+    overflow-x: hidden;
+    padding: 5px;
+}
+
+#mob-gallery-contents {
+    width: 350px;
+    height: 400px;
+    background: #eae65f;
+    overflow: auto;
+    overflow-x: hidden;
+    padding: 5px;
+}
+
+
+#petal-gallery-contents > div {
+    display: inline-block;
+    margin: 5px;
+}
+
+#mob-gallery-contents > div {
+    display: inline-block;
+    margin: 5px;
+}
+
+#petal-gallery-contents > .unknown {
+    background-color: rgba(0, 0, 0, 0.2);
+    background-size: 100% 100%;
+    width: 45px;
+    height: 45px;
+    border-radius: 5px;
+}
+
+#mob-gallery-contents > .unknown {
+    background-color: rgba(0, 0, 0, 0.2);
+    background-size: 100% 100%;
+    width: 58px;
+    height: 58px;
+    border-radius: 5px;
+}
+
+.petal-gallery-content {
+    width: 45px;
+    height: 45px;
+    border-radius: 5px;
+    position: relative;
+}
+
+.petal-gallery-content > .petal {
+    top: -4.4px;
+    left: -4.4px;
+    pointer-events: none;
+}
+
+.mob-gallery-content {
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+    position: relative;
+    background-size: 100% 100%;
+    border-width: 4px;
+    border-style: solid;
+}
+
+.mob-loots {
+    display: flex;
+    max-width: 300px;
+    flex-wrap: wrap;
+}
+
+.mob-loot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.mob-loot > .drop-rate {
+    font-size: 12px;
+    margin: 0;
+}
+
+.mob-loot > .petal {
+    width: 40px;
+    height: 40px;
+    margin: 0 5px;
+    border-width: 3px;
+}
+
+.mob-loot > .unknown {
+    background-color: rgba(0, 0, 0, 0.2);
+    background-size: 100% 100%;
+    width: 46px;
+    height: 46px;
+    margin: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

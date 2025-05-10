@@ -1,18 +1,24 @@
 @use './utils/button.scss';
 @use './utils/dialogs.scss';
 @use './utils/dropdown.scss';
-@use './game/server.scss';
+@use './utils/animation.scss';
+@use './utils/text.scss';
+@use './utils/scrollbar.scss';
+
 @use './game/mobile.scss';
-@use './utils/textStroke.scss';
+@use './game/servers.scss';
+@use './game/gallery.scss';
+@use './game/petal.scss';
+@use './game/chat.scss';
 
 $none_bg: #fff;
 $none_bd: #ccc;
 
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap');
-// Ubuntu fonts here
+// Ubuntu fonts here.
 
-*{
-    font-family: 'Ubuntu', sans-serif;
+* {
+    font-family: 'Ubuntu', sans-serif; // Apply fonts
     user-select: none;
     -webkit-tap-highlight-color: transparent;
 }
@@ -39,19 +45,8 @@ body {
     background-size: 20px 20px;
     overflow: hidden;
     background-position: 0 0;
-    animation: bodyAnimate 0.5s linear infinite;
+    animation: background 0.5s linear infinite;
 }
-@keyframes bodyAnimate {
-    from {
-       background-position: 0 0;
-       width: 100%;
-       height: 100%;
-    }
-    to {
-       background-position: 20px 20px;
-    }
-  }
-
 
 #animation-container {
     position: fixed;
@@ -62,27 +57,18 @@ body {
     pointer-events: none;
     z-index: -6;
     overflow: hidden;
-  }
+}
 
-  .floating-entity {
+.floating-entity {
     position: absolute;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-  }
+}
 
-  .floating-entity.petal {
+.floating-entity {
     animation: spin var(--spin-duration, 15s) linear infinite;
-  }
-
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
+}
 
 #game-over-title {
     font-size: 20px;
@@ -110,7 +96,6 @@ body {
     width: 60px;
     font-size: 15px;
 }
-
 
 #main {
   position: absolute;
@@ -411,27 +396,7 @@ img {
     animation: shaking 1.6s infinite;
 }
 
-@keyframes shaking {
-    0% {
-        transform: rotate(0deg);
-    }
 
-    20% {
-        transform: rotate(10deg);
-    }
-
-    50% {
-        transform: rotate(0deg);
-    }
-
-    75% {
-        transform: rotate(-10deg);
-    }
-
-    100% {
-        transform: rotate(0deg);
-    }
-}
 
 #move-high{
     position: absolute;
@@ -468,198 +433,14 @@ img {
     z-index: 999;
 }
 
-#chat-box {
-    position: absolute;
-    left: 5px;
-    bottom: 130px;
-    &.mobile {
-        bottom: 150px;
-    }
-}
-
-#chat-input {
-    width: 300px;
-    height: 15px;
-    font-size: 15px;
-    background: rgba(0, 0, 0, 0.2);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    outline: 0;
-    padding: 6px;
-}
 
 input::placeholder {
     color: white;
 }
 
-#chat-input:focus {
-    background: white;
-    color: black;
-    border: black solid 2px;
-    padding: 5px;
-}
-
-#chat-channel {
-    color: white;
-    font-size: 15px;
-    margin-right: 5px;
-}
-
-#chat-send {
-    width: 350px;
-    display: flex;
-    align-items: center;
-}
-
-#chat-messages {
-    min-width: 300px;
-    max-width: 500px;
-    max-height: 300px;
-    overflow: hidden;
-    pointer-events: none;
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    grid-gap: 3px;
-    margin-bottom: 8px;
-    padding-right: 5px;
-}
-
-.opened#chat-messages {
-    overflow-y: auto;
-    pointer-events: all;
-    max-width: 506px;
-}
-
-.chat-message {
-    color: white;
-}
-
-::-webkit-scrollbar-track-piece {
-    display: none;
-}
-
-::-webkit-scrollbar {
-    width: 6px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.6);
-    background-clip: padding-box;
-}
-
-#petal-gallery-contents {
-    width: 350px;
-    height: 400px;
-    background: #e3a96d;
-    overflow: auto;
-    overflow-x: hidden;
-    padding: 5px;
-}
-
-#mob-gallery-contents {
-    width: 350px;
-    height: 400px;
-    background: #eae65f;
-    overflow: auto;
-    overflow-x: hidden;
-    padding: 5px;
-}
-
-
-#petal-gallery-contents > div {
-    display: inline-block;
-    margin: 5px;
-}
-
-#mob-gallery-contents > div {
-    display: inline-block;
-    margin: 5px;
-}
-
-#petal-gallery-contents > .unknown {
-    background-color: rgba(0, 0, 0, 0.2);
-    background-size: 100% 100%;
-    width: 45px;
-    height: 45px;
-    border-radius: 5px;
-}
-
-#mob-gallery-contents > .unknown {
-    background-color: rgba(0, 0, 0, 0.2);
-    background-size: 100% 100%;
-    width: 58px;
-    height: 58px;
-    border-radius: 5px;
-}
-
-.petal-gallery-content {
-    width: 45px;
-    height: 45px;
-    border-radius: 5px;
-    position: relative;
-}
-
-.petal-gallery-content > .petal {
-    top: -4.4px;
-    left: -4.4px;
-    pointer-events: none;
-}
-
-.mob-gallery-content {
-    width: 50px;
-    height: 50px;
-    border-radius: 5px;
-    position: relative;
-    background-size: 100% 100%;
-    border-width: 4px;
-    border-style: solid;
-}
-
-.mob-loots {
-    display: flex;
-    max-width: 300px;
-    flex-wrap: wrap;
-}
-
-.mob-loot {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.mob-loot > .drop-rate {
-    font-size: 12px;
-    margin: 0;
-}
-
-.mob-loot > .petal {
-    width: 40px;
-    height: 40px;
-    margin: 0 5px;
-    border-width: 3px;
-}
-
-.mob-loot > .unknown {
-    background-color: rgba(0, 0, 0, 0.2);
-    background-size: 100% 100%;
-    width: 46px;
-    height: 46px;
-    margin: 0 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 
 .information > .br{
     margin: 15px 0;
-}
-
-.petal-slot > .petal > canvas {
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
 }
 
 #abandon {
