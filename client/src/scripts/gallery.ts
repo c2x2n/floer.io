@@ -3,15 +3,12 @@ import { PetalDefinition, Petals } from "@common/definitions/petals.ts";
 import { Rarity } from "@common/definitions/rarities.ts";
 import { MobContainer, PetalContainer, renderPetal } from "@/scripts/inventory.ts";
 import $ from "jquery";
-import { showMobInformation, showPetalInformation, unShowInformation } from "@/scripts/shown/information.ts";
+import { applyTooltip, createMobTooltip, createPetalTooltip, unShowInformation } from "@/scripts/shown/tooltip.ts";
 import { MobDefinition, Mobs } from "@common/definitions/mobs.ts";
 
 export class Gallery{
     petalGallery: string[] = [];
     mobGallery: string[] = [];
-
-    petalContainers: PetalContainer[] = [];
-    mobContainers: MobContainer[] = [];
 
     constructor(private ui: UI) {
         const petalGallery = localStorage.getItem("petalGallery");
@@ -54,7 +51,6 @@ export class Gallery{
 
     renderPetalGallery() {
         this.ui.petalGalleryContents.empty();
-        this.petalContainers = [];
 
         const sortedDefintions =
             Petals.definitions.concat([])
@@ -67,26 +63,15 @@ export class Gallery{
 
             if (!rarity.hideInGallery) {
                 if (this.petalGallery.includes(definition.idString)) {
-                    const petalContainer = new PetalContainer();
-
                     const content = $('<div class="petal-gallery-content"></div>');
-
                     const petal = renderPetal(definition);
-
-                    petalContainer.ui_slot = content;
-                    petalContainer.petalDefinition = definition;
 
                     content.append(petal);
                     this.ui.petalGalleryContents.append(content);
-                    this.petalContainers.push(petalContainer);
 
-                    content.on("mouseover",(ev) => {
-                        if (!petalContainer.showingInformation) showPetalInformation(petalContainer);
-                    })
-
-                    content.on("mouseout",(ev) => {
-                        if (petalContainer.showingInformation) unShowInformation(petalContainer);
-                    })
+                    applyTooltip(
+                        content, createPetalTooltip(definition)
+                    )
                 } else {
                     this.ui.petalGalleryContents.append(
                         $(
@@ -100,7 +85,6 @@ export class Gallery{
 
     renderMobGallery() {
         this.ui.mobGalleryContents.empty();
-        this.mobContainers = [];
 
         const sortedDefintions =
             Mobs.definitions.concat([])
@@ -113,26 +97,16 @@ export class Gallery{
 
             if (!rarity.hideInGallery && !definition.hideInGallery) {
                 if (this.mobGallery.includes(definition.idString)) {
-                    const container = new MobContainer();
-                    container.mobDefinition = definition;
-
                     const content = $(`<div class="mob-gallery-content mob-${definition.idString}"></div>`);
 
                     content.css("background-color", rarity.color);
                     content.css("border-color", rarity.border);
 
-                    container.ui_slot = content;
-
-                    content.on("mouseover",(ev) => {
-                        if (!container.showingInformation) showMobInformation(this, container);
-                    })
-
-                    content.on("mouseout",(ev) => {
-                        if (container.showingInformation) unShowInformation(container);
-                    })
-
                     this.ui.mobGalleryContents.append(content);
-                    this.mobContainers.push(container);
+
+                    applyTooltip(
+                        content, createMobTooltip(this, definition)
+                    )
                 } else {
                     const content = $(`<div class="unknown mob-${definition.idString}-silhouette"></div>`);
                     this.ui.mobGalleryContents.append(content);

@@ -1,7 +1,7 @@
 import { UI } from "@/ui.ts";
 import { EntityPool } from "@common/utils/entityPool";
 import { ClientPlayer } from "@/scripts/entities/clientPlayer.ts";
-import { Camera } from "@/scripts/render/camera";
+import { Camera } from "@/scripts/render/camera.ts";
 import { ClientEntity } from "@/scripts/entities/clientEntity.ts";
 import { EntityType, GameConstants } from "@common/constants.ts";
 import { Inventory } from "@/scripts/inventory.ts";
@@ -23,11 +23,11 @@ import { Petals, SavedPetalDefinitionData } from "@common/definitions/petals.ts"
 import { ChatChannel, ChatPacket } from "@common/net/packets/chatPacket.ts";
 import { ClientWall } from "@/scripts/entities/clientWall.ts";
 import { Settings } from "@/settings.ts";
-import { Minimap } from "@/scripts/render/minimap.ts";
-import { Leaderboard } from "@/scripts/render/leaderboard.ts";
-import { ExpUI } from "@/scripts/render/expUI.ts";
+import { Minimap } from "@/scripts/ui/minimap.ts";
+import { Leaderboard } from "@/scripts/ui/leaderboard.ts";
+import { ExpUI } from "@/scripts/ui/expUI.ts";
 import { ParticleManager } from "@/scripts/utils/particle.ts";
-import { Bossbar } from "@/scripts/render/bossbar.ts";
+import { Bossbar } from "@/scripts/ui/bossbar.ts";
 import $ from "jquery"
 
 const typeToEntity = {

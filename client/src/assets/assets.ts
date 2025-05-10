@@ -1,4 +1,4 @@
-import { RenderContainer } from "@/scripts/utils/renderContainer.ts";
+import { RenderContainer } from "@/scripts/utils/render.ts";
 import { ObjectDefinition } from "@common/utils/definitions.ts";
 import { projectileAssets } from "@/assets/projectiles.ts";
 import { mobAssets } from "@/assets/mobs.ts";
@@ -17,7 +17,7 @@ export function getGameAssetsName(
     return `${reify.idString}`;
 }
 
-function getAssets(type: "mob" | "petal" | "projectile" , definition: ObjectDefinition): AssetsDrawer| null {
+export function getAssets(type: "mob" | "petal" | "projectile" , definition: ObjectDefinition): AssetsDrawer| null {
     const name = getGameAssetsName(definition);
 
     let assetsBunch: AssetsBunch;

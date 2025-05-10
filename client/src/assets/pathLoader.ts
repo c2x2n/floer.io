@@ -1,6 +1,6 @@
-import { RenderContainer } from "@/scripts/utils/renderContainer.ts";
+import { RenderContainer } from "@/scripts/utils/render.ts";
 
-export interface PathLoader {
+export interface PathLoaderArguments {
     containerToDraw: RenderContainer,
     pathS: string,
     scale?: number,
@@ -11,8 +11,9 @@ export interface PathLoader {
     }
 }
 
+
 export function loadPathFromSVG(
-    loader: PathLoader
+    loader: PathLoaderArguments
 ) {
     const {containerToDraw, pathS} = loader;
     let {ctx, radius} = containerToDraw;

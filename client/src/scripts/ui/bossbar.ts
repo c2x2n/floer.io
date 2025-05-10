@@ -2,33 +2,6 @@ import { Game } from "@/scripts/game.ts";
 import { MobDefinition } from "@common/definitions/mobs.ts";
 import { Rarity } from "@common/definitions/rarities.ts";
 
-// export class BossbarContent {
-//     bossbarGraphics: Graphics = new Graphics();
-//     nameText: Text = new Text({
-//         text: "",
-//         style: {
-//             fontFamily: 'Ubuntu',
-//             fontSize: 29,
-//             fill: "#fff",
-//             stroke: {color: "#000", width: 3}
-//         }
-//     });
-//     rarityText: Text = new Text({
-//         text: "",
-//         style: {
-//             fontFamily: 'Ubuntu',
-//             fontSize: 18,
-//             fill: "#fff",
-//             stroke: {color: "#000", width: 1.25}
-//         }
-//     });
-//
-//     constructor() {
-//         this.nameText.anchor.set(0.5);
-//         this.rarityText.anchor.set(0.5);
-//     }
-// }
-
 export interface BossbarData {
     mob: MobDefinition;
     healthPercent: number;

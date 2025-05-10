@@ -6,7 +6,7 @@ import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
 import { Tween } from "@tweenjs/tween.js";
 import { MathNumeric, P2 } from "@common/utils/math.ts";
 import { Camera } from "@/scripts/render/camera.ts";
-import { RenderContainer } from "@/scripts/utils/renderContainer.ts";
+import { RenderContainer } from "@/scripts/utils/render.ts";
 
 export abstract class ClientEntity<T extends EntityType = EntityType> implements GameEntity{
     readonly game: Game;

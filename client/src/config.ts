@@ -16,6 +16,10 @@ export const Config: ClientConfig = {
             name: "Shiyan",
             address: "ws://211.154.18.48:12563/floer/",
             fetchAddress: "http://211.154.18.48:12563/floer/"
+        }, "hk": {
+            name: "Hongkong",
+            address: "ws://38.55.192.120:12563/floer/",
+            fetchAddress: "http://38.55.192.120:12563/floer/"
         }
     }
 };

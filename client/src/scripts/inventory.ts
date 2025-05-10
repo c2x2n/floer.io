@@ -5,8 +5,7 @@ import { PetalDefinition, Petals, SavedPetalDefinitionData } from "@common/defin
 import { UI } from "@/ui.ts";
 import { Rarity } from "@common/definitions/rarities.ts";
 import { ActionType } from "@common/constants";
-import { showPetalInformation, unShowInformation } from "@/scripts/shown/information.ts";
-import { MobDefinition } from "@common/definitions/mobs.ts";
+import { applyTooltip, createPetalTooltip } from "@/scripts/shown/tooltip.ts";
 import { PetalData, PetalState } from "@common/net/packets/updatePacket.ts";
 
 interface EasingData {
@@ -767,9 +766,6 @@ export class Inventory{
 
             petalContainer.ui_slot = petal_slot;
 
-            petalContainer.informationBox?.remove();
-            petalContainer.showingInformation = false;
-
             petal_slot.on("mouseover",() => {
                 mouseSelectingPetal = petalContainer;
             })
@@ -791,6 +787,10 @@ export class Inventory{
                 petal_slot.append(petal);
                 petal.append(canvas);
                 petalContainer.canvas = canvas;
+
+                applyTooltip(
+                    petal_slot, createPetalTooltip(petalContainer.petalDefinition)
+                )
 
                 petal.on("mousedown", (ev) => {
                     if (!this.game.running) return;
@@ -843,14 +843,6 @@ export class Inventory{
 
                     ev.preventDefault();
                 })
-
-                petal.on("mouseover",(ev) => {
-                    if (!petalContainer.showingInformation) showPetalInformation(petalContainer);
-                })
-
-                petal.on("mouseout",(ev) => {
-                    if (petalContainer.showingInformation) unShowInformation(petalContainer);
-                })
             }
         })
     }
@@ -892,8 +884,6 @@ export class Inventory{
 export class PetalContainer {
     ui_slot?: JQuery;
     petalDefinition: SavedPetalDefinitionData = null;
-    showingInformation: boolean = false;
-    informationBox?: JQuery;
     canvas?: HTMLCanvasElement;
 
     constructor() {}
@@ -908,14 +898,4 @@ export class PetalContainer {
         return this;
     }
 }
-
-export class MobContainer {
-    ui_slot?: JQuery;
-    mobDefinition?: MobDefinition;
-    showingInformation: boolean = false;
-    informationBox?: JQuery;
-
-    constructor() {}
-}
-
 

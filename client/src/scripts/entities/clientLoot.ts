@@ -6,7 +6,7 @@ import { Camera } from "@/scripts/render/camera.ts";
 import { PetalDefinition } from "@common/definitions/petals.ts";
 import { Rarity } from "@common/definitions/rarities.ts";
 import { Tween } from "@tweenjs/tween.js";
-import { ICON_drawPetal } from "@/scripts/utils/assets.ts";
+import { ICON_drawPetal } from "@/scripts/utils/icons.ts";
 
 export class ClientLoot extends ClientEntity {
     type = EntityType.Loot;

@@ -1,7 +1,6 @@
-.information {
+.tooltip {
     position: absolute;
     padding: 7px;
-    transform: translate(-35%, -100%);
     background: rgba(0, 0, 0, 0.6);
     height: max-content;
     width: max-content;
@@ -10,18 +9,22 @@
     z-index: 100;
 }
 
-.information > div {
+.information {
+    transform: translate(-35%, -100%);
+}
+
+.tooltip > div {
     margin: 0.1em 0;
 }
 
-.information > div > p {
+.tooltip > div > p {
     margin: 0;
 }
 
-.information > p {
+.tooltip > p {
     margin: 0;
 }
 
-.information > .br{
+.tooltip > .br{
     margin: 15px 0;
 }

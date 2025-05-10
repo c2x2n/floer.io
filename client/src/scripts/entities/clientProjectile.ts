@@ -9,6 +9,7 @@ import { Camera } from "@/scripts/render/camera.ts";
 import { Vec2 } from "@common/utils/vector.ts";
 import { Tween } from "@tweenjs/tween.js";
 import { MathGraphics, P2 } from "@common/utils/math.ts";
+import { getAssets } from "@/assets/assets.ts";
 
 export class ClientProjectile extends ClientEntity {
     type = EntityType.Projectile;
@@ -28,10 +29,9 @@ export class ClientProjectile extends ClientEntity {
 
         if (!this.definition) return;
 
-        const name = this.definition.idString;
-
-        if (this.container.visible && projectileAssets.hasOwnProperty(name)) {
-            projectileAssets[name](this.container)
+        if (this.container.visible) {
+            const assets = getAssets("projectile", this.definition);
+            if (assets) assets(this.container);
         }
     }
 
