@@ -351,7 +351,7 @@ export class Inventory{
     }
 
     cleanUpAll(): void {
-        draggingData.item = null;
+                draggingData.item = null;
 
         mouseSelectingPetal = undefined;
         mouseDeletingPetal = false;
@@ -372,9 +372,9 @@ export class Inventory{
         if (mouseSelectingPetal && mouseSelectingPetal != draggingData.container) {
             const targetIndex = this.inventory.indexOf(mouseSelectingPetal);
 
-            const trans = mouseSelectingPetal.petalDefinition;
-            mouseSelectingPetal.petalDefinition = draggingData.container.petalDefinition;
-            draggingData.container.petalDefinition = trans;
+                    const trans = mouseSelectingPetal.petalDefinition;
+                    mouseSelectingPetal.petalDefinition = draggingData.container.petalDefinition;
+                    draggingData.container.petalDefinition = trans;
 
             this.switchPetals(originalIndex, targetIndex);
 
@@ -479,7 +479,7 @@ export class Inventory{
             // We'll call it in the onAnimationComplete callback instead
             return;
         } else if (mouseDeletingPetal) {
-            draggingData.container.petalDefinition = null;
+                    draggingData.container.petalDefinition = null;
             this.deleteSlot(originalIndex)
 
             // Animate deletion - shrink to 0 size and fade opacity to 0.5
@@ -529,7 +529,7 @@ export class Inventory{
                         draggingData.item = null; // It is already removed by the animation method
 
                         // Call updatePetalRows AFTER the animation completes to redraw the petal in its slot
-                        this.updatePetalRows();
+                this.updatePetalRows();
                     });
                     return; // Skip the immediate removal below
                 }
@@ -645,7 +645,7 @@ export class Inventory{
         const originalEquipSlot = this.equippedPetals.length;
         if (slot >= originalEquipSlot){
             for (let i = 0; i < slot - originalEquipSlot; i++) {
-                this.equippedPetals.push(new PetalContainer())
+            this.equippedPetals.push(new PetalContainer())
             }
         } else {
             for (let i = 0; i < originalEquipSlot - slot; i++) {
@@ -656,7 +656,7 @@ export class Inventory{
         const originalPrepSlot = this.preparationPetals.length;
         if (prepare >= originalPrepSlot){
             for (let i = 0; i < prepare - originalPrepSlot; i++) {
-                this.preparationPetals.push(new PetalContainer())
+            this.preparationPetals.push(new PetalContainer())
             }
         } else {
             for (let i = 0; i < originalPrepSlot - prepare; i++) {

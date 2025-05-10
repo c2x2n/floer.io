@@ -65,6 +65,7 @@ export const GameConstants = Object.freeze({
             conditionalHeal: undefined,
             controlRotation: false,
             extraSlot: 0,
+            bodyDamage: 1,
         }),
     },
     petal: {

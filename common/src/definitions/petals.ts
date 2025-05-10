@@ -350,7 +350,8 @@ export let Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.unusual,
-    },{
+    },
+    {
         idString: "tri_leaf",
         displayName: "Leaf",
         description: "Gathers energy from the sun to heal your flower passively",
@@ -959,7 +960,8 @@ export let Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.rare,
-    }, {
+    },
+    {
         idString: "poison_cactus",
         displayName: "Cactus",
         description: "Increases your maximum health and makes your flower toxic. Enemies hit by your flower will get poisoned",
@@ -2249,7 +2251,32 @@ export let Petals = new Definitions<PetalDefinition>([
         pieceAmount: 1,
         rarity: RarityName.super,
         usingAssets: "lightning"
-    }
+    },
+    {
+        idString: "cutter",
+        displayName: "Cutter",
+        description: "A friend used to own this... now it's time for revenge.Increases body damage.",
+        equipment: true,
+        images: {
+            slotDisplaySize: 55,
+            centerYOffset: -1.25,
+            slotRotation: -(22.5)*(Math.PI/180),
+            fontSizeMultiplier: 0.8,
+            equipmentStyles: {
+                noRender: false,
+                coordsToOwner: {
+                    x: 0,
+                    y: 0,
+                    scale: 2
+                }
+            }
+        },
+        hitboxRadius: 0.6,
+        modifiers: {
+            bodyDamage: 5
+        },
+        rarity: RarityName.epic
+    },
 ] satisfies PetalDefinition[]);
 
 export type AttributeNames = keyof AttributeParameters;

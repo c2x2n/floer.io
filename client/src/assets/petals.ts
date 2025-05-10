@@ -979,6 +979,55 @@ export const petalAssets: AssetsBunch = {
             }
         })
     },
+    "cutter": (containerToDraw) => {
+        const { ctx, radius } = containerToDraw;
+
+        const spikeCount = 8;
+        const outerRadius = radius * 1;
+        const innerRadius = radius * 1;
+        const spikeLength = radius * 0.4;
+        
+
+        const rotationSpeed = 5;
+        const currentTime = Date.now();
+        const elapsedTime = (currentTime - containerToDraw.createdTime) / 1000;
+        const rotation = (elapsedTime * rotationSpeed) % (Math.PI * 2);
+        
+        ctx.save();
+        ctx.rotate(rotation);
+        
+        ctx.fillStyle = containerToDraw.getRenderColor("#000000");
+        
+        ctx.beginPath();
+
+        const firstSpikeX = (outerRadius + spikeLength) * Math.cos(0.5 / spikeCount * P2);
+        const firstSpikeY = (outerRadius + spikeLength) * Math.sin(0.5 / spikeCount * P2);
+        
+        ctx.moveTo(firstSpikeX, firstSpikeY);
+        
+        for (let i = 0; i < spikeCount; i++) {
+            const currentAngle = ((i + 0.5) / spikeCount) * P2;
+            const nextAngle = ((i + 1.5) / spikeCount) * P2;
+
+            const spikeX = (outerRadius + spikeLength) * Math.cos(currentAngle);
+            const spikeY = (outerRadius + spikeLength) * Math.sin(currentAngle);
+
+            const arcX = outerRadius * Math.cos((i + 1) / spikeCount * P2);
+            const arcY = outerRadius * Math.sin((i + 1) / spikeCount * P2);
+
+            const nextSpikeX = (outerRadius + spikeLength) * Math.cos(nextAngle);
+            const nextSpikeY = (outerRadius + spikeLength) * Math.sin(nextAngle);
+
+            ctx.quadraticCurveTo(arcX, arcY, nextSpikeX, nextSpikeY);
+        }
+
+        ctx.arc(0, 0, innerRadius, 0, P2, true);
+        
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.restore();
+    },
     "default": (containerToDraw) => {
         petalAssets["basic"](containerToDraw);
     },

@@ -1,6 +1,5 @@
 import { ClientEntity } from "./clientEntity";
 import { EntityType } from "@common/constants";
-import { getGameAssetsFile } from "@/scripts/utils/icons.ts";
 import { Game } from "@/scripts/game";
 import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";

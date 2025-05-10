@@ -343,10 +343,9 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         if (this.spectatorMode) return;
 
         if (to.canReceiveDamageFrom(this)) {
-            to.receiveDamage(this.damage, this);
-            this.sendEvent(
-                AttributeEvents.FLOWER_DEAL_DAMAGE, to
-            )
+            const damage = this.damage * this.modifiers.bodyDamage;
+            to.receiveDamage(damage, this);
+            this.sendEvent(AttributeEvents.FLOWER_DEAL_DAMAGE, to);
         }
     }
 
@@ -766,6 +765,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         now.extraDistance += extra.extraDistance ?? 0;
         now.controlRotation = extra.controlRotation ?? now.controlRotation;
         now.revive = extra.revive ?? now.revive;
+        now.bodyDamage *= extra.bodyDamage ?? 1;
         if (extra.conditionalHeal) {
             now.conditionalHeal = extra.conditionalHeal;
         }

@@ -68,6 +68,11 @@ const petalDefinitionShowingConfigs: { [key: string] : DefinitionShowingConfig }
             displayName: "Extra Zoom",
             color: "#58fd48"
         },
+        bodyDamage: {
+            displayName: "Body Damage",
+            color: "#ff6666",
+            percent: true
+        },
         undroppable: {
             displayName: "Undroppable",
             color: "#656548",
