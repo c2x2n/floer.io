@@ -5,7 +5,7 @@ import { Grid } from "./utils/grid";
 import { EntityPool } from "../../common/src/utils/entityPool";
 import { EntityType, GameConstants } from "../../common/src/constants";
 import NanoTimer from "nanotimer";
-import { type ServerConfig } from "./config";
+import { Config, type ServerConfig } from "./config";
 import { IDAllocator } from "./utils/idAllocator";
 import { Vec2, type Vector } from "../../common/src/utils/vector";
 import { ServerMob } from "./entities/serverMob";
@@ -44,7 +44,7 @@ export class Game {
     width = GameConstants.game.width;
     height = GameConstants.game.height;
 
-    adminSecret: string;
+    adminSecret: string = Config.adminSecret;
 
     maxVector = Vec2.new(GameConstants.game.width, GameConstants.game.height);
 
@@ -72,7 +72,6 @@ export class Game {
     constructor(config: ServerConfig) {
         this.deltaMs = 1000 / config.tps;
         this.timer.setInterval(this.tick.bind(this), "", `${this.deltaMs}m`);
-        this.adminSecret = "72502bd1646d5d37a75fb1aa76b9bd3d53e2129ebd6913b5040da31960181d41";
 
         for (const wall of Walls) {
             const { x, y, width, height } = wall;

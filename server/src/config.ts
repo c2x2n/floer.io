@@ -1,7 +1,8 @@
 export const Config: Readonly<ServerConfig> = Object.freeze({
     host: "0.0.0.0",
     port: 12563,
-    tps: 30
+    tps: 30,
+    adminSecret: "123456"
 });
 
 export interface ServerConfig {
@@ -13,4 +14,5 @@ export interface ServerConfig {
      * In ticks/second
      */
     readonly tps: number
+    readonly adminSecret: string
 }

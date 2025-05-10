@@ -13,6 +13,7 @@ export class ClientApplication {
     settings = new Settings(this);
     ui = new UI(this);
     game = new Game(this);
+
     renderer = new Renderer(this);
 
     async init() {
