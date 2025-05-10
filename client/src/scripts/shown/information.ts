@@ -316,13 +316,13 @@ export function showPetalInformation(container: PetalContainer) {
         line.css("display", "flex");
 
         const startS =
-            $(`<p textStroke="${startsWith}">${startsWith}</p>`);
+            $(`<p textin="${startsWith}"></p>`);
 
         const valueS =
-            $(`<p textStroke="${value}">${value}</p>`);
+            $(`<p textin="${value}"></p>`);
 
         const endS =
-            $(`<p textStroke="${endsWith}">${endsWith}</p>`);
+            $(`<p textin="${endsWith}"></p>`);
 
         startS.css("font-size", fontSize + "px")
         startS.css("color", color)
@@ -467,7 +467,7 @@ export function showPetalInformation(container: PetalContainer) {
         if (definition.usable) {
             content += " + " + definition.useTime + "s";
         }
-        const reload = $(`<p textStroke="${content}">${content}<p>`);
+        const reload = $(`<p textin="${content}"><p>`);
 
         reload.css("position", "absolute");
         reload.css("right", "7px");
@@ -534,13 +534,13 @@ export function showMobInformation(gallery: Gallery, container: MobContainer) {
         line.css("display", "flex");
 
         const startS =
-            $(`<p textStroke="${startsWith}">${startsWith}</p>`);
+            $(`<p textin="${startsWith}"></p>`);
 
         const valueS =
-            $(`<p textStroke="${value}">${value}</p>`);
+            $(`<p textin="${value}"></p>`);
 
         const endS =
-            $(`<p textStroke="${endsWith}">${endsWith}</p>`);
+            $(`<p textin="${endsWith}"></p>`);
 
         startS.css("font-size", fontSize + "px")
         startS.css("color", color)
@@ -665,7 +665,7 @@ export function showMobInformation(gallery: Gallery, container: MobContainer) {
     }
 
     const xp = definition.exp;
-    const reload = $(`<p textStroke="${xp}◆">${xp}◆<p>`);
+    const reload = $(`<p textin="${xp}◆"><p>`);
 
     reload.css("position", "absolute");
     reload.css("right", "7px");
@@ -687,7 +687,7 @@ export function showMobInformation(gallery: Gallery, container: MobContainer) {
         const loot = Petals.fromStringSafe(lootTableKey);
 
         const lootDOM = $(`<div class="mob-loot"></div>`)
-        const rateDOM = $(`<p class="drop-rate" textStroke="${rate}%">${rate}%</p>`);
+        const rateDOM = $(`<p class="drop-rate" textin="${rate}%"></p>`);
 
         if (!loot) continue;
 
@@ -695,7 +695,7 @@ export function showMobInformation(gallery: Gallery, container: MobContainer) {
             lootDOM.append(renderPetal(loot))
         } else {
             lootDOM.append($(`<div class="unknown">
-                <div textStroke="?">?</div>
+                <div textin="?"></div>
             </div>`))
         }
         lootDOM.append(rateDOM)

@@ -1,12 +1,15 @@
 @use './utils/button.scss';
-@use './utils/rarity.scss';
 @use './utils/dialogs.scss';
-@use './utils/dropdowns.scss';
+@use './utils/dropdown.scss';
+@use './game/server.scss';
+@use './game/mobile.scss';
+@use './utils/textStroke.scss';
 
 $none_bg: #fff;
 $none_bd: #ccc;
 
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap');
+// Ubuntu fonts here
 
 *{
     font-family: 'Ubuntu', sans-serif;
@@ -27,7 +30,7 @@ $none_bd: #ccc;
     z-index: 1000;
     place-content: center;
     display: grid;
-  }
+}
 
 
 body {
@@ -158,19 +161,6 @@ body {
   height: 35px;
   width: 80px;
   font-size: 20px;
-}
-
-[textStroke] {
-  position: relative;
-  z-index: 0;
-  --x: 0.1em;
-}
-
-[textStroke]:before{
-  position: absolute;
-  z-index: -1;
-  content: attr(textStroke);
-  -webkit-text-stroke: var(--x) #000;
 }
 
 .line-container {

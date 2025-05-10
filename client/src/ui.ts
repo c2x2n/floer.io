@@ -215,8 +215,7 @@ export class UI {
         this.loader.animate({ opacity: 0 }, 100, ()=>{ this.loader.css("display", "none");});
 
         const content  = `floer.io ${getVersion()}`;
-        this.version.text(content);
-        this.version.attr("textStroke", content);
+        this.version.attr("textin", content);
 
         this.gallery.renderPetalGallery();
         this.gallery.renderMobGallery();
@@ -291,8 +290,7 @@ export class UI {
                 const status = $("<div class='server-item-status'></div>");
                 serverElement.append(status);
                 const unavailable = $("<div></div>");
-                unavailable.text("Unavailable");
-                unavailable.attr("textStroke", "Unavailable")
+                unavailable.attr("textin", "Unavailable")
                 status.append(unavailable);
             }
 
@@ -309,11 +307,9 @@ export class UI {
         const serverSelected = this.app.settings.data.server;
         if (Config.servers.hasOwnProperty(serverSelected)) {
             const data = Config.servers[serverSelected];
-            this.serverName.text(data.name);
-            this.serverName.attr("textStroke", data.name);
+            this.serverName.attr("textin", data.name);
             const info = this.serverInfo[serverSelected];
-            this.serverPlayerCount.text(`${info.playerCount} Player${info.playerCount != 1? "s" : ""}`);
-            this.serverPlayerCount.attr("textStroke", `${info.playerCount} Player${info.playerCount != 1? "s" : ""}`);
+            this.serverPlayerCount.attr("textin", `${info.playerCount} Player${info.playerCount != 1? "s" : ""}`);
         }
     }
 
@@ -563,11 +559,9 @@ export class UI {
         this.game.debug.entities.players = this.game.entityPool.countType(EntityType.Player);
         const debug = this.game.debug;
         const t = `floer.io BETA ${getVersion()}`;
-        this.gameInfo.attr("textStroke", t);
-        this.gameInfo.text(t);
+        this.gameInfo.attr("textin", t);
         const text = `${debug.ping.toFixed(2)}ms | ${debug.fps} FPS / ${debug.particles} Particles / ${debug.entities.loot} Loot / ${debug.entities.mobs} Mobs / ${debug.entities.petals} Petals / ${debug.entities.projectiles} Projectiles / ${debug.entities.players} Players`;
-        this.debugInfo.text(text)
-        this.debugInfo.attr("textStroke", text);
+        this.debugInfo.attr("textin", text);
     }
 
     toggleDialog(dialog: JQuery<HTMLDivElement>): void {
@@ -590,11 +584,9 @@ export class UI {
         this.gameOverScreen.css("display", "flex");
         this.gameOverScreen.css("opacity", "0");
 
-        this.gameOverMurderer.attr("textStroke", packet.murderer);
-        this.gameOverMurderer.text(packet.murderer);
+        this.gameOverMurderer.attr("textin", packet.murderer);
         const kills = `You killed ${packet.kills} flower${packet.kills != 1 ? "s" : ""} this run.`
-        this.gameOverKills.attr("textStroke", kills);
-        this.gameOverKills.text(kills);
+        this.gameOverKills.attr("textin", kills);
 
         this.gameOverScreen.animate({
             opacity: "1"
@@ -614,8 +606,7 @@ export class UI {
         let content = `${time}s`;
         if (time <= 0) content = "MOVE NOW";
         this.moveHigh.css("display", "block");
-        this.moveHighTime.attr("textStroke", content);
-        this.moveHighTime.text(content);
+        this.moveHighTime.attr("textin", content);
     }
 
     chatMessages: ChatMessage[] = [];
@@ -633,8 +624,7 @@ export class UI {
             ></div>`
         );
 
-        jq.text(msg.content);
-        jq.attr("textStroke", msg.content);
+        jq.attr("textin", msg.content);
 
         this.chatMessagesBox.append(jq)
 
@@ -686,8 +676,7 @@ export class UI {
         }
         this.chattingChannel = this.changeableChannel[index];
 
-        this.chatChannel.text(`[${ChatChannel[this.changeableChannel[index]]}]`);
-        this.chatChannel.attr("textStroke", `[${ChatChannel[this.changeableChannel[index]]}]`);
+        this.chatChannel.attr("textin", `[${ChatChannel[this.changeableChannel[index]]}]`);
     }
 
     scrollToEnd(jq: JQuery<HTMLDivElement>) {
