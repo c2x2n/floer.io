@@ -158,7 +158,7 @@ export let Petals = new Definitions<PetalDefinition>([
         rarity: RarityName.common,
         usingAssets: "light",
         modifiers: {
-            speed: 1.007
+            speed: 1.006
         },
     },
     {
@@ -177,7 +177,7 @@ export let Petals = new Definitions<PetalDefinition>([
         rarity: RarityName.unusual,
         usingAssets: "light",
         modifiers: {
-            speed: 1.007
+            speed: 1.005
         },
     },
     {
@@ -196,7 +196,7 @@ export let Petals = new Definitions<PetalDefinition>([
         rarity: RarityName.mythic,
         usingAssets: "light",
         modifiers: {
-            speed: 1.02
+            speed: 1.01
         },
     },
     {
@@ -207,7 +207,7 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 15,
         swinging: {
             time: 0.5,
-            distance: 6
+            distance: 2.6
         },
         images:{
             slotDisplaySize: 60,
@@ -229,7 +229,7 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 20,
         swinging: {
             time: 0.5,
-            distance: 6
+            distance: 2.6
         },
         images:{
             slotDisplaySize: 45,
@@ -263,7 +263,7 @@ export let Petals = new Definitions<PetalDefinition>([
         rarity: RarityName.epic,
         usingAssets: "light",
         modifiers: {
-            speed: 1.007
+            speed: 1.004
         },
     },{
         idString: "faster",
@@ -289,7 +289,7 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 15,
         swinging: {
             time: 0.25,
-            distance: 6
+            distance: 2.6
         },
         extendable: true,
         reloadTime: 1.25,
@@ -558,7 +558,7 @@ export let Petals = new Definitions<PetalDefinition>([
         attributes: {
             health_percent_damage: {
                 percent: 0.3,
-                maxDamage: 200
+                maxDamage: 150
             }
         },
         reloadTime: 2.5,
@@ -615,7 +615,7 @@ export let Petals = new Definitions<PetalDefinition>([
         rarity: RarityName.rare
     },
     {
-        idString: "unstoppable_bubble",
+        idString: "dev_bub",
         displayName: "UNBubble",
         description: "Powers are for the DEV",
         damage: 0,
@@ -835,8 +835,8 @@ export let Petals = new Definitions<PetalDefinition>([
         idString: "big_missile",
         displayName: "Missile",
         description: "You can actually shoot this bigger one",
-        damage: 20,
-        health: 50,
+        damage: 25,
+        health: 75,
         extendable: true,
         images: {
             selfGameRotation: 0.02,
@@ -850,10 +850,10 @@ export let Petals = new Definitions<PetalDefinition>([
         attributes: {
             shoot: {
                 hitboxRadius: 1,
-                damage: 40,
-                health: 20,
+                damage: 25,
+                health: 75,
                 despawnTime: 3,
-                speed: 7,
+                speed: 7.25,
                 definition: Projectiles.fromString("missile")
             }
         },
@@ -952,7 +952,7 @@ export let Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 18
         },
         modifiers: {
-            maxHealth: 35
+            maxHealth: 22
         },
         reloadTime: 1,
         hitboxRadius: 0.7,
@@ -982,7 +982,7 @@ export let Petals = new Definitions<PetalDefinition>([
             }
         },
         modifiers: {
-            maxHealth: 35
+            maxHealth: 22
         },
         reloadTime: 1,
         hitboxRadius: 0.7,
@@ -1003,7 +1003,7 @@ export let Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 18
         },
         modifiers: {
-            maxHealth: 30
+            maxHealth: 20
         },
         reloadTime: 1,
         hitboxRadius: 0.7,
@@ -1121,7 +1121,7 @@ export let Petals = new Definitions<PetalDefinition>([
         idString: "rice",
         displayName: "Rice",
         description: "Spawns instantly, but not very strong",
-        damage: 8,
+        damage: 6,
         health: 5,
         extendable: true,
         reloadTime: 0.04,
@@ -1130,7 +1130,7 @@ export let Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 18
         },
         usable: false,
-        hitboxRadius: 0.75,
+        hitboxRadius: 0.95,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.epic
@@ -2055,9 +2055,9 @@ export let Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 18
         },
         attributes: {
-            damage_reduction_percent: 65
+            damage_reduction_percent: 75
         },
-        reloadTime: 5,
+        reloadTime: 10,
         hitboxRadius: 1.0,
         isDuplicate: false,
         pieceAmount: 1,
