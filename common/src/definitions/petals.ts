@@ -1922,147 +1922,6 @@ export let Petals = new Definitions<PetalDefinition>([
         usingAssets: "egg"
     },
     {
-        idString: "segg",
-        displayName: "Egg",
-        description: "Something dangerous might pop out of this.",
-        damage: 1,
-        health: 2500,
-        extendable: false,
-        usable: true,
-        images: {
-            slotDisplaySize: 75
-        },
-        useTime: 1,
-        attributes: {
-            spawner: Mobs.fromString("mega_hornet")
-        },
-        reloadTime: 1,
-        hitboxRadius: 1,
-        isShowedInOne: false,
-        isDuplicate: true,
-        pieceAmount: 2,
-        rarity: RarityName.super,
-        usingAssets: "egg",
-        undroppable: true
-    },
-    {
-        idString: "segg2",
-        displayName: "Egg",
-        description: "An army might pop out of this.",
-        damage: 1,
-        health: 2500,
-        extendable: false,
-        usable: true,
-        images: {
-            slotDisplaySize: 40
-        },
-        useTime: 1,
-        attributes: {
-            spawner: Mobs.fromString("spider")
-        },
-        reloadTime: 1,
-        hitboxRadius: 0.6,
-        isShowedInOne: false,
-        isDuplicate: true,
-        pieceAmount: 25,
-        rarity: RarityName.super,
-        usingAssets: "egg",
-        undroppable: true
-    },
-    {
-        idString: "segg3",
-        displayName: "Egg",
-        description: "Something that does not belong to this world might pop out of this.",
-        damage: 1,
-        health: 2500,
-        extendable: false,
-        usable: true,
-        images: {
-            slotDisplaySize: 80
-        },
-        useTime: 0.2,
-        attributes: {
-            spawner: Mobs.fromString("sshiny"),
-        },
-        reloadTime: 0.2,
-        hitboxRadius: 0.6,
-        isDuplicate: false,
-        pieceAmount: 1,
-        rarity: RarityName.ethereal,
-        usingAssets: "egg",
-        undroppable: true
-    },
-    {
-        idString: "segg4",
-        displayName: "Egg",
-        description: "Something that can bomb might pop out of this.",
-        damage: 1,
-        health: 2500,
-        extendable: false,
-        usable: true,
-        images: {
-            slotDisplaySize: 80
-        },
-        useTime: 0.2,
-        attributes: {
-            spawner: Mobs.fromString("myt_ant_hole"),
-        },
-        reloadTime: 0.2,
-        hitboxRadius: 0.6,
-        isDuplicate: true,
-        pieceAmount: 5,
-        isShowedInOne: false,
-        rarity: RarityName.ethereal,
-        usingAssets: "egg",
-        undroppable: true
-    },
-    {
-        idString: "segg5",
-        displayName: "Egg",
-        description: "Something gigantic might pop out of this this.",
-        damage: 3,
-        health: 7500,
-        extendable: false,
-        usable: true,
-        images: {
-            slotDisplaySize: 80
-        },
-        useTime: 0.2,
-        attributes: {
-            spawner: Mobs.fromString("giant_spider"),
-        },
-        reloadTime: 0.2,
-        hitboxRadius: 0.6,
-        pieceAmount: 1,
-        isDuplicate: false,
-        rarity: RarityName.phantasmagoric,
-        usingAssets: "egg",
-        undroppable: true
-    },
-    {
-        idString: "segg6",
-        displayName: "Egg",
-        description: "Something beyond imagination might pop out of this.",
-        damage: 9,
-        health: 7500*3,
-        extendable: false,
-        usable: true,
-        images: {
-            slotDisplaySize: 85
-        },
-        useTime: 0.2,
-        attributes: {
-            spawner: Mobs.fromString("giant_mantis"),
-        },
-        reloadTime: 0.2,
-        hitboxRadius: 0.6,
-        pieceAmount: 1,
-        isDuplicate: false,
-        rarity: RarityName.arcane,
-        usingAssets: "egg",
-        undroppable: true
-    },
-    {
         idString: "talisman",
         displayName: "Talisman",
         description: "A necklace that allows the wearer to anticipate enemy attacks",
@@ -2150,9 +2009,9 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         attributes: {
             paralyze: {
-                duration: 4,
-                speedReduction: 0.15,
-                revolutionReduction: 0.30
+                duration: 8,
+                speedReduction: 0.05,
+                revolutionReduction: 0.15
             }
         },
         reloadTime: 1.7,
@@ -2178,7 +2037,7 @@ export let Petals = new Definitions<PetalDefinition>([
             absorbing_shield: 25
         },
         reloadTime: 3,
-        hitboxRadius: 0.5,
+        hitboxRadius: 0.8,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.epic
