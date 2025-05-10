@@ -59,14 +59,14 @@ export const Zones: { readonly [K in ZoneName]: ZoneDefinition } = Object.freeze
             "shiny_ladybug": 1,
             "beetle": 5,
             "cactus": 35,
-            "mega_cactus": 5,
+            "mega_cactus": 1,
             "ant_hole": 0.05,
             "bee": 10,
             "worker_ant": 5,
             "baby_ant": 5,
             "soldier_ant": 5,
             "centipede": 1,
-            "desert_centipede": 10,
+            "desert_centipede": 12.5,
         }
     },
     [ZoneName.Hard]: {
