@@ -66,7 +66,7 @@ export const Zones: { readonly [K in ZoneName]: ZoneDefinition } = Object.freeze
             "baby_ant": 5,
             "soldier_ant": 5,
             "centipede": 1,
-            "desert_centipede": 10,
+            "desert_centipede": 12.5,
         }
     },
     [ZoneName.Hard]: {
