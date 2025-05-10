@@ -642,26 +642,24 @@ export class Inventory{
     }
 
     setSlotAmount(slot: number, prepare: number){
-        // this.equippedPetals = [];
-        // this.preparationPetals = [];
-        const orgEquipSlot = this.equippedPetals.length;
-        if (slot >= orgEquipSlot){
-            for (let i = 0; i < slot - orgEquipSlot; i++) {
+        const originalEquipSlot = this.equippedPetals.length;
+        if (slot >= originalEquipSlot){
+            for (let i = 0; i < slot - originalEquipSlot; i++) {
                 this.equippedPetals.push(new PetalContainer())
             }
         } else {
-            for (let i = 0; i < orgEquipSlot - slot; i++) {
+            for (let i = 0; i < originalEquipSlot - slot; i++) {
                 this.equippedPetals.splice(i + slot)
             }
         }
 
-        const orgPrepSlot = this.preparationPetals.length;
-        if (prepare >= orgPrepSlot){
-            for (let i = 0; i < prepare - orgPrepSlot; i++) {
+        const originalPrepSlot = this.preparationPetals.length;
+        if (prepare >= originalPrepSlot){
+            for (let i = 0; i < prepare - originalPrepSlot; i++) {
                 this.preparationPetals.push(new PetalContainer())
             }
         } else {
-            for (let i = 0; i < orgPrepSlot - prepare; i++) {
+            for (let i = 0; i < originalPrepSlot - prepare; i++) {
                 this.preparationPetals.splice(i + prepare)
             }
         }
@@ -789,7 +787,7 @@ export class Inventory{
                 petalContainer.canvas = canvas;
 
                 applyTooltip(
-                    petal_slot, createPetalTooltip(petalContainer.petalDefinition)
+                    petal, createPetalTooltip(petalContainer.petalDefinition)
                 )
 
                 petal.on("mousedown", (ev) => {
@@ -812,7 +810,6 @@ export class Inventory{
                         "transform",
                         `translateX(${clientX}px) translateY(${clientY}px)`
                     );
-
                     dragging.append(petal);
                     $("body").append(dragging);
                 })

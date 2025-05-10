@@ -187,7 +187,7 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
     dealDamageTo(to: damageableEntity): void{
         if (this.definition.doesNotDamage?.includes(to.type)) {
             return;
-        };
+        }
         if (this.owner.spectatorMode) {
             return;
         }

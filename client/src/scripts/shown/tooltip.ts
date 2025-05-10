@@ -687,6 +687,8 @@ export function createMobTooltip(gallery: Gallery, definition: MobDefinition): J
 }
 
 export function applyTooltip(follow: JQuery, tooltip: JQuery) {
+    let on = false;
+
     follow.on("mouseover", () => {
         if (!follow.is(":visible")) return;
         $("body").append(tooltip);
@@ -699,13 +701,18 @@ export function applyTooltip(follow: JQuery, tooltip: JQuery) {
         }
         tooltip.css("opacity", "0");
         tooltip.animate({ opacity: 1 }, 100);
+        on = true;
         const observer = setInterval(() => {
-            if (!follow.is(":hover") || follow.siblings(":visible").length == 0) {
+            if (!on || !follow.is(":visible")) {
                 tooltip.animate({ opacity: 0 }, 200, () => {
                     tooltip.remove()
                 });
                 clearInterval(observer);
             }
         }, 100)
+    })
+
+    follow.on("mouseout", () => {
+        on = false;
     })
 }
