@@ -39,3 +39,9 @@ pnpm build
 cd ./server
 pnpm start
 ```
+
+## Contributors
+
+<a href="https://github.com/c2x/floer.io/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=c2x/floer.io" />
+</a>
