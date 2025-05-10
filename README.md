@@ -105,5 +105,5 @@ pnpm lint:ci
 ## 贡献者
 
 <a href="https://github.com/c2x/floer.io/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=c2x/floer.io" />
+  <img src="https://contrib.rocks/image?repo=c2x2n/floer.io" />
 </a>
