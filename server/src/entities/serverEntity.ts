@@ -9,6 +9,7 @@ import { CollisionResponse } from "../../../common/src/utils/collision";
 import { EffectManager, PoisonEffect } from "../utils/effects";
 import { Modifiers } from "../../../common/src/typings";
 import { collideableEntity, damageSource } from "../typings";
+import { ServerPlayer } from "./serverPlayer";
 
 export abstract class ServerEntity<T extends EntityType = EntityType> implements GameEntity{
     abstract type: T;
@@ -201,12 +202,20 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
 
                 return;
             }
+            
+            let knockbackMultiplier = 1;
+            if (this.type === EntityType.Player) {
+                const player = this as unknown as ServerPlayer;
+                knockbackMultiplier = Math.max(0, 1 - (player.modifiers.knockbackReduction || 0));
+            }
+            
             this.addVelocity(
                 Vec2.mul(
                     collision.dir,
                     (collision.pen + (entity.type !== this.type ? entity.knockback : knockbackBetween[entity.type]))
                     * entity.weight
                     * (-1)
+                    * knockbackMultiplier
                     / (this.weight + entity.weight)
                     / this.game.dt
                 ),

@@ -24,6 +24,7 @@ interface DefinitionShowingConfig {
     endsWith?: string
     noValue?: boolean
     percent?: boolean
+    noSubtract?: boolean
 }
 
 type AttributeShowingFunction<K extends AttributeNames> =
@@ -67,6 +68,23 @@ const petalDefinitionShowingConfigs: { [key: string] : DefinitionShowingConfig }
         zoom: {
             displayName: "Extra Zoom",
             color: "#58fd48"
+        },
+        bodyDamage: {
+            displayName: "Body Damage",
+            color: "#ff6666",
+            percent: true
+        },
+        knockbackReduction: {
+            displayName: "Knockback Reduction",
+            color: "#6666ff",
+            percent: true,
+            noSubtract: true
+        },
+        bodyDamageReduction: {
+            displayName: "Collision Damage Resistance",
+            color: "#6666ff",
+            percent: true,
+            noSubtract: true
         },
         undroppable: {
             displayName: "Undroppable",
@@ -418,7 +436,10 @@ export function createPetalTooltip(definition: PetalDefinition): JQuery {
                 let startsWith = "";
                 let endsWith = "";
                 if (showing.percent) {
-                    value = original * 100 - 100;
+                    value = original * 100;
+                    if (!showing.noSubtract) {
+                        value = value - 100;
+                    }
                     if (value > 0) startsWith = "+"
                     endsWith = "%";
                 } else if (modifiersDefinitionKey === "damageAvoidanceChance") {
@@ -609,7 +630,10 @@ export function createMobTooltip(gallery: Gallery, definition: MobDefinition): J
                 let startsWith = "";
                 let endsWith = "";
                 if (showing.percent) {
-                    value = original * 100 - 100;
+                    value = original * 100;
+                    if (!showing.noSubtract) {
+                        value = value - 100;
+                    }
                     if (value > 0) startsWith = "+"
                     endsWith = "%";
                 } else if (modifiersDefinitionKey === "damageAvoidanceChance") {

@@ -257,11 +257,11 @@ export class ClientPlayer extends ClientEntity {
             firstEyeCenter.y + this.eyeTrianglePosition
         )
         this.ctx.lineTo(
-            firstEyeCenter.x + eyeWidth,
+                firstEyeCenter.x + eyeWidth,
             firstEyeCenter.y + this.eyeTrianglePosition + eyeWidth * 2
         )
         this.ctx.lineTo(
-            firstEyeCenter.x - eyeWidth * 2,
+                firstEyeCenter.x - eyeWidth * 2,
             firstEyeCenter.y + this.eyeTrianglePosition
         )
         this.ctx.fill()
@@ -272,11 +272,11 @@ export class ClientPlayer extends ClientEntity {
             firstEyeCenter.y + this.eyeTrianglePosition
         )
         this.ctx.lineTo(
-            -firstEyeCenter.x - eyeWidth,
+                -firstEyeCenter.x - eyeWidth,
             firstEyeCenter.y + this.eyeTrianglePosition + eyeWidth * 2
         )
         this.ctx.lineTo(
-            -firstEyeCenter.x + eyeWidth * 2,
+                -firstEyeCenter.x + eyeWidth * 2,
             firstEyeCenter.y + this.eyeTrianglePosition
         )
         this.ctx.fill()

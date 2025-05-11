@@ -350,7 +350,8 @@ export let Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.unusual,
-    },{
+    },
+    {
         idString: "tri_leaf",
         displayName: "Leaf",
         description: "Gathers energy from the sun to heal your flower passively",
@@ -952,14 +953,15 @@ export let Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 18
         },
         modifiers: {
-            maxHealth: 22
+            maxHealth: 30
         },
         reloadTime: 1,
         hitboxRadius: 0.7,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.rare,
-    }, {
+    },
+    {
         idString: "poison_cactus",
         displayName: "Cactus",
         description: "Increases your maximum health and makes your flower toxic. Enemies hit by your flower will get poisoned",
@@ -982,7 +984,7 @@ export let Petals = new Definitions<PetalDefinition>([
             }
         },
         modifiers: {
-            maxHealth: 22
+            maxHealth: 30
         },
         reloadTime: 1,
         hitboxRadius: 0.7,
@@ -1003,7 +1005,7 @@ export let Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 18
         },
         modifiers: {
-            maxHealth: 20
+            maxHealth: 27
         },
         reloadTime: 1,
         hitboxRadius: 0.7,
@@ -1013,7 +1015,8 @@ export let Petals = new Definitions<PetalDefinition>([
         pieceAmount: 3,
         rarity: RarityName.legendary,
         usingAssets: "cactus",
-    },{
+    },
+    {
         idString: "salt",
         displayName: "Salt",
         description: "Reflects some of the damage you take back to the enemy that dealt it",
@@ -2249,6 +2252,112 @@ export let Petals = new Definitions<PetalDefinition>([
         pieceAmount: 1,
         rarity: RarityName.super,
         usingAssets: "lightning"
+    },
+    {
+        idString: "cutter",
+        displayName: "Cutter",
+        description: "A friend used to own this... now it's time for revenge.Increases body damage.",
+        equipment: true,
+        images: {
+            slotDisplaySize: 55,
+            slotRotation: -(22.5)*(Math.PI/180),
+            fontSizeMultiplier: 0.8,
+            equipmentStyles: {
+                noRender: false,
+                coordsToOwner: {
+                    x: 0,
+                    y: 0,
+                    scale: 2
+                }
+            }
+        },
+        hitboxRadius: 0.6,
+        unstackable: true,
+        modifiers: {
+            bodyDamage: 2
+        },
+        rarity: RarityName.epic
+    },
+    {
+        idString: "smasher",
+        displayName: "Smasher",
+        description: "Steady.",
+        equipment: true,
+        images: {
+            slotDisplaySize: 55,
+            fontSizeMultiplier: 0.8,
+            equipmentStyles: {
+                noRender: false,
+                coordsToOwner: {
+                    x: 0,
+                    y: 0,
+                    scale: 2
+                }
+            }
+        },
+        hitboxRadius: 0.6,
+        unstackable: true,
+        modifiers: {
+            knockbackReduction: 0.5
+        },
+        rarity: RarityName.epic,
+    },
+    {
+        idString: "disc",
+        displayName: "Disc",
+        description: "Reduces damages taken from collisions with mobs and flowers.",
+        equipment: true,
+        images: {
+            slotDisplaySize: 55,
+            fontSizeMultiplier: 0.8,
+            equipmentStyles: {
+                noRender: false,
+                coordsToOwner: {
+                    x: 0,
+                    y: 0,
+                    scale: 2
+                }
+            }
+        },
+        hitboxRadius: 0.6,
+        unstackable: true,
+        modifiers: {
+            bodyDamageReduction: 0.5
+        },
+        rarity: RarityName.epic,
+    },
+    {
+        idString: "tri_poison_cactus",
+        displayName: "Cactus",
+        description: "Not very strong, but somehow increases your maximum health",
+        damage: 5,
+        health: 15,
+        extendable: true,
+        usable: false,
+        images: {
+            slotDisplaySize: 52,
+            selfGameRotation: 18
+        },
+        modifiers: {
+            maxHealth: 50
+        },
+        attributes: {
+            poison: {
+                damagePerSecond: 10,
+                duration: 0.6
+            },
+            body_poison: {
+                damagePerSecond: 15,
+                duration: 5
+            }
+        },
+        reloadTime: 1,
+        hitboxRadius: 0.7,
+        distanceToCenter: 0.62,
+        isDuplicate: true,
+        isShowedInOne: true,
+        pieceAmount: 3,
+        rarity: RarityName.mythic
     }
 ] satisfies PetalDefinition[]);
 
