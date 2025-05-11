@@ -953,7 +953,7 @@ export let Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 18
         },
         modifiers: {
-            maxHealth: 22
+            maxHealth: 30
         },
         reloadTime: 1,
         hitboxRadius: 0.7,
@@ -984,7 +984,7 @@ export let Petals = new Definitions<PetalDefinition>([
             }
         },
         modifiers: {
-            maxHealth: 22
+            maxHealth: 30
         },
         reloadTime: 1,
         hitboxRadius: 0.7,
@@ -1005,7 +1005,7 @@ export let Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 18
         },
         modifiers: {
-            maxHealth: 20
+            maxHealth: 27
         },
         reloadTime: 1,
         hitboxRadius: 0.7,
