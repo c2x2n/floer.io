@@ -2327,7 +2327,7 @@ export let Petals = new Definitions<PetalDefinition>([
         rarity: RarityName.epic,
     },
     {
-        idString: "tri_poison_cactus",
+        idString: "myt_cactus",
         displayName: "Cactus",
         description: "Not very strong, but somehow increases your maximum health",
         damage: 5,
@@ -2335,7 +2335,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 52,
+            slotDisplaySize: 68,
             selfGameRotation: 18
         },
         modifiers: {
@@ -2353,11 +2353,9 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         reloadTime: 1,
         hitboxRadius: 0.7,
-        distanceToCenter: 0.62,
-        isDuplicate: true,
-        isShowedInOne: true,
-        pieceAmount: 3,
-        rarity: RarityName.mythic
+        isDuplicate: false,
+        rarity: RarityName.mythic,
+        pieceAmount: 1
     }
 ] satisfies PetalDefinition[]);
 

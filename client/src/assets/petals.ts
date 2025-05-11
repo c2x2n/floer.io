@@ -1,6 +1,7 @@
 import { AssetsBunch, AssetsDrawer } from "@/assets/assets.ts";
 import { P2 } from "@common/utils/math.ts";
 import { loadPathFromSVG } from "@/assets/pathLoader.ts";
+import { strokeColor } from "@common/utils/misc";
 
 export const petalAssets: AssetsBunch = {
     "basic": (containerToDraw) => {
@@ -865,18 +866,11 @@ export const petalAssets: AssetsBunch = {
         loadPathFromSVG({
             containerToDraw,
             pathS: "m 190.9104,100.00044 q -28.83584,25.7134 -26.62977,64.28139 Q 125.71264,162.07576 99.999241,190.9116 74.290071,162.07576 35.717846,164.28183 37.923913,125.71384 9.0880745,100.00044 37.923913,74.291273 35.717846,35.719044 74.285831,37.925111 99.999241,9.0935154 125.7084,37.925111 164.28063,35.719044 162.07456,74.287031 190.9104,100.00044",
-            fill: "#2da14d",
+            fill: "#38c75f",
             stroke: {
-                width: 25,
+                width: 20,
                 color: "#2da14d"
             }
-        })
-
-
-        loadPathFromSVG({
-            containerToDraw,
-            pathS: "m 190.9104,100.00044 q -28.83584,25.7134 -26.62977,64.28139 Q 125.71264,162.07576 99.999241,190.9116 74.290071,162.07576 35.717846,164.28183 37.923913,125.71384 9.0880745,100.00044 37.923913,74.291273 35.717846,35.719044 74.285831,37.925111 99.999241,9.0935154 125.7084,37.925111 164.28063,35.719044 162.07456,74.287031 190.9104,100.00044",
-            fill: "#38c75f"
         })
 
         ctx.beginPath();
@@ -899,15 +893,9 @@ export const petalAssets: AssetsBunch = {
             pathS: "m 190.9104,100.00044 q -28.83584,25.7134 -26.62977,64.28139 Q 125.71264,162.07576 99.999241,190.9116 74.290071,162.07576 35.717846,164.28183 37.923913,125.71384 9.0880745,100.00044 37.923913,74.291273 35.717846,35.719044 74.285831,37.925111 99.999241,9.0935154 125.7084,37.925111 164.28063,35.719044 162.07456,74.287031 190.9104,100.00044",
             fill: "#b03ac8",
             stroke: {
-                width: 25,
+                width: 20,
                 color: "#9d2fae"
             }
-        })
-
-        loadPathFromSVG({
-            containerToDraw,
-            pathS: "m 190.9104,100.00044 q -28.83584,25.7134 -26.62977,64.28139 Q 125.71264,162.07576 99.999241,190.9116 74.290071,162.07576 35.717846,164.28183 37.923913,125.71384 9.0880745,100.00044 37.923913,74.291273 35.717846,35.719044 74.285831,37.925111 99.999241,9.0935154 125.7084,37.925111 164.28063,35.719044 162.07456,74.287031 190.9104,100.00044",
-            fill: "#b03ac8"
         })
 
         ctx.beginPath();
@@ -1069,35 +1057,36 @@ export const petalAssets: AssetsBunch = {
         ctx.stroke();
         ctx.restore();
     },
-    "tri_poison_cactus": (containerToDraw) => {
+    "myt_cactus": (containerToDraw) => {
         const { ctx, radius } = containerToDraw;
 
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
+        const innercolor="#19b1b4"
+        const outercolor="#00878a"
 
         loadPathFromSVG({
             containerToDraw,
             pathS: "m 190.9104,100.00044 q -28.83584,25.7134 -26.62977,64.28139 Q 125.71264,162.07576 99.999241,190.9116 74.290071,162.07576 35.717846,164.28183 37.923913,125.71384 9.0880745,100.00044 37.923913,74.291273 35.717846,35.719044 74.285831,37.925111 99.999241,9.0935154 125.7084,37.925111 164.28063,35.719044 162.07456,74.287031 190.9104,100.00044",
-            fill: "#b03ac8",
+            fill: outercolor,
             stroke: {
-                width: 25,  
-                color: "#540a0b"
+                width: 20,  
+                color: strokeColor(outercolor)
             }
         })
 
-        loadPathFromSVG({
-            containerToDraw,
-            pathS: "m 190.9104,100.00044 q -28.83584,25.7134 -26.62977,64.28139 Q 125.71264,162.07576 99.999241,190.9116 74.290071,162.07576 35.717846,164.28183 37.923913,125.71384 9.0880745,100.00044 37.923913,74.291273 35.717846,35.719044 74.285831,37.925111 99.999241,9.0935154 125.7084,37.925111 164.28063,35.719044 162.07456,74.287031 190.9104,100.00044",
-            fill: "#ab0f10"
-        })
-
         ctx.beginPath();
-        ctx.fillStyle = containerToDraw.getRenderColor("#e60e0f");
+        ctx.fillStyle = containerToDraw.getRenderColor(innercolor);
         ctx.arc(
             0, 0,
             radius * 0.5, 0, P2
         )
-
+        ctx.fill()
+        
+        ctx.beginPath();
+        ctx.fillStyle = containerToDraw.getRenderColor("#1ed3cb");
+        ctx.lineWidth = radius / 3;
+        ctx.arc(0, 0, radius*0.25, 0, Math.PI * 2);
         ctx.fill()
     },
         "disc": (containerToDraw) => {
