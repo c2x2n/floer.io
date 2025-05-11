@@ -1,16 +1,16 @@
 import { getDisplayedPieces, SavedPetalDefinitionData } from "../../../common/src/definitions/petals";
 import { ServerPetal } from "../entities/serverPetal";
-import { MathGraphics, MathNumeric, P2 } from "../../../common/src/utils/math";
-import { Vec2, Vector } from "../../../common/src/utils/vector";
+import { Geometry, Numeric, P2 } from "../../../common/src/utils/math";
+import { Vec2, VectorAbstract } from "../../../common/src/utils/vector";
 import { Inventory } from "./inventory";
 import { GameConstants } from "../../../common/src/constants";
 import { ServerPlayer } from "../entities/serverPlayer";
 import { PetalUsingAnimations } from "../utils/attributeRealizes";
 
 export class PetalBunch {
-    position: Vector;
+    position: VectorAbstract;
 
-    centerPosition: Vector;
+    centerPosition: VectorAbstract;
 
     player: ServerPlayer;
 
@@ -101,7 +101,7 @@ export class PetalBunch {
             }
         }
 
-        this.range = MathNumeric.targetEasing(
+        this.range = Numeric.targetEasing(
             this.range,
             target,
             2
@@ -115,7 +115,7 @@ export class PetalBunch {
 
         const firstPetalCenter = Vec2.add(
             this.position,
-            MathGraphics.getPositionOnCircle(revolutionRadians, radius)
+            Geometry.getPositionOnCircle(revolutionRadians, radius)
         );
 
         this.centerPosition = firstPetalCenter;
@@ -130,7 +130,7 @@ export class PetalBunch {
 
                 this.petals.forEach(petal => {
                     petal.setPositionSafe(
-                        MathGraphics.getPositionOnCircle(
+                        Geometry.getPositionOnCircle(
                             rotationRadians,
                             definition.distanceToCenter ?? GameConstants.petal.rotationRadius,
                             firstPetalCenter
@@ -144,7 +144,7 @@ export class PetalBunch {
 
                 this.petals.forEach(petal => {
                     petal.setPositionSafe(
-                        MathGraphics.getPositionOnCircle(radiansNow, radius, this.position)
+                        Geometry.getPositionOnCircle(radiansNow, radius, this.position)
                     )
 
                     radiansNow += singleOccupiedRadians;

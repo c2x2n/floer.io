@@ -1,7 +1,7 @@
 import { BitStream } from "bit-buffer";
-import { type Vector } from "../utils/vector";
+import { type VectorAbstract } from "../utils/vector";
 import { GameConstants } from "../constants";
-import { MathNumeric } from "../utils/math";
+import { Numeric } from "../utils/math";
 import { JoinPacket } from "./packets/joinPacket";
 import { InputPacket } from "./packets/inputPacket";
 import { UpdatePacket } from "./packets/updatePacket";
@@ -30,7 +30,7 @@ export class GameBitStream extends BitStream {
             throw new Error(`Value out of range: ${value}, range: [${min}, ${max}]`);
         }
         const range = (1 << bitCount) - 1;
-        const clamped = MathNumeric.clamp(value, min, max);
+        const clamped = Numeric.clamp(value, min, max);
         this.writeBits(((clamped - min) / (max - min)) * range + 0.5, bitCount);
     }
 
@@ -58,7 +58,7 @@ export class GameBitStream extends BitStream {
      * @param maxY The maximum Y position.
      * @param bitCount The number of bits to write.
      */
-    writeVector(vector: Vector, minX: number, minY: number, maxX: number, maxY: number, bitCount: number): void {
+    writeVector(vector: VectorAbstract, minX: number, minY: number, maxX: number, maxY: number, bitCount: number): void {
         this.writeVectorByXY(vector.x, vector.y, minX, minY, maxX, maxY, bitCount);
     }
 
@@ -86,7 +86,7 @@ export class GameBitStream extends BitStream {
      * @param maxY The maximum Y position.
      * @param bitCount The number of bits to read
      */
-    readVector(minX: number, minY: number, maxX: number, maxY: number, bitCount: number): Vector {
+    readVector(minX: number, minY: number, maxX: number, maxY: number, bitCount: number): VectorAbstract {
         return {
             x: this.readFloat(minX, maxX, bitCount),
             y: this.readFloat(minY, maxY, bitCount)
@@ -97,7 +97,7 @@ export class GameBitStream extends BitStream {
      * Write a position Vector to the stream with the game default max and minimum X and Y.
      * @param vector The Vector to write.
      */
-    writePosition(vector: Vector): void {
+    writePosition(vector: VectorAbstract): void {
         this.writePositionByXY(vector.x, vector.y);
     }
 
@@ -118,7 +118,7 @@ export class GameBitStream extends BitStream {
      * Read a position Vector from stream with the game default max and minimum X and Y.
      * @return the position Vector.
      */
-    readPosition(): Vector {
+    readPosition(): VectorAbstract {
         // return this.readVector(-GameConstants.maxPosition, -GameConstants.maxPosition, GameConstants.maxPosition, GameConstants.maxPosition, 16);
         const negaX = this.readBoolean();
         const negaY = this.readBoolean();
@@ -135,7 +135,7 @@ export class GameBitStream extends BitStream {
     * @param vector The Vector to write.
     * @param bitCount The number of bits to write.
     */
-    writeUnit(vector: Vector, bitCount: number): void {
+    writeUnit(vector: VectorAbstract, bitCount: number): void {
         this.writeVector(
             vector,
             -GameBitStream.unitEps,
@@ -151,7 +151,7 @@ export class GameBitStream extends BitStream {
      * @param bitCount The number of bits to read.
      * @return the unit Vector.
      */
-    readUnit(bitCount: number): Vector {
+    readUnit(bitCount: number): VectorAbstract {
         return this.readVector(
             -GameBitStream.unitEps,
             -GameBitStream.unitEps,

@@ -1,5 +1,5 @@
 import { ServerPetal } from "../entities/serverPetal";
-import { MathGraphics, P2 } from "../../../common/src/utils/math";
+import { Geometry, P2 } from "../../../common/src/utils/math";
 import { Vec2 } from "../../../common/src/utils/vector";
 import { AttributeNames, AttributeParameters } from "../../../common/src/definitions/petals";
 import { EventInitializer } from "./petalEvents";
@@ -72,7 +72,7 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
                 () => {
                     if (data) {
                         const direction =
-                            MathGraphics.directionBetweenPoints(petal.owner.position, petal.position);
+                            Geometry.directionBetweenPoints(petal.owner.position, petal.position);
                         petal.owner.addVelocity(
                             Vec2.mul(direction, data * 10)
                         )
@@ -86,7 +86,7 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
                     if (entity && data && data < 0 && isDamageableEntity(entity)) {
                         // 击退效果，负值表示击退
                         const entityToPlayerDirection =
-                            MathGraphics.directionBetweenPoints(entity.position, petal.owner.position);
+                            Geometry.directionBetweenPoints(entity.position, petal.owner.position);
 
                         // 计算击退力度倍率
                         let knockbackMultiplier = 1.0;
@@ -186,7 +186,7 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
             on(AttributeEvents.ATTACK,() => {
                 if (!data) return;
                 const direction =
-                    MathGraphics.directionBetweenPoints(petal.position, petal.owner.position);
+                    Geometry.directionBetweenPoints(petal.position, petal.owner.position);
                 const position = petal.position;
                 const projectile = new ServerProjectile(
                     petal.owner, position, direction, data, petal);
@@ -202,7 +202,7 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
             on(AttributeEvents.ATTACK,() => {
                 if (!data) return;
                 const direction =
-                    MathGraphics.directionBetweenPoints(petal.position, petal.petalBunch.centerPosition);
+                    Geometry.directionBetweenPoints(petal.position, petal.petalBunch.centerPosition);
                 const position = petal.position;
                 const projectile = new ServerProjectile(
                     petal.owner, position, direction, data, petal);
@@ -223,12 +223,12 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
                 const radianStep = P2 / amount;
 
                 for (let i = 0; i < amount; i++) {
-                    const position = MathGraphics.getPositionOnCircle(
+                    const position = Geometry.getPositionOnCircle(
                         radianNow, radius, petal.petalBunch.centerPosition
                     )
 
                     const direction =
-                        MathGraphics.directionBetweenPoints(position, petal.petalBunch.centerPosition);
+                        Geometry.directionBetweenPoints(position, petal.petalBunch.centerPosition);
                     const projectile = new ServerProjectile(
                         petal.owner, position, direction, para, petal);
                     projectile.addVelocity(Vec2.mul(direction, para.velocityAtFirst ?? para.speed * 6));
@@ -245,7 +245,7 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
             on(AttributeEvents.ATTACK,() => {
                 if (!data) return;
                 const direction =
-                    MathGraphics.directionBetweenPoints(petal.position, petal.owner.position);
+                    Geometry.directionBetweenPoints(petal.position, petal.owner.position);
                 const position = petal.position;
                 const projectile = new ServerProjectile(
                     petal.owner, position, direction, data, petal);
@@ -257,7 +257,7 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
             on(AttributeEvents.DEFEND,() => {
                 if (!data) return;
                 const direction =
-                    MathGraphics.directionBetweenPoints(petal.position, petal.owner.position);
+                    Geometry.directionBetweenPoints(petal.position, petal.owner.position);
                 const position = petal.position;
                 new ServerProjectile(
                     petal.owner, position, direction, data, petal);
@@ -523,10 +523,10 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
                         if (validTargets.length === 0) break;
 
                         let nextTarget = validTargets[0];
-                        let minDistance = Vec2.distance(currentTarget.position, nextTarget.position);
+                        let minDistance = Vec2.distanceBetween(currentTarget.position, nextTarget.position);
 
                         for (let i = 1; i < validTargets.length; i++) {
-                            const distance = Vec2.distance(currentTarget.position, validTargets[i].position);
+                            const distance = Vec2.distanceBetween(currentTarget.position, validTargets[i].position);
                             if (distance < minDistance) {
                                 minDistance = distance;
                                 nextTarget = validTargets[i];

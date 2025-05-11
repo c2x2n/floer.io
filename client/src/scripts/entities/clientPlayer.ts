@@ -2,8 +2,8 @@ import { ClientEntity } from "./clientEntity";
 import { EntityType, GameConstants, PlayerState } from "@common/constants";
 import { Game } from "@/scripts/game";
 import { Camera } from "@/scripts/render/camera.ts";
-import { MathNumeric, P2 } from "@common/utils/math.ts";
-import { Vec2, Vector } from "@common/utils/vector.ts";
+import { Geometry, Numeric, P2 } from "@common/utils/math.ts";
+import { Vec2, VectorAbstract } from "@common/utils/vector.ts";
 import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
 
 export class ClientPlayer extends ClientEntity {
@@ -118,13 +118,13 @@ export class ClientPlayer extends ClientEntity {
         }
     }
 
-    eyeBallPosition : Vector = Vec2.new(0, 0);
+    eyeBallPosition : VectorAbstract = Vec2.new(0, 0);
 
     drawFlower() {
         const mouthX = 6.2;
         const mouthY = 9;
 
-        this.mouthTopPosition = MathNumeric.targetEasing(
+        this.mouthTopPosition = Numeric.targetEasing(
             this.mouthTopPosition, this.getMouthTopPosition() + mouthY
         )
 
@@ -139,14 +139,14 @@ export class ClientPlayer extends ClientEntity {
         const eyeHeight = 6.5;
         const eyeStroke = 4;
 
-        this.eyeTrianglePosition = MathNumeric.targetEasing(
+        this.eyeTrianglePosition = Numeric.targetEasing(
             this.eyeTrianglePosition, (this.state === PlayerState.Attacking ? -3.5 : -8) + firstEyeCenter.y
         )
 
         const eyeInsideWidth = 2;
         const eyeInsideHeight = 5;
 
-        const radians = Vec2.directionToRadians(this.direction);
+        const radians = Geometry.directionToRadians(this.direction);
 
         const ellRadius = Math.sqrt(
             (eyeInsideWidth * Math.sin(radians)) ** 2 + (eyeInsideHeight * Math.cos(radians)) ** 2

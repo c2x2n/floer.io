@@ -3,7 +3,7 @@ import { EntityType, GameConstants } from "../../../common/src/constants";
 import { GameBitStream } from "../../../common/src/net/net";
 import { type EntitiesNetData, EntitySerializations } from "../../../common/src/net/packets/updatePacket";
 import { CircleHitbox, type Hitbox } from "../../../common/src/utils/hitbox";
-import { Vec2, type Vector, Velocity } from "../../../common/src/utils/vector";
+import { Vec2, type VectorAbstract, Velocity } from "../../../common/src/utils/vector";
 import { type Game } from "../game";
 import { CollisionResponse } from "../../../common/src/utils/collision";
 import { EffectManager, PoisonEffect } from "../utils/effects";
@@ -16,8 +16,8 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
     game: Game;
     id: number;
 
-    _position: Vector;
-    _oldPosition?: Vector;
+    _position: VectorAbstract;
+    _oldPosition?: VectorAbstract;
 
     modifiers: Modifiers = GameConstants.defaultModifiers();
     otherModifiers: Partial<Modifiers>[] = [];
@@ -25,10 +25,10 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
     hasInited: boolean = false;
     destroyed: boolean = false;
 
-    get position(): Vector {
+    get position(): VectorAbstract {
         return this._position;
     }
-    set position(pos: Vector) {
+    set position(pos: VectorAbstract) {
         this.updatePosition(pos);
     }
 
@@ -47,7 +47,7 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
         vector: Vec2.new(0,0),
         downing: 0.7
     }];
-    acceleration: Vector = Vec2.new(0,0);
+    acceleration: VectorAbstract = Vec2.new(0,0);
 
     state: {
         poison?: PoisonEffect
@@ -65,7 +65,7 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
         return !this.destroyed;
     }
 
-    constructor(game: Game, pos: Vector) {
+    constructor(game: Game, pos: VectorAbstract) {
         this.game = game;
         this.id = game.nextEntityID;
         this._position = pos;
@@ -141,12 +141,12 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
         this.game.fullDirtyEntities.add(this);
     }
 
-    setPositionSafe(position: Vector) {
+    setPositionSafe(position: VectorAbstract) {
         if (!this.isActive()) return;
         this.updatePosition(position);
     }
 
-    updatePosition(position: Vector): void {
+    updatePosition(position: VectorAbstract): void {
         if (this._oldPosition && this._oldPosition == position) return;
 
         if (this.hitbox instanceof CircleHitbox) {
@@ -165,14 +165,14 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
         this.game.grid.updateEntity(this);
     }
 
-    addVelocity(vec: Vector, downing: number = 0.7): void {
+    addVelocity(vec: VectorAbstract, downing: number = 0.7): void {
         this.velocity.push({
             vector: vec,
             downing: downing
         });
     }
 
-    setAcceleration(vec: Vector): void {
+    setAcceleration(vec: VectorAbstract): void {
         this.acceleration = vec;
     }
 
@@ -202,13 +202,13 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
 
                 return;
             }
-            
+
             let knockbackMultiplier = 1;
             if (this.type === EntityType.Player) {
                 const player = this as unknown as ServerPlayer;
                 knockbackMultiplier = Math.max(0, 1 - (player.modifiers.knockbackReduction || 0));
             }
-            
+
             this.addVelocity(
                 Vec2.mul(
                     collision.dir,

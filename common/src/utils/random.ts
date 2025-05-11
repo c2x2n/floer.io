@@ -1,5 +1,5 @@
-import { MathNumeric } from "./math";
-import { Vec2, type Vector } from "./vector";
+import { Numeric } from "./math";
+import { Vec2, type VectorAbstract } from "./vector";
 
 export const Random = Object.freeze({
     /**
@@ -34,7 +34,7 @@ export const Random = Object.freeze({
      * @param minY The minimum length in the y-direction.
      * @param maxY The maximum length in the y-direction.
      */
-    vector(minX: number, maxX: number, minY: number, maxY: number): Vector {
+    vector(minX: number, maxX: number, minY: number, maxY: number): VectorAbstract {
         return {
             x: Random.float(minX, maxX),
             y: Random.float(minY, maxY)
@@ -48,7 +48,7 @@ export const Random = Object.freeze({
      * @param radius The radius of the circle.
      * @returns A random point inside the circle radius.
      */
-    pointInsideCircle(position: Vector, radius: number): Vector {
+    pointInsideCircle(position: VectorAbstract, radius: number): VectorAbstract {
         let x: number,
             y: number;
 
@@ -91,6 +91,6 @@ export class SeededRandom {
     get(min = 0, max = 1): number {
         this.rng = this.rng * 16807 % 2147483647;
         const t = this.rng / 2147483647;
-        return MathNumeric.lerp(min, max, t);
+        return Numeric.lerp(min, max, t);
     }
 }

@@ -1,5 +1,5 @@
 import { Game } from "@/scripts/game.ts";
-import { MathNumeric } from "@common/utils/math.ts";
+import { Numeric } from "@common/utils/math.ts";
 import { getLevelInformation } from "@common/utils/levels.ts";
 
 export class ExpUI {
@@ -24,12 +24,12 @@ export class ExpUI {
         const levelInfo = getLevelInformation(this.exp);
 
         const targetExpWidth = Math.max(
-            MathNumeric.remap(levelInfo.remainsExp, 0, levelInfo.toNextLevelExp, 0, this.width - 8),
+            Numeric.remap(levelInfo.remainsExp, 0, levelInfo.toNextLevelExp, 0, this.width - 8),
             30 // set minimum width so that it won't look weird
         );
 
         // Use targetEasing for smooth animation
-        this.currentExpWidth = MathNumeric.targetEasing(this.currentExpWidth, targetExpWidth, 10);
+        this.currentExpWidth = Numeric.targetEasing(this.currentExpWidth, targetExpWidth, 10);
 
         ctx.fillStyle = "#343434";
         ctx.globalAlpha = 0.8;

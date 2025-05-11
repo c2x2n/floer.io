@@ -7,7 +7,7 @@ import { MobDefinition } from "@common/definitions/mobs.ts";
 import { Vec2 } from "@common/utils/vector.ts";
 import { Rarity } from "@common/definitions/rarities.ts";
 import { Tween, Easing } from "@tweenjs/tween.js";
-import { MathGraphics, MathNumeric } from "@common/utils/math.ts";
+import { Geometry, Numeric } from "@common/utils/math.ts";
 import { getAssets, getGameAssetsName } from "@/assets/assets.ts";
 
 export class ClientMob extends ClientEntity {
@@ -41,8 +41,8 @@ export class ClientMob extends ClientEntity {
             }else {
                 const actualDirection = this.direction
                 this.container.rotation =
-                    Vec2.directionToRadians(Vec2.targetEasing(
-                        Vec2.radiansToDirection(this.container.rotation),
+                    Geometry.directionToRadians(Vec2.targetEasing(
+                        Geometry.radiansToDirection(this.container.rotation),
                         actualDirection, 6)
                     );
             }
@@ -50,7 +50,7 @@ export class ClientMob extends ClientEntity {
 
         this.updateContainerPosition(8);
 
-        const movementDistance = Vec2.distance(this.oldPosition, this.position);
+        const movementDistance = Vec2.distanceBetween(this.oldPosition, this.position);
         if (movementDistance) {
             this.playMovementAnimation(movementDistance)
         }
@@ -75,7 +75,7 @@ export class ClientMob extends ClientEntity {
         const { ctx } = this;
         const positionY = this.healthBarY;
 
-        const healthBarWidth = MathNumeric.clamp(
+        const healthBarWidth = Numeric.clamp(
             Camera.unitToScreen(this.definition.hitboxRadius) * 2,
             80,
             Infinity
@@ -127,7 +127,7 @@ export class ClientMob extends ClientEntity {
 
             if (isNew) {
                 this.container.position = Camera.vecToScreen(this.position);
-                this.container.rotation = Vec2.directionToRadians(data.direction);
+                this.container.rotation = Geometry.directionToRadians(data.direction);
                 this.container.radius = Camera.unitToScreen(this.hitboxRadius);
 
                 this.healthBarY = Camera.unitToScreen(this.definition.hitboxRadius + 5 / 20) + 6;
@@ -135,7 +135,7 @@ export class ClientMob extends ClientEntity {
                 if (this.definition.idString === "sandstorm") {
                     this.container.rotation = Math.random() * Math.PI * 2;
                 } else {
-                    this.container.rotation = Vec2.directionToRadians(data.direction);
+                    this.container.rotation = Geometry.directionToRadians(data.direction);
                 }
             }
 
@@ -168,7 +168,7 @@ export class ClientMob extends ClientEntity {
         this.lastMovementAnimation = Date.now();
         if (this.definition.images?.mouth) {
             time =
-                MathNumeric.remap(size, 0, 0.3, 500, 150);
+                Numeric.remap(size, 0, 0.3, 500, 150);
             this.game.addTween(
                 new Tween({angle: 0})
                     .to({angle: 8}, time)
@@ -189,7 +189,7 @@ export class ClientMob extends ClientEntity {
 
         if (this.definition.images?.legs) {
             time =
-                MathNumeric.remap(size, 0, 0.3, 600, 160);
+                Numeric.remap(size, 0, 0.3, 600, 160);
             this.game.addTween(
                 new Tween({angle: 0})
                     .to({ angle: 20 }, time)

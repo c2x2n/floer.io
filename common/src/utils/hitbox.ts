@@ -1,5 +1,5 @@
 import { Collision, type CollisionResponse, type LineIntersection } from "./collision";
-import { Vec2, type Vector } from "./vector";
+import { Vec2, type VectorAbstract } from "./vector";
 
 export enum HitboxType {
     Circle,
@@ -10,12 +10,12 @@ export interface HitboxJSONMapping {
     [HitboxType.Circle]: {
         readonly type: HitboxType.Circle
         readonly radius: number
-        readonly position: Vector
+        readonly position: VectorAbstract
     }
     [HitboxType.Rect]: {
         readonly type: HitboxType.Rect
-        readonly min: Vector
-        readonly max: Vector
+        readonly min: VectorAbstract
+        readonly max: VectorAbstract
     }
 }
 
@@ -58,7 +58,7 @@ export abstract class BaseHitbox {
      * @param b the end point of the line
      * @return An intersection response containing the intersection position and normal
      */
-    abstract intersectsLine(a: Vector, b: Vector): LineIntersection;
+    abstract intersectsLine(a: VectorAbstract, b: VectorAbstract): LineIntersection;
     /**
      * Get a random position inside this {@link Hitbox}.
      * @return A Vector of a random position inside this {@link Hitbox}
@@ -66,15 +66,15 @@ export abstract class BaseHitbox {
 
     abstract toRectangle(): RectHitbox;
 
-    abstract isPointInside(point: Vector): boolean;
+    abstract isPointInside(point: VectorAbstract): boolean;
 }
 
 export class CircleHitbox extends BaseHitbox {
     override readonly type = HitboxType.Circle;
-    position: Vector;
+    position: VectorAbstract;
     radius: number;
 
-    constructor(radius: number, position?: Vector) {
+    constructor(radius: number, position?: VectorAbstract) {
         super();
 
         this.position = position ?? Vec2.new(0, 0);
@@ -107,7 +107,7 @@ export class CircleHitbox extends BaseHitbox {
         this.radius *= scale;
     }
 
-    override intersectsLine(a: Vector, b: Vector): LineIntersection {
+    override intersectsLine(a: VectorAbstract, b: VectorAbstract): LineIntersection {
         return Collision.lineIntersectsCircle(a, b, this.position, this.radius);
     }
 
@@ -118,17 +118,17 @@ export class CircleHitbox extends BaseHitbox {
         );
     }
 
-    override isPointInside(point: Vector): boolean {
-        return Vec2.distance(point, this.position) < this.radius;
+    override isPointInside(point: VectorAbstract): boolean {
+        return Vec2.distanceBetween(point, this.position) < this.radius;
     }
 }
 
 export class RectHitbox extends BaseHitbox {
     override readonly type = HitboxType.Rect;
-    min: Vector;
-    max: Vector;
+    min: VectorAbstract;
+    max: VectorAbstract;
 
-    constructor(min: Vector, max: Vector) {
+    constructor(min: VectorAbstract, max: VectorAbstract) {
         super();
 
         this.min = min;
@@ -143,7 +143,7 @@ export class RectHitbox extends BaseHitbox {
         };
     }
 
-    static fromLine(a: Vector, b: Vector): RectHitbox {
+    static fromLine(a: VectorAbstract, b: VectorAbstract): RectHitbox {
         return new RectHitbox(
             Vec2.new(
                 Math.min(a.x, b.x),
@@ -168,7 +168,7 @@ export class RectHitbox extends BaseHitbox {
     /**
      * Creates a new rectangle hitbox from the bounds of a circle
      */
-    static fromCircle(radius: number, position: Vector): RectHitbox {
+    static fromCircle(radius: number, position: VectorAbstract): RectHitbox {
         return new RectHitbox(
             Vec2.new(position.x - radius, position.y - radius),
             Vec2.new(position.x + radius, position.y + radius));
@@ -204,7 +204,7 @@ export class RectHitbox extends BaseHitbox {
         this.max = Vec2.new((this.max.x - centerX) * scale + centerX, (this.max.y - centerY) * scale + centerY);
     }
 
-    override intersectsLine(a: Vector, b: Vector): LineIntersection {
+    override intersectsLine(a: VectorAbstract, b: VectorAbstract): LineIntersection {
         return Collision.lineIntersectsRect(a, b, this.min, this.max);
     }
 
@@ -212,7 +212,7 @@ export class RectHitbox extends BaseHitbox {
         return this;
     }
 
-    override isPointInside(point: Vector): boolean {
+    override isPointInside(point: VectorAbstract): boolean {
         return point.x > this.min.x && point.y > this.min.y && point.x < this.max.x && point.y < this.max.y;
     }
 }

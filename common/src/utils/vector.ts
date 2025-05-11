@@ -1,11 +1,80 @@
-import { MathNumeric } from "./math";
+import { Geometry, Numeric } from "./math";
 
 /**
  * 2D vector
  */
-export interface Vector {
+export interface VectorAbstract {
     x: number
     y: number
+}
+
+class Vector implements VectorAbstract{
+    constructor(public x: number = 0, public y: number = 0){}
+
+    public add(vec: VectorAbstract): this {
+        this.x += vec.x;
+        this.y += vec.y;
+        return this
+    }
+
+    public set(vec: VectorAbstract): this {
+        this.x = vec.x;
+        this.y = vec.y;
+        return this
+    }
+
+    public sub(vec: VectorAbstract): this {
+        this.x -= vec.x;
+        this.y -= vec.y;
+        return this
+    }
+
+    public mul(n: number): this {
+        this.x *= n;
+        this.y *= n;
+        return this;
+    }
+
+    public mulByVector(n: VectorAbstract): this {
+        this.x *= n.x;
+        this.y *= n.y;
+        return this;
+    }
+
+    public div(n: number): this {
+        this.x /= n;
+        this.y /= n;
+        return this;
+    }
+
+    public clone(): Vector {
+        return new Vector(this.x, this.y);
+    }
+
+    public getAbstract(): VectorAbstract {
+        return {
+            x: this.x,
+            y: this.y
+        }
+    }
+
+    public get angle(): number {
+        return Geometry.directionToRadians(this);
+    }
+
+    public set angle(value: number) {
+        const magnitude = this.magnitude;
+        this.mulByVector(Geometry.radiansToDirection(value)).mul(magnitude);
+    }
+
+    public set magnitude(value: number) {
+        const angle = this.angle;
+        this.mulByVector(Geometry.radiansToDirection(angle)).mul(value);
+    }
+
+    public get magnitude(): number {
+        return Vec2.length(this);
+    }
 }
 
 /**
@@ -18,7 +87,7 @@ export const Vec2 = {
     * @param y - The vertical (y-axis) coordinate
     * @returns A new Vector object with the provided x and y coordinates
     */
-    new(x: number, y: number): Vector {
+    new(x: number, y: number): VectorAbstract {
         return { x, y };
     },
 
@@ -28,7 +97,7 @@ export const Vec2 = {
     * @param b - The second Vector
     * @returns A new Vector resulting from the addition of vectors a and b
     */
-    add(a: Vector, b: Vector): Vector {
+    add(a: VectorAbstract, b: VectorAbstract): VectorAbstract {
         return Vec2.new(a.x + b.x, a.y + b.y);
     },
 
@@ -39,7 +108,7 @@ export const Vec2 = {
     * @param y - The y-coordinate of the second vector
     * @returns A new Vector resulting from the addition of a, and x and y
     */
-    add2(a: Vector, x: number, y: number): Vector {
+    add2(a: VectorAbstract, x: number, y: number): VectorAbstract {
         return Vec2.new(a.x + x, a.y + y);
     },
 
@@ -49,7 +118,7 @@ export const Vec2 = {
     * @param b - The Vector to subtract
     * @returns A new Vector resulting from the subtraction of vector b from vector a
     */
-    sub(a: Vector, b: Vector): Vector {
+    sub(a: VectorAbstract, b: VectorAbstract): VectorAbstract {
         return Vec2.new(a.x - b.x, a.y - b.y);
     },
 
@@ -60,7 +129,7 @@ export const Vec2 = {
     * @param y - The y-coordinate of the second vector
     * @returns A new Vector resulting from the subtraction of and x and y from vector a
     */
-    sub2(a: Vector, x: number, y: number): Vector {
+    sub2(a: VectorAbstract, x: number, y: number): VectorAbstract {
         return Vec2.new(a.x - x, a.y - y);
     },
 
@@ -70,7 +139,7 @@ export const Vec2 = {
     * @param n - The scalar value to multiply the Vector by
     * @returns A new Vector resulting from the multiplication of vector a and scalar n
     */
-    mul(a: Vector, n: number): Vector {
+    mul(a: VectorAbstract, n: number): VectorAbstract {
         return Vec2.new(a.x * n, a.y * n);
     },
 
@@ -80,7 +149,7 @@ export const Vec2 = {
     * @param n - The scalar value to divide the Vector by
     * @returns A new Vector resulting from the division of vector a and scalar n
     */
-    div(a: Vector, n: number): Vector {
+    div(a: VectorAbstract, n: number): VectorAbstract {
         return Vec2.new(a.x / n, a.y / n);
     },
 
@@ -89,7 +158,7 @@ export const Vec2 = {
     * @param vector - The Vector to be cloned
     * @returns A new Vector with the same coordinates as the input Vector
     */
-    clone(vector: Vector): Vector {
+    clone(vector: VectorAbstract): VectorAbstract {
         return Vec2.new(vector.x, vector.y);
     },
 
@@ -98,7 +167,7 @@ export const Vec2 = {
     * @param a - The Vector to be inverted
     * @returns A new Vector resulting from inverting vector a
     */
-    invert(a: Vector): Vector {
+    invert(a: VectorAbstract): VectorAbstract {
         return Vec2.new(-a.x, -a.y);
     },
 
@@ -108,7 +177,7 @@ export const Vec2 = {
     * @param angle - The angle in radians to rotate the Vector by
     * @returns A new Vector resulting from the rotation of the input Vector by the given angle
     */
-    rotate(vector: Vector, angle: number): Vector {
+    rotate(vector: VectorAbstract, angle: number): VectorAbstract {
         const cos = Math.cos(angle);
         const sin = Math.sin(angle);
         return Vec2.new(vector.x * cos - vector.y * sin, vector.x * sin + vector.y * cos);
@@ -119,7 +188,7 @@ export const Vec2 = {
      * @param a - The Vector
      * @returns The squared length of Vector a
      */
-    lengthSqr(a: Vector): number {
+    lengthSqr(a: VectorAbstract): number {
         return a.x * a.x + a.y * a.y;
     },
 
@@ -128,7 +197,7 @@ export const Vec2 = {
      * @param a - The Vector
      * @returns The length of Vector a
      */
-    length(a: Vector): number {
+    length(a: VectorAbstract): number {
         return Math.sqrt(Vec2.lengthSqr(a));
     },
 
@@ -138,7 +207,7 @@ export const Vec2 = {
     * @param b - The second Vector
     * @returns The distance between Vector a and b
     */
-    distance(a: Vector, b: Vector): number {
+    distanceBetween(a: VectorAbstract, b: VectorAbstract): number {
         const diff = Vec2.sub(a, b);
         return Vec2.length(diff);
     },
@@ -148,7 +217,7 @@ export const Vec2 = {
      * @param a - The Vector to be normalized
      * @returns A new Vector resulting from normalizing the input Vector
      */
-    normalize(a: Vector): Vector {
+    normalize(a: VectorAbstract): VectorAbstract {
         const eps = 0.000001;
         const len = Vec2.length(a);
         return {
@@ -157,7 +226,7 @@ export const Vec2 = {
         };
     },
 
-    normalizeSafe(a: Vector, b?: Vector): Vector {
+    normalizeSafe(a: VectorAbstract, b?: VectorAbstract): VectorAbstract {
         b = b ?? Vec2.new(1.0, 0.0);
         const eps = 0.000001;
         const len = Vec2.length(a);
@@ -173,7 +242,7 @@ export const Vec2 = {
      * @param end The end Vector
      * @param interpFactor The interpolation factor ranging from 0 to 1
      */
-    lerp(start: Vector, end: Vector, interpFactor: number): Vector {
+    lerp(start: VectorAbstract, end: VectorAbstract, interpFactor: number): VectorAbstract {
         return Vec2.add(Vec2.mul(start, 1 - interpFactor), Vec2.mul(end, interpFactor));
     },
 
@@ -183,7 +252,7 @@ export const Vec2 = {
      * @param b The second vector
      * @returns The result of performing the dot product between the two Vectors
      */
-    dot(a: Vector, b: Vector): number {
+    dot(a: VectorAbstract, b: VectorAbstract): number {
         return a.x * b.x + a.y * b.y;
     },
     /**
@@ -193,7 +262,7 @@ export const Vec2 = {
      * @param epsilon The largest difference in any component that will be accepted as being "equal"
      * @returns Whether or not the two vectors are considered equal with the given epsilon
      */
-    equals(a: Vector, b: Vector, epsilon = 0.001): boolean {
+    equals(a: VectorAbstract, b: VectorAbstract, epsilon = 0.001): boolean {
         return Math.abs(a.x - b.x) <= epsilon && Math.abs(a.y - b.y) <= epsilon;
     },
     /**
@@ -202,41 +271,30 @@ export const Vec2 = {
      * @param magnitude The vector's length. Defaults to 1
      * @returns A new vector whose length is `magnitude` and whose direction is `angle`
      */
-    fromPolar(angle: number, magnitude = 1): Vector {
+    fromPolar(angle: number, magnitude = 1): VectorAbstract {
         return {
             x: Math.cos(angle) * magnitude,
             y: Math.sin(angle) * magnitude
         };
     },
 
-    targetEasing(a: Vector, b: Vector, n: number = 4): Vector {
+    targetEasing(a: VectorAbstract, b: VectorAbstract, n: number = 4): VectorAbstract {
         return  Vec2.add(a, Vec2.div(Vec2.sub(b, a), n));
     },
 
-    clampWithXY(vector: Vector, minX: number, maxX: number, minY: number, maxY: number): Vector{
+    clampWithXY(vector: VectorAbstract, minX: number, maxX: number, minY: number, maxY: number): VectorAbstract{
         let clampedVector = Vec2.clone(vector);
-        clampedVector.x = MathNumeric.clamp(clampedVector.x, minX, maxX);
-        clampedVector.y = MathNumeric.clamp(clampedVector.y, minY, maxY);
+        clampedVector.x = Numeric.clamp(clampedVector.x, minX, maxX);
+        clampedVector.y = Numeric.clamp(clampedVector.y, minY, maxY);
         return clampedVector;
     },
 
-    clampWithVector(vector: Vector, min: Vector, max: Vector): Vector{
+    clampWithVector(vector: VectorAbstract, min: VectorAbstract, max: VectorAbstract): VectorAbstract{
         return Vec2.clampWithXY(vector,min.x,max.x,min.y,max.y);
-    },
-
-    directionToRadians(vector: Vector): number {
-        return Math.atan2(vector.y, vector.x);
-    },
-
-    radiansToDirection(n: number): Vector {
-        return {
-            x: Math.cos(n),
-            y: Math.sin(n)
-        }
     }
 };
 
 export interface Velocity {
-    vector: Vector;
+    vector: VectorAbstract;
     downing: number;
 }

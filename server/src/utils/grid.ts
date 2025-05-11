@@ -1,7 +1,7 @@
 import { EntityType } from "../../../common/src/constants";
 import { type Hitbox, RectHitbox } from "../../../common/src/utils/hitbox";
-import { MathNumeric } from "../../../common/src/utils/math";
-import { Vec2, type Vector } from "../../../common/src/utils/vector";
+import { Numeric } from "../../../common/src/utils/math";
+import { Vec2, type VectorAbstract } from "../../../common/src/utils/vector";
 import { type ServerEntity } from "../entities/serverEntity";
 import { type ServerPlayer } from "../entities/serverPlayer";
 import { ServerPetal } from "../entities/serverPetal";
@@ -24,7 +24,7 @@ export class Grid {
 
     // store the cells each entity is occupying
     // so removing the entity from the grid is faster
-    private readonly _entitiesCells = new Map<number, Vector[]>();
+    private readonly _entitiesCells = new Map<number, VectorAbstract[]>();
 
     readonly entities = new Map<number, ServerEntity>();
 
@@ -63,7 +63,7 @@ export class Grid {
      */
     updateEntity(entity: ServerEntity): void {
         this.removeFromGrid(entity);
-        const cells: Vector[] = [];
+        const cells: VectorAbstract[] = [];
 
         const rect = entity.hitbox.toRectangle();
 
@@ -132,23 +132,23 @@ export class Grid {
         return entities;
     }
 
-    intersectPos(pos: Vector) {
+    intersectPos(pos: VectorAbstract) {
         pos = this._roundToCells(pos);
         return [...this._grid[pos.x][pos.y].values()];
     }
 
     // TODO: optimize this
-    intersectLineSegment(a: Vector, b: Vector) {
+    intersectLineSegment(a: VectorAbstract, b: VectorAbstract) {
         return this.intersectsHitbox(RectHitbox.fromLine(a, b));
     }
 
     /**
      * Rounds a position to this grid cells
      */
-    private _roundToCells(vector: Vector): Vector {
+    private _roundToCells(vector: VectorAbstract): VectorAbstract {
         return {
-            x: MathNumeric.clamp(Math.floor(vector.x / this.cellSize), 0, this.width),
-            y: MathNumeric.clamp(Math.floor(vector.y / this.cellSize), 0, this.height)
+            x: Numeric.clamp(Math.floor(vector.x / this.cellSize), 0, this.width),
+            y: Numeric.clamp(Math.floor(vector.y / this.cellSize), 0, this.height)
         };
     }
 }

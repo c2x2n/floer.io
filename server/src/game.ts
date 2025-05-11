@@ -7,7 +7,7 @@ import { EntityType, GameConstants } from "../../common/src/constants";
 import NanoTimer from "nanotimer";
 import { Config, type ServerConfig } from "./config";
 import { IDAllocator } from "./utils/idAllocator";
-import { Vec2, type Vector } from "../../common/src/utils/vector";
+import { Vec2, type VectorAbstract } from "../../common/src/utils/vector";
 import { ServerMob } from "./entities/serverMob";
 import { MobDefinition, Mobs } from "../../common/src/definitions/mobs";
 import { CollisionResponse } from "../../common/src/utils/collision";
@@ -16,7 +16,7 @@ import { collideableEntity, isCollideableEntity, isDamageableEntity } from "./ty
 import { PacketStream } from "../../common/src/net/net";
 import { JoinPacket } from "../../common/src/net/packets/joinPacket";
 import { PetalDefinition } from "../../common/src/definitions/petals";
-import { P2 } from "../../common/src/utils/math";
+import { Geometry, P2 } from "../../common/src/utils/math";
 import { Rarity, RarityName } from "../../common/src/definitions/rarities";
 import { ChatData } from "../../common/src/net/packets/updatePacket";
 import { MobSpawner, SpecialSpawn, ZoneName } from "../../common/src/definitions/zones";
@@ -79,7 +79,7 @@ export class Game {
         }
     }
 
-    clampPosition(p: Vector, width: number, height: number): Vector{
+    clampPosition(p: VectorAbstract, width: number, height: number): VectorAbstract{
         const maxVector = Vec2.sub(this.maxVector, Vec2.new(width, height));
         const position = Vec2.clone(p);
         return Vec2.clampWithVector(
@@ -294,7 +294,7 @@ export class Game {
         }
     }
 
-    spawnMob(definition: MobDefinition, position: Vector): ServerMob {
+    spawnMob(definition: MobDefinition, position: VectorAbstract): ServerMob {
         // 1/1.5m chance to spawn as a square
         if (Math.random() < (1 / 1500000)) {
             definition = Mobs.fromString("square");
@@ -310,7 +310,7 @@ export class Game {
         } else {
             mob = new ServerMob(this,
                 position,
-                Vec2.radiansToDirection(Random.float(-P2, P2)),
+                Geometry.radiansToDirection(Random.float(-P2, P2)),
                 definition
             );
         }

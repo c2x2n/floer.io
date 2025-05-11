@@ -5,7 +5,7 @@ import { Game } from "@/scripts/game.ts";
 import { SettingsData } from "@/settings.ts";
 import { ChatData } from "@common/net/packets/updatePacket.ts";
 import { ChatChannel } from "@common/net/packets/chatPacket.ts";
-import { MathNumeric } from "@common/utils/math.ts";
+import { Numeric } from "@common/utils/math.ts";
 import { ActionType, EntityType, GameConstants } from "@common/constants.ts";
 import { Random } from "@common/utils/random.ts";
 import { Gallery } from "@/scripts/gallery.ts";
@@ -801,7 +801,7 @@ class ChatMessage {
     getOpacity() {
         const timePassed = (Date.now() - this.createdTime) / 1000;
         if (timePassed > messageHidingTime) {
-            return MathNumeric.clamp(
+            return Numeric.clamp(
                 (1 -
                     (timePassed - messageHidingTime) / (messageExistTime - messageHidingTime)
                 ), 0, 1

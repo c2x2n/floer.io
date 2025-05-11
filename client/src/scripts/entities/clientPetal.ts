@@ -5,9 +5,9 @@ import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
 import { Tween } from '@tweenjs/tween.js';
 import { PetalDefinition } from "@common/definitions/petals.ts";
-import { EasingFunctions, MathGraphics, MathNumeric } from "@common/utils/math.ts";
+import { EasingFunctions, Geometry, Numeric } from "@common/utils/math.ts";
 import { Rarity } from "@common/definitions/rarities.ts";
-import { Vec2, Vector, Velocity } from "@common/utils/vector.ts";
+import { Vec2, VectorAbstract, Velocity } from "@common/utils/vector.ts";
 import { getAssets } from "@/assets/assets.ts";
 
 export class ClientPetal extends ClientEntity {
@@ -70,13 +70,13 @@ export class ClientPetal extends ClientEntity {
             if (this.definition.images?.facingOut) {
                 if (owner) {
                     this.container.rotation =
-                        Vec2.directionToRadians(
-                            MathGraphics.directionBetweenPoints(this.position, owner.position)
+                        Geometry.directionToRadians(
+                            Geometry.directionBetweenPoints(this.position, owner.position)
                         )
                 }
             } else if (this.definition.images?.selfGameRotation) {
                 this.angle += this.definition.images.selfGameRotation  * dt;
-                this.container.rotation = MathGraphics.degreesToRadians(this.angle)
+                this.container.rotation = Geometry.degreesToRadians(this.angle)
             }
 
             if (Rarity.fromString(this.definition.rarity).showParticle && this.visible) {
@@ -167,8 +167,8 @@ export class ClientPetal extends ClientEntity {
         }
     }
 
-    ownerPosition: Vector = Vec2.new(0, 0);
-    toCenterPosition: Vector = Vec2.new(0, 0);
+    ownerPosition: VectorAbstract = Vec2.new(0, 0);
+    toCenterPosition: VectorAbstract = Vec2.new(0, 0);
 
     updateFromData(data: EntitiesNetData[EntityType.Petal], isNew: boolean): void {
         data.position = Vec2.div(data.position, 100);
@@ -186,12 +186,12 @@ export class ClientPetal extends ClientEntity {
             if (owner) this.ownerPosition = owner.position;
         }
         const length =
-            Vec2.distance(this.toCenterPosition, data.position);
-        const vector = Vec2.mul(MathGraphics.directionBetweenPoints(
+            Vec2.distanceBetween(this.toCenterPosition, data.position);
+        const vector = Vec2.mul(Geometry.directionBetweenPoints(
             data.position, this.toCenterPosition
         ), length * 1.1);
 
-        const downer = MathNumeric.clamp(length, 0, 0.64);
+        const downer = Numeric.clamp(length, 0, 0.64);
 
         if (length > 0.1) {
             this.velocity.push({

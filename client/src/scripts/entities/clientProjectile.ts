@@ -8,7 +8,7 @@ import { projectileAssets } from "@/assets/projectiles.ts";
 import { Camera } from "@/scripts/render/camera.ts";
 import { Vec2 } from "@common/utils/vector.ts";
 import { Tween } from "@tweenjs/tween.js";
-import { MathGraphics, P2 } from "@common/utils/math.ts";
+import { Geometry, P2 } from "@common/utils/math.ts";
 import { getAssets } from "@/assets/assets.ts";
 
 export class ClientProjectile extends ClientEntity {
@@ -46,7 +46,7 @@ export class ClientProjectile extends ClientEntity {
 
                 this.hitboxRadius = data.full.hitboxRadius;
                 this.container.radius = Camera.unitToScreen(this.hitboxRadius);
-                this.container.rotation = Vec2.directionToRadians(data.direction);
+                this.container.rotation = Geometry.directionToRadians(data.direction);
                 if (this.definition.onGround){
                     this.container.zIndex = -999
                 }
@@ -58,7 +58,7 @@ export class ClientProjectile extends ClientEntity {
                     console.log(this.id, radiansNow)
                     for (let i = 0; i < amount; i++) {
                         const { x, y } =
-                            MathGraphics.getPositionOnCircle(
+                            Geometry.getPositionOnCircle(
                                 radiansNow, 4000
                             )
 

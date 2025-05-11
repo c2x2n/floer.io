@@ -1,6 +1,6 @@
 import { Game } from "@/scripts/game.ts";
 import $ from "jquery";
-import { MathNumeric, P2 } from "@common/utils/math.ts";
+import { Numeric, P2 } from "@common/utils/math.ts";
 import { PetalDefinition, Petals, SavedPetalDefinitionData } from "@common/definitions/petals.ts";
 import { UI } from "@/ui.ts";
 import { Rarity } from "@common/definitions/rarities.ts";
@@ -92,8 +92,8 @@ export class Inventory{
                 currentX = clientX;
                 currentY = clientY;
             } else {
-                currentX = MathNumeric.targetEasing(where.left, clientX);
-                currentY = MathNumeric.targetEasing(where.top, clientY);
+                currentX = Numeric.targetEasing(where.left, clientX);
+                currentY = Numeric.targetEasing(where.top, clientY);
             }
 
             // Follow
@@ -104,10 +104,10 @@ export class Inventory{
                     ) translate(-10%, -10%)`
             );
             draggingData.item.css('width',
-                `${MathNumeric.targetEasing(sizeNow, draggingBoxSize, 4)}px`
+                `${Numeric.targetEasing(sizeNow, draggingBoxSize, 4)}px`
             );
             draggingData.item.css('height',
-                `${MathNumeric.targetEasing(sizeNow, draggingBoxSize, 4)}px`
+                `${Numeric.targetEasing(sizeNow, draggingBoxSize, 4)}px`
             );
 
             let swingProgress = this.swingProgress;
@@ -154,7 +154,7 @@ export class Inventory{
                                 container.percent = data.percent;
                                 container.state = data.state;
                             }
-                            container.percent = MathNumeric.targetEasing(container.percent, data.percent, 4);
+                            container.percent = Numeric.targetEasing(container.percent, data.percent, 4);
                             if (data.state === PetalState.Reloading) {
                                 ctx.moveTo(canvas.width / 2, canvas.height / 2);
                                 const start = P2 * (1 - container.percent) * 5;
@@ -316,10 +316,10 @@ export class Inventory{
             // ease-out-cubic for angle, size, opac
             const easeOutCubic = 1 - Math.pow(1 - progress, 3);
             const currentAngle = from.angle * (1 - easeOutCubic);
-            const currentW = MathNumeric.targetEasing(
+            const currentW = Numeric.targetEasing(
                 petalEl.width() ?? destination.w, destination.w, 4
             );
-            const currentOpacity = MathNumeric.targetEasing(from.opacity, destination.opacity, 4);
+            const currentOpacity = Numeric.targetEasing(from.opacity, destination.opacity, 4);
 
             const scale = currentW / destination.w;
 

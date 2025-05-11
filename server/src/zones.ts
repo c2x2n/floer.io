@@ -1,5 +1,5 @@
 import { ZoneDefinition, ZoneName, Zones } from "../../common/src/definitions/zones";
-import { Vec2, Vector } from "../../common/src/utils/vector";
+import { Vec2, VectorAbstract } from "../../common/src/utils/vector";
 import { Random } from "../../common/src/utils/random";
 import { Game } from "./game";
 import { CircleHitbox, RectHitbox } from "../../common/src/utils/hitbox";
@@ -14,7 +14,7 @@ export class ZonesManager {
         })
     }
 
-    inWhichZone(position: Vector): Zone | undefined {
+    inWhichZone(position: VectorAbstract): Zone | undefined {
         for (const zone of this.zones.values()) {
             if (zone.hitbox.isPointInside(position)) return zone;
         }
@@ -45,7 +45,7 @@ export class Zone {
         )
     }
 
-    public randomPoint(): Vector {
+    public randomPoint(): VectorAbstract {
         const randomX =
             Random.int(this.data.x, this.data.x + this.data.width)
         const randomY =
@@ -56,7 +56,7 @@ export class Zone {
         }
     }
 
-    public randomSafePosition(hitboxRadius: number): Vector {
+    public randomSafePosition(hitboxRadius: number): VectorAbstract {
         let collidedNumber = 0;
         let position = this.randomPoint();
         let attempt = 0;

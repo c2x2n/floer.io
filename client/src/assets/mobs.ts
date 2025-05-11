@@ -1,9 +1,9 @@
 import { AssetsBunch, AssetsDrawer } from "@/assets/assets.ts";
 import { Dot, RenderContainer } from "@/scripts/utils/render.ts";
 import { Random } from "@common/utils/random.ts";
-import { halfPI, MathGraphics, MathNumeric, P2, PI } from "@common/utils/math.ts";
+import { halfPI, Geometry, Numeric, P2, PI } from "@common/utils/math.ts";
 import { loadPathFromSVG } from "@/assets/pathLoader.ts";
-import { Vector } from "@common/utils/vector.ts";
+import { VectorAbstract } from "@common/utils/vector.ts";
 
 const ladybugHeadPathS = "m 34.922494,3.9576593 c 7.88843,0 14.283271,6.3814447 14.283271,14.2533487 0,7.871924 -6.394841,14.253408 -14.283271,14.253408 -7.888435,0 -14.283276,-6.381484 -14.283276,-14.253408 0,-7.871904 6.394841,-14.2533487 14.283276,-14.2533487 z";
 const ladybugBodyPathS = "m 26.689942,3.1151231 c 1.025874,0 3.620854,0.4174594 3.620854,0.4174594 0,0 1.799643,8.3626085 5.45483,12.4634625 3.085786,3.462078 13.213924,6.256938 13.213924,6.256938 0,0 1.116466,3.261075 1.116466,4.219162 0,12.899759 -10.479254,23.357139 -23.406074,23.357139 -12.926821,0 -23.4060862,-10.45738 -23.4060862,-23.357139 0,-12.899758 10.4792652,-23.357129 23.4060862,-23.357129 z";
@@ -760,7 +760,7 @@ export const mobAssets: AssetsBunch = {
         ctx.translate(radius * 0.74, radius * 0.23);
 
         ctx.rotate(
-            MathGraphics.degreesToRadians(containerToDraw.transing)
+            Geometry.degreesToRadians(containerToDraw.transing)
         );
 
         loadPathFromSVG({
@@ -779,7 +779,7 @@ export const mobAssets: AssetsBunch = {
         ctx.translate(radius * 0.74, radius * 0.23);
 
         ctx.rotate(
-            MathGraphics.degreesToRadians(containerToDraw.transing)
+            Geometry.degreesToRadians(containerToDraw.transing)
         );
 
         loadPathFromSVG({
@@ -814,7 +814,7 @@ export const mobAssets: AssetsBunch = {
         ctx.translate(radius * 1.2, radius * 0.23);
 
         ctx.rotate(
-            MathGraphics.degreesToRadians(containerToDraw.transing)
+            Geometry.degreesToRadians(containerToDraw.transing)
         );
 
         loadPathFromSVG({
@@ -833,7 +833,7 @@ export const mobAssets: AssetsBunch = {
         ctx.translate(radius * 1.2, radius * 0.23);
 
         ctx.rotate(
-            MathGraphics.degreesToRadians(containerToDraw.transing)
+            Geometry.degreesToRadians(containerToDraw.transing)
         );
 
         loadPathFromSVG({
@@ -868,7 +868,7 @@ export const mobAssets: AssetsBunch = {
     "soldier_ant": (containerToDraw) => {
         const { ctx, radius } = containerToDraw;
 
-        const rotation = MathGraphics.degreesToRadians(containerToDraw.transing)
+        const rotation = Geometry.degreesToRadians(containerToDraw.transing)
 
         ctx.save();
         ctx.lineCap = "round";
@@ -957,7 +957,7 @@ export const mobAssets: AssetsBunch = {
     "queen_ant": (containerToDraw) => {
         const { ctx, radius } = containerToDraw;
 
-        const rotation = MathGraphics.degreesToRadians(containerToDraw.transing)
+        const rotation = Geometry.degreesToRadians(containerToDraw.transing)
 
         ctx.save();
 
@@ -1092,11 +1092,11 @@ export const mobAssets: AssetsBunch = {
         let radiansNow = 0;
 
         for (let i = 0; i < x + 1; i++) {
-            const position = MathGraphics.getPositionOnCircle(
+            const position = Geometry.getPositionOnCircle(
                 radiansNow, radius
             )
 
-            const besPosition = MathGraphics.getPositionOnCircle(
+            const besPosition = Geometry.getPositionOnCircle(
                 radiansNow - P2 / x / 2, radius * 0.93
             )
 
@@ -1115,7 +1115,7 @@ export const mobAssets: AssetsBunch = {
     },
     "spider": (containerToDraw) => {
         const { ctx, radius } = containerToDraw;
-        const rotation = MathGraphics.degreesToRadians(containerToDraw.transing);
+        const rotation = Geometry.degreesToRadians(containerToDraw.transing);
         ctx.save();
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
@@ -1294,8 +1294,8 @@ export const mobAssets: AssetsBunch = {
     "mantis": (containerToDraw) => {
         const { ctx, radius } = containerToDraw;
         const rotation =
-            MathNumeric.clamp(
-                0.5 - MathGraphics.degreesToRadians(containerToDraw.transing) / 6,
+            Numeric.clamp(
+                0.5 - Geometry.degreesToRadians(containerToDraw.transing) / 6,
                 0.05, 0.5
             );
         ctx.save();
@@ -1377,7 +1377,7 @@ export const mobAssets: AssetsBunch = {
 
     "beetle": (containerToDraw) => {
         const { ctx, radius } = containerToDraw;
-        const rotation = MathGraphics.degreesToRadians(containerToDraw.transing) / 1.2;
+        const rotation = Geometry.degreesToRadians(containerToDraw.transing) / 1.2;
 
         ctx.save();
 

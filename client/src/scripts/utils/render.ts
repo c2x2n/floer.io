@@ -1,5 +1,5 @@
-import { Vector, Vec2 } from "@common/utils/vector.ts";
-import { MathNumeric } from "@common/utils/math.ts";
+import { VectorAbstract, Vec2 } from "@common/utils/vector.ts";
+import { Numeric } from "@common/utils/math.ts";
 
 export type ColorLike = Color | string | number;
 export type RenderFunc = (dt: number) => void;
@@ -33,7 +33,7 @@ export class RenderContainer {
 
     radius: number = 0;
 
-    position: Vector = Vec2.new(0, 0);
+    position: VectorAbstract = Vec2.new(0, 0);
     tint: Color = {
         r: 255,
         g: 255,
@@ -83,7 +83,7 @@ export class RenderContainer {
     }
 
     getAlpha(alpha: number): number {
-        return MathNumeric.clamp(this.alpha * alpha, 0, 1);
+        return Numeric.clamp(this.alpha * alpha, 0, 1);
     }
 
     getRenderColor(color: ColorLike): string {
@@ -98,9 +98,9 @@ export class RenderContainer {
 
         // Clamp to avoid errors
         color = {
-            r: MathNumeric.clamp(color.r, 0, 255),
-            g: MathNumeric.clamp(color.g, 0, 255),
-            b: MathNumeric.clamp(color.b, 0, 255)
+            r: Numeric.clamp(color.r, 0, 255),
+            g: Numeric.clamp(color.g, 0, 255),
+            b: Numeric.clamp(color.b, 0, 255)
         }
 
         return `rgb(${color.r}, ${color.g}, ${color.b})`

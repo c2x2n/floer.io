@@ -1,11 +1,11 @@
-import { type Vector, Vec2 } from "./vector";
+import { type VectorAbstract, Vec2 } from "./vector";
 
 export const PI = Math.PI;
 export const P2 = PI * 2;
 export const halfPI = PI / 2;
 
-export const MathGraphics = {
-    getPositionOnCircle(radians: number, radius: number, basic: Vector = Vec2.new(0, 0)): Vector {
+export const Geometry = {
+    getPositionOnCircle(radians: number, radius: number, basic: VectorAbstract = Vec2.new(0, 0)): VectorAbstract {
         return Vec2.add(basic, Vec2.new(
             Math.cos(radians) * radius,
             Math.sin(radians) * radius
@@ -20,13 +20,13 @@ export const MathGraphics = {
         return (radians / Math.PI) * 180;
     },
 
-    angleBetweenPoints(a: Vector, b: Vector): number {
+    angleBetweenPoints(a: VectorAbstract, b: VectorAbstract): number {
         const dy = a.y - b.y;
         const dx = a.x - b.x;
         return Math.atan2(dy, dx);
     },
 
-    directionBetweenPoints(a: Vector, b: Vector): Vector {
+    directionBetweenPoints(a: VectorAbstract, b: VectorAbstract): VectorAbstract {
         const radians = this.angleBetweenPoints(a, b);
         return Vec2.new(
             Math.cos(radians),
@@ -34,12 +34,23 @@ export const MathGraphics = {
         )
     },
 
-    signedAreaTri(a: Vector, b: Vector, c: Vector): number {
+    signedAreaTri(a: VectorAbstract, b: VectorAbstract, c: VectorAbstract): number {
         return (a.x - c.x) * (b.y - c.y) - (a.y - c.y) * (b.x - c.x);
+    },
+
+    directionToRadians(vector: VectorAbstract): number {
+        return Math.atan2(vector.y, vector.x);
+    },
+
+    radiansToDirection(n: number): VectorAbstract {
+        return {
+            x: Math.cos(n),
+            y: Math.sin(n)
+        }
     }
 };
 
-export const MathNumeric = {
+export const Numeric = {
     /**
      * Interpolate between two values
      * @param start The start value

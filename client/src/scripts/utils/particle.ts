@@ -1,6 +1,6 @@
-import { EasingFunctions, MathNumeric, P2 } from "@common/utils/math.ts";
+import { EasingFunctions, Numeric, P2 } from "@common/utils/math.ts";
 import { Random } from "@common/utils/random.ts";
-import { Vec2, type Vector } from "@common/utils/vector.ts";
+import { Vec2, type VectorAbstract } from "@common/utils/vector.ts";
 import { type Game } from "../game.ts";
 import { RenderContainer } from "@/scripts/utils/render.ts";
 
@@ -59,7 +59,7 @@ type ParticleOption = (MinMax | {
 
 interface ParticleOptions {
     /** Particle initial position */
-    position: Vector
+    position: VectorAbstract
     /** Particle sprite zIndex */
     zIndex?: number
     /** Particle Sprite tint */
@@ -104,7 +104,7 @@ class Particle {
     dead = false;
     tick = 0;
     end: number;
-    position: Vector;
+    position: VectorAbstract;
 
     container: RenderContainer;
 
@@ -152,7 +152,7 @@ class Particle {
 
         for (const key in this.data) {
             const data = this.data[key as keyof ParticleInterpData];
-            data!.value = MathNumeric.lerp(data!.start, data!.end, data!.easing(t));
+            data!.value = Numeric.lerp(data!.start, data!.end, data!.easing(t));
         }
 
 

@@ -3,14 +3,14 @@ import { PetalBunch } from "./petalBunch";
 import { Game } from "../game";
 import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../../../common/src/definitions/petals";
 import { P2 } from "../../../common/src/utils/math";
-import { Vector } from "../../../common/src/utils/vector";
+import { VectorAbstract } from "../../../common/src/utils/vector";
 import { GameConstants } from "../../../common/src/constants";
 import { PetalEventManager } from "../utils/petalEvents";
 import { Rarity } from "../../../common/src/definitions/rarities";
 import { Random } from "../../../common/src/utils/random";
 
 export class Inventory {
-    position: Vector;
+    position: VectorAbstract;
 
     readonly game: Game;
     readonly player: ServerPlayer;

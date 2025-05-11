@@ -1,8 +1,8 @@
-import { MathGraphics, MathNumeric } from "./math";
-import { Vec2, type Vector } from "./vector";
+import { Geometry, Numeric } from "./math";
+import { Vec2, type VectorAbstract } from "./vector";
 
-export type CollisionResponse = { dir: Vector, pen: number } | null;
-export type LineIntersection = { point: Vector, normal: Vector } | null;
+export type CollisionResponse = { dir: VectorAbstract, pen: number } | null;
+export type LineIntersection = { point: VectorAbstract, normal: VectorAbstract } | null;
 
 export const Collision = {
     /**
@@ -12,7 +12,7 @@ export const Collision = {
     * @param pos2 The center of the second circle
     * @param r2 The radius of the second circle
     */
-    checkCircleCircle(pos1: Vector, r1: number, pos2: Vector, r2: number): boolean {
+    checkCircleCircle(pos1: VectorAbstract, r1: number, pos2: VectorAbstract, r2: number): boolean {
         const a = r1 + r2;
         const x = pos1.x - pos2.x;
         const y = pos1.y - pos2.y;
@@ -27,10 +27,10 @@ export const Collision = {
     * @param pos The center of the circle
     * @param rad The radius of the circle
     */
-    checkRectCircle(min: Vector, max: Vector, pos: Vector, rad: number): boolean {
+    checkRectCircle(min: VectorAbstract, max: VectorAbstract, pos: VectorAbstract, rad: number): boolean {
         const cpt = {
-            x: MathNumeric.clamp(pos.x, min.x, max.x),
-            y: MathNumeric.clamp(pos.y, min.y, max.y)
+            x: Numeric.clamp(pos.x, min.x, max.x),
+            y: Numeric.clamp(pos.y, min.y, max.y)
         };
 
         const distX = pos.x - cpt.x;
@@ -47,7 +47,7 @@ export const Collision = {
     * @param min2 - The min Vector of the second rectangle
     * @param max2 - The max vector of the second rectangle
     */
-    checkRectRect(min1: Vector, max1: Vector, min2: Vector, max2: Vector): boolean {
+    checkRectRect(min1: VectorAbstract, max1: VectorAbstract, min2: VectorAbstract, max2: VectorAbstract): boolean {
         return min2.x < max1.x && min2.y < max1.y && min1.x < max2.x && min1.y < max2.y;
     },
 
@@ -59,11 +59,11 @@ export const Collision = {
      * @param b1 The end of the second line
      * @return The intersection position if it happened, if not returns null
     */
-    lineIntersectsLine(a0: Vector, a1: Vector, b0: Vector, b1: Vector): Vector | null {
-        const x1 = MathGraphics.signedAreaTri(a0, a1, b1);
-        const x2 = MathGraphics.signedAreaTri(a0, a1, b0);
+    lineIntersectsLine(a0: VectorAbstract, a1: VectorAbstract, b0: VectorAbstract, b1: VectorAbstract): VectorAbstract | null {
+        const x1 = Geometry.signedAreaTri(a0, a1, b1);
+        const x2 = Geometry.signedAreaTri(a0, a1, b0);
         if (x1 !== 0 && x2 !== 0 && x1 * x2 < 0) {
-            const x3 = MathGraphics.signedAreaTri(b0, b1, a0);
+            const x3 = Geometry.signedAreaTri(b0, b1, a0);
             const x4 = x3 + x2 - x1;
             if (x3 * x4 < 0) {
                 const t = x3 / (x3 - x4);
@@ -81,7 +81,7 @@ export const Collision = {
      * @param rad The radius of the circle
      * @return An intersection response with the intersection position and normal Vectors, returns null if they don't intersect
     */
-    lineIntersectsCircle(s0: Vector, s1: Vector, pos: Vector, rad: number): LineIntersection {
+    lineIntersectsCircle(s0: VectorAbstract, s1: VectorAbstract, pos: VectorAbstract, rad: number): LineIntersection {
         let d = Vec2.sub(s1, s0);
         const len = Math.max(Vec2.length(d), 0.000001);
         d = Vec2.div(d, len);
@@ -118,7 +118,7 @@ export const Collision = {
      * @param max The max Vector of the rectangle
      * @return An intersection response with the intersection position and normal Vectors, returns null if they don't intersect
     */
-    lineIntersectsRect(s0: Vector, s1: Vector, min: Vector, max: Vector): LineIntersection {
+    lineIntersectsRect(s0: VectorAbstract, s1: VectorAbstract, min: VectorAbstract, max: VectorAbstract): LineIntersection {
         let tmin = 0;
         let tmax = Number.MAX_VALUE;
         const eps = 0.00001;
@@ -187,7 +187,7 @@ export const Collision = {
      * @param rad1 The radius of the second circle
      * @return An intersection response with the intersection direction and pen, returns null if they don't intersect
     */
-    circleCircleIntersection(pos0: Vector, rad0: number, pos1: Vector, rad1: number): CollisionResponse {
+    circleCircleIntersection(pos0: VectorAbstract, rad0: number, pos1: VectorAbstract, rad1: number): CollisionResponse {
         const r = rad0 + rad1;
         const toP1 = Vec2.sub(pos1, pos0);
         const distSqr = Vec2.lengthSqr(toP1);
@@ -209,7 +209,7 @@ export const Collision = {
      * @param radius The radius of the circle
      * @return An intersection response with the intersection direction and pen, returns null if they don't intersect
     */
-    rectCircleIntersection(min: Vector, max: Vector, pos: Vector, radius: number): CollisionResponse {
+    rectCircleIntersection(min: VectorAbstract, max: VectorAbstract, pos: VectorAbstract, radius: number): CollisionResponse {
         if (pos.x >= min.x && pos.x <= max.x && pos.y >= min.y && pos.y <= max.y) {
             const e = Vec2.mul(Vec2.sub(max, min), 0.5);
             const c = Vec2.add(min, e);
@@ -228,8 +228,8 @@ export const Collision = {
             };
         }
         const cpt = Vec2.new(
-            MathNumeric.clamp(pos.x, min.x, max.x),
-            MathNumeric.clamp(pos.y, min.y, max.y)
+            Numeric.clamp(pos.x, min.x, max.x),
+            Numeric.clamp(pos.y, min.y, max.y)
         );
         let dir = Vec2.sub(pos, cpt);
 
@@ -255,7 +255,7 @@ export const Collision = {
     * @param max1 - The max vector of the second rectangle
     * @return An intersection response with the intersection direction and pen, returns null if they don't intersect
     */
-    rectRectIntersection(min0: Vector, max0: Vector, min1: Vector, max1: Vector): CollisionResponse {
+    rectRectIntersection(min0: VectorAbstract, max0: VectorAbstract, min1: VectorAbstract, max1: VectorAbstract): CollisionResponse {
         const e0 = Vec2.mul(Vec2.sub(max0, min0), 0.5);
         const c0 = Vec2.add(min0, e0);
         const e1 = Vec2.mul(Vec2.sub(max1, min1), 0.5);

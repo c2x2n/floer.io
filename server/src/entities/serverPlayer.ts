@@ -1,6 +1,6 @@
 import { type WebSocket } from "ws";
 import { ServerEntity } from "./serverEntity";
-import { Vec2, Vector } from "../../../common/src/utils/vector";
+import { Vec2, VectorAbstract } from "../../../common/src/utils/vector";
 import { GameBitStream, type Packet, PacketStream } from "../../../common/src/net/net";
 import { createHash } from "crypto"
 import { type Game } from "../game";
@@ -13,7 +13,7 @@ import {
 } from "../../../common/src/net/packets/updatePacket";
 import { CircleHitbox, RectHitbox } from "../../../common/src/utils/hitbox";
 import { Random } from "../../../common/src/utils/random";
-import { MathNumeric } from "../../../common/src/utils/math";
+import { Geometry, Numeric } from "../../../common/src/utils/math";
 import { InputAction, InputPacket } from "../../../common/src/net/packets/inputPacket";
 import { JoinPacket } from "../../../common/src/net/packets/joinPacket";
 import { ActionType, EntityType, GameConstants, PlayerState } from "../../../common/src/constants";
@@ -69,8 +69,8 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     name = "";
 
     direction: {
-        direction: Vector,
-        mouseDirection: Vector
+        direction: VectorAbstract,
+        mouseDirection: VectorAbstract
     } = {
         direction: Vec2.new(0, 0),
         mouseDirection: Vec2.new(0, 0)
@@ -98,7 +98,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
     set health(health: number) {
         if (health === this._health) return;
-        this._health = MathNumeric.clamp(health, 0, this.modifiers.maxHealth);
+        this._health = Numeric.clamp(health, 0, this.modifiers.maxHealth);
         this.setFullDirty();
     }
 
@@ -110,10 +110,10 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
     set maxHealth(maxHealth: number) {
         if (maxHealth === this._maxHealth) return;
-        this._health = MathNumeric.clamp(this._health  * maxHealth / this._maxHealth, 0, maxHealth);
+        this._health = Numeric.clamp(this._health  * maxHealth / this._maxHealth, 0, maxHealth);
         this._maxHealth = maxHealth;
         this.maxShield = this.maxHealth * 0.75;
-        this.shield = MathNumeric.clamp(this.shield, 0, this.maxShield);
+        this.shield = Numeric.clamp(this.shield, 0, this.maxShield);
 
         this.setFullDirty();
     }
@@ -128,7 +128,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
     set shield(shield: number) {
         const maxShield = this.maxHealth * 0.75; // 最大护盾值为最大生命值的75%
-        this._shield = MathNumeric.clamp(shield, 0, maxShield);
+        this._shield = Numeric.clamp(shield, 0, maxShield);
     }
 
     kills = 0;
@@ -251,7 +251,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
         this.setAcceleration(Vec2.mul(
             this.direction.direction,
-            MathNumeric.remap(this.distance, 0, 150, 0, GameConstants.player.maxSpeed) * this.modifiers.speed
+            Numeric.remap(this.distance, 0, 150, 0, GameConstants.player.maxSpeed) * this.modifiers.speed
         ));
 
         // 观察者模式下只处理移动，不处理花瓣和其他功能
@@ -370,13 +370,13 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             (source && source instanceof ServerPlayer && source.state.poison) ||
             // 自毒伤害(uranium辐射)
             (disableEvent && this.modifiers.selfPoison > 0);
-            
+
         // 检查是否为碰撞伤害（来自玩家或怪物，但不是花瓣和投射物）
-        const isCollisionDamage = source && 
-            (source instanceof ServerPlayer || 
+        const isCollisionDamage = source &&
+            (source instanceof ServerPlayer ||
              (source instanceof ServerEntity && source.type === EntityType.Mob)) &&
             !isPoisonDamage;
-            
+
         // 如果是碰撞伤害，应用伤害减免
         if (isCollisionDamage && this.modifiers.bodyDamageReduction > 0) {
             amount *= (1 - this.modifiers.bodyDamageReduction);
@@ -565,7 +565,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                 }
             }
 
-            data.percent = MathNumeric.clamp(data.percent, 0, 1)
+            data.percent = Numeric.clamp(data.percent, 0, 1)
 
             datas.push(data);
         })
@@ -694,12 +694,12 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         }
 
         // if the direction changed set to dirty
-        if (!Vec2.equals(this.direction.direction, Vec2.radiansToDirection(packet.direction.direction))) {
+        if (!Vec2.equals(this.direction.direction, Geometry.radiansToDirection(packet.direction.direction))) {
             this.setDirty();
         }
         this.direction = {
-            direction: Vec2.radiansToDirection(packet.direction.direction),
-            mouseDirection: Vec2.radiansToDirection(packet.direction.mouseDirection)
+            direction: Geometry.radiansToDirection(packet.direction.direction),
+            mouseDirection: Geometry.radiansToDirection(packet.direction.mouseDirection)
         };
         this.distance = packet.movementDistance;
         this.isAttacking = packet.isAttacking;

@@ -1,15 +1,15 @@
 import { Game } from "../game";
 import { PetalDefinition } from "../../../common/src/definitions/petals";
-import { Vec2, Vector } from "../../../common/src/utils/vector";
+import { Vec2, VectorAbstract } from "../../../common/src/utils/vector";
 import { Rarity } from "../../../common/src/definitions/rarities";
-import { MathGraphics, P2 } from "../../../common/src/utils/math";
+import { Geometry, P2 } from "../../../common/src/utils/math";
 import { ServerLoot } from "../entities/serverLoot";
 import { GameConstants } from "../../../common/src/constants";
 import { MobDefinition, Mobs } from "../../../common/src/definitions/mobs";
 import { ServerMob } from "../entities/serverMob";
 import { Random } from "../../../common/src/utils/random";
 
-export function spawnLoot(game: Game, loots: PetalDefinition[], position: Vector, bypassLimitations: boolean = false): void {
+export function spawnLoot(game: Game, loots: PetalDefinition[], position: VectorAbstract, bypassLimitations: boolean = false): void {
     let spawnedLoots = loots.concat([]);
 
     loots.forEach(loot => {
@@ -34,7 +34,7 @@ export function spawnLoot(game: Game, loots: PetalDefinition[], position: Vector
         const everyOccupiedRadians = P2 / spawnedLoots.length;
         spawnedLoots.forEach(loot => {
             new ServerLoot(game,
-                MathGraphics.getPositionOnCircle(radiansNow, GameConstants.loot.spawnRadius, position), loot
+                Geometry.getPositionOnCircle(radiansNow, GameConstants.loot.spawnRadius, position), loot
             )
 
             radiansNow += everyOccupiedRadians;
@@ -46,14 +46,14 @@ export function spawnLoot(game: Game, loots: PetalDefinition[], position: Vector
     }
 }
 
-export function spawnSegmentMobs(game: Game, definition: MobDefinition, head_position: Vector): ServerMob {
+export function spawnSegmentMobs(game: Game, definition: MobDefinition, head_position: VectorAbstract): ServerMob {
     const hitboxRadius = definition.hitboxRadius;
     let direction = Random.float(-P2, P2);
     let positionNow = head_position;
 
     let last: ServerMob = new ServerMob(game,
         positionNow,
-        Vec2.radiansToDirection(-direction),
+        Geometry.radiansToDirection(-direction),
         definition
     );
 
@@ -66,7 +66,7 @@ export function spawnSegmentMobs(game: Game, definition: MobDefinition, head_pos
 
     for (let i = 0; i < segmentCount - 1; i++) {
         direction += Random.float(-0.1, 0.1)
-        positionNow = MathGraphics.getPositionOnCircle(
+        positionNow = Geometry.getPositionOnCircle(
             direction,
             hitboxRadius * 2,
             positionNow
@@ -76,7 +76,7 @@ export function spawnSegmentMobs(game: Game, definition: MobDefinition, head_pos
 
         last = new ServerMob(game,
             positionNow,
-            Vec2.radiansToDirection(-direction),
+            Geometry.radiansToDirection(-direction),
             Mobs.fromString(definition.segmentDefinitionIdString),
             last
         );

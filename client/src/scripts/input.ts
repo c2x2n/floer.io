@@ -1,6 +1,6 @@
 import { Vec2 } from "@common/utils/vector.ts";
 import { type Game } from "./game";
-import { halfPI, PI } from "@common/utils/math.ts";
+import { Geometry, halfPI, PI } from "@common/utils/math.ts";
 import { DirectionIn, InputAction } from "@common/net/packets/inputPacket.ts";
 
 
@@ -58,11 +58,11 @@ export class Input {
             const hRad = -halfPI * hMove + halfPI;
             const vRad = PI / 2 * vMove + PI / 2 + halfPI;
 
-            const hDir = Vec2.radiansToDirection(hRad);
-            const vDir = Vec2.radiansToDirection(vRad);
+            const hDir = Geometry.radiansToDirection(hRad);
+            const vDir = Geometry.radiansToDirection(vRad);
 
             if (hMove != 0 && vMove != 0) {
-                return Vec2.directionToRadians(Vec2.add(vDir, hDir))
+                return Geometry.directionToRadians(Vec2.add(vDir, hDir))
             } else if (hMove != 0) {
                 return hRad
             } else if (vMove != 0) {

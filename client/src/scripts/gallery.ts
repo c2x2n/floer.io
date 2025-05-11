@@ -1,9 +1,9 @@
 import { UI } from "@/ui.ts";
 import { PetalDefinition, Petals } from "@common/definitions/petals.ts";
 import { Rarity } from "@common/definitions/rarities.ts";
-import { MobContainer, PetalContainer, renderPetal } from "@/scripts/inventory.ts";
+import { renderPetal } from "@/scripts/inventory.ts";
 import $ from "jquery";
-import { applyTooltip, createMobTooltip, createPetalTooltip, unShowInformation } from "@/scripts/shown/tooltip.ts";
+import { applyTooltip, createMobTooltip, createPetalTooltip } from "@/scripts/shown/tooltip.ts";
 import { MobDefinition, Mobs } from "@common/definitions/mobs.ts";
 
 export class Gallery{

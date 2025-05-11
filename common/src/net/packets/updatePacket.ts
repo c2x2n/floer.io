@@ -1,6 +1,6 @@
 import { EntityType, GameConstants, PlayerState } from "../../constants";
 import { type GameBitStream, type Packet } from "../net";
-import { Vec2, type Vector } from "../../utils/vector";
+import { Vec2, type VectorAbstract } from "../../utils/vector";
 import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../../definitions/petals";
 import { MobDefinition, Mobs } from "../../definitions/mobs";
 import { Projectiles, ProjectileDefinition } from "../../definitions/projectiles";
@@ -8,8 +8,8 @@ import { P2 } from "../../utils/math";
 
 export interface EntitiesNetData {
     [EntityType.Player]: {
-        position: Vector
-        direction: Vector
+        position: VectorAbstract
+        direction: VectorAbstract
         state: PlayerState
         gotDamage: boolean
 
@@ -23,7 +23,7 @@ export interface EntitiesNetData {
         }
     }
     [EntityType.Petal]: {
-        position: Vector
+        position: VectorAbstract
         isReloading: boolean
         gotDamage: boolean
 
@@ -33,8 +33,8 @@ export interface EntitiesNetData {
         }
     }
     [EntityType.Mob]: {
-        position: Vector
-        direction: Vector
+        position: VectorAbstract
+        direction: VectorAbstract
 
         full?: {
             healthPercent: number
@@ -42,15 +42,15 @@ export interface EntitiesNetData {
         }
     }
     [EntityType.Loot]: {
-        position: Vector
+        position: VectorAbstract
 
         full?: {
             definition: PetalDefinition
         }
     }
     [EntityType.Projectile]: {
-        position: Vector
-        direction: Vector
+        position: VectorAbstract
+        direction: VectorAbstract
 
         full?: {
             definition: ProjectileDefinition
@@ -58,8 +58,8 @@ export interface EntitiesNetData {
         }
     }
     [EntityType.Wall]: {
-        position: Vector
-        max: Vector
+        position: VectorAbstract
+        max: VectorAbstract
 
         full?: {}
     }

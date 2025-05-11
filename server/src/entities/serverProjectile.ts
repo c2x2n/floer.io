@@ -1,5 +1,5 @@
 import { ServerEntity } from "./serverEntity";
-import { Vec2, Vector } from "../../../common/src/utils/vector";
+import { Vec2, VectorAbstract } from "../../../common/src/utils/vector";
 import { type EntitiesNetData } from "../../../common/src/net/packets/updatePacket";
 import { CircleHitbox } from "../../../common/src/utils/hitbox";
 import { EntityType } from "../../../common/src/constants";
@@ -10,7 +10,7 @@ import { damageableEntity, damageSource, isDamageableEntity } from "../typings";
 import { ServerFriendlyMob, ServerMob } from "./serverMob";
 import { ServerPlayer } from "./serverPlayer";
 import { Random } from "../../../common/src/utils/random";
-import { MathGraphics, P2 } from "../../../common/src/utils/math";
+import { Geometry, P2 } from "../../../common/src/utils/math";
 import { Effect } from "../utils/effects";
 
 export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
@@ -24,7 +24,7 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
     damage: number = 0;
 
     existingTime: number = 0;
-    direction: Vector = Vec2.new(0, 0);
+    direction: VectorAbstract = Vec2.new(0, 0);
     source: damageSource;
     elasticity = 0;
     knockback = 0.002;
@@ -54,8 +54,8 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
     }
 
     constructor(source: damageSource,
-                position: Vector,
-                direction: Vector,
+                position: VectorAbstract,
+                direction: VectorAbstract,
                 parameters: ProjectileParameters,
                 from?: ServerPetal) {
         super(source.game, position);
@@ -147,7 +147,7 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
         }
     }
 
-    updatePosition(position: Vector): void {
+    updatePosition(position: VectorAbstract): void {
         super.updatePosition(position);
         if (
             this.definition && !this.definition.onGround && !Vec2.equals(position, this._position)
@@ -172,12 +172,12 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
         if (this.parameters.spawner) {
             const spawner = this.parameters.spawner;
             if (spawner.type === EntityType.Projectile) {
-                let radiansNow = Vec2.directionToRadians(this.direction);
+                let radiansNow = Geometry.directionToRadians(this.direction);
                 for (let i = 0; i < spawner.amount; i++) {
                     new ServerProjectile(
                         this.source,
                         this.position,
-                        Vec2.radiansToDirection(radiansNow),
+                        Geometry.radiansToDirection(radiansNow),
                         spawner.spawn
                     )
                     radiansNow += P2 / spawner.amount;
@@ -190,7 +190,7 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
                     new ServerMob(
                         this.game,
                         position,
-                        Vec2.radiansToDirection(Random.float(-P2, P2)),
+                        Geometry.radiansToDirection(Random.float(-P2, P2)),
                         spawner.spawn
                     )
                 }

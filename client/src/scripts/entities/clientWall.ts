@@ -2,7 +2,7 @@ import { ClientEntity } from "./clientEntity";
 import { EntityType } from "@common/constants";
 import { Game } from "@/scripts/game";
 import { Camera } from "@/scripts/render/camera.ts";
-import { Vector } from "@common/utils/vector.ts";
+import { VectorAbstract } from "@common/utils/vector.ts";
 import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
 
 
@@ -35,8 +35,8 @@ export class ClientWall extends ClientEntity {
         ctx.fill()
     }
 
-    min?: Vector;
-    max?: Vector;
+    min?: VectorAbstract;
+    max?: VectorAbstract;
 
     override updateFromData(data: EntitiesNetData[EntityType.Wall], isNew: boolean): void {
         if (isNew) {

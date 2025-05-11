@@ -3,7 +3,7 @@ import { Vec2 } from "@common/utils/vector.ts";
 import { PetalDefinition, Petals } from "@common/definitions/petals.ts";
 import { RenderContainer } from "@/scripts/utils/render.ts";
 import { Camera } from "@/scripts/render/camera.ts";
-import { MathGraphics, P2, PI } from "@common/utils/math.ts";
+import { Geometry, P2, PI } from "@common/utils/math.ts";
 import { MobDefinition, Mobs } from "@common/definitions/mobs.ts";
 import { getAssets, getGameAssetsName } from "@/assets/assets.ts";
 import { petalAssets } from "@/assets/petals.ts";
@@ -62,7 +62,7 @@ export function ICON_drawPetal(
 
         for (let i = 0; i < count; i++) {
             const { x, y } =
-                MathGraphics.getPositionOnCircle(
+                Geometry.getPositionOnCircle(
                     radiansNow, defaultRadius, Vec2.new(offsetX, offsetY)
                 );
             ICON_drawPetalPiece(ctx, cx + x, cy + y, displaySize, petal, radians, silhouette)

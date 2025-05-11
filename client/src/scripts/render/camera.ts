@@ -1,6 +1,6 @@
-import { Vec2, type Vector } from "@common/utils/vector.ts";
+import { Vec2, type VectorAbstract } from "@common/utils/vector.ts";
 import { type Game } from "@/scripts/game.ts";
-import { MathNumeric } from "@common/utils/math.ts";
+import { Numeric } from "@common/utils/math.ts";
 import { Tween } from "@tweenjs/tween.js"
 
 export class Camera {
@@ -23,7 +23,7 @@ export class Camera {
     /**
      * Scales a game vector to pixels
      */
-    static vecToScreen(a: Vector): Vector {
+    static vecToScreen(a: VectorAbstract): VectorAbstract {
         return Vec2.mul(a, this.scale);
     }
 
@@ -51,7 +51,7 @@ export class Camera {
     scale: number = 1;
 
     resize(): void {
-        this.zoomNow = MathNumeric.targetEasing(this.zoomNow, this._zoom, 6);
+        this.zoomNow = Numeric.targetEasing(this.zoomNow, this._zoom, 6);
 
         this.screenWidth = this.game.screenWidth;
         this.screenHeight = this.game.screenHeight;
@@ -66,7 +66,7 @@ export class Camera {
     XOffset: number = 0;
     YOffset: number = 0;
 
-    cameraPosition: Vector = Vec2.new(0, 0);
+    cameraPosition: VectorAbstract = Vec2.new(0, 0);
 
     render(): void {
         this.resize()

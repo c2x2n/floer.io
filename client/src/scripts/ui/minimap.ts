@@ -1,5 +1,5 @@
 import { Game } from "@/scripts/game.ts";
-import { MathNumeric, P2 } from "@common/utils/math.ts";
+import { Numeric, P2 } from "@common/utils/math.ts";
 
 import { ZoneName, Zones } from "@common/definitions/zones.ts";
 import { Walls } from "@common/definitions/walls.ts";
@@ -148,9 +148,9 @@ export class Minimap {
 
         if (position) {
             const remappedX =
-                MathNumeric.remap(position.x, 0, this.gameWidth, 0, this.minimapWidth);
+                Numeric.remap(position.x, 0, this.gameWidth, 0, this.minimapWidth);
             const remappedY =
-                MathNumeric.remap(position.y, 0, this.gameHeight, 0, this.minimapHeight);
+                Numeric.remap(position.y, 0, this.gameHeight, 0, this.minimapHeight);
 
             ctx.fillStyle = "#FEE763";
             ctx.strokeStyle = "#988A3B";

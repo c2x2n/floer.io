@@ -1,10 +1,10 @@
 import { type GameEntity } from "@common/utils/entityPool";
 import { EntityType } from "@common/constants";
-import { Vec2, Vector } from "@common/utils/vector";
+import { Vec2, VectorAbstract } from "@common/utils/vector";
 import { Game } from "@/scripts/game";
 import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
 import { Tween } from "@tweenjs/tween.js";
-import { MathNumeric, P2 } from "@common/utils/math.ts";
+import { Numeric, P2 } from "@common/utils/math.ts";
 import { Camera } from "@/scripts/render/camera.ts";
 import { RenderContainer } from "@/scripts/utils/render.ts";
 
@@ -18,27 +18,27 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
 
     lastReceivePacket: number = 0;
 
-    oldPosition: Vector = Vec2.new(0, 0);
-    _position: Vector = Vec2.new(0, 0);
+    oldPosition: VectorAbstract = Vec2.new(0, 0);
+    _position: VectorAbstract = Vec2.new(0, 0);
     hitboxRadius: number = 0;
 
-    get position(): Vector {
+    get position(): VectorAbstract {
         return this._position;
     }
 
-    set position(position: Vector) {
+    set position(position: VectorAbstract) {
         this.oldPosition = this.position;
         this._position = position;
     }
 
-    oldDirection: Vector = Vec2.new(0, 0);
-    _direction: Vector = Vec2.new(0, 0);
+    oldDirection: VectorAbstract = Vec2.new(0, 0);
+    _direction: VectorAbstract = Vec2.new(0, 0);
 
-    get direction(): Vector {
+    get direction(): VectorAbstract {
         return this._direction;
     }
 
-    set direction(direction: Vector) {
+    set direction(direction: VectorAbstract) {
         this.oldDirection = this.direction;
         this._direction = direction;
     }
@@ -76,7 +76,7 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
 
     render(dt: number): void {
         this.interpolationTick += dt;
-        this.interpolationFactor = MathNumeric.clamp(
+        this.interpolationFactor = Numeric.clamp(
             this.interpolationTick / this.game.serverDt
             , 0, 1
         );

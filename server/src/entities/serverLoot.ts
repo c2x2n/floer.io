@@ -1,5 +1,5 @@
 import { ServerEntity } from "./serverEntity";
-import { Vector } from "../../../common/src/utils/vector";
+import { VectorAbstract } from "../../../common/src/utils/vector";
 import { type EntitiesNetData } from "../../../common/src/net/packets/updatePacket";
 import { CircleHitbox } from "../../../common/src/utils/hitbox";
 import { EntityType, GameConstants } from "../../../common/src/constants";
@@ -22,7 +22,7 @@ export class ServerLoot extends ServerEntity<EntityType.Loot> {
         return false
     }
 
-    constructor(game: Game, position: Vector, definition: PetalDefinition) {
+    constructor(game: Game, position: VectorAbstract, definition: PetalDefinition) {
         super(game, position);
         this.hitbox = new CircleHitbox(GameConstants.loot.radius * 2.5);
 

@@ -1,5 +1,5 @@
 import { Game } from "@/scripts/game.ts";
-import { MathNumeric } from "@common/utils/math.ts";
+import { Numeric } from "@common/utils/math.ts";
 import { Collision } from "@common/utils/collision.ts";
 import { RectHitbox } from "@common/utils/hitbox.ts";
 import { Vec2 } from "@common/utils/vector.ts";
@@ -119,7 +119,7 @@ export class Leaderboard {
             let isActivePlayer = data.id === this.game.activePlayerID;
             let color = "#55be55";
 
-            let width = MathNumeric.remap(
+            let width = Numeric.remap(
                 data.exp, 0, highestScore.exp, 0, this.contentWidth
             );
 

@@ -1,11 +1,11 @@
 import { ServerEntity } from "./serverEntity";
-import { Vec2, type Vector } from "../../../common/src/utils/vector";
+import { Vec2, type VectorAbstract } from "../../../common/src/utils/vector";
 import { type EntitiesNetData } from "../../../common/src/net/packets/updatePacket";
 import { CircleHitbox } from "../../../common/src/utils/hitbox";
 import { EntityType, GameConstants } from "../../../common/src/constants";
 import { Game } from "../game";
 import { MobCategory, MobDefinition, Mobs } from "../../../common/src/definitions/mobs";
-import { MathGraphics, MathNumeric, P2 } from "../../../common/src/utils/math";
+import { Geometry, Numeric, P2 } from "../../../common/src/utils/math";
 import { ServerPlayer } from "./serverPlayer";
 import { Random } from "../../../common/src/utils/random";
 import { PetalDefinition, Petals } from "../../../common/src/definitions/petals";
@@ -42,20 +42,20 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
     set health(value: number) {
         if (value === this._health) return
-        this._health = MathNumeric.clamp(value, 0, this.definition.health);
+        this._health = Numeric.clamp(value, 0, this.definition.health);
 
         this.setFullDirty();
     }
 
     aggroTarget?: damageSource;
 
-    _direction: Vector = Vec2.new(0, 0);
+    _direction: VectorAbstract = Vec2.new(0, 0);
 
-    get direction(): Vector {
+    get direction(): VectorAbstract {
         return this._direction
     }
 
-    set direction(value: Vector) {
+    set direction(value: VectorAbstract) {
         if (value === this._direction) return
         this._direction = value;
 
@@ -107,8 +107,8 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
     healingToFull: boolean = false;
 
     constructor(game: Game
-                , position: Vector
-                , direction: Vector
+                , position: VectorAbstract
+                , direction: VectorAbstract
                 , definition: MobDefinition
                 , lastSegment?: ServerMob) {
         super(game, position);
@@ -166,7 +166,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         }
     }
 
-    shootDirection: Vector = Vec2.new(0, 0);
+    shootDirection: VectorAbstract = Vec2.new(0, 0);
     shootSpeedForNow?: number;
     lastShootTime: number = 0;
 
@@ -232,13 +232,13 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
         if (this.lastSegment) {
             if (!this.lastSegment.destroyed) {
-                this.direction = MathGraphics.directionBetweenPoints(
+                this.direction = Geometry.directionBetweenPoints(
                     this.position,
                     this.lastSegment.position
                 );
 
-                this.position = MathGraphics.getPositionOnCircle(
-                    Vec2.directionToRadians(
+                this.position = Geometry.getPositionOnCircle(
+                    Geometry.directionToRadians(
                         this.direction,
                     ),
                     this.definition.hitboxRadius + this.lastSegment.definition.hitboxRadius,
@@ -247,7 +247,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
                 if (this.lastSegment.aggroTarget) {
                     if (this.definition.shootable) {
-                        this.shootDirection = Vec2.radiansToDirection(
+                        this.shootDirection = Geometry.radiansToDirection(
                             Random.float(-P2, P2)
                         )
                         this.shootTick();
@@ -317,13 +317,13 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
             && this.aggroTarget)
         {
             if (this.aggroTarget.destroyed) return this.changeAggroTo();
-            const distanceBetween = Vec2.distance(this.aggroTarget.position, this.position);
+            const distanceBetween = Vec2.distanceBetween(this.aggroTarget.position, this.position);
             if (distanceBetween > this.definition.aggroRadius * 2.2) return this.changeAggroTo();
 
-            this.direction = MathGraphics.directionBetweenPoints(
+            this.direction = Geometry.directionBetweenPoints(
                 this.aggroTarget.position, this.position
             );
-            this.shootDirection = MathGraphics.directionBetweenPoints(
+            this.shootDirection = Geometry.directionBetweenPoints(
                 this.aggroTarget.position, this.position
             );
 
@@ -358,7 +358,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
                     for (const entity of entities) {
                         if (entity instanceof ServerPlayer) {
-                            const distance = Vec2.distance(this.position, entity.position);
+                            const distance = Vec2.distanceBetween(this.position, entity.position);
                             if (distance < nearestDistance) {
                                 nearestDistance = distance;
                                 nearestPlayer = entity;
@@ -457,7 +457,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                 popPercents.forEach((popPercent) => {
                     if (popPercent >= percent && lastPopped >= popPercent) {
                         new ServerMob(this.game,
-                            MathGraphics.getPositionOnCircle(Random.float(-P2, P2), 4,this.position),
+                            Geometry.getPositionOnCircle(Random.float(-P2, P2), 4,this.position),
                             this.direction,
                             Mobs.fromString(popKey)).changeAggroTo(source)
                         if (this.lastPopped > percent) this.lastPopped = percent;
@@ -584,7 +584,7 @@ export class ServerFriendlyMob extends ServerMob {
     gettingBackToOwner: boolean = false;
 
     tick() {
-        const distanceToOwner = Vec2.distance(this.position, this.owner.position);
+        const distanceToOwner = Vec2.distanceBetween(this.position, this.owner.position);
         if (distanceToOwner > Math.max(8 * this.definition.hitboxRadius, 25)) {
             this.gettingBackToOwner = true;
         }
@@ -592,7 +592,7 @@ export class ServerFriendlyMob extends ServerMob {
         if (this.gettingBackToOwner) {
             this.aggroTarget = undefined;
             this.direction =
-                MathGraphics.directionBetweenPoints(this.owner.position, this.position);
+                Geometry.directionBetweenPoints(this.owner.position, this.position);
             this.setAcceleration(Vec2.mul(
                 this.direction, this.speed
             ));

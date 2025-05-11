@@ -1,5 +1,5 @@
 import { AssetsBunch, AssetsDrawer } from "@/assets/assets.ts";
-import { MathNumeric, P2 } from "@common/utils/math.ts";
+import { Numeric, P2 } from "@common/utils/math.ts";
 
 const web = new Image();
 web.src = "img/game/web.svg";
@@ -83,12 +83,12 @@ export const projectileAssets: AssetsBunch = {
 
             const oldBrightness = containerToDraw.brightness;
 
-            containerToDraw.brightness = MathNumeric.remap(time, 1, 2, 1, 10);
+            containerToDraw.brightness = Numeric.remap(time, 1, 2, 1, 10);
 
             ctx.strokeStyle = containerToDraw.getRenderColor("#6e2a25");
 
             ctx.globalAlpha = containerToDraw.getAlpha(
-                MathNumeric.remap(time, 0, 2, 0.5, 1)
+                Numeric.remap(time, 0, 2, 0.5, 1)
             );
             ctx.beginPath();
             ctx.moveTo(one.x, one.y);
