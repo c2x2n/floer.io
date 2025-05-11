@@ -1,8 +1,4 @@
-<img src="https://img.shields.io/badge/TYPESCRIPT-white?style=for-the-badge&logo=typescript">
-<img src="https://img.shields.io/badge/HTML5-gray?style=for-the-badge&logo=html5">
-<img src="https://img.shields.io/badge/CSS3-blue?style=for-the-badge&logo=css3">
-<img src="https://img.shields.io/badge/VITE-yellow?style=for-the-badge&logo=vite">
-<img src="https://img.shields.io/badge/Nginx-green?style=for-the-badge&logo=nginx">
+<img src="https://img.shields.io/badge/TYPESCRIPT-white?style=for-the-badge&logo=typescript"><img src="https://img.shields.io/badge/HTML5-gray?style=for-the-badge&logo=html5"><img src="https://img.shields.io/badge/CSS3-blue?style=for-the-badge&logo=css3"><img src="https://img.shields.io/badge/VITE-yellow?style=for-the-badge&logo=vite"><img src="https://img.shields.io/badge/Nginx-green?style=for-the-badge&logo=nginx">
 
 Floer.io is a fan-made game of Florr.io, and work in progress.
 
