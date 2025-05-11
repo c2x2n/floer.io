@@ -451,7 +451,7 @@ export class Game {
         this.camera.render();
         this.app.renderer.render();
 
-        this.ui.render();
+        this.ui.renderGame();
 
         for (const needUpdateEntity of this.needUpdateEntities) {
             if (!needUpdateEntity) continue;

@@ -226,7 +226,7 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
 
     get data(): Required<EntitiesNetData[EntityType.Petal]>{
         const data = {
-            position: Vec2.sub(this.position, this.owner.position),
+            position: Vec2.mul(Vec2.sub(this.position, this.owner.position), 100),
             isReloading: this.isReloading || this.hidden,
             gotDamage: this.gotDamage,
             full: {

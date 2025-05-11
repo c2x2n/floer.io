@@ -17,7 +17,6 @@ export function getVersion() {
     return `v${version}`;
 }
 
-
 export class UI {
     readonly app: ClientApplication;
 
@@ -51,8 +50,6 @@ export class UI {
     readonly continueButton = $<HTMLDivElement>("#btn-continue");
     readonly closeButton = $<HTMLDivElement>("#btn-close");
     readonly abandon= $<HTMLDivElement>("#abandon");
-
-    readonly topLeftButton = $<HTMLDivElement>("#top-left-buttons");
 
     readonly moveHigh = $<HTMLDivElement>("#move-high");
     readonly moveHighTime = $<HTMLDivElement>("#move-high-time");
@@ -201,9 +198,8 @@ export class UI {
         });
 
         window.addEventListener("beforeunload", (ev) => {
-            if (this.game.running) {
+            if (this.game.running)
                 ev.preventDefault();
-            }
         });
 
         this.gameOverScreen.css("display", "none");
@@ -686,7 +682,7 @@ export class UI {
         jq.scrollTop(scrollPosition);
     }
 
-    render(): void {
+    renderGame(): void {
         if (!this.chatInput.hasClass("focused")) {
             for (const chatMessage of this.chatMessages) {
                 chatMessage.updateOpacity()

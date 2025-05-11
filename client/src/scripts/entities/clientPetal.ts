@@ -114,11 +114,6 @@ export class ClientPetal extends ClientEntity {
 
             this.velocity = newVelocity;
             this.toCenterPosition = position;
-            this.appliedToCenterPosition = Vec2.targetEasing(
-                this.appliedToCenterPosition,
-                this.toCenterPosition,
-                1.5
-            )
 
             if (owner) {
                 this.ownerPosition = Vec2.targetEasing(
@@ -128,7 +123,7 @@ export class ClientPetal extends ClientEntity {
                 )
             }
 
-            this.position = Vec2.add(this.appliedToCenterPosition, this.ownerPosition)
+            this.position = Vec2.add(this.toCenterPosition, this.ownerPosition)
 
             this.updateContainerPosition(4.5);
         }
@@ -174,9 +169,10 @@ export class ClientPetal extends ClientEntity {
 
     ownerPosition: Vector = Vec2.new(0, 0);
     toCenterPosition: Vector = Vec2.new(0, 0);
-    appliedToCenterPosition: Vector = Vec2.new(0, 0);
 
     updateFromData(data: EntitiesNetData[EntityType.Petal], isNew: boolean): void {
+        data.position = Vec2.div(data.position, 100);
+
         if (data.full && isNew) {
             this.toCenterPosition = data.position;
             this.definition = data.full.definition;
@@ -186,15 +182,16 @@ export class ClientPetal extends ClientEntity {
             this.container.position = Camera.vecToScreen(data.position);
             this.container.zIndex = 2;
             this.ownerId = data.full.ownerId;
+            const owner = this.game.entityPool.get(this.ownerId);
+            if (owner) this.ownerPosition = owner.position;
         }
         const length =
             Vec2.distance(this.toCenterPosition, data.position);
         const vector = Vec2.mul(MathGraphics.directionBetweenPoints(
             data.position, this.toCenterPosition
-        ), length)
-        const downer = MathNumeric.clamp(
-            length, 0, 0.75
-        )
+        ), length * 1.1);
+
+        const downer = MathNumeric.clamp(length, 0, 0.64);
 
         if (length > 0.1) {
             this.velocity.push({

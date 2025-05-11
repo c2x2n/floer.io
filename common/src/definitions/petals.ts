@@ -685,7 +685,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         images: {
             selfGameRotation: 0.02,
-            slotDisplaySize: 75,
+            slotDisplaySize: 55,
             slotRotation: 0.8,
             facingOut: true,
             fontSizeMultiplier: 0.8

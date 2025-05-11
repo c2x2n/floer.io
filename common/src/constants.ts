@@ -21,6 +21,7 @@ export enum PlayerState {
     Defending,
     Danded,
     Poisoned,
+    Debuffed,
     Normal
 }
 

@@ -107,7 +107,11 @@ export class GameBitStream extends BitStream {
      * @param y The y-coordinate of the vector to write
      */
     writePositionByXY(x: number, y: number): void {
-        this.writeVectorByXY(x, y, -GameConstants.maxPosition, -GameConstants.maxPosition, GameConstants.maxPosition, GameConstants.maxPosition, 16);
+        // this.writeVectorByXY(x, y, -GameConstants.maxPosition, -GameConstants.maxPosition, GameConstants.maxPosition, GameConstants.maxPosition, 16);
+        this.writeBoolean(x < 0);
+        this.writeBoolean(y < 0);
+        this.writeUint16((Math.abs(x) / GameConstants.maxPosition) * 65536 + 0.5);
+        this.writeUint16((Math.abs(y) / GameConstants.maxPosition) * 65536 + 0.5);
     }
 
     /**
@@ -115,7 +119,14 @@ export class GameBitStream extends BitStream {
      * @return the position Vector.
      */
     readPosition(): Vector {
-        return this.readVector(-GameConstants.maxPosition, -GameConstants.maxPosition, GameConstants.maxPosition, GameConstants.maxPosition, 16);
+        // return this.readVector(-GameConstants.maxPosition, -GameConstants.maxPosition, GameConstants.maxPosition, GameConstants.maxPosition, 16);
+        const negaX = this.readBoolean();
+        const negaY = this.readBoolean();
+
+        return {
+            x: (negaX ? -1 : 1) * (this.readUint16() / 65536) * GameConstants.maxPosition,
+            y: (negaY ? -1 : 1) *(this.readUint16() / 65536) * GameConstants.maxPosition
+        }
     }
 
     static unitEps = 1.0001;

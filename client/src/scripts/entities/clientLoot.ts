@@ -7,6 +7,8 @@ import { PetalDefinition } from "@common/definitions/petals.ts";
 import { Rarity } from "@common/definitions/rarities.ts";
 import { Tween } from "@tweenjs/tween.js";
 import { ICON_drawPetal } from "@/scripts/utils/icons.ts";
+import { Random } from "@common/utils/random.ts";
+import { halfPI, P2 } from "@common/utils/math.ts";
 
 export class ClientLoot extends ClientEntity {
     type = EntityType.Loot;
@@ -31,10 +33,10 @@ export class ClientLoot extends ClientEntity {
         ctx.globalAlpha = 0.2;
         ctx.beginPath();
         ctx.roundRect(
-            -29,
-            -29,
-            58,
-            58,
+            -30,
+            -30,
+            59,
+            59,
             2
         )
         ctx.fill()
@@ -63,38 +65,38 @@ export class ClientLoot extends ClientEntity {
 
         if (data.full && isNew){
             this.definition = data.full.definition;
+            const targetRotation = Random.float(0.1, -0.1);
 
             this.container.zIndex = -888;
 
             this.animations.push(this.game.addTween(
-                new Tween({ scale: 0, alpha: 0 })
-                    .to({ scale: 1, alpha: 1 }, 100 )
+                new Tween({ scale: 0, alpha: 0, rotation: -halfPI })
+                    .to({ scale: 0.85, alpha: 1, rotation: targetRotation }, 200 )
                     .onUpdate(d => {
                         this.container.scale = d.scale;
                         this.container.alpha = d.alpha;
-                    })
-            ));
+                        this.container.rotation = d.rotation;
+                    }),
+                () => {
+                    this.animations.push(this.game.addTween(
+                        new Tween({ scale: 0.9 })
+                            .to({ scale: 1.05 }, 400 )
+                            .repeat(Infinity)
+                            .onUpdate(d => {
+                                this.container.scale = d.scale;
+                            })
+                    ));
 
-            this.animations.push(this.game.addTween(
-                new Tween({ angle: 0.1, scale: 0.95 })
-                    .delay(100)
-                    .to({ angle: -0.1, scale: 1.05 }, 900 )
-                    .repeat(Infinity)
-                    .onUpdate(d => {
-                        this.container.rotation = d.angle;
-                        this.container.scale = d.scale;
-                    })
-            ));
-
-            this.animations.push(this.game.addTween(
-                new Tween({ angle: -0.1, scale: 1.05 })
-                    .delay(1000)
-                    .to({ angle: 0.1, scale: 0.95 }, 1000 )
-                    .repeat(Infinity)
-                    .onUpdate(d => {
-                        this.container.rotation = d.angle;
-                        this.container.scale = d.scale;
-                    })
+                    this.animations.push(this.game.addTween(
+                        new Tween({ scale: 1.05 })
+                            .delay(400)
+                            .to({ scale: 0.9 }, 400 )
+                            .repeat(Infinity)
+                            .onUpdate(d => {
+                                this.container.scale = d.scale;
+                            })
+                    ));
+                }
             ));
         }
     }

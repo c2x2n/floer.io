@@ -106,7 +106,7 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
 
         if (disableFilter){
             this.game.addTween(
-                new Tween({ color: { r: 255, g: 0, b: 0 } })
+                new Tween({ color: { r: 555, g: 0, b: 0 } })
                     .to({ color: { r: 255, g: 255, b: 255 } }, tick * 2 )
                     .onUpdate(d => {
                         this.container.tint = d.color;
@@ -116,7 +116,7 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
         }
 
         this.game.addTween(
-            new Tween({ color: { r: 255, g: 0, b: 0 } })
+            new Tween({ color: { r: 555, g: 0, b: 0 } })
                 .to({ color: { r: 255, g: 255, b: 255 } }, tick )
                 .onUpdate(d => {
                     this.container.tint = d.color;
@@ -126,14 +126,14 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
         this.game.addTween(
             new Tween({ brightness: 1 })
                 .delay(tick)
-                .to({ brightness: 3 }, tick )
+                .to({ brightness: 4 }, tick )
                 .onUpdate(d => {
                     this.container.brightness = d.brightness;
                 })
         )
 
         this.game.addTween(
-            new Tween({ brightness: 3 })
+            new Tween({ brightness: 4 })
                 .delay(tick * 2)
                 .to({ brightness: 1 }, tick )
                 .onUpdate(d => {

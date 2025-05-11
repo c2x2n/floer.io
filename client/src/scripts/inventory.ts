@@ -150,14 +150,19 @@ export class Inventory{
                         ctx.fillStyle = "rgba(0, 0, 0, 0.25)";
                         ctx.beginPath()
                         if (this.game.running) {
+                            if (container.state != data.state) {
+                                container.percent = data.percent;
+                                container.state = data.state;
+                            }
+                            container.percent = MathNumeric.targetEasing(container.percent, data.percent, 4);
                             if (data.state === PetalState.Reloading) {
                                 ctx.moveTo(canvas.width / 2, canvas.height / 2);
-                                const start = P2 * (1 - data.percent) * 5;
+                                const start = P2 * (1 - container.percent) * 5;
 
                                 ctx.arc(
                                     canvas.width / 2, canvas.height / 2,
                                     canvas.width,
-                                    start, start + P2 * data.percent
+                                    start, start + P2 * container.percent
                                 )
 
                                 ctx.closePath()
@@ -165,7 +170,7 @@ export class Inventory{
                                 ctx.fill()
                             } else if (data.state === PetalState.Normal) {
                                 ctx.rect(
-                                    0, 0, canvas.width, canvas.height * (1 - data.percent)
+                                    0, 0, canvas.width, canvas.height * (1 - container.percent)
                                 )
 
                                 ctx.fill()
@@ -883,6 +888,8 @@ export class PetalContainer {
     ui_slot?: JQuery;
     petalDefinition: SavedPetalDefinitionData = null;
     canvas?: HTMLCanvasElement;
+    percent: number = 1;
+    state: PetalState = PetalState.Normal;
 
     constructor() {}
 

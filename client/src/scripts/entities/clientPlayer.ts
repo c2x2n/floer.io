@@ -3,7 +3,7 @@ import { EntityType, GameConstants, PlayerState } from "@common/constants";
 import { Game } from "@/scripts/game";
 import { Camera } from "@/scripts/render/camera.ts";
 import { MathNumeric, P2 } from "@common/utils/math.ts";
-import { Vec2 } from "@common/utils/vector.ts";
+import { Vec2, Vector } from "@common/utils/vector.ts";
 import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
 
 export class ClientPlayer extends ClientEntity {
@@ -24,7 +24,6 @@ export class ClientPlayer extends ClientEntity {
 
     mouthTopPosition: number = 0;
     eyeTrianglePosition: number = 0;
-    eyeDirection: number = 0;
 
     state: PlayerState = PlayerState.Normal;
 
@@ -54,21 +53,21 @@ export class ClientPlayer extends ClientEntity {
                 this.healthPercent = data.full.healthPercent;
                 this.shieldPercent = data.full.shieldPercent ?? 0;
             }
-            
+
             // 只在隐身状态真正改变时才更新
             if (data.full.invisible !== this.invisible) {
                 const newInvisible = data.full.invisible;
                 this.invisible = newInvisible;
                 this.container.visible = !newInvisible;
-                
+
                 // 使用 Set 来存储已更新的花瓣，避免重复更新
                 const updatedPetals = new Set<number>();
-                
+
                 // 只在状态改变时更新花瓣可见性
                 if (this.game.entityPool) {
                     for (const entity of this.game.entityPool) {
-                        if (entity.type === EntityType.Petal && 
-                            (entity as any).ownerId === this.id && 
+                        if (entity.type === EntityType.Petal &&
+                            (entity as any).ownerId === this.id &&
                             !updatedPetals.has(entity.id)) {
                             entity.container.visible = !newInvisible;
                             updatedPetals.add(entity.id);
@@ -92,6 +91,8 @@ export class ClientPlayer extends ClientEntity {
             case PlayerState.Defending:
                 return -2;
             case PlayerState.Danded:
+                return -3;
+            case PlayerState.Debuffed:
                 return -3;
         }
         return 2.7;
@@ -117,6 +118,8 @@ export class ClientPlayer extends ClientEntity {
         }
     }
 
+    eyeBallPosition : Vector = Vec2.new(0, 0);
+
     drawFlower() {
         const mouthX = 6.2;
         const mouthY = 9;
@@ -140,13 +143,10 @@ export class ClientPlayer extends ClientEntity {
             this.eyeTrianglePosition, (this.state === PlayerState.Attacking ? -3.5 : -8) + firstEyeCenter.y
         )
 
-        this.eyeDirection =
-            MathNumeric.targetEasing(this.eyeDirection, Vec2.directionToRadians(this.direction))
-
         const eyeInsideWidth = 2;
         const eyeInsideHeight = 5;
 
-        const radians = this.eyeDirection;
+        const radians = Vec2.directionToRadians(this.direction);
 
         const ellRadius = Math.sqrt(
             (eyeInsideWidth * Math.sin(radians)) ** 2 + (eyeInsideHeight * Math.cos(radians)) ** 2
@@ -157,6 +157,11 @@ export class ClientPlayer extends ClientEntity {
                 eyeInsideWidth * eyeInsideHeight * Math.cos(radians) / ellRadius,
                 eyeInsideWidth * eyeInsideHeight * Math.sin(radians) / ellRadius,
             )
+
+        this.eyeBallPosition = Vec2.targetEasing(
+            this.eyeBallPosition,
+            eyeballPosition
+        );
 
         this.ctx.beginPath()
         this.ctx.fillStyle = bodyColor;
@@ -172,13 +177,13 @@ export class ClientPlayer extends ClientEntity {
 
         this.ctx.beginPath()
         this.ctx.lineWidth = 1.7;
-        this.ctx.strokeStyle = "#000000";
+        this.ctx.strokeStyle = "#111111";
         this.ctx.moveTo(-mouthX, mouthY)
         this.ctx.bezierCurveTo(0, this.mouthTopPosition, 0, this.mouthTopPosition, mouthX, mouthY)
         this.ctx.stroke()
 
         this.ctx.beginPath()
-        this.ctx.fillStyle = "#000000";
+        this.ctx.fillStyle = "#111111";
         this.ctx.ellipse(
             firstEyeCenter.x, firstEyeCenter.y,
             eyeWidth, eyeHeight, 0, 0, P2
@@ -186,7 +191,7 @@ export class ClientPlayer extends ClientEntity {
         this.ctx.fill()
 
         this.ctx.beginPath()
-        this.ctx.fillStyle = "#000000";
+        this.ctx.fillStyle = "#111111";
         this.ctx.ellipse(
             -firstEyeCenter.x, firstEyeCenter.y,
             eyeWidth, eyeHeight, 0, 0, P2
@@ -195,9 +200,9 @@ export class ClientPlayer extends ClientEntity {
 
         this.ctx.beginPath()
         this.ctx.lineWidth = 1;
-        this.ctx.fillStyle = "#ffffff";
+        this.ctx.fillStyle = "#eeeeee";
         this.ctx.arc(
-            firstEyeCenter.x + eyeballPosition.x, firstEyeCenter.y + eyeballPosition.y,
+            firstEyeCenter.x + this.eyeBallPosition.x, firstEyeCenter.y + this.eyeBallPosition.y,
             3.5,
             0, P2
         )
@@ -205,9 +210,9 @@ export class ClientPlayer extends ClientEntity {
         this.ctx.stroke()
 
         this.ctx.beginPath()
-        this.ctx.fillStyle = "#ffffff";
+        this.ctx.fillStyle = "#eeeeee";
         this.ctx.arc(
-            -firstEyeCenter.x + eyeballPosition.x, firstEyeCenter.y + eyeballPosition.y,
+            -firstEyeCenter.x + this.eyeBallPosition.x, firstEyeCenter.y + this.eyeBallPosition.y,
             3.5,
             0, P2
         )

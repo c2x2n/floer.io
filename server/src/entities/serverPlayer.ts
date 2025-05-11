@@ -20,7 +20,7 @@ import { ActionType, EntityType, GameConstants, PlayerState } from "../../../com
 import { GameOverPacket } from "../../../common/src/net/packets/gameOverPacket";
 import { Inventory } from "../inventory/inventory";
 import { ServerPetal } from "./serverPetal";
-import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../../../common/src/definitions/petals";
+import { PetalDefinition, SavedPetalDefinitionData } from "../../../common/src/definitions/petals";
 import { AttributeEvents } from "../utils/attributeRealizes";
 import { PlayerModifiers } from "../../../common/src/typings";
 import { EventFunctionArguments } from "../utils/petalEvents";
@@ -30,9 +30,7 @@ import { LoggedInPacket } from "../../../common/src/net/packets/loggedInPacket";
 import { ServerFriendlyMob } from "./serverMob";
 import { ChatChannel, ChatPacket } from "../../../common/src/net/packets/chatPacket";
 import { PoisonEffect } from "../utils/effects";
-import { Rarity, RarityName } from "../../../common/src/definitions/rarities";
-import { MobDefinition, Mobs } from "../../../common/src/definitions/mobs";
-import { ServerWall } from "./serverWall";
+import { MobDefinition } from "../../../common/src/definitions/mobs";
 import { spawnLoot } from "../misc/spawning";
 import { applyCommand, CommandResolving } from "../misc/command";
 
@@ -716,6 +714,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         if (this.modifiers.healing < 1) return PlayerState.Danded;
         if (this.isAttacking) return PlayerState.Attacking;
         if (this.isDefending) return PlayerState.Defending;
+        if (this.modifiers.speed < 1) return PlayerState.Debuffed;
         return PlayerState.Normal
     }
 

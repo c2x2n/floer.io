@@ -1,13 +1,11 @@
 import { ClientEntity } from "./clientEntity";
 import { EntityType } from "@common/constants";
-import { getGameAssetsFile } from "@/scripts/utils/icons.ts";
 import { Game } from "@/scripts/game";
 import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
 import { Camera } from "@/scripts/render/camera.ts";
 import { MobDefinition } from "@common/definitions/mobs.ts";
 import { Vec2 } from "@common/utils/vector.ts";
 import { Rarity } from "@common/definitions/rarities.ts";
-import { mobAssets } from "@/assets/mobs.ts";
 import { Tween, Easing } from "@tweenjs/tween.js";
 import { MathGraphics, MathNumeric } from "@common/utils/math.ts";
 import { getAssets, getGameAssetsName } from "@/assets/assets.ts";
@@ -214,9 +212,10 @@ export class ClientMob extends ClientEntity {
     }
 
     destroy() {
+        this.getDamageAnimation()
         this.game.addTween(
             new Tween({ scale: this.container.scale, alpha: 1 },)
-                .to({ scale: this.container.scale * 3, alpha: 0 }, 100 )
+                .to({ scale: this.container.scale * 4, alpha: 0 }, 200 )
                 .onUpdate(d => {
                     this.container.scale = d.scale;
                     this.container.alpha = d.alpha;
