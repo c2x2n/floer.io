@@ -1028,6 +1028,97 @@ export const petalAssets: AssetsBunch = {
         
         ctx.restore();
     },
+    "smasher": (containerToDraw) => {
+        const { ctx, radius } = containerToDraw;
+
+        const sides = 6;
+        const outerRadius = radius * 1.2;
+        const innerRadius = radius * 1;
+
+        const rotationSpeed = 3;
+        const currentTime = Date.now();
+        const elapsedTime = (currentTime - containerToDraw.createdTime) / 1000;
+        const rotation = (elapsedTime * rotationSpeed) % (Math.PI * 2);
+        
+        ctx.save();
+        ctx.rotate(rotation);
+        
+        ctx.fillStyle = containerToDraw.getRenderColor("#444444");
+        ctx.strokeStyle = containerToDraw.getRenderColor("#000000");
+        ctx.lineWidth = radius * 0.075;
+
+        ctx.beginPath();
+        for (let i = 0; i < sides; i++) {
+            const angle = (i / sides) * P2;
+            const x = outerRadius * Math.cos(angle);
+            const y = outerRadius * Math.sin(angle);
+            
+            if (i === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        }
+        ctx.closePath();
+
+        ctx.arc(0, 0, innerRadius, 0, P2, true);
+        ctx.closePath();
+        
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+    },
+    "tri_poison_cactus": (containerToDraw) => {
+        const { ctx, radius } = containerToDraw;
+
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+
+        loadPathFromSVG({
+            containerToDraw,
+            pathS: "m 190.9104,100.00044 q -28.83584,25.7134 -26.62977,64.28139 Q 125.71264,162.07576 99.999241,190.9116 74.290071,162.07576 35.717846,164.28183 37.923913,125.71384 9.0880745,100.00044 37.923913,74.291273 35.717846,35.719044 74.285831,37.925111 99.999241,9.0935154 125.7084,37.925111 164.28063,35.719044 162.07456,74.287031 190.9104,100.00044",
+            fill: "#b03ac8",
+            stroke: {
+                width: 25,
+                color: "#896d34"
+            }
+        })
+
+        loadPathFromSVG({
+            containerToDraw,
+            pathS: "m 190.9104,100.00044 q -28.83584,25.7134 -26.62977,64.28139 Q 125.71264,162.07576 99.999241,190.9116 74.290071,162.07576 35.717846,164.28183 37.923913,125.71384 9.0880745,100.00044 37.923913,74.291273 35.717846,35.719044 74.285831,37.925111 99.999241,9.0935154 125.7084,37.925111 164.28063,35.719044 162.07456,74.287031 190.9104,100.00044",
+            fill: "#a78640"
+        })
+
+        ctx.beginPath();
+        ctx.fillStyle = containerToDraw.getRenderColor("#b29642");
+        ctx.arc(
+            0, 0,
+            radius * 0.5, 0, P2
+        )
+
+        ctx.fill()
+    },
+        "disc": (containerToDraw) => {
+        const { ctx, radius } = containerToDraw;
+        
+        const outerRadius = radius * 1.1;
+        const innerRadius = radius * 0.9;
+        
+        
+        ctx.save();
+        
+
+        ctx.beginPath();
+        ctx.arc(0, 0, outerRadius, 0, P2);
+        ctx.arc(0, 0, innerRadius, 0, P2, true);
+        ctx.closePath();
+        
+        ctx.fillStyle = containerToDraw.getRenderColor("#000000");
+        ctx.fill();
+
+
+    },
     "default": (containerToDraw) => {
         petalAssets["basic"](containerToDraw);
     },

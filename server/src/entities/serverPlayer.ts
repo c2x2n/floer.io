@@ -370,6 +370,17 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             (source && source instanceof ServerPlayer && source.state.poison) ||
             // 自毒伤害(uranium辐射)
             (disableEvent && this.modifiers.selfPoison > 0);
+            
+        // 检查是否为碰撞伤害（来自玩家或怪物，但不是花瓣和投射物）
+        const isCollisionDamage = source && 
+            (source instanceof ServerPlayer || 
+             (source instanceof ServerEntity && source.type === EntityType.Mob)) &&
+            !isPoisonDamage;
+            
+        // 如果是碰撞伤害，应用伤害减免
+        if (isCollisionDamage && this.modifiers.bodyDamageReduction > 0) {
+            amount *= (1 - this.modifiers.bodyDamageReduction);
+        }
 
         // 如果是毒素伤害，直接扣减血量，绕过护盾
         if (isPoisonDamage) {
@@ -766,11 +777,12 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         now.controlRotation = extra.controlRotation ?? now.controlRotation;
         now.revive = extra.revive ?? now.revive;
         now.bodyDamage *= extra.bodyDamage ?? 1;
+        now.knockbackReduction += extra.knockbackReduction ?? 0;
         if (extra.conditionalHeal) {
             now.conditionalHeal = extra.conditionalHeal;
         }
         now.extraSlot += extra.extraSlot ?? 0;
-
+        now.bodyDamageReduction += extra.bodyDamageReduction ?? 0;
         return now;
     }
 

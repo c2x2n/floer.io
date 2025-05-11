@@ -66,6 +66,8 @@ export const GameConstants = Object.freeze({
             controlRotation: false,
             extraSlot: 0,
             bodyDamage: 1,
+            knockbackReduction: 0,
+            bodyDamageReduction: 0
         }),
     },
     petal: {
