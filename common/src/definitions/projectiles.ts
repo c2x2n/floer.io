@@ -16,6 +16,10 @@ export const Projectiles = new Definitions<ProjectileDefinition>([
     },{
         idString: "missile",
         displayName: "Missile",
+    },
+    {
+        idString: "myt_big_missile",
+        displayName: "Mecha Missile",
     },{
         idString: "web",
         displayName: "Web",
@@ -71,6 +75,12 @@ export interface ProjectileParameters {
     velocityAtFirst?: number
     spawner?: SpawnerType
     customDefinition?: any
+    tracking?: {
+        enabled: boolean
+        turnSpeed: number
+        detectionRange: number
+        preferClosest?: boolean
+    }
 }
 
 export type SpawnerType = {

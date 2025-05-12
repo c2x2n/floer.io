@@ -38,6 +38,12 @@ export class ClientProjectile extends ClientEntity {
     updateFromData(data: EntitiesNetData[EntityType.Projectile], isNew: boolean): void {
         this.position = data.position;
         this.direction = data.direction;
+        
+        const rotation = data.rotation !== undefined ? 
+            data.rotation : 
+            Geometry.directionToRadians(data.direction);
+
+        this.container.rotation = rotation;
 
         if (data.full){
             if (isNew) {
@@ -46,7 +52,7 @@ export class ClientProjectile extends ClientEntity {
 
                 this.hitboxRadius = data.full.hitboxRadius;
                 this.container.radius = Camera.unitToScreen(this.hitboxRadius);
-                this.container.rotation = Geometry.directionToRadians(data.direction);
+
                 if (this.definition.onGround){
                     this.container.zIndex = -999
                 }

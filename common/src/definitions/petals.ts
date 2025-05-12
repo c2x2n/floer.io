@@ -875,7 +875,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         images: {
             selfGameRotation: 0.02,
-            slotDisplaySize: 45,
+            slotDisplaySize: 60,
             slotRotation: 0.8,
             centerXOffset: -1,
             centerYOffset: -1,
@@ -887,9 +887,15 @@ export let Petals = new Definitions<PetalDefinition>([
                 hitboxRadius: 0.6,
                 damage: 50,
                 health: 20,
-                despawnTime: 3,
-                speed: 12,
-                definition: Projectiles.fromString("missile")
+                despawnTime: 10,
+                speed: 5,
+                definition: Projectiles.fromString("myt_big_missile"),
+                tracking: {
+                    enabled: true,
+                    turnSpeed: 4,
+                    detectionRange: 30,
+                    preferClosest: true
+                }
             }
         },
         useTime: 0.1,
@@ -897,8 +903,7 @@ export let Petals = new Definitions<PetalDefinition>([
         hitboxRadius: 0.6,
         isDuplicate: false,
         pieceAmount: 1,
-        rarity: RarityName.mythic,
-        usingAssets: "missile"
+        rarity: RarityName.mythic
     }, {
         idString: "iris",
         displayName: "Iris",
