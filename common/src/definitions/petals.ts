@@ -607,7 +607,7 @@ export let Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 45,
         },
         attributes: {
-            boost: 10
+            boost: 7.5
         },
         reloadTime: 3.5,
         hitboxRadius: 0.5,
@@ -1151,18 +1151,18 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 1,
         extendable: false,
         usable: true,
-        useTime: 0,
+        useTime: 0.1,
         images: {
             slotDisplaySize: 45,
         },
         attributes: {
             boost: 5
         },
-        reloadTime: 1.5,
+        reloadTime: 1.4,
         hitboxRadius: 0.5,
         isDuplicate: false,
         pieceAmount: 1,
-        rarity: RarityName.legendary,
+        rarity: RarityName.mythic,
         usingAssets: "bubble"
     },
     {
