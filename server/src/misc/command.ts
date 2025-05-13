@@ -2,9 +2,7 @@ import { PetalDefinition, Petals } from "../../../common/src/definitions/petals"
 import { Rarity, RarityName } from "../../../common/src/definitions/rarities";
 import { spawnLoot } from "./spawning";
 import { Mobs } from "../../../common/src/definitions/mobs";
-import { EntityType, GameConstants } from "../../../common/src/constants";
-import { ServerWall } from "../entities/serverWall";
-import { Vec2 } from "../../../common/src/utils/vector";
+import { EntityType } from "../../../common/src/constants";
 import { ServerPlayer } from "../entities/serverPlayer";
 import {
     CommandDefinition,
@@ -20,10 +18,10 @@ export type DirectlyChatData = ChatData & ({
     to: ServerPlayer
 } | {
     global: true
-})
+});
 
 type CommandApply<K extends CommandName> =
-    (resolve: CommandResolving, parameters: CommandParameterType<K>) => void
+    (resolve: CommandResolving, parameters: CommandParameterType<K>) => void;
 
 const Commands = {
     name: (resolve, parameters) => {
@@ -31,28 +29,28 @@ const Commands = {
         resolve.$p(who, player => {
             resolve.resolve(`Successfully changed ${player.name} 's name to ${name}.`);
             player.name = name;
-        })
+        });
     },
     exp: (resolve, parameters) => {
         const [exp, who] = parameters;
         resolve.$p(who, player => {
-            player.addExp(exp)
+            player.addExp(exp);
             resolve.resolve(`Successfully added ${exp} exp to ${player.name}.`);
-        })
+        });
     },
     give: (resolve, parameters) => {
         const [item, amount, who] = parameters;
         resolve.$p(who, player => {
             const validatePString = Petals.hasString(item);
-            const pVec = {x: player.position.x,y: player.position.y};
+            const pVec = { x: player.position.x, y: player.position.y };
             if (!validatePString || !isFinite(amount)) {
                 resolve.err(
                     `!validatePString: ${!validatePString}, !isFinite(count): ${!isFinite(amount)}`
-                )
+                );
                 resolve.err(
                     `pn: ${item}, count: ${amount}, pVec: ${pVec.x} ${pVec.y}`
-                )
-                return resolve.reject('Errored when trying to give petals.')
+                );
+                return resolve.reject("Errored when trying to give petals.");
             } else {
                 const petalDefinition = Petals.fromString(item); // petal string verifie
                 const rarityDefinition = Rarity.fromString(petalDefinition.rarity);
@@ -62,44 +60,44 @@ const Commands = {
                         '${petalDefinition.idString}' is a isUnique petal and is already in game.`
                     );
                 }
-                let pArr: PetalDefinition[] = [];
+                const pArr: PetalDefinition[] = [];
                 for (let i = 0; i < amount; i++) {
-                    pArr.push(petalDefinition)
+                    pArr.push(petalDefinition);
                 }
                 spawnLoot(player.game, pArr, pVec, true); // pass array, true to make it bypass room limitations
                 resolve.sendMessage(
-                    `Admin dropped ${amount} of ${petalDefinition.idString} for you.`, 0xcfcfcf , player
+                    `Admin dropped ${amount} of ${petalDefinition.idString} for you.`, 0xcfcfcf, player
                 );
                 resolve.resolve(
                     `Dropped ${amount} of ${petalDefinition.idString} for ${player.name}.`
                 );
             }
-        })
+        });
     },
     spawn: (resolve, parameters) => {
         const [mob, amount, who] = parameters;
         resolve.$p(who, player => {
             const validatePString = Mobs.hasString(mob);
-            const pVec = {x: player.position.x,y: player.position.y};
+            const pVec = { x: player.position.x, y: player.position.y };
             if (!validatePString || !isFinite(amount)) {
                 resolve.err(
                     `!validatePString: ${!validatePString}, !isFinite(count): ${!isFinite(amount)}`
-                )
+                );
                 resolve.err(
                     `pn: ${mob}, count: ${amount}, pVec: ${pVec.x} ${pVec.y}`
-                )
-                return resolve.reject('Errored when trying to spawn mobs.')
+                );
+                return resolve.reject("Errored when trying to spawn mobs.");
             } else {
                 const mobDefinition = Mobs.fromString(mob);
 
                 for (let i = 0; i < amount; i++) {
-                    player.game.spawnMob(mobDefinition, pVec)
+                    player.game.spawnMob(mobDefinition, pVec);
                 }
                 resolve.resolve(
                     `Spawned ${amount} of ${mobDefinition.idString} for ${player.name}.`
                 );
             }
-        })
+        });
     },
     cleanup: (resolve, parameters) => {
         const [cleanUpLootAlso] = parameters;
@@ -139,22 +137,22 @@ const Commands = {
                 // Check for mythics (max 3 per player)
                 // TODO: FIX: this logic is WRONG, max 3 mythics in server
                 // but still useful sometimes maybe so im keeping
-                if (rarity.idString === 'mythic') {
-                    const count = (mythicCounts.get('mythic') || 0) + 1;
-                    mythicCounts.set('mythic', count);
+                if (rarity.idString === "mythic") {
+                    const count = (mythicCounts.get("mythic") || 0) + 1;
+                    mythicCounts.set("mythic", count);
                     if (count > 3 && !player.isAdmin) {
                         toRemove.push(i);
                     }
                 }
 
                 // Remove super petals from non-dev players
-                if (def.rarity === RarityName.super && !player.isAdmin) {
+                if (def.rarity === RarityName["super"] && !player.isAdmin) {
                     toRemove.push(i);
                 }
             }
 
             toRemove.sort((a, b) => b - a).forEach(index => {
-                player.inventory.delete(index);
+                player.inventory["delete"](index);
                 petalCount++;
             });
         }
@@ -173,8 +171,8 @@ const Commands = {
                 resolve.warn(`Attempted to kill ${player.name} (ID: ${player.id}), but they might have survived (e.g., revive).`);
             }
             resolve.resolve(`Killed ${player.name} (ID: ${player.id}).`);
-                // The GameOverPacket is sent within receiveDamage/destroy logic
-        })
+            // The GameOverPacket is sent within receiveDamage/destroy logic
+        });
     },
     ban: (resolve, parameters) => {
         const [who] = parameters;
@@ -182,7 +180,7 @@ const Commands = {
             player.destroy();
             player.socket.close();
             resolve.resolve(`Banned ${player.name} (ID: ${player.id})`);
-        })
+        });
     },
     tp: (resolve, parameters) => {
         const [who, to] = parameters;
@@ -191,24 +189,24 @@ const Commands = {
                 resolve.$p(to, target => {
                     player.position = target.position;
                     resolve.resolve(`Teleported ${player.name} (ID: ${player.id}) to ${target.name} (ID: ${target.id}).`);
-                })
-            })
+                });
+            });
         } else {
             resolve.$p(who, player => {
                 resolve.player.position = player.position;
                 resolve.resolve(`Teleported to ${player.name} (ID: ${player.id}).`);
-            })
+            });
         }
     },
     list: (resolve, parameters) => {
-        resolve.sendMessage('--- Player List ---');
+        resolve.sendMessage("--- Player List ---");
         for (const player of resolve.player.game.players) {
             resolve.sendMessage(`ID: ${player.id}, Name: ${player.name}, XP: ${player.exp}`);
         }
-        resolve.sendMessage('-------------------');
+        resolve.sendMessage("-------------------");
     },
     help: (resolve, parameters) => {
-        resolve.sendMessage('--- Command List ---');
+        resolve.sendMessage("--- Command List ---");
         for (const [name, def] of Object.entries(CommandDefinitions)) {
             let content = `/${name}`;
 
@@ -224,19 +222,19 @@ const Commands = {
 
             resolve.sendMessage(`${content} - ${def.description}`);
         }
-        resolve.sendMessage('-------------------');
+        resolve.sendMessage("-------------------");
     },
     spectator: (resolve, parameters) => {
         const [who] = parameters;
         resolve.$p(who, player => {
             player.spectatorMode = !player.spectatorMode;
-            resolve.resolve(`${player.name} ${player.spectatorMode ? 'entered' : 'exited'} spectator mode.`);
+            resolve.resolve(`${player.name} ${player.spectatorMode ? "entered" : "exited"} spectator mode.`);
         });
     },
     speed: (resolve, parameters) => {
         const [multiplier, who] = parameters;
         if (multiplier <= 0) {
-            return resolve.reject('Speed multiplier must be greater than 0');
+            return resolve.reject("Speed multiplier must be greater than 0");
         }
         resolve.$p(who, player => {
             player.persistentSpeedModifier = multiplier;
@@ -247,7 +245,7 @@ const Commands = {
     zoom: (resolve, parameters) => {
         const [multiplier, who] = parameters;
         if (multiplier <= 0) {
-            return resolve.reject('Zoom multiplier must be greater than 0');
+            return resolve.reject("Zoom multiplier must be greater than 0");
         }
         resolve.$p(who, player => {
             player.persistentZoomModifier = multiplier;
@@ -259,21 +257,21 @@ const Commands = {
         const [who] = parameters;
         resolve.$p(who, player => {
             player.godMode = !player.godMode;
-            resolve.resolve(`${player.name} ${player.godMode ? 'enabled' : 'disabled'} god mode.`);
+            resolve.resolve(`${player.name} ${player.godMode ? "enabled" : "disabled"} god mode.`);
         });
     },
     invisible: (resolve, parameters) => {
         const [who] = parameters;
         resolve.$p(who, player => {
             player.invisible = !player.invisible;
-            resolve.resolve(`${player.name} is now ${player.invisible ? 'invisible' : 'visible'}.`);
+            resolve.resolve(`${player.name} is now ${player.invisible ? "invisible" : "visible"}.`);
         });
     },
     freeze: (resolve, parameters) => {
         const [who] = parameters;
         resolve.$p(who, player => {
             player.frozen = !player.frozen;
-            resolve.resolve(`${player.name} is now ${player.frozen ? 'frozen' : 'unfrozen'}.`);
+            resolve.resolve(`${player.name} is now ${player.frozen ? "frozen" : "unfrozen"}.`);
         });
     },
     heal: (resolve, parameters) => {
@@ -284,20 +282,20 @@ const Commands = {
             resolve.resolve(`Restored ${player.name}'s health and shield to maximum.`);
         });
     }
-} as const satisfies Readonly<{ readonly [K in CommandName]: CommandApply<K>}>
+} as const satisfies Readonly<{ readonly [K in CommandName]: CommandApply<K> }>;
 
 export class CommandResolving {
-    state: 'pending' | 'resolved' | 'rejected' = 'pending';
+    state: "pending" | "resolved" | "rejected" = "pending";
     messages: DirectlyChatData[] = [];
 
     constructor(public player: ServerPlayer) {}
 
     get rejected(): boolean {
-        return this.state === 'rejected';
+        return this.state === "rejected";
     }
 
     getPlayer(value: string): ServerPlayer {
-        if (!isNaN(+value)){ // Prove it's a number
+        if (!isNaN(+value)) { // Prove it's a number
             const id = +value;
             const player = this.player.game.grid.entities.get(id);
             if (player && player instanceof ServerPlayer) {
@@ -307,10 +305,10 @@ export class CommandResolving {
                 return this.player;
             }
         } else {
-            const player =
-            Array.from(this.player.game.grid.byCategory[EntityType.Player]).find(
-                (entity) => entity.name === value
-            )
+            const player
+            = Array.from(this.player.game.grid.byCategory[EntityType.Player]).find(
+                entity => entity.name === value
+            );
             if (player) {
                 return player;
             } else {
@@ -321,35 +319,34 @@ export class CommandResolving {
     }
 
     // Player query
-    $p(value: string, callback: (player: ServerPlayer) => void): boolean{
+    $p(value: string, callback: (player: ServerPlayer) => void): boolean {
         const player = value ? this.getPlayer(value) : this.player;
         if (this.rejected) return false;
         callback(player);
         return false;
     }
 
-
     sendMessage(
         content: string,
-        color: number = 0xffcc00,
+        color = 0xffcc00,
         to: ServerPlayer | boolean = this.player
         // Boolean value of True means Global Message.
         // If not, then it's a Direct Message.
     ) {
         if (this.state != "pending") return;
-        if (typeof to === 'boolean' && to) {
+        if (typeof to === "boolean" && to) {
             this.messages.push({
                 content,
                 color,
                 global: true
-            })
+            });
         } else {
             this.messages.push({
                 content,
                 color,
                 global: false,
                 to: to instanceof ServerPlayer ? to : this.player
-            })
+            });
         }
     }
 
@@ -363,12 +360,12 @@ export class CommandResolving {
 
     resolve(tip: string) {
         this.sendMessage(tip);
-        this.state = 'resolved';
+        this.state = "resolved";
     }
 
     reject(reason: string) {
         this.err(`Failed while executing the command, reason: ${reason}`);
-        this.state = 'rejected';
+        this.state = "rejected";
     }
 
     finish() {
@@ -376,7 +373,7 @@ export class CommandResolving {
             const nerfedChatData: ChatData = {
                 content: mes.content,
                 color: mes.color
-            }
+            };
             if (mes.global) {
                 this.player.game.sendGlobalMessage(
                     nerfedChatData
@@ -384,7 +381,7 @@ export class CommandResolving {
             } else {
                 mes.to.chatMessagesToSend.push(nerfedChatData);
             }
-        })
+        });
     }
 }
 
@@ -393,34 +390,30 @@ export function applyCommand(
     inputParameters: string[],
     resolve: CommandResolving
 ) {
-    if (!Commands.hasOwnProperty(command))
-        return resolve.reject(`Not a valid command: ${command}`);
+    if (!Object.prototype.hasOwnProperty.call(Commands, command)) { return resolve.reject(`Not a valid command: ${command}`); }
 
     const commandName = command as CommandName;
-    const commandData: CommandDefinition =
-        CommandDefinitions[commandName];
+    const commandData: CommandDefinition
+        = CommandDefinitions[commandName];
     const commandParameters: StTyped[] = [];
-
 
     function toNumber(value: string, index: number) {
         const parsed = +value;
-        if (isNaN(parsed))
-            resolve.reject(`Parameter "${value}" of index ${index} is not a valid number.`);
+        if (isNaN(parsed)) { resolve.reject(`Parameter "${value}" of index ${index} is not a valid number.`); }
         return parsed;
     }
 
     function toBoolean(value: string, index: number) {
         const parsed = value.toLowerCase();
-        if (parsed !== 'true' && parsed !== 'false')
-            resolve.reject(`Parameter "${value}" of index ${index} is not a valid boolean. Must be a "true" or "false".`);
-        return parsed === 'true';
+        if (parsed !== "true" && parsed !== "false") { resolve.reject(`Parameter "${value}" of index ${index} is not a valid boolean. Must be a "true" or "false".`); }
+        return parsed === "true";
     }
 
     for (let i = 0; i < commandData.parameters.length; i++) {
         const parameter = commandData.parameters[i];
         if (inputParameters.length <= i) {
             if (parameter.optional) {
-                commandParameters[i] = parameter.default;
+                commandParameters[i] = parameter["default"];
             } else {
                 resolve.reject(`Missing parameter of index ${i}.`);
             }

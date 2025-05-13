@@ -1,17 +1,18 @@
 import { ZoneDefinition, ZoneName, Zones } from "../../common/src/definitions/zones";
-import { Vec2, VectorAbstract } from "../../common/src/utils/vector";
+import { UVec2D } from "../../common/src/physics/utils";
 import { Random } from "../../common/src/utils/random";
 import { Game } from "./game";
 import { CircleHitbox, RectHitbox } from "../../common/src/utils/hitbox";
 import { EntityType } from "../../common/src/constants";
+import VectorAbstract from "../../common/src/physics/vectorAbstract";
 
 export class ZonesManager {
     zones = new Map<ZoneName, Zone>();
     constructor(private game: Game) {
-        Object.keys(ZoneName).forEach((name) => {
+        Object.keys(ZoneName).forEach(name => {
             const zoneName = name as ZoneName;
-            this.zones.set(zoneName, new Zone(this.game, Zones[zoneName]))
-        })
+            this.zones.set(zoneName, new Zone(this.game, Zones[zoneName]));
+        });
     }
 
     inWhichZone(position: VectorAbstract): Zone | undefined {
@@ -28,32 +29,32 @@ export class Zone {
     public hitbox: RectHitbox;
 
     get y(): number {
-        return this.data.y?? 0;
+        return this.data.y ?? 0;
     }
 
     get height(): number {
-        return this.data.height?? this.game.height;
+        return this.data.height ?? this.game.height;
     }
 
     get maxMobCount(): number {
-        return this.data.density / 15 * this.data.width * this.height / 20 / lagDowner
+        return this.data.density / 15 * this.data.width * this.height / 20 / lagDowner;
     }
 
     constructor(private game: Game, public data: ZoneDefinition) {
         this.hitbox = new RectHitbox(
-            Vec2.new(data.x, this.y), Vec2.new(data.x + data.width, this.y + this.height)
-        )
+            UVec2D.new(data.x, this.y), UVec2D.new(data.x + data.width, this.y + this.height)
+        );
     }
 
     public randomPoint(): VectorAbstract {
-        const randomX =
-            Random.int(this.data.x, this.data.x + this.data.width)
-        const randomY =
-            Random.int(this.y, this.y + this.height)
+        const randomX
+            = Random.int(this.data.x, this.data.x + this.data.width);
+        const randomY
+            = Random.int(this.y, this.y + this.height);
         return {
             x: randomX,
             y: randomY
-        }
+        };
     }
 
     public randomSafePosition(hitboxRadius: number): VectorAbstract {
@@ -67,8 +68,8 @@ export class Zone {
 
             const hitbox = new CircleHitbox(hitboxRadius + 5, position);
 
-            const collided =
-                this.game.grid.intersectsHitbox(hitbox);
+            const collided
+                = this.game.grid.intersectsHitbox(hitbox);
 
             for (const collidedElement of collided) {
                 if (hitbox.collidesWith(collidedElement.hitbox)) collidedNumber++;
@@ -90,9 +91,10 @@ export class Zone {
         let count = 0;
 
         for (const collidedElement of collided) {
-            if (type)
+            if (type) {
                 if (collidedElement.type == type) count++;
-            else count++;
+                else count++;
+            }
         }
 
         return count;

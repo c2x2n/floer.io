@@ -10,10 +10,10 @@ export class JoinPacket implements Packet {
     serialize(stream: GameBitStream): void {
         stream.writeASCIIString(this.name, GameConstants.player.maxNameLength);
         stream.writeASCIIString(this.secret);
-        stream.writeArray(this.petals, 8, (def) => {
+        stream.writeArray(this.petals, 8, def => {
             stream.writeBoolean(def == null);
             if (def) Petals.writeToStream(stream, def);
-        })
+        });
     }
 
     deserialize(stream: GameBitStream): void {
@@ -22,6 +22,6 @@ export class JoinPacket implements Packet {
         stream.readArray(this.petals, 8, () => {
             if (stream.readBoolean()) return null;
             return Petals.readFromStream(stream);
-        })
+        });
     }
 }

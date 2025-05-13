@@ -1,22 +1,21 @@
-import { Game } from "@/scripts/game.ts";
-import { Numeric } from "@common/utils/math.ts";
-import { Collision } from "@common/utils/collision.ts";
-import { RectHitbox } from "@common/utils/hitbox.ts";
-import { Vec2 } from "@common/utils/vector.ts";
+import { Game } from "../game";
+import { Numeric } from "../../../../common/src/maths/math";
+import { RectHitbox } from "../../../../common/src/utils/hitbox";
+import { UVec2D } from "../../../../common/src/physics/utils";
 
 export class Leaderboard {
-    width: number = 200;
-    height: number = 280;
+    width = 200;
+    height = 280;
     readonly contentWidth: number = 182;
     readonly contentHeight: number = 19;
     readonly maxLength = 10;
 
-    on: boolean = true;
-    eventLoaded: boolean = false;
+    on = true;
+    eventLoaded = false;
 
     constructor(private game: Game) {}
 
-    render(ctx: CanvasRenderingContext2D){
+    render(ctx: CanvasRenderingContext2D) {
         if (!this.on) {
             ctx.save();
             ctx.translate(
@@ -28,11 +27,11 @@ export class Leaderboard {
             ctx.strokeStyle = "#459745";
             ctx.lineWidth = 4;
 
-            ctx.beginPath()
+            ctx.beginPath();
 
             ctx.roundRect(
                 0, 0, 40, 40, 5
-            )
+            );
 
             ctx.fill();
             ctx.stroke();
@@ -49,7 +48,7 @@ export class Leaderboard {
         ctx.translate(
             this.positionX,
             this.positionY
-        )
+        );
 
         ctx.fillStyle = "#555555";
         ctx.strokeStyle = "#454545";
@@ -62,9 +61,9 @@ export class Leaderboard {
             0, 0,
             this.width, this.height,
             5
-        )
-        ctx.fill()
-        ctx.stroke()
+        );
+        ctx.fill();
+        ctx.stroke();
 
         ctx.fillStyle = "#55bb55";
         ctx.strokeStyle = "#459745";
@@ -76,9 +75,9 @@ export class Leaderboard {
             0, 0,
             this.width, 40,
             0.5
-        )
-        ctx.fill()
-        ctx.stroke()
+        );
+        ctx.fill();
+        ctx.stroke();
 
         ctx.fillStyle = "#ffffff";
         ctx.strokeStyle = "#000000";
@@ -87,24 +86,23 @@ export class Leaderboard {
         ctx.globalAlpha = 1;
         ctx.beginPath();
 
-
         const number = this.game.playerData.size;
 
         ctx.strokeText(
-            number + ` Flower${number === 1? "" : "s"}`,
+            `${number} Flower${number === 1 ? "" : "s"}`,
             this.width / 2, 20,
             this.width
-        )
+        );
 
         ctx.fillText(
-            number + ` Flower${number === 1 ? "" : "s"}`,
+            `${number} Flower${number === 1 ? "" : "s"}`,
             this.width / 2, 20,
             this.width
-        )
-        const sortedPlayer =
-            Array.from(this.game.playerData.values()).sort(
+        );
+        const sortedPlayer
+            = Array.from(this.game.playerData.values()).sort(
                 (a, b) => b.exp - a.exp
-            )
+            );
 
         let index = 0;
 
@@ -116,7 +114,7 @@ export class Leaderboard {
         for (let data of sortedPlayer) {
             if (index >= this.maxLength) break;
 
-            let isActivePlayer = data.id === this.game.activePlayerID;
+            const isActivePlayer = data.id === this.game.activePlayerID;
             let color = "#55be55";
 
             let width = Numeric.remap(
@@ -144,8 +142,8 @@ export class Leaderboard {
                 8, 40 + y,
                 this.contentWidth, this.contentHeight,
                 16
-            )
-            ctx.fill()
+            );
+            ctx.fill();
 
             // score bar
             // minimum width so that border radius works
@@ -157,8 +155,8 @@ export class Leaderboard {
                 8 + 1.5, 40 + y + 1.5,
                 width - 3, this.contentHeight - 3,
                 16
-            )
-            ctx.fill()
+            );
+            ctx.fill();
 
             ctx.fillStyle = "#ffffff";
             ctx.strokeStyle = "#000000";
@@ -167,27 +165,27 @@ export class Leaderboard {
             ctx.globalAlpha = 1;
             ctx.beginPath();
             ctx.strokeText(
-                data.name + " - " + data.exp,
+                `${data.name} - ${data.exp}`,
                 8 + this.contentWidth / 2, 40 + y + this.contentHeight / 2,
                 this.contentWidth
-            )
+            );
             ctx.fillText(
-                data.name + " - " + data.exp,
+                `${data.name} - ${data.exp}`,
                 8 + this.contentWidth / 2, 40 + y + this.contentHeight / 2,
                 this.contentWidth
-            )
+            );
 
             // every item later on is 4px away from the last one
             y += this.contentHeight + 3.6;
 
-            index ++;
+            index++;
         }
 
         ctx.restore();
     }
 
-    positionX: number = 0;
-    positionY: number = 0;
+    positionX = 0;
+    positionY = 0;
 
     buttonHbx?: RectHitbox;
     leaderboardHbx?: RectHitbox;
@@ -198,57 +196,57 @@ export class Leaderboard {
         const positionX = screenWidth - this.width - 18;
         const positionY = 17;
 
-        this.positionX = positionX
+        this.positionX = positionX;
         this.positionY = positionY;
 
         this.buttonHbx = new RectHitbox(
-            Vec2.new(
+            UVec2D["new"](
                 this.game.screenWidth - 60, 10
             ),
-            Vec2.new(
+            UVec2D["new"](
                 this.game.screenWidth - 20, 30
             )
         );
 
         this.leaderboardHbx = new RectHitbox(
-            Vec2.new(
+            UVec2D["new"](
                 this.positionX, this.positionY
             ),
-            Vec2.new(
+            UVec2D["new"](
                 this.positionX + this.width, this.positionY + this.height
             )
-        )
+        );
 
         if (!this.eventLoaded) {
             this.eventLoaded = true;
             const canvas = this.game.ui.canvas;
-            canvas.on("touchstart",(e) => {
+            canvas.on("touchstart", e => {
                 if (!this.game.playerIsOnMobile) return;
                 if (!this.leaderboardHbx || !this.buttonHbx) return;
                 if (!e.touches.length) return;
 
-                for (let touch of e.touches) {
-                    const position =  {
+                for (const touch of e.touches) {
+                    const position = {
                         x: touch.clientX,
                         y: touch.clientY
-                    }
+                    };
 
                     switch (this.on) {
                         case true:
                             if (this.leaderboardHbx.isPointInside(position)) {
                                 this.on = false;
-                                e.preventDefault()
+                                e.preventDefault();
                             }
                             return;
                         case false:
                             if (this.buttonHbx.isPointInside(position)) {
                                 this.on = true;
-                                e.preventDefault()
+                                e.preventDefault();
                             }
                             return;
                     }
                 }
-            })
+            });
         }
     }
 }

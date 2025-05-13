@@ -7,7 +7,7 @@ import { EntityType, GameConstants } from "../../common/src/constants";
 import NanoTimer from "nanotimer";
 import { Config, type ServerConfig } from "./config";
 import { IDAllocator } from "./utils/idAllocator";
-import { Vec2, type VectorAbstract } from "../../common/src/utils/vector";
+import { UVec2D } from "../../common/src/physics/utils";
 import { ServerMob } from "./entities/serverMob";
 import { MobDefinition, Mobs } from "../../common/src/definitions/mobs";
 import { CollisionResponse } from "../../common/src/utils/collision";
@@ -16,7 +16,7 @@ import { collideableEntity, isCollideableEntity, isDamageableEntity } from "./ty
 import { PacketStream } from "../../common/src/net/net";
 import { JoinPacket } from "../../common/src/net/packets/joinPacket";
 import { PetalDefinition } from "../../common/src/definitions/petals";
-import { Geometry, P2 } from "../../common/src/utils/math";
+import { Geometry, P2 } from "../../common/src/maths/math";
 import { Rarity, RarityName } from "../../common/src/definitions/rarities";
 import { ChatData } from "../../common/src/net/packets/updatePacket";
 import { MobSpawner, SpecialSpawn, ZoneName } from "../../common/src/definitions/zones";
@@ -24,10 +24,10 @@ import jwt from "jsonwebtoken";
 import { getLevelInformation } from "../../common/src/utils/levels";
 import { Zone, ZonesManager } from "./zones";
 import { ServerWall } from "./entities/serverWall";
-import { CircleHitbox, RectHitbox } from "../../common/src/utils/hitbox";
 import { spawnSegmentMobs } from "./misc/spawning";
 import { Walls } from "../../common/src/definitions/walls";
 import { GameData } from "./gameContainer";
+import VectorAbstract from "../../common/src/physics/vectorAbstract";
 
 type SpecialSpawningTimer = { timer: number, toNextTimer: number, spawned?: ServerMob };
 
@@ -46,7 +46,7 @@ export class Game {
 
     adminSecret: string = Config.adminSecret;
 
-    maxVector = Vec2.new(GameConstants.game.width, GameConstants.game.height);
+    maxVector = UVec2D.new(GameConstants.game.width, GameConstants.game.height);
 
     mapDirty = false;
 
@@ -67,7 +67,7 @@ export class Game {
 
     data: GameData = {
         playerCount: 0
-    }
+    };
 
     constructor(config: ServerConfig) {
         this.deltaMs = 1000 / config.tps;
@@ -75,16 +75,16 @@ export class Game {
 
         for (const wall of Walls) {
             const { x, y, width, height } = wall;
-            new ServerWall(this, Vec2.new(x, y), Vec2.new(x + width, y + height));
+            new ServerWall(this, UVec2D.new(x, y), UVec2D.new(x + width, y + height));
         }
     }
 
-    clampPosition(p: VectorAbstract, width: number, height: number): VectorAbstract{
-        const maxVector = Vec2.sub(this.maxVector, Vec2.new(width, height));
-        const position = Vec2.clone(p);
-        return Vec2.clampWithVector(
+    clampPosition(p: VectorAbstract, width: number, height: number): VectorAbstract {
+        const maxVector = UVec2D.sub(this.maxVector, UVec2D.new(width, height));
+        const position = UVec2D.clone(p);
+        return UVec2D.clampWithVector(
             position,
-            Vec2.new(width, height),
+            UVec2D.new(width, height),
             maxVector
         );
     }
@@ -98,7 +98,7 @@ export class Game {
         this.removePlayer(socket);
 
         this.wsPlayerMap.set(socket, player);
-        this.updateGameData()
+        this.updateGameData();
 
         return player;
     }
@@ -126,8 +126,8 @@ export class Game {
 
             const newPlayer = this.newPlayer(wssocket);
             if (oldPlayer) {
-                const inventory =
-                    oldPlayer.inventory.inventory.sort(
+                const inventory
+                    = oldPlayer.inventory.inventory.sort(
                         (a, b) => {
                             if (a === b) return 0;
                             if (a === null) return 1;
@@ -155,7 +155,7 @@ export class Game {
 
     updateGameData() {
         this.data.playerCount = this.players.size;
-        process.send?.(this.data)
+        process.send?.(this.data);
     }
 
     specialSpawnTimer = new Map<
@@ -177,15 +177,15 @@ export class Game {
         }
 
         for (const entity of activeEntities) {
-            const collidedEntities =
-                this.grid.intersectsHitbox(entity.hitbox);
+            const collidedEntities
+                = this.grid.intersectsHitbox(entity.hitbox);
 
             for (const collidedEntity of collidedEntities) {
                 if (collidedEntity === entity) continue;
                 if (!activeEntities.has(collidedEntity)) continue;
 
-                const collision =
-                    entity.hitbox.getIntersection(collidedEntity.hitbox);
+                const collision
+                    = entity.hitbox.getIntersection(collidedEntity.hitbox);
 
                 if (collision) {
                     if (isDamageableEntity(entity) && isDamageableEntity(collidedEntity)) {
@@ -197,9 +197,9 @@ export class Game {
                             source: entity,
                             target: collidedEntity,
                             collision
-                        }
+                        };
 
-                        collisionTasks.add(task)
+                        collisionTasks.add(task);
                     }
                 }
             }
@@ -248,36 +248,36 @@ export class Game {
         for (const zone of this.zoneManager.zones.values()) {
             // const zone = Zones[zoneKey as ZoneName];
 
-            this.applyMobSpawnerInZone(zone.data.normalSpawning, zone)
+            this.applyMobSpawnerInZone(zone.data.normalSpawning, zone);
 
             if (zone.data.specialSpawning) {
-                let zoneTimers =
-                    this.specialSpawnTimer.get(zone);
-                if (!zoneTimers){
+                let zoneTimers
+                    = this.specialSpawnTimer.get(zone);
+                if (!zoneTimers) {
                     zoneTimers = new Map<SpecialSpawn, SpecialSpawningTimer>();
                 }
 
                 for (const specialSpawn of zone.data.specialSpawning) {
                     let spawned = zoneTimers.get(specialSpawn)?.spawned;
-                    if (spawned && spawned.isActive()) return;
+                    if (spawned?.isActive()) return;
 
                     let timerNow
                         = (zoneTimers.get(specialSpawn)?.timer ?? 0) + this.dt;
-                    let toNextTimer =
-                        (zoneTimers.get(specialSpawn)?.toNextTimer ?? 0);
+                    let toNextTimer
+                        = (zoneTimers.get(specialSpawn)?.toNextTimer ?? 0);
 
                     if (!toNextTimer) {
                         if (typeof specialSpawn.timer === "number") {
-                            toNextTimer = specialSpawn.timer
+                            toNextTimer = specialSpawn.timer;
                         } else {
                             toNextTimer = Random.float(
                                 specialSpawn.timer.min,
                                 specialSpawn.timer.max
-                            )
+                            );
                         }
                     }
                     if (timerNow >= toNextTimer) {
-                        spawned = this.applyMobSpawnerInZone(specialSpawn.spawn, zone, true)
+                        spawned = this.applyMobSpawnerInZone(specialSpawn.spawn, zone, true);
                         timerNow = 0;
                         toNextTimer = 0;
                     }
@@ -305,8 +305,8 @@ export class Game {
             mob = spawnSegmentMobs(
                 this,
                 definition,
-                position,
-            )
+                position
+            );
         } else {
             mob = new ServerMob(this,
                 position,
@@ -317,11 +317,11 @@ export class Game {
 
         const rarity = Rarity.fromString(definition.rarity);
         if (rarity.globalMessage && !definition.noSpawnMessage) {
-            let content = `A ${rarity.displayName} ${definition.displayName} has spawned somewhere`
+            const content = `A ${rarity.displayName} ${definition.displayName} has spawned somewhere`;
             this.sendGlobalMessage({
-                content: content +"!",
+                content: `${content}!`,
                 color: parseInt(rarity.color.substring(1), 16)
-            })
+            });
         }
 
         return mob;
@@ -331,7 +331,7 @@ export class Game {
         const definitionIdString = Random.weightedRandom(
             Object.keys(mobSpawner),
             Object.values(mobSpawner)
-        )
+        );
 
         const definition = Mobs.fromString(definitionIdString);
         const maxMobCount = zone.maxMobCount;
@@ -343,38 +343,37 @@ export class Game {
 
     gameHas(petal: PetalDefinition): boolean {
         for (const activePlayer of this.players) {
-            if (activePlayer.inventory.inventory.includes(petal))
-                return true;
+            if (activePlayer.inventory.inventory.includes(petal)) { return true; }
         }
 
         for (const byCategoryElementElement of this.grid.byCategory[EntityType.Loot]) {
-            if (byCategoryElementElement.definition === petal){
+            if (byCategoryElementElement.definition === petal) {
                 return true;
             }
         }
 
-        return false
+        return false;
     }
 
     rarityPetalCount(rarity: RarityName): number {
         let num = 0;
 
         for (const activePlayer of this.players) {
-            activePlayer.inventory.inventory.forEach((e) => {
+            activePlayer.inventory.inventory.forEach(e => {
                 if (e && e.rarity === rarity) num++;
-            })
+            });
         }
 
         for (const byCategoryElementElement of this.grid.byCategory[EntityType.Loot]) {
             if (byCategoryElementElement.definition.rarity === rarity) num++;
         }
 
-        return num
+        return num;
     }
 
     sendGlobalMessage(message: ChatData): void {
         for (const player of this.players) {
-            player.chatMessagesToSend.push(message)
+            player.chatMessagesToSend.push(message);
         }
     }
 
@@ -384,7 +383,7 @@ export class Game {
 }
 
 interface CollisionTask {
-    source: collideableEntity;
-    target: collideableEntity;
-    collision: CollisionResponse;
+    source: collideableEntity
+    target: collideableEntity
+    collision: CollisionResponse
 }

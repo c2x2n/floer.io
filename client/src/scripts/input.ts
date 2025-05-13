@@ -1,8 +1,7 @@
-import { Vec2 } from "@common/utils/vector.ts";
+import { UVec2D } from "../../../common/src/physics/utils";
 import { type Game } from "./game";
-import { Geometry, halfPI, PI } from "@common/utils/math.ts";
-import { DirectionIn, InputAction } from "@common/net/packets/inputPacket.ts";
-
+import { Geometry, halfPI, PI } from "../../../common/src/maths/math";
+import { DirectionIn, InputAction } from "../../../common/src/net/packets/inputPacket";
 
 export class Input {
     readonly game: Game;
@@ -24,8 +23,8 @@ export class Input {
     setVirtualMousePosition(x: number, y: number): void {
         this.clientDirection = Math.atan2(y - window.innerHeight / 2, x - window.innerWidth / 2);
 
-        this.mouseMovementDistance = Vec2.length(
-            Vec2.new(
+        this.mouseMovementDistance = UVec2D.length(
+            UVec2D.new(
                 y - window.innerHeight / 2, x - window.innerWidth / 2
             )
         );
@@ -40,8 +39,8 @@ export class Input {
         const direction = this.moveDirection ?? this.oldDirection.direction;
         const oldDirection = {
             direction,
-                mouseDirection: this.clientDirection
-        }
+            mouseDirection: this.clientDirection
+        };
         this.oldDirection = oldDirection;
         return oldDirection;
     }
@@ -62,16 +61,16 @@ export class Input {
             const vDir = Geometry.radiansToDirection(vRad);
 
             if (hMove != 0 && vMove != 0) {
-                return Geometry.directionToRadians(Vec2.add(vDir, hDir))
+                return Geometry.directionToRadians(UVec2D.add(vDir, hDir));
             } else if (hMove != 0) {
-                return hRad
+                return hRad;
             } else if (vMove != 0) {
-                return vRad
+                return vRad;
             }
 
             return;
-        }else {
-            return this.clientDirection
+        } else {
+            return this.clientDirection;
         }
     }
 
@@ -81,7 +80,7 @@ export class Input {
         if (this.game.app.settings.data.keyboardMovement && !this.game.playerIsOnMobile) {
             if (this.moveDirection != undefined) distance = maxDistance;
             else distance = 0;
-        }else {
+        } else {
             distance = this.mouseMovementDistance;
         }
 
@@ -90,17 +89,17 @@ export class Input {
     }
 
     clientPosition: {
-        clientX: number,
+        clientX: number
         clientY: number
     } = {
-        clientX: 0,
-        clientY: 0
-    };
+            clientX: 0,
+            clientY: 0
+        };
 
     constructor(game: Game) {
         this.game = game;
 
-        document.addEventListener('contextmenu', function (e) {
+        document.addEventListener("contextmenu", e => {
             e.preventDefault();
         });
 
@@ -114,15 +113,15 @@ export class Input {
             this.handleKeyboardEvent.bind(this, true));
 
         window.addEventListener("keyup",
-            this.handleKeyboardEvent.bind(this, false))
+            this.handleKeyboardEvent.bind(this, false));
 
         window.addEventListener("mousemove", e => {
             if (this.game.playerIsOnMobile) return;
 
             this.clientDirection = Math.atan2(e.clientY - window.innerHeight / 2, e.clientX - window.innerWidth / 2);
 
-            this.mouseMovementDistance = Vec2.length(
-                Vec2.new(
+            this.mouseMovementDistance = UVec2D.length(
+                UVec2D.new(
                     e.clientY - window.innerHeight / 2, e.clientX - window.innerWidth / 2
                 )
             );
@@ -130,17 +129,16 @@ export class Input {
             this.clientPosition = {
                 clientX: e.clientX,
                 clientY: e.clientY
-            }
+            };
         });
 
         window.addEventListener("touchmove", e => {
             this.clientPosition = {
                 clientX: e.touches[0].clientX,
                 clientY: e.touches[0].clientY
-            }
+            };
         });
     }
-
 
     handleMouseEvent(down: boolean, event: MouseEvent): void {
         const key = this.getKeyFromInputEvent(event);
@@ -161,7 +159,7 @@ export class Input {
             if (this.game.ui.chatInput.hasClass("focused")) {
                 setTimeout(() => {
                     this.game.ui.sendChat();
-                }, 100)
+                }, 100);
             } else {
                 this.game.ui.openChat();
             }
@@ -188,7 +186,7 @@ export class Input {
                     } else {
                         this.game.inventory.switchSlot(index);
                     }
-                }else {
+                } else {
                     this.game.inventory.switchSelectingSlotTo(index);
                 }
             }

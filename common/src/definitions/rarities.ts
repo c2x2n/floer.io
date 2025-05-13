@@ -11,24 +11,24 @@ export enum RarityName {
     unique = "unique",
     super = "super",
     ethereal = "ethereal",
-    phantasmagoric  = "phantasmagoric",
+    phantasmagoric = "phantasmagoric",
     arcane = "arcane",
-    empyrean = "Empyrean",
+    empyrean = "Empyrean"
 }
 
 type RarityDefinition = ObjectDefinition & {
     idString: RarityName
 } & {
-    color: string;
-    border: string;
-    expWhenAbsorb: number;
-    level: number;
-    showParticle?: boolean;
-    isUnique?: boolean;
-    petalMaxCount?: number;
-    globalMessage?: boolean;
-    notCollideWithOther?: boolean;
-    hideInGallery?: boolean;
+    color: string
+    border: string
+    expWhenAbsorb: number
+    level: number
+    showParticle?: boolean
+    isUnique?: boolean
+    petalMaxCount?: number
+    globalMessage?: boolean
+    notCollideWithOther?: boolean
+    hideInGallery?: boolean
 };
 
 export const Rarity = new Definitions<RarityDefinition>(([
@@ -91,7 +91,7 @@ export const Rarity = new Definitions<RarityDefinition>(([
     },
     // dev rarities
     {
-        idString: RarityName.super,
+        idString: RarityName["super"],
         displayName: "Super",
         color: "#2bffa3",
         expWhenAbsorb: 25000,
@@ -144,7 +144,7 @@ export const Rarity = new Definitions<RarityDefinition>(([
         globalMessage: true,
         hideInGallery: true
     }
-] satisfies Partial<RarityDefinition>[]).map(def => ({
+] satisfies Array<Partial<RarityDefinition>>).map(def => ({
     ...def,
     border: strokeColor(def.color)
 })) satisfies RarityDefinition[]);

@@ -1,5 +1,6 @@
 import { Collision, type CollisionResponse, type LineIntersection } from "./collision";
-import { Vec2, type VectorAbstract } from "./vector";
+import { UVec2D } from "../physics/utils";
+import VectorAbstract from "../physics/vectorAbstract";
 
 export enum HitboxType {
     Circle,
@@ -77,7 +78,7 @@ export class CircleHitbox extends BaseHitbox {
     constructor(radius: number, position?: VectorAbstract) {
         super();
 
-        this.position = position ?? Vec2.new(0, 0);
+        this.position = position ?? UVec2D.new(0, 0);
         this.radius = radius;
     }
 
@@ -100,7 +101,7 @@ export class CircleHitbox extends BaseHitbox {
     }
 
     override clone(): CircleHitbox {
-        return new CircleHitbox(this.radius, Vec2.clone(this.position));
+        return new CircleHitbox(this.radius, UVec2D.clone(this.position));
     }
 
     override scale(scale: number): void {
@@ -113,13 +114,13 @@ export class CircleHitbox extends BaseHitbox {
 
     override toRectangle(): RectHitbox {
         return new RectHitbox(
-            Vec2.new(this.position.x - this.radius, this.position.y - this.radius),
-            Vec2.new(this.position.x + this.radius, this.position.y + this.radius)
+            UVec2D.new(this.position.x - this.radius, this.position.y - this.radius),
+            UVec2D.new(this.position.x + this.radius, this.position.y + this.radius)
         );
     }
 
     override isPointInside(point: VectorAbstract): boolean {
-        return Vec2.distanceBetween(point, this.position) < this.radius;
+        return UVec2D.distanceBetween(point, this.position) < this.radius;
     }
 }
 
@@ -138,30 +139,30 @@ export class RectHitbox extends BaseHitbox {
     toJSON(): HitboxJSONMapping[HitboxType.Rect] {
         return {
             type: this.type,
-            min: Vec2.clone(this.min),
-            max: Vec2.clone(this.max)
+            min: UVec2D.clone(this.min),
+            max: UVec2D.clone(this.max)
         };
     }
 
     static fromLine(a: VectorAbstract, b: VectorAbstract): RectHitbox {
         return new RectHitbox(
-            Vec2.new(
+            UVec2D.new(
                 Math.min(a.x, b.x),
                 Math.min(a.y, b.y)
             ),
-            Vec2.new(
+            UVec2D.new(
                 Math.max(a.x, b.x),
                 Math.max(a.y, b.y)
             )
         );
     }
 
-    static fromRect(width: number, height: number, pos = Vec2.new(0, 0)): RectHitbox {
-        const size = Vec2.new(width / 2, height / 2);
+    static fromRect(width: number, height: number, pos = UVec2D.new(0, 0)): RectHitbox {
+        const size = UVec2D.new(width / 2, height / 2);
 
         return new RectHitbox(
-            Vec2.sub(pos, size),
-            Vec2.add(pos, size)
+            UVec2D.sub(pos, size),
+            UVec2D.add(pos, size)
         );
     }
 
@@ -170,8 +171,8 @@ export class RectHitbox extends BaseHitbox {
      */
     static fromCircle(radius: number, position: VectorAbstract): RectHitbox {
         return new RectHitbox(
-            Vec2.new(position.x - radius, position.y - radius),
-            Vec2.new(position.x + radius, position.y + radius));
+            UVec2D.new(position.x - radius, position.y - radius),
+            UVec2D.new(position.x + radius, position.y + radius));
     }
 
     override collidesWith(that: Hitbox): boolean {
@@ -193,15 +194,15 @@ export class RectHitbox extends BaseHitbox {
     }
 
     override clone(): RectHitbox {
-        return new RectHitbox(Vec2.clone(this.min), Vec2.clone(this.max));
+        return new RectHitbox(UVec2D.clone(this.min), UVec2D.clone(this.max));
     }
 
     override scale(scale: number): void {
         const centerX = (this.min.x + this.max.x) / 2;
         const centerY = (this.min.y + this.max.y) / 2;
 
-        this.min = Vec2.new((this.min.x - centerX) * scale + centerX, (this.min.y - centerY) * scale + centerY);
-        this.max = Vec2.new((this.max.x - centerX) * scale + centerX, (this.max.y - centerY) * scale + centerY);
+        this.min = UVec2D.new((this.min.x - centerX) * scale + centerX, (this.min.y - centerY) * scale + centerY);
+        this.max = UVec2D.new((this.max.x - centerX) * scale + centerX, (this.max.y - centerY) * scale + centerY);
     }
 
     override intersectsLine(a: VectorAbstract, b: VectorAbstract): LineIntersection {

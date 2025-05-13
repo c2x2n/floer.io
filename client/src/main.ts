@@ -1,13 +1,13 @@
 import "./scss/client.scss";
 import { Game } from "./scripts/game";
-import { UI } from "@/ui.ts";
-import { Settings } from "@/settings.ts";
-import { Renderer } from "@/scripts/render/renderer.ts";
-import { loadStyleSheet } from "@/scripts/utils/icons.ts";
+import { UI } from "./ui";
+import { Settings } from "./settings";
+import { Renderer } from "./scripts/render/renderer";
+import { loadStyleSheet } from "./scripts/utils/icons";
 
-document.fonts.ready.then(() => {
+void document.fonts.ready.then(() => {
     loadStyleSheet();
-})
+});
 
 export class ClientApplication {
     settings = new Settings(this);

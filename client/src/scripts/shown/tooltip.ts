@@ -1,10 +1,10 @@
-import { Rarity } from "@common/definitions/rarities.ts";
-import { AttributeNames, AttributeParameters, PetalDefinition, Petals } from "@common/definitions/petals.ts";
-import { Modifiers, PlayerModifiers } from "@common/typings.ts";
-import { renderPetal } from "@/scripts/inventory.ts";
+import { Rarity } from "../../../../common/src/definitions/rarities";
+import { AttributeNames, AttributeParameters, PetalDefinition, Petals } from "../../../../common/src/definitions/petals";
+import { Modifiers, PlayerModifiers } from "../../../../common/src/typings";
+import { renderPetal } from "../inventory";
 import $ from "jquery";
-import { MobDefinition, Mobs } from "@common/definitions/mobs.ts";
-import { Gallery } from "@/scripts/gallery.ts";
+import { MobDefinition, Mobs } from "../../../../common/src/definitions/mobs";
+import { Gallery } from "../gallery";
 import Big from "big.js";
 
 const tooltipTemplate = $("<div class='tooltip information'></div>");
@@ -28,10 +28,10 @@ interface DefinitionShowingConfig {
 }
 
 type AttributeShowingFunction<K extends AttributeNames> =
-    (data: Required<AttributeParameters>[K]) => (DefinitionShowingConfig & { value: string })[];
+    (data: Required<AttributeParameters>[K]) => Array<DefinitionShowingConfig & { value: string }>;
 
-const petalDefinitionShowingConfigs: { [key: string] : DefinitionShowingConfig } =
-    {
+const petalDefinitionShowingConfigs: Record<string, DefinitionShowingConfig>
+    = {
         damage: {
             displayName: "Damage",
             color: "#fd6565"
@@ -117,25 +117,25 @@ const petalDefinitionShowingConfigs: { [key: string] : DefinitionShowingConfig }
             color: "#58fd48",
             noValue: true
         }
-    }
+    };
 
-const attributesShowingConfigs: { [K in AttributeNames] : AttributeShowingFunction<K>} =
-    {
-        absorbing_heal: (data) => {
+const attributesShowingConfigs: { [K in AttributeNames]: AttributeShowingFunction<K> }
+    = {
+        absorbing_heal: data => {
             return [{
                 displayName: "Heal",
                 value: data.toString(),
                 color: "#58fd48"
-            }]
+            }];
         },
-        absorbing_shield: (data) => {
+        absorbing_shield: data => {
             return [{
                 displayName: "Shield",
                 value: data.toString(),
                 color: "#d2eb34"
-            }]
+            }];
         },
-        boost: (data) => {
+        boost: data => {
             if (data > 0) {
                 return [{
                     displayName: "Dynamic",
@@ -150,21 +150,21 @@ const attributesShowingConfigs: { [K in AttributeNames] : AttributeShowingFuncti
                 }];
             }
         },
-        body_poison: (data) => {
+        body_poison: data => {
             return [{
                 displayName: "Body Poison",
                 value: `${data.damagePerSecond * data.duration} (${data.damagePerSecond}/s)`,
                 color: "#ce76db"
-            }]
+            }];
         },
-        damage_reflection: (data) => {
+        damage_reflection: data => {
             return [{
                 displayName: "Damage Reflection",
                 value: `${data * 100}%`,
                 color: "#989898"
-            }]
+            }];
         },
-        healing_debuff: (data) => {
+        healing_debuff: data => {
             return [{
                 displayName: "Healing Debuff",
                 value: `-${100 - data.healing * 100}% `,
@@ -173,27 +173,27 @@ const attributesShowingConfigs: { [K in AttributeNames] : AttributeShowingFuncti
                 displayName: "Duration",
                 value: `${data.duration}s`,
                 color: "#6161f0"
-            },]
+            }];
         },
-        poison: (data) => {
+        poison: data => {
             return [{
                 displayName: "Poison",
                 value: `${data.damagePerSecond * data.duration} (${data.damagePerSecond}/s)`,
                 color: "#ce76db"
-            }]
+            }];
         },
         shoot: () => [],
         peas_shoot: () => [],
         around_circle_shoot: () => [],
         place_projectile: () => [],
-        spawner: (data) => {
+        spawner: data => {
             return [{
                 displayName: "Content",
-                value: `${data.displayName}`,
+                value: data.displayName,
                 color: "#6161f0"
-            },]
+            }];
         },
-        critical_hit: (data) => {
+        critical_hit: data => {
             return [{
                 displayName: "Critical Chance",
                 value: `${data.chance * 100}%`,
@@ -202,29 +202,31 @@ const attributesShowingConfigs: { [K in AttributeNames] : AttributeShowingFuncti
                 displayName: "Critical Multiplier",
                 value: `${data.multiplier}x`,
                 color: "#ff5500"
-            }]
+            }];
         },
-        health_percent_damage: (data) => {
+        health_percent_damage: data => {
             return [{
                 displayName: "Current Health Damage",
                 value: `${data.percent * 100}%`,
                 color: "#ff3333"
             },
-                ...(data.maxDamage !== undefined ? [{
+            ...(data.maxDamage !== undefined
+                ? [{
                     displayName: "Max Damage",
                     value: data.maxDamage.toString(),
                     color: "#ff6666"
-                }] : [])
-            ]
+                }]
+                : [])
+            ];
         },
-        damage_avoidance: (data) => {
+        damage_avoidance: data => {
             return [{
                 displayName: "Damage Avoidance",
                 value: `${data.chance * 100}%`,
                 color: "#3399ff"
-            }]
+            }];
         },
-        paralyze: (data) => {
+        paralyze: data => {
             return [{
                 displayName: "Paralyze",
                 value: `${data.duration}s`,
@@ -237,9 +239,9 @@ const attributesShowingConfigs: { [K in AttributeNames] : AttributeShowingFuncti
                 displayName: "Revolution Reduction",
                 value: `${data.revolutionReduction ? data.revolutionReduction * 100 : 0}%`,
                 color: "#9966ff"
-            }]
+            }];
         },
-        area_poison: (data) => {
+        area_poison: data => {
             return [{
                 displayName: "Radiation Radius",
                 value: `${data.radius}`,
@@ -248,34 +250,36 @@ const attributesShowingConfigs: { [K in AttributeNames] : AttributeShowingFuncti
                 displayName: "Radiation Damage",
                 value: `${data.damagePerSecond}/s`,
                 color: "#32CD32"
-            }]
+            }];
         },
-        armor: (data) => {
+        armor: data => {
             return [{
                 displayName: "Armor",
                 value: data.toString(),
                 color: "#989898"
-            }]
+            }];
         },
-        self_damage: (data) => {
+        self_damage: data => {
             return [{
                 displayName: "Self Damage",
                 value: `${data}`,
                 color: "#ff6666"
-            }]
+            }];
         },
-        damage_heal: (data) => {
+        damage_heal: data => {
             return [{
                 displayName: "Damage Heal",
                 value: `${data.healPercent}%`,
                 color: "#58fd48"
-            }, ...(data.maximumHeal !== undefined ? [{
-                displayName: "Max Damage",
-                value: data.maximumHeal.toString(),
-                color: "#58fd48"
-            }] : [])]
+            }, ...(data.maximumHeal !== undefined
+                ? [{
+                    displayName: "Max Damage",
+                    value: data.maximumHeal.toString(),
+                    color: "#58fd48"
+                }]
+                : [])];
         },
-        lightning: (data) => {
+        lightning: data => {
             return [{
                 displayName: "Attenuation",
                 value: `${data.attenuation * 100}%`,
@@ -288,22 +292,21 @@ const attributesShowingConfigs: { [K in AttributeNames] : AttributeShowingFuncti
                 displayName: "Bounces",
                 value: `${data.bounces}`,
                 color: "#66ffff"
-            }]
+            }];
         },
-        damage_reduction_percent: (data) => {
+        damage_reduction_percent: data => {
             return [{
                 displayName: "Petal Resistance",
                 value: `${data}%`,
                 color: "#3344ff"
-            }]
+            }];
         }
-    }
-
+    };
 
 export function createPetalTooltip(definition: PetalDefinition): JQuery {
     const box = tooltipTemplate.clone();
 
-    function addLine(args: InformationLineParameters){
+    function addLine(args: InformationLineParameters) {
         let {
             startsWith,
             endsWith,
@@ -311,31 +314,31 @@ export function createPetalTooltip(definition: PetalDefinition): JQuery {
             fontSize,
             color
         } = args;
-        startsWith = startsWith ? startsWith + "&nbsp;" : "";
+        startsWith = startsWith ? `${startsWith}&nbsp;` : "";
         endsWith = endsWith ?? "";
         value = value ?? "";
         fontSize = fontSize ?? 13;
         color = color ?? "#FFFFFF";
 
-        const line = $(`<div></div>`);
+        const line = $("<div></div>");
         line.css("display", "flex");
 
-        const startS =
-            $(`<p textin="${startsWith}"></p>`);
+        const startS
+            = $(`<p textin="${startsWith}"></p>`);
 
-        const valueS =
-            $(`<p textin="${value}"></p>`);
+        const valueS
+            = $(`<p textin="${value}"></p>`);
 
-        const endS =
-            $(`<p textin="${endsWith}"></p>`);
+        const endS
+            = $(`<p textin="${endsWith}"></p>`);
 
-        startS.css("font-size", fontSize + "px")
-        startS.css("color", color)
+        startS.css("font-size", `${fontSize}px`);
+        startS.css("color", color);
 
-        valueS.css("font-size", fontSize + "px")
+        valueS.css("font-size", `${fontSize}px`);
         valueS.css("color", "#FFFFFF");
 
-        endS.css("font-size", fontSize + "px");
+        endS.css("font-size", `${fontSize}px`);
         endS.css("color", "#FFFFFF");
 
         line.append(startS);
@@ -345,7 +348,7 @@ export function createPetalTooltip(definition: PetalDefinition): JQuery {
         box.append(line);
     }
 
-    function addBr(){
+    function addBr() {
         box.append($("<p class='br'></p>"));
     }
 
@@ -354,24 +357,24 @@ export function createPetalTooltip(definition: PetalDefinition): JQuery {
             addLine({
                 startsWith: config.displayName,
                 color: config.color
-            })
+            });
 
             return;
         }
 
         addLine({
-            startsWith: config.displayName
-                + `: `,
-            value: `${config.startsWith ?? ""}` + value,
+            startsWith: `${config.displayName
+            }: `,
+            value: config.startsWith ?? value,
             endsWith: config.endsWith ?? "",
             color: config.color
-        })
+        });
     }
 
     addLine({
         value: definition.displayName,
         fontSize: 25
-    })
+    });
 
     const rarity = Rarity.fromStringSafe(definition.rarity);
     if (rarity) {
@@ -380,7 +383,7 @@ export function createPetalTooltip(definition: PetalDefinition): JQuery {
             value: "",
             fontSize: 12,
             color: rarity.color
-        })
+        });
     }
 
     addBr();
@@ -389,37 +392,36 @@ export function createPetalTooltip(definition: PetalDefinition): JQuery {
         addLine({
             value: definition.description,
             fontSize: 12
-        })
+        });
     }
 
     addBr();
 
     for (const definitionKey in definition) {
-        if (petalDefinitionShowingConfigs.hasOwnProperty(definitionKey)) {
-            const showing =
-                petalDefinitionShowingConfigs[definitionKey];
+        if (Object.prototype.hasOwnProperty.call(petalDefinitionShowingConfigs, definitionKey)) {
+            const showing
+                = petalDefinitionShowingConfigs[definitionKey];
             addData(showing,
-                (definition[definitionKey as keyof PetalDefinition]
-                    ?? "").toString()
+                // eslint-disable-next-line @typescript-eslint/no-base-to-string
+                (definition[definitionKey as keyof PetalDefinition] ?? "").toString()
             );
         }
     }
 
     if (definition.modifiers) {
         for (const modifiersDefinitionKey in definition.modifiers) {
-            const showing =
-                petalDefinitionShowingConfigs[modifiersDefinitionKey];
-            let original = (definition.modifiers
-                [modifiersDefinitionKey as keyof PlayerModifiers]);
+            const showing
+                = petalDefinitionShowingConfigs[modifiersDefinitionKey];
+            const original = (definition.modifiers[modifiersDefinitionKey as keyof PlayerModifiers]);
             if (!showing) continue;
 
             // 特殊处理conditionalHeal
             if (modifiersDefinitionKey === "conditionalHeal" && original) {
-                const conditionalHeal = original as {healthPercent: number, healAmount: number};
+                const conditionalHeal = original as { healthPercent: number, healAmount: number };
                 addData(showing, "");
                 addLine({
-                    startsWith: "HP < " + (conditionalHeal.healthPercent * 100).toFixed(0) + "%: ",
-                    value: "+" + conditionalHeal.healAmount.toFixed(1),
+                    startsWith: `HP < ${(conditionalHeal.healthPercent * 100).toFixed(0)}%: `,
+                    value: `+${conditionalHeal.healAmount.toFixed(1)}`,
                     endsWith: "/s",
                     color: "#58fd48",
                     fontSize: 12
@@ -440,7 +442,7 @@ export function createPetalTooltip(definition: PetalDefinition): JQuery {
                     if (!showing.noSubtract) {
                         value = value - 100;
                     }
-                    if (value > 0) startsWith = "+"
+                    if (value > 0) startsWith = "+";
                     endsWith = "%";
                 } else if (modifiersDefinitionKey === "damageAvoidanceChance") {
                     value = original * 100;
@@ -459,21 +461,20 @@ export function createPetalTooltip(definition: PetalDefinition): JQuery {
         for (attributesDefinitionKey in definition.attributes) {
             const data = definition.attributes[attributesDefinitionKey];
             if (!data) continue;
-            const config =
-                (attributesShowingConfigs[attributesDefinitionKey] as AttributeShowingFunction<typeof attributesDefinitionKey>)
-                (data);
+            const config
+                = (attributesShowingConfigs[attributesDefinitionKey] as AttributeShowingFunction<typeof attributesDefinitionKey>)(data);
             config.forEach(e => {
                 addData(e as DefinitionShowingConfig,
                     e.value
                 );
-            })
+            });
         }
     }
 
     if (!definition.equipment && definition.reloadTime) {
-        let content = definition.reloadTime + "s";
+        let content = `${definition.reloadTime}s`;
         if (definition.usable) {
-            content += " + " + definition.useTime + "s";
+            content += ` + ${definition.useTime}s`;
         }
         const reload = $(`<p textin="${content}"><p>`);
 
@@ -485,15 +486,15 @@ export function createPetalTooltip(definition: PetalDefinition): JQuery {
     }
 
     const occupy = $("<div style='height: 1px; width: 200px'></div>");
-    box.append(occupy)
+    box.append(occupy);
 
     box.css("opacity", "0").animate({ opacity: 1 }, 100);
 
     return box;
 }
 
-const mobDefinitionShowingConfigs: { [key: string] : DefinitionShowingConfig } =
-{
+const mobDefinitionShowingConfigs: Record<string, DefinitionShowingConfig>
+= {
     damage: {
         displayName: "Damage",
         color: "#fd6565"
@@ -505,13 +506,13 @@ const mobDefinitionShowingConfigs: { [key: string] : DefinitionShowingConfig } =
     speed: {
         displayName: "Speed",
         color: "#58fd48"
-    },
-}
+    }
+};
 
 export function createMobTooltip(gallery: Gallery, definition: MobDefinition): JQuery {
     const box = tooltipTemplate.clone();
 
-    function addLine(args: InformationLineParameters){
+    function addLine(args: InformationLineParameters) {
         let {
             startsWith,
             endsWith,
@@ -519,31 +520,31 @@ export function createMobTooltip(gallery: Gallery, definition: MobDefinition): J
             fontSize,
             color
         } = args;
-        startsWith = startsWith ? startsWith + "&nbsp;" : "";
+        startsWith = startsWith ? `${startsWith}&nbsp;` : "";
         endsWith = endsWith ?? "";
         value = value ?? "";
         fontSize = fontSize ?? 13;
         color = color ?? "#FFFFFF";
 
-        const line = $(`<div></div>`);
+        const line = $("<div></div>");
         line.css("display", "flex");
 
-        const startS =
-            $(`<p textin="${startsWith}"></p>`);
+        const startS
+            = $(`<p textin="${startsWith}"></p>`);
 
-        const valueS =
-            $(`<p textin="${value}"></p>`);
+        const valueS
+            = $(`<p textin="${value}"></p>`);
 
-        const endS =
-            $(`<p textin="${endsWith}"></p>`);
+        const endS
+            = $(`<p textin="${endsWith}"></p>`);
 
-        startS.css("font-size", fontSize + "px")
-        startS.css("color", color)
+        startS.css("font-size", `${fontSize}px`);
+        startS.css("color", color);
 
-        valueS.css("font-size", fontSize + "px")
+        valueS.css("font-size", `${fontSize}px`);
         valueS.css("color", "#FFFFFF");
 
-        endS.css("font-size", fontSize + "px");
+        endS.css("font-size", `${fontSize}px`);
         endS.css("color", "#FFFFFF");
 
         line.append(startS);
@@ -553,7 +554,7 @@ export function createMobTooltip(gallery: Gallery, definition: MobDefinition): J
         box.append(line);
     }
 
-    function addBr(){
+    function addBr() {
         box.append($("<p class='br'></p>"));
     }
 
@@ -562,24 +563,24 @@ export function createMobTooltip(gallery: Gallery, definition: MobDefinition): J
             addLine({
                 startsWith: config.displayName,
                 color: config.color
-            })
+            });
 
             return;
         }
 
         addLine({
-            startsWith: config.displayName
-                + `: `,
-            value: `${config.startsWith ?? ""}` + value,
+            startsWith: `${config.displayName
+            }: `,
+            value: config.startsWith ?? value,
             endsWith: config.endsWith ?? "",
             color: config.color
-        })
+        });
     }
 
     addLine({
         value: definition.displayName,
         fontSize: 25
-    })
+    });
 
     const rarity = Rarity.fromStringSafe(definition.rarity);
     if (rarity) {
@@ -588,7 +589,7 @@ export function createMobTooltip(gallery: Gallery, definition: MobDefinition): J
             value: "",
             fontSize: 12,
             color: rarity.color
-        })
+        });
     }
 
     addBr();
@@ -597,28 +598,28 @@ export function createMobTooltip(gallery: Gallery, definition: MobDefinition): J
         addLine({
             value: definition.description,
             fontSize: 12
-        })
+        });
     }
 
     addBr();
 
     for (const definitionKey in definition) {
-        if (mobDefinitionShowingConfigs.hasOwnProperty(definitionKey)) {
-            const showing =
-                mobDefinitionShowingConfigs[definitionKey];
+        if (Object.prototype.hasOwnProperty.call(mobDefinitionShowingConfigs, definitionKey)) {
+            const showing
+                = mobDefinitionShowingConfigs[definitionKey];
             addData(showing,
+                // eslint-disable-next-line @typescript-eslint/no-base-to-string
                 (definition[definitionKey as keyof MobDefinition]
-                    ?? "").toString()
+                ?? "").toString()
             );
         }
     }
 
     if (definition.modifiers) {
         for (const modifiersDefinitionKey in definition.modifiers) {
-            const showing =
-                mobDefinitionShowingConfigs[modifiersDefinitionKey];
-            let original = (definition.modifiers
-                [modifiersDefinitionKey as keyof Modifiers]);
+            const showing
+                = mobDefinitionShowingConfigs[modifiersDefinitionKey];
+            const original = (definition.modifiers[modifiersDefinitionKey as keyof Modifiers]);
             if (!showing) continue;
 
             if (!original) {
@@ -634,7 +635,7 @@ export function createMobTooltip(gallery: Gallery, definition: MobDefinition): J
                     if (!showing.noSubtract) {
                         value = value - 100;
                     }
-                    if (value > 0) startsWith = "+"
+                    if (value > 0) startsWith = "+";
                     endsWith = "%";
                 } else if (modifiersDefinitionKey === "damageAvoidanceChance") {
                     value = original * 100;
@@ -649,17 +650,21 @@ export function createMobTooltip(gallery: Gallery, definition: MobDefinition): J
     }
 
     if (definition.shootable) {
-        if (definition.shoot.damage) addLine({
-            startsWith: "Missile Damage: ",
-            value: definition.shoot.damage.toString(),
-            color: "#fd6565"
-        })
+        if (definition.shoot.damage) {
+            addLine({
+                startsWith: "Missile Damage: ",
+                value: definition.shoot.damage.toString(),
+                color: "#fd6565"
+            });
+        }
 
-        if (definition.shoot.health) addLine({
-            startsWith: "Missile Health: ",
-            value: definition.shoot.health.toString(),
-            color: "#58fd48"
-        })
+        if (definition.shoot.health) {
+            addLine({
+                startsWith: "Missile Health: ",
+                value: definition.shoot.health.toString(),
+                color: "#58fd48"
+            });
+        }
     }
 
     const xp = definition.exp;
@@ -671,36 +676,36 @@ export function createMobTooltip(gallery: Gallery, definition: MobDefinition): J
 
     box.append(reload);
 
-    addBr()
+    addBr();
 
-    const loots = $(`<div class="mob-loots"></div>`)
+    const loots = $("<div class=\"mob-loots\"></div>");
 
     const sortedLootTable = Object.keys(definition.lootTable).sort(
         (a, b) =>
             Rarity.fromString(Petals.fromString(a).rarity).level - Rarity.fromString(Petals.fromString(b).rarity).level
-    )
+    );
 
     for (const lootTableKey of sortedLootTable) {
         const rate = Big(definition.lootTable[lootTableKey]).mul(100);
         const loot = Petals.fromStringSafe(lootTableKey);
 
-        const lootDOM = $(`<div class="mob-loot"></div>`)
-        const rateDOM = $(`<p class="drop-rate" textin="${rate}%"></p>`);
+        const lootDOM = $("<div class=\"mob-loot\"></div>");
+        const rateDOM = $(`<p class="drop-rate" textin="${rate.toNumber()}%"></p>`);
 
         if (!loot) continue;
 
         if (gallery.petalGallery.includes(lootTableKey)) {
-            lootDOM.append(renderPetal(loot))
+            lootDOM.append(renderPetal(loot));
         } else {
             lootDOM.append($(`<div class="unknown">
                 <div textin="?"></div>
-            </div>`))
+            </div>`));
         }
-        lootDOM.append(rateDOM)
-        loots.append(lootDOM)
+        lootDOM.append(rateDOM);
+        loots.append(lootDOM);
     }
 
-    box.append(loots)
+    box.append(loots);
 
     const occupy = $("<div style='height: 1px; width: 300px'></div>");
     box.append(occupy);
@@ -717,11 +722,11 @@ export function applyTooltip(follow: JQuery, tooltip: JQuery) {
         if (!follow.is(":visible")) return;
         $("body").append(tooltip);
         const offset = follow.offset();
-        if (offset){
+        if (offset) {
             let left = offset.left;
             left = Math.max(left, 20 + (tooltip.width() ?? 0) * 0.35);
-            tooltip.css("left", left + "px");
-            tooltip.css("top", offset.top - 10 + "px");
+            tooltip.css("left", `${left}px`);
+            tooltip.css("top", `${offset.top - 10}px`);
         }
         tooltip.css("opacity", "0");
         tooltip.animate({ opacity: 1 }, 100);
@@ -729,14 +734,14 @@ export function applyTooltip(follow: JQuery, tooltip: JQuery) {
         const observer = setInterval(() => {
             if (!on || !follow.is(":visible")) {
                 tooltip.animate({ opacity: 0 }, 200, () => {
-                    tooltip.remove()
+                    tooltip.remove();
                 });
                 clearInterval(observer);
             }
-        }, 100)
-    })
+        }, 100);
+    });
 
     follow.on("mouseout", () => {
         on = false;
-    })
+    });
 }

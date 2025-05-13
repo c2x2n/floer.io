@@ -5,26 +5,26 @@ import { ServerPlayer } from "../entities/serverPlayer";
 import { ServerMob } from "../entities/serverMob";
 import { damageSource, isDamageableEntity, isDamageSourceEntity } from "../typings";
 
-export interface EffectData{
-    readonly effectedTarget: ServerEntity;
-    readonly source: damageSource;
-    readonly workingType?: EntityType[];
-    readonly duration: number;
-    readonly callback?: (dt: number, effected: ServerEntity) => void;
-    readonly modifier?: Partial<PlayerModifiers>;
+export interface EffectData {
+    readonly effectedTarget: ServerEntity
+    readonly source: damageSource
+    readonly workingType?: EntityType[]
+    readonly duration: number
+    readonly callback?: (dt: number, effected: ServerEntity) => void
+    readonly modifier?: Partial<PlayerModifiers>
 }
 
 export interface PoisonEffectData {
-    readonly effectedTarget: ServerEntity;
-    readonly source: damageSource;
-    readonly duration: number;
-    readonly damagePerSecond: number;
+    readonly effectedTarget: ServerEntity
+    readonly source: damageSource
+    readonly duration: number
+    readonly damagePerSecond: number
 }
 
 export class Effect {
-    time: number = 0;
+    time = 0;
 
-    hasStarted: boolean = false;
+    hasStarted = false;
 
     readonly effectedTarget: ServerEntity;
     readonly source: damageSource;
@@ -43,15 +43,14 @@ export class Effect {
     }
 
     public start() {
-        if (this.workingType && !this.workingType.includes(this.effectedTarget.type))
-            return;
+        if (this.workingType && !this.workingType.includes(this.effectedTarget.type)) { return; }
         this.effectedTarget.effects.addEffect(this);
         this.hasStarted = true;
     }
 
     public tick(dt: number) {
         this.time += dt;
-        if(this.callback) this.callback(dt, this.effectedTarget);
+        if (this.callback) this.callback(dt, this.effectedTarget);
         if (this.time >= this.duration) this.destroy();
     }
 
@@ -61,7 +60,7 @@ export class Effect {
 }
 
 export class PoisonEffect extends Effect {
-    damagePerSecond: number
+    damagePerSecond: number;
 
     public constructor(data: PoisonEffectData) {
         super({
@@ -71,7 +70,7 @@ export class PoisonEffect extends Effect {
             callback: (dt, effected) => {
                 if (!data) return;
                 if (isDamageableEntity(effected)) {
-                    if (!effected.canReceiveDamageFrom(this.source)) return
+                    if (!effected.canReceiveDamageFrom(this.source)) return;
                     effected.receiveDamage(dt * data.damagePerSecond, this.source);
                 }
             },
@@ -82,21 +81,19 @@ export class PoisonEffect extends Effect {
 
     public destroy() {
         super.destroy();
-        if (this.effectedTarget.state.poison === this)
-            this.effectedTarget.state.poison = undefined;
+        if (this.effectedTarget.state.poison === this) { this.effectedTarget.state.poison = undefined; }
     }
 }
 
-
 export class EffectManager {
-    effects= new Set<Effect>();
+    effects = new Set<Effect>();
 
     constructor(public owner: ServerEntity) {}
 
     tick() {
         this.effects.forEach(e => {
             e.tick(this.owner.game.dt);
-        })
+        });
     }
 
     addEffect(effect: Effect) {

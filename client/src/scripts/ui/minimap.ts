@@ -1,20 +1,19 @@
-import { Game } from "@/scripts/game.ts";
-import { Numeric, P2 } from "@common/utils/math.ts";
-
-import { ZoneName, Zones } from "@common/definitions/zones.ts";
-import { Walls } from "@common/definitions/walls.ts";
+import { Game } from "../game";
+import { Numeric, P2 } from "../../../../common/src/maths/math";
+import { ZoneName, Zones } from "../../../../common/src/definitions/zones";
+import { Walls } from "../../../../common/src/definitions/walls";
 
 const widthDiv = 10;
 const heightDiv = 8;
 
 export class Minimap {
-    private minimapPositionX: number = 0;
-    private minimapPositionY: number = 0;
-    private minimapWidth: number = 0;
-    private minimapHeight: number = 0;
-    private gameWidth: number = 0;
-    private gameHeight: number = 0;
-    sized: boolean = false;
+    private minimapPositionX = 0;
+    private minimapPositionY = 0;
+    private minimapWidth = 0;
+    private minimapHeight = 0;
+    private gameWidth = 0;
+    private gameHeight = 0;
+    sized = false;
 
     constructor(private game: Game) {}
 
@@ -24,7 +23,7 @@ export class Minimap {
             this.minimapPositionX = screenWidth / 2;
             this.minimapPositionY = 30;
 
-            return
+            return;
         }
         const screenWidth = this.game.screenWidth;
         const screenHeight = this.game.screenHeight;
@@ -46,15 +45,14 @@ export class Minimap {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        if (this.game.playerIsOnMobile && this.game.leaderboard.on)
-            return;
+        if (this.game.playerIsOnMobile && this.game.leaderboard.on) { return; }
 
-        ctx.save()
+        ctx.save();
 
         ctx.translate(
             this.minimapPositionX,
             this.minimapPositionY
-        )
+        );
 
         ctx.globalAlpha = 1;
 
@@ -69,10 +67,10 @@ export class Minimap {
             0,
             this.minimapWidth,
             this.minimapHeight, 2
-        )
+        );
 
-        ctx.fill()
-        ctx.stroke()
+        ctx.fill();
+        ctx.stroke();
 
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
@@ -95,8 +93,8 @@ export class Minimap {
                 y,
                 width,
                 height
-            )
-            ctx.fill()
+            );
+            ctx.fill();
 
             ctx.globalAlpha = 0.8;
             ctx.font = "15px Ubuntu";
@@ -115,7 +113,7 @@ export class Minimap {
             ctx.fillStyle = "#000000";
             ctx.globalAlpha = 0.8;
 
-            index ++
+            index++;
         }
 
         ctx.font = "25px Ubuntu";
@@ -139,18 +137,18 @@ export class Minimap {
                 data.y / heightDiv,
                 data.width / widthDiv,
                 data.height / heightDiv
-            )
+            );
 
-            ctx.fill()
+            ctx.fill();
         }
 
         const position = this.game.activePlayer?.position;
 
         if (position) {
-            const remappedX =
-                Numeric.remap(position.x, 0, this.gameWidth, 0, this.minimapWidth);
-            const remappedY =
-                Numeric.remap(position.y, 0, this.gameHeight, 0, this.minimapHeight);
+            const remappedX
+                = Numeric.remap(position.x, 0, this.gameWidth, 0, this.minimapWidth);
+            const remappedY
+                = Numeric.remap(position.y, 0, this.gameHeight, 0, this.minimapHeight);
 
             ctx.fillStyle = "#FEE763";
             ctx.strokeStyle = "#988A3B";
@@ -162,7 +160,7 @@ export class Minimap {
                 remappedY,
                 5,
                 0, P2
-            )
+            );
 
             ctx.fill();
             ctx.stroke();

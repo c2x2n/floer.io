@@ -1,5 +1,5 @@
 import { ServerEntity } from "./serverEntity";
-import { Vec2, VectorAbstract } from "../../../common/src/utils/vector";
+import { UVec2D } from "../../../common/src/physics/utils";
 import { type EntitiesNetData } from "../../../common/src/net/packets/updatePacket";
 import { CircleHitbox } from "../../../common/src/utils/hitbox";
 import { EntityType } from "../../../common/src/constants";
@@ -10,8 +10,9 @@ import { damageableEntity, damageSource, isDamageableEntity } from "../typings";
 import { ServerFriendlyMob, ServerMob } from "./serverMob";
 import { ServerPlayer } from "./serverPlayer";
 import { Random } from "../../../common/src/utils/random";
-import { Geometry, P2 } from "../../../common/src/utils/math";
+import { Geometry, P2 } from "../../../common/src/maths/math";
 import { Effect } from "../utils/effects";
+import VectorAbstract from "../../../common/src/physics/vectorAbstract";
 
 export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
     type: EntityType.Projectile = EntityType.Projectile;
@@ -21,10 +22,10 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
     parameters: ProjectileParameters;
 
     health?: number;
-    damage: number = 0;
+    damage = 0;
 
-    existingTime: number = 0;
-    direction: VectorAbstract = Vec2.new(0, 0);
+    existingTime = 0;
+    direction: VectorAbstract = UVec2D["new"](0, 0);
     source: damageSource;
     elasticity = 0;
     knockback = 0.002;
@@ -42,22 +43,21 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
             case EntityType.Petal:
                 return source.owner != this.source;
             case EntityType.Projectile:
-                if (source.source.type === EntityType.Mob)
-                    return this.source.type != EntityType.Mob;
+                if (source.source.type === EntityType.Mob) { return this.source.type != EntityType.Mob; }
                 return source.source != this.source;
         }
     }
 
     canCollideWith(source: ServerEntity): boolean {
-        if(isDamageableEntity(source)) return this.canReceiveDamageFrom(source)
+        if (isDamageableEntity(source)) return this.canReceiveDamageFrom(source);
         else return false;
     }
 
     constructor(source: damageSource,
-                position: VectorAbstract,
-                direction: VectorAbstract,
-                parameters: ProjectileParameters,
-                from?: ServerPetal) {
+        position: VectorAbstract,
+        direction: VectorAbstract,
+        parameters: ProjectileParameters,
+        from?: ServerPetal) {
         super(source.game, position);
 
         this.hitbox = new CircleHitbox(parameters.hitboxRadius);
@@ -76,7 +76,7 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
         this.game.grid.addEntity(this);
     }
 
-    tick(): void{
+    tick(): void {
         super.tick();
 
         this.existingTime += this.game.dt;
@@ -84,16 +84,15 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
             this.destroy();
         }
 
-        this.setAcceleration(Vec2.mul(this.direction, this.parameters.speed));
-
+        this.setAcceleration(UVec2D.mul(this.direction, this.parameters.speed));
     }
 
-    dealDamageTo(to: damageableEntity): void{
+    dealDamageTo(to: damageableEntity): void {
         if (this.definition.doesNotDamage?.includes(to.type)) return;
         if (to.canReceiveDamageFrom(this)) {
             to.receiveDamage(this.damage, this.source);
             if (this.from && this.source.type === EntityType.Player) {
-                this.source.sendEvent(AttributeEvents.PROJECTILE_DEAL_DAMAGE, to, this.from)
+                this.source.sendEvent(AttributeEvents.PROJECTILE_DEAL_DAMAGE, to, this.from);
             }
 
             if (this.parameters.modifiersWhenDamage) {
@@ -103,7 +102,7 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
                     duration: d.duration,
                     source: this.source,
                     modifier: d.modifier
-                }).start()
+                }).start();
             }
 
             if (this.parameters.poison) {
@@ -111,12 +110,12 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
                     this.source
                     , this.parameters.poison.damagePerSecond
                     , this.parameters.poison.duration
-                )
+                );
             }
         }
 
         if (this.parameters.modifiersWhenOn && this.canEffect(to)) {
-            to.otherModifiers.push(this.parameters.modifiersWhenOn)
+            to.otherModifiers.push(this.parameters.modifiersWhenOn);
         }
     }
 
@@ -150,22 +149,22 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
     updatePosition(position: VectorAbstract): void {
         super.updatePosition(position);
         if (
-            this.definition && !this.definition.onGround && !Vec2.equals(position, this._position)
-        ) this.destroy()
+            this.definition && !this.definition.onGround && !UVec2D.equals(position, this._position)
+        ) this.destroy();
     }
 
-    get data(): Required<EntitiesNetData[EntityType]>{
+    get data(): Required<EntitiesNetData[EntityType]> {
         return {
             position: this.position,
             direction: this.direction,
             full: {
                 hitboxRadius: this.parameters.hitboxRadius,
-                definition: this.definition,
+                definition: this.definition
             }
         };
     };
 
-    destroy(noDrops: boolean = false) {
+    destroy(noDrops = false) {
         super.destroy(noDrops);
         if (noDrops) return;
 
@@ -179,20 +178,20 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
                         this.position,
                         Geometry.radiansToDirection(radiansNow),
                         spawner.spawn
-                    )
+                    );
                     radiansNow += P2 / spawner.amount;
                 }
             } else {
                 for (let i = 0; i < spawner.amount; i++) {
                     const position = Random.pointInsideCircle(
                         this.position, 8
-                    )
+                    );
                     new ServerMob(
                         this.game,
                         position,
-                        Geometry.radiansToDirection(Random.float(-P2, P2)),
+                        Geometry.radiansToDirection(Random["float"](-P2, P2)),
                         spawner.spawn
-                    )
+                    );
                 }
             }
         }

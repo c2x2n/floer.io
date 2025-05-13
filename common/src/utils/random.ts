@@ -1,5 +1,6 @@
-import { Numeric } from "./math";
-import { Vec2, type VectorAbstract } from "./vector";
+import { Numeric } from "../maths/math";
+import { UVec2D } from "../physics/utils";
+import VectorAbstract from "../physics/vectorAbstract";
 
 export const Random = Object.freeze({
     /**
@@ -58,7 +59,7 @@ export const Random = Object.freeze({
         } while ((x * x + y * y) >= 1); // check unit circle
 
         // scale and translate the points
-        return Vec2.new(x * radius + position.x, y * radius + position.y);
+        return UVec2D.new(x * radius + position.x, y * radius + position.y);
     },
 
     /**

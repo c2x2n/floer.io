@@ -1,6 +1,6 @@
 import { ServerPetal } from "../entities/serverPetal";
-import { Geometry, P2 } from "../../../common/src/utils/math";
-import { Vec2 } from "../../../common/src/utils/vector";
+import { Geometry, P2 } from "../../../common/src/maths/math";
+import { UVec2D } from "../../../common/src/physics/utils";
 import { AttributeNames, AttributeParameters } from "../../../common/src/definitions/petals";
 import { EventInitializer } from "./petalEvents";
 import { Effect } from "./effects";
@@ -30,22 +30,20 @@ export enum PetalUsingAnimations {
 }
 
 export interface AttributeRealize<T extends AttributeNames = AttributeNames> {
-    readonly unstackable?: boolean;
+    readonly unstackable?: boolean
     readonly callback: (
         on: EventInitializer, petal: ServerPetal, data: AttributeParameters[T]
     ) => void
 }
 
-export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>} = {
+export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K> } = {
     absorbing_heal: {
         callback: (on, petal, data) => {
-
             on(AttributeEvents.HEALING,
                 () => {
-                    if (data) petal.owner.heal(data)
+                    if (data) petal.owner.heal(data);
                 }
-            , PetalUsingAnimations.ABSORB);
-
+                , PetalUsingAnimations.ABSORB);
         }
     },
 
@@ -61,32 +59,31 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
                         );
                     }
                 }
-            , PetalUsingAnimations.ABSORB);
+                , PetalUsingAnimations.ABSORB);
         }
     },
 
     boost: {
         callback: (on, petal, data) => {
-
             on(AttributeEvents.DEFEND,
                 () => {
                     if (data) {
-                        const direction =
-                            Geometry.directionBetweenPoints(petal.owner.position, petal.position);
+                        const direction
+                            = Geometry.directionBetweenPoints(petal.owner.position, petal.position);
                         petal.owner.addVelocity(
-                            Vec2.mul(direction, data * 10)
-                        )
+                            UVec2D.mul(direction, data * 10)
+                        );
                     }
                 }
-            , PetalUsingAnimations.NORMAL);
+                , PetalUsingAnimations.NORMAL);
 
             on<AttributeEvents.PETAL_DEAL_DAMAGE>(
                 AttributeEvents.PETAL_DEAL_DAMAGE,
-                (entity) => {
+                entity => {
                     if (entity && data && data < 0 && isDamageableEntity(entity)) {
                         // 击退效果，负值表示击退
-                        const entityToPlayerDirection =
-                            Geometry.directionBetweenPoints(entity.position, petal.owner.position);
+                        const entityToPlayerDirection
+                            = Geometry.directionBetweenPoints(entity.position, petal.owner.position);
 
                         // 计算击退力度倍率
                         let knockbackMultiplier = 1.0;
@@ -94,8 +91,7 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
                         // 对玩家固定为1倍
                         if (entity.type === EntityType.Player) {
                             knockbackMultiplier = 1.0;
-                        }
-                        else {
+                        } else {
                             const entityRadius = entity.hitbox.radius;
                             const baseRadius = 1;
 
@@ -103,11 +99,11 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
                             knockbackMultiplier = Math.min(1.0, baseRadius / entityRadius);
                         }
                         entity.addVelocity(
-                            Vec2.mul(entityToPlayerDirection, Math.abs(data) * 10 * knockbackMultiplier)
-                        )
+                            UVec2D.mul(entityToPlayerDirection, Math.abs(data) * 10 * knockbackMultiplier)
+                        );
                     }
                 }
-            )
+            );
         }
     },
 
@@ -115,14 +111,14 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
         callback: (on, petal, data) => {
             on<AttributeEvents.PETAL_DEAL_DAMAGE>(
                 AttributeEvents.PETAL_DEAL_DAMAGE,
-                (entity) => {
+                entity => {
                     if (entity && data) {
                         entity.receivePoison(
                             petal.owner, data.damagePerSecond, data.duration
                         );
                     }
                 }
-            )
+            );
         }
     },
 
@@ -130,19 +126,19 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
         callback: (on, petal, data) => {
             on<AttributeEvents.PETAL_DEAL_DAMAGE>(
                 AttributeEvents.PETAL_DEAL_DAMAGE,
-                (entity) => {
-                    if (!entity || !data) return
+                entity => {
+                    if (!entity || !data) return;
                     new Effect({
                         effectedTarget: entity,
                         source: petal.owner,
                         modifier: {
-                            healing: data.healing,
+                            healing: data.healing
                         },
                         duration: data.duration,
                         workingType: [EntityType.Player]
                     }).start();
                 }
-            )
+            );
         }
     },
 
@@ -150,14 +146,14 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
         callback: (on, petal, data) => {
             on<AttributeEvents.FLOWER_DEAL_DAMAGE>(
                 AttributeEvents.FLOWER_DEAL_DAMAGE,
-                (entity) => {
+                entity => {
                     if (entity && data) {
                         entity.receivePoison(
                             petal.owner, data.damagePerSecond, data.duration
                         );
                     }
                 }
-            )
+            );
         }
     },
 
@@ -165,55 +161,53 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
         unstackable: true,
         callback: (on, petal, data) => {
             on<AttributeEvents.FLOWER_GET_DAMAGE>(AttributeEvents.FLOWER_GET_DAMAGE,
-                (arg) => {
+                arg => {
                     if (arg && data) {
                         const { entity, damage } = arg;
                         if (
                             entity instanceof ServerPlayer
-                            || entity instanceof ServerMob
-                            && entity.canReceiveDamageFrom(petal.owner)
+                            || (entity instanceof ServerMob && entity.canReceiveDamageFrom(petal.owner))
                         ) {
-                            entity.receiveDamage(data * damage, petal.owner, true)
+                            entity.receiveDamage(data * damage, petal.owner, true);
                         }
                     }
                 }
-            )
+            );
         }
     },
 
     shoot: {
         callback: (on, petal, data) => {
-            on(AttributeEvents.ATTACK,() => {
+            on(AttributeEvents.ATTACK, () => {
                 if (!data) return;
-                const direction =
-                    Geometry.directionBetweenPoints(petal.position, petal.owner.position);
+                const direction
+                    = Geometry.directionBetweenPoints(petal.position, petal.owner.position);
                 const position = petal.position;
                 const projectile = new ServerProjectile(
                     petal.owner, position, direction, data, petal);
-                projectile.addVelocity(Vec2.mul(direction, data.velocityAtFirst ?? data.speed * 6));
-                if (data.definition.onGround)
-                    projectile.addVelocity(Vec2.mul(direction, 80 * data.hitboxRadius / 5));
-            }, PetalUsingAnimations.NORMAL)
+                projectile.addVelocity(UVec2D.mul(direction, data.velocityAtFirst ?? data.speed * 6));
+                if (data.definition.onGround) { projectile.addVelocity(UVec2D.mul(direction, 80 * data.hitboxRadius / 5)); }
+            }, PetalUsingAnimations.NORMAL);
         }
     },
 
     around_circle_shoot: {
         callback: (on, petal, data) => {
-            on(AttributeEvents.ATTACK,() => {
+            on(AttributeEvents.ATTACK, () => {
                 if (!data) return;
-                const direction =
-                    Geometry.directionBetweenPoints(petal.position, petal.petalBunch.centerPosition);
+                const direction
+                    = Geometry.directionBetweenPoints(petal.position, petal.petalBunch.centerPosition);
                 const position = petal.position;
                 const projectile = new ServerProjectile(
                     petal.owner, position, direction, data, petal);
-                projectile.addVelocity(Vec2.mul(direction, data.velocityAtFirst ?? data.speed * 6))
-            }, PetalUsingAnimations.NORMAL)
+                projectile.addVelocity(UVec2D.mul(direction, data.velocityAtFirst ?? data.speed * 6));
+            }, PetalUsingAnimations.NORMAL);
         }
     },
 
     peas_shoot: {
         callback: (on, petal, data) => {
-            on(AttributeEvents.ATTACK,() => {
+            on(AttributeEvents.ATTACK, () => {
                 if (!data) return;
                 const para = data.parameters;
                 const amount = data.amount;
@@ -225,49 +219,47 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
                 for (let i = 0; i < amount; i++) {
                     const position = Geometry.getPositionOnCircle(
                         radianNow, radius, petal.petalBunch.centerPosition
-                    )
+                    );
 
-                    const direction =
-                        Geometry.directionBetweenPoints(position, petal.petalBunch.centerPosition);
+                    const direction
+                        = Geometry.directionBetweenPoints(position, petal.petalBunch.centerPosition);
                     const projectile = new ServerProjectile(
                         petal.owner, position, direction, para, petal);
-                    projectile.addVelocity(Vec2.mul(direction, para.velocityAtFirst ?? para.speed * 6));
+                    projectile.addVelocity(UVec2D.mul(direction, para.velocityAtFirst ?? para.speed * 6));
 
                     radianNow += radianStep;
                 }
-
-            }, PetalUsingAnimations.NORMAL)
+            }, PetalUsingAnimations.NORMAL);
         }
     },
 
     place_projectile: {
         callback: (on, petal, data) => {
-            on(AttributeEvents.ATTACK,() => {
+            on(AttributeEvents.ATTACK, () => {
                 if (!data) return;
-                const direction =
-                    Geometry.directionBetweenPoints(petal.position, petal.owner.position);
+                const direction
+                    = Geometry.directionBetweenPoints(petal.position, petal.owner.position);
                 const position = petal.position;
                 const projectile = new ServerProjectile(
                     petal.owner, position, direction, data, petal);
-                projectile.addVelocity(Vec2.mul(direction, data.velocityAtFirst ?? data.speed * 6));
-                if (data.definition.onGround)
-                    projectile.addVelocity(Vec2.mul(direction, 80 * data.hitboxRadius / 5));
-            }, PetalUsingAnimations.NORMAL)
+                projectile.addVelocity(UVec2D.mul(direction, data.velocityAtFirst ?? data.speed * 6));
+                if (data.definition.onGround) { projectile.addVelocity(UVec2D.mul(direction, 80 * data.hitboxRadius / 5)); }
+            }, PetalUsingAnimations.NORMAL);
 
-            on(AttributeEvents.DEFEND,() => {
+            on(AttributeEvents.DEFEND, () => {
                 if (!data) return;
-                const direction =
-                    Geometry.directionBetweenPoints(petal.position, petal.owner.position);
+                const direction
+                    = Geometry.directionBetweenPoints(petal.position, petal.owner.position);
                 const position = petal.position;
                 new ServerProjectile(
                     petal.owner, position, direction, data, petal);
-            }, PetalUsingAnimations.NORMAL)
+            }, PetalUsingAnimations.NORMAL);
         }
     },
 
     spawner: {
         callback: (on, petal, data) => {
-            on(AttributeEvents.USABLE,() => {
+            on(AttributeEvents.USABLE, () => {
                 if (!data) return;
 
                 const isSandstorm = data.idString === "sandstorm";
@@ -295,13 +287,13 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
         callback: (on, petal, data) => {
             on<AttributeEvents.PETAL_DEAL_DAMAGE>(
                 AttributeEvents.PETAL_DEAL_DAMAGE,
-                (entity) => {
-                    if (!entity || !data) return
+                entity => {
+                    if (!entity || !data) return;
                     if (Math.random() < data.chance && isDamageableEntity(entity) && petal.damage) {
                         entity.receiveDamage(petal.damage * (data.multiplier - 1), petal.owner);
                     }
                 }
-            )
+            );
         }
     },
 
@@ -309,16 +301,17 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
         callback: (on, petal, data) => {
             on<AttributeEvents.PETAL_DEAL_DAMAGE>(
                 AttributeEvents.PETAL_DEAL_DAMAGE,
-                (entity) => {
-                    if (!entity || !data) return
+                entity => {
+                    if (!entity || !data) return;
                     if (isDamageableEntity(entity) && entity.health) {
                         const additionalDamage = entity.health * data.percent;
-                        const limitedDamage = data.maxDamage !== undefined ?
-                            Math.min(additionalDamage, data.maxDamage) : additionalDamage;
+                        const limitedDamage = data.maxDamage !== undefined
+                            ? Math.min(additionalDamage, data.maxDamage)
+                            : additionalDamage;
                         entity.receiveDamage(limitedDamage, petal.owner);
                     }
                 }
-            )
+            );
         }
     },
 
@@ -339,13 +332,12 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
         callback: (on, petal, data) => {
             on<AttributeEvents.PETAL_DEAL_DAMAGE>(
                 AttributeEvents.PETAL_DEAL_DAMAGE,
-                (entity) => {
+                entity => {
                     if (!entity || !data) return;
                     const existingEffects = Array.from(entity.effects.effects);
                     const existingParalyze = existingEffects.find(e =>
-                        e.source === petal.owner &&
-                        e.modifier &&
-                        e.modifier.speed !== undefined);
+                        e.source === petal.owner
+                        && e.modifier?.speed !== undefined);
 
                     let newSpeedMod = 1 - data.speedReduction;
                     let revolutionReduction = data.revolutionReduction || 0;
@@ -355,7 +347,7 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
                             newSpeedMod *= existingParalyze.modifier.speed;
                         }
                         if (existingParalyze.modifier?.revolutionSpeed !== undefined) {
-                            let existingReductionPercent = Math.abs(existingParalyze.modifier.revolutionSpeed) / 2.4;
+                            const existingReductionPercent = Math.abs(existingParalyze.modifier.revolutionSpeed) / 2.4;
                             let combinedReductionPercent = existingReductionPercent + revolutionReduction - (existingReductionPercent * revolutionReduction);
                             combinedReductionPercent = Math.min(combinedReductionPercent, 0.99);
                             revolutionReduction = combinedReductionPercent;
@@ -376,13 +368,12 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
 
             on<AttributeEvents.PROJECTILE_DEAL_DAMAGE>(
                 AttributeEvents.PROJECTILE_DEAL_DAMAGE,
-                (entity) => {
+                entity => {
                     if (!entity || !data) return;
                     const existingEffects = Array.from(entity.effects.effects);
                     const existingParalyze = existingEffects.find(e =>
-                        e.source === petal.owner &&
-                        e.modifier &&
-                        e.modifier.speed !== undefined);
+                        e.source === petal.owner
+                        && e.modifier?.speed !== undefined);
 
                     let newSpeedMod = 1 - data.speedReduction;
                     let revolutionReduction = data.revolutionReduction || 0;
@@ -392,7 +383,7 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
                             newSpeedMod *= existingParalyze.modifier.speed;
                         }
                         if (existingParalyze.modifier?.revolutionSpeed !== undefined) {
-                            let existingReductionPercent = Math.abs(existingParalyze.modifier.revolutionSpeed) / 2.4;
+                            const existingReductionPercent = Math.abs(existingParalyze.modifier.revolutionSpeed) / 2.4;
                             let combinedReductionPercent = existingReductionPercent + revolutionReduction - (existingReductionPercent * revolutionReduction);
                             combinedReductionPercent = Math.min(combinedReductionPercent, 0.99);
                             revolutionReduction = combinedReductionPercent;
@@ -450,7 +441,7 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
         callback: (on, petal, data) => {
             on<AttributeEvents.PETAL_DEAL_DAMAGE>(
                 AttributeEvents.PETAL_DEAL_DAMAGE,
-                (entity) => {
+                entity => {
                     if (!entity || !data) return;
                     const owner = petal.owner;
                     const selfDamage = data;
@@ -465,10 +456,10 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
         callback: (on, petal, data) => {
             on<AttributeEvents.PETAL_DEAL_DAMAGE>(
                 AttributeEvents.PETAL_DEAL_DAMAGE,
-                (entity) => {
+                entity => {
                     if (!entity || !data) return;
                     const owner = petal.owner;
-                    let selfHealPercent = data.healPercent/100;
+                    const selfHealPercent = data.healPercent / 100;
                     let selfHeal = (petal.damage ?? 15) * selfHealPercent;
                     if (selfHeal && owner) {
                         if (data.maximumHeal) selfHeal = Math.min(selfHeal, data.maximumHeal);
@@ -496,7 +487,7 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
 
             on<AttributeEvents.PETAL_DEAL_DAMAGE>(
                 AttributeEvents.PETAL_DEAL_DAMAGE,
-                (entity) => {
+                entity => {
                     if (!entity || !data) return;
 
                     const hitEntities = new Set([entity]);
@@ -505,28 +496,27 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
                     let currentDamage = petal.damage || 0;
 
                     while (remainingBounces > 0 && currentDamage > 1) {
-
                         currentDamage *= data.attenuation;
 
                         const rangeHitbox = new CircleHitbox(data.range, currentTarget.position);
 
-                        const nearbyEntities = petal.game.grid.intersectsHitbox(rangeHitbox)
+                        const nearbyEntities = petal.game.grid.intersectsHitbox(rangeHitbox);
                         const validTargets = Array.from(nearbyEntities).filter((e: ServerEntity) =>
-                            !hitEntities.has(e) &&
-                            e.type !== EntityType.Petal &&
-                            e.type !== EntityType.Projectile &&
-                            e !== petal.owner &&
-                            isDamageableEntity(e) &&
-                            e.canReceiveDamageFrom(petal.owner)
+                            !hitEntities.has(e)
+                            && e.type !== EntityType.Petal
+                            && e.type !== EntityType.Projectile
+                            && e !== petal.owner
+                            && isDamageableEntity(e)
+                            && e.canReceiveDamageFrom(petal.owner)
                         );
 
                         if (validTargets.length === 0) break;
 
                         let nextTarget = validTargets[0];
-                        let minDistance = Vec2.distanceBetween(currentTarget.position, nextTarget.position);
+                        let minDistance = UVec2D.distanceBetween(currentTarget.position, nextTarget.position);
 
                         for (let i = 1; i < validTargets.length; i++) {
-                            const distance = Vec2.distanceBetween(currentTarget.position, validTargets[i].position);
+                            const distance = UVec2D.distanceBetween(currentTarget.position, validTargets[i].position);
                             if (distance < minDistance) {
                                 minDistance = distance;
                                 nextTarget = validTargets[i];
@@ -545,7 +535,7 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
 
                             // 闪电特效谁帮我写一下
                             petal.owner.sendEvent(
-                                'lightning_effect' as any,
+                                "lightning_effect" as any,
                                 {
                                     sourceId: currentTarget.id,
                                     targetId: nextTarget.id,
@@ -568,8 +558,7 @@ export const PetalAttributeRealizes: {[K in AttributeNames]: AttributeRealize<K>
                 if (data && source) {
                     if (source.type === EntityType.Petal || source.type === EntityType.Projectile) {
                         shouldReduceDamage = true;
-                    }
-                    else if (source.type === EntityType.Player && source.isPetalAttack) {
+                    } else if (source.type === EntityType.Player && source.isPetalAttack) {
                         shouldReduceDamage = true;
                     }
 

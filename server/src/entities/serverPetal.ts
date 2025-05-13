@@ -5,11 +5,11 @@ import { EntityType } from "../../../common/src/constants";
 import { PetalDefinition } from "../../../common/src/definitions/petals";
 import { ServerPlayer } from "./serverPlayer";
 import { CollisionResponse } from "../../../common/src/utils/collision";
-import { AttributeEvents, PetalUsingAnimations, } from "../utils/attributeRealizes";
+import { AttributeEvents, PetalUsingAnimations } from "../utils/attributeRealizes";
 import { collideableEntity, damageableEntity, damageSource } from "../typings";
 import { PetalBunch } from "../inventory/petalBunch";
 import { ServerFriendlyMob, ServerMob } from "./serverMob";
-import { Vec2 } from "../../../common/src/utils/vector";
+import { UVec2D } from "../../../common/src/physics/utils";
 
 export class ServerPetal extends ServerEntity<EntityType.Petal> {
     type: EntityType.Petal = EntityType.Petal;
@@ -19,9 +19,9 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
     hitbox: CircleHitbox;
     definition: PetalDefinition;
 
-    _isReloading: boolean = false;
+    _isReloading = false;
 
-    _hidden: boolean = false;
+    _hidden = false;
 
     get hidden(): boolean {
         return this._hidden;
@@ -51,23 +51,22 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
     }
 
     isUsing?: PetalUsingAnimations;
-    reloadTime: number = 0;
-    useReload: number = 0;
+    reloadTime = 0;
+    useReload = 0;
     petalBunch: PetalBunch;
 
-    isLoadingFirstTime: boolean = true;
+    isLoadingFirstTime = true;
 
     readonly damage?: number;
     health?: number;
 
-    knockback: number = 0.00002;
+    knockback = 0.00002;
     weight = 0.0002;
 
     spawned?: ServerMob;
 
     get canUse(): boolean {
-        if (!this.definition.equipment && this.definition.usable)
-            return this.useReload >= this.definition.useTime;
+        if (!this.definition.equipment && this.definition.usable) { return this.useReload >= this.definition.useTime; }
         return false;
     }
 
@@ -105,11 +104,11 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
         this.isReloading = true;
     }
 
-    tick(): void{
+    tick(): void {
         if (this.owner.overleveled || this.owner.spectatorMode) {
             this.isReloading = true;
             this.isLoadingFirstTime = true;
-            this.spawned?.destroy()
+            this.spawned?.destroy();
             return;
         }
 
@@ -144,7 +143,7 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
                 if (this.definition.usable) {
                     this.useReload += this.game.dt;
                     if (this.canUse) {
-                        this.owner.sendEvent(AttributeEvents.USABLE, undefined, this)
+                        this.owner.sendEvent(AttributeEvents.USABLE, undefined, this);
                     }
                 }
             }
@@ -155,9 +154,9 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
         }
     }
 
-    gotDamage: boolean = false;
+    gotDamage = false;
 
-    startUsing(animation: PetalUsingAnimations, func?: Function): void{
+    startUsing(animation: PetalUsingAnimations, func?: () => void): void {
         this.isUsing = animation;
 
         if (this.isUsing === PetalUsingAnimations.HATCH) {
@@ -178,14 +177,14 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
         setTimeout(() => {
             if (!this.isReloading) {
                 this.isReloading = true;
-                if(func) func()
+                if (func) func();
             }
             this.isUsing = undefined;
             this.useReload = 0;
         }, animation === PetalUsingAnimations.NORMAL ? 0 : 100);
     }
 
-    dealDamageTo(to: damageableEntity): void{
+    dealDamageTo(to: damageableEntity): void {
         if (this.definition.doesNotDamage?.includes(to.type)) {
             return;
         }
@@ -222,19 +221,19 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
         }
     }
 
-    collideWith(collision: CollisionResponse, entity: collideableEntity): void{}
+    collideWith(collision: CollisionResponse, entity: collideableEntity): void {}
 
-    get data(): Required<EntitiesNetData[EntityType.Petal]>{
+    get data(): Required<EntitiesNetData[EntityType.Petal]> {
         const data = {
-            position: Vec2.mul(Vec2.sub(this.position, this.owner.position), 100),
+            position: UVec2D.mul(UVec2D.sub(this.position, this.owner.position), 100),
             isReloading: this.isReloading || this.hidden,
             gotDamage: this.gotDamage,
             full: {
                 definition: this.definition,
-                ownerId: this.owner.id,
+                ownerId: this.owner.id
             }
         };
-        this.gotDamage = false
+        this.gotDamage = false;
         return data;
     };
 

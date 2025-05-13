@@ -1,10 +1,9 @@
 import { EntityType, GameConstants, PlayerState } from "../../constants";
 import { type GameBitStream, type Packet } from "../net";
-import { Vec2, type VectorAbstract } from "../../utils/vector";
 import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../../definitions/petals";
 import { MobDefinition, Mobs } from "../../definitions/mobs";
 import { Projectiles, ProjectileDefinition } from "../../definitions/projectiles";
-import { P2 } from "../../utils/math";
+import VectorAbstract from "../../physics/vectorAbstract";
 
 export interface EntitiesNetData {
     [EntityType.Player]: {
@@ -61,7 +60,7 @@ export interface EntitiesNetData {
         position: VectorAbstract
         max: VectorAbstract
 
-        full?: {}
+        full?: NonNullable<unknown>
     }
 }
 
@@ -102,7 +101,7 @@ export const EntitySerializations: { [K in EntityType]: EntitySerialization<K> }
                 position: stream.readPosition(),
                 direction: stream.readUnit(16),
                 state: stream.readUint8(),
-                gotDamage: stream.readBoolean(),
+                gotDamage: stream.readBoolean()
             };
         },
         deserializeFull(stream) {
@@ -132,7 +131,7 @@ export const EntitySerializations: { [K in EntityType]: EntitySerialization<K> }
             return {
                 position: stream.readPosition(),
                 isReloading: stream.readBoolean(),
-                gotDamage: stream.readBoolean(),
+                gotDamage: stream.readBoolean()
             };
         },
         deserializeFull(stream) {
@@ -147,7 +146,7 @@ export const EntitySerializations: { [K in EntityType]: EntitySerialization<K> }
         fullSize: 4,
         serializePartial(stream, data): void {
             stream.writePosition(data.position);
-            stream.writeUnit(data.direction, 16)
+            stream.writeUnit(data.direction, 16);
         },
         serializeFull(stream, data): void {
             Mobs.writeToStream(stream, data.definition);
@@ -177,12 +176,12 @@ export const EntitySerializations: { [K in EntityType]: EntitySerialization<K> }
         },
         deserializePartial(stream) {
             return {
-                position: stream.readPosition(),
+                position: stream.readPosition()
             };
         },
         deserializeFull(stream) {
             return {
-                definition: Petals.readFromStream(stream),
+                definition: Petals.readFromStream(stream)
             };
         }
     },
@@ -227,7 +226,7 @@ export const EntitySerializations: { [K in EntityType]: EntitySerialization<K> }
             };
         },
         deserializeFull() {
-            return {}
+            return {};
         }
     }
 };
@@ -244,12 +243,12 @@ export interface ChatData {
 }
 
 export interface PlayerData {
-    id: number,
-    zoom: number,
-    inventory: SavedPetalDefinitionData[],
-    slot: number,
-    exp: number,
-    overleveled: number,
+    id: number
+    zoom: number
+    inventory: SavedPetalDefinitionData[]
+    slot: number
+    exp: number
+    overleveled: number
     collect: MobDefinition[]
 }
 
@@ -351,7 +350,7 @@ export class UpdatePacket implements Packet {
             stream.writeArray(this.players, 8, player => {
                 stream.writeUint16(player.id);
                 stream.writeASCIIString(player.name, GameConstants.player.maxNameLength);
-                stream.writeUint32(player.exp)
+                stream.writeUint32(player.exp);
             });
 
             flags |= UpdateFlags.Players;
@@ -370,10 +369,10 @@ export class UpdatePacket implements Packet {
 
             stream.writeBoolean(this.playerDataDirty.inventory);
             if (this.playerDataDirty.inventory) {
-                stream.writeArray(this.playerData.inventory, 8, (item) => {
+                stream.writeArray(this.playerData.inventory, 8, item => {
                     stream.writeBoolean(item === null);
                     if (item) Petals.writeToStream(stream, item);
-                })
+                });
             }
 
             stream.writeBoolean(this.playerDataDirty.slot);
@@ -394,9 +393,9 @@ export class UpdatePacket implements Packet {
 
             stream.writeBoolean(this.playerDataDirty.collect);
             if (this.playerDataDirty.collect) {
-                stream.writeArray(this.playerData.collect, 8, (mob) => {
+                stream.writeArray(this.playerData.collect, 8, mob => {
                     Mobs.writeToStream(stream, mob);
-                })
+                });
             }
 
             stream.writeAlignToNextByte();
@@ -408,7 +407,7 @@ export class UpdatePacket implements Packet {
             stream.writeArray(this.chatMessages, 8, msg => {
                 stream.writeUint32(msg.color);
                 stream.writeUTF8String(msg.content);
-            })
+            });
 
             flags |= UpdateFlags.ChatMessage;
         }
@@ -416,7 +415,7 @@ export class UpdatePacket implements Packet {
         if (this.petalData.length) {
             stream.writeArray(this.petalData, 8, petal => {
                 petal.writeToStream(stream);
-            })
+            });
 
             flags |= UpdateFlags.PetalData;
         }
@@ -499,9 +498,9 @@ export class UpdatePacket implements Packet {
                 this.playerDataDirty.inventory = true;
                 stream.readArray(this.playerData.inventory, 8, () => {
                     const isEmpty = stream.readBoolean();
-                    if(!isEmpty) return Petals.readFromStream(stream);
+                    if (!isEmpty) return Petals.readFromStream(stream);
                     return null;
-                })
+                });
             }
 
             if (stream.readBoolean()) {
@@ -523,7 +522,7 @@ export class UpdatePacket implements Packet {
                 this.playerDataDirty.collect = true;
                 stream.readArray(this.playerData.collect, 8, () => {
                     return Mobs.readFromStream(stream);
-                })
+                });
             }
 
             stream.readAlignToNextByte();
@@ -536,8 +535,8 @@ export class UpdatePacket implements Packet {
                 return {
                     color: stream.readUint32(),
                     content: stream.readUTF8String()
-                }
-            })
+                };
+            });
         }
 
         if (flags & UpdateFlags.PetalData) {
@@ -546,7 +545,7 @@ export class UpdatePacket implements Packet {
                 const petal = new PetalData();
                 petal.readFromStream(stream);
                 return petal;
-            })
+            });
         }
 
         if (flags & UpdateFlags.Map) {
@@ -564,7 +563,7 @@ export enum PetalState {
 
 export class PetalData {
     state: PetalState = PetalState.Normal;
-    percent: number = 1;
+    percent = 1;
 
     writeToStream(stream: GameBitStream) {
         stream.writeUint8(this.state);

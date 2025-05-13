@@ -1,5 +1,4 @@
 import { ServerEntity } from "./serverEntity";
-import { VectorAbstract } from "../../../common/src/utils/vector";
 import { type EntitiesNetData } from "../../../common/src/net/packets/updatePacket";
 import { CircleHitbox } from "../../../common/src/utils/hitbox";
 import { EntityType, GameConstants } from "../../../common/src/constants";
@@ -9,6 +8,7 @@ import { Game } from "../game";
 import { Rarity } from "../../../common/src/definitions/rarities";
 import { CollisionResponse } from "../../../common/src/utils/collision";
 import { collideableEntity } from "../typings";
+import VectorAbstract from "../../../common/src/physics/vectorAbstract";
 
 export class ServerLoot extends ServerEntity<EntityType.Loot> {
     type: EntityType.Loot = EntityType.Loot;
@@ -16,10 +16,10 @@ export class ServerLoot extends ServerEntity<EntityType.Loot> {
     hitbox: CircleHitbox;
     definition: PetalDefinition;
 
-    despawnTime: number = 0;
+    despawnTime = 0;
 
     canCollideWith(entity: ServerEntity): boolean {
-        return false
+        return false;
     }
 
     constructor(game: Game, position: VectorAbstract, definition: PetalDefinition) {
@@ -33,39 +33,39 @@ export class ServerLoot extends ServerEntity<EntityType.Loot> {
         this.game.grid.addEntity(this);
     }
 
-    tick(): void{
+    tick(): void {
         this.despawnTime += this.game.dt;
         const rarityDef = Rarity.fromString(this.definition.rarity);
         // rarityDef.level starts from 1
-        const corrDespawnTime = GameConstants.loot.despawnTime[rarityDef.level-1] || 45;
+        const corrDespawnTime = GameConstants.loot.despawnTime[rarityDef.level - 1] || 45;
         if (this.despawnTime >= corrDespawnTime) {
             this.destroy();
         }
     }
 
     collideWith(collision: CollisionResponse, entity: collideableEntity) {
-        if (!(entity.type === EntityType.Player)) return
-        if (entity.inventory.pickUp(this.definition)){
+        if (!(entity.type === EntityType.Player)) return;
+        if (entity.inventory.pickUp(this.definition)) {
             this.destroy();
             const rarity = Rarity.fromString(this.definition.rarity);
             if (rarity.globalMessage && !this.definition.noAnnouncement) {
-                let content = `The ${rarity.displayName} ${this.definition.displayName} has been found`
+                let content = `The ${rarity.displayName} ${this.definition.displayName} has been found`;
                 if (this.game.activePlayers.size >= 20) {
-                    content += `by ${entity.name}`
+                    content += `by ${entity.name}`;
                 }
                 this.game.sendGlobalMessage({
-                    content: content +"!",
+                    content: `${content}!`,
                     color: parseInt(rarity.color.substring(1), 16)
-                })
+                });
             }
         }
     }
 
-    get data(): Required<EntitiesNetData[EntityType.Loot]>{
+    get data(): Required<EntitiesNetData[EntityType.Loot]> {
         return {
             position: this.position,
             full: {
-                definition: this.definition,
+                definition: this.definition
             }
         };
     };

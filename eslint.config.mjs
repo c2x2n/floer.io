@@ -28,11 +28,14 @@ export default tseslint.config(
             ["@stylistic"]: stylistic
         },
         rules: {
+            "dot-notation": "off",
+            "@typescript-eslint/dot-notation": ["error", { allowKeywords: true }],
+
             // ESLint
-            curly: ["warn", "multi-line"],
+            "curly": ["warn", "multi-line"],
             ["prefer-arrow-callback"]: "warn",
             ["prefer-template"]: "warn",
-            yoda: ["error", "never", { onlyEquality: true }],
+            "yoda": ["error", "never", { onlyEquality: true }],
 
             // Stylistic
             ["@stylistic/arrow-parens"]: ["warn", "as-needed"],

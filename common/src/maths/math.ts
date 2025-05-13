@@ -1,12 +1,13 @@
-import { type VectorAbstract, Vec2 } from "./vector";
+import { UVec2D } from "../physics/utils";
+import VectorAbstract from "../physics/vectorAbstract";
 
 export const PI = Math.PI;
 export const P2 = PI * 2;
 export const halfPI = PI / 2;
 
 export const Geometry = {
-    getPositionOnCircle(radians: number, radius: number, basic: VectorAbstract = Vec2.new(0, 0)): VectorAbstract {
-        return Vec2.add(basic, Vec2.new(
+    getPositionOnCircle(radians: number, radius: number, basic: VectorAbstract = UVec2D["new"](0, 0)): VectorAbstract {
+        return UVec2D.add(basic, UVec2D["new"](
             Math.cos(radians) * radius,
             Math.sin(radians) * radius
         ));
@@ -28,10 +29,10 @@ export const Geometry = {
 
     directionBetweenPoints(a: VectorAbstract, b: VectorAbstract): VectorAbstract {
         const radians = this.angleBetweenPoints(a, b);
-        return Vec2.new(
+        return UVec2D["new"](
             Math.cos(radians),
             Math.sin(radians)
-        )
+        );
     },
 
     signedAreaTri(a: VectorAbstract, b: VectorAbstract, c: VectorAbstract): number {
@@ -46,7 +47,7 @@ export const Geometry = {
         return {
             x: Math.cos(n),
             y: Math.sin(n)
-        }
+        };
     }
 };
 
@@ -84,8 +85,8 @@ export const Numeric = {
         return Math.min(Math.max(a, min), max);
     },
 
-    targetEasing(from: number, to: number, n: number = 4): number {
-        return from + (to - from) / n
+    targetEasing(from: number, to: number, n = 4): number {
+        return from + (to - from) / n;
     }
 };
 

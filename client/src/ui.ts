@@ -1,17 +1,17 @@
 import $ from "jquery";
-import { ClientApplication } from "@/main.ts";
-import { GameOverPacket } from "@common/net/packets/gameOverPacket.ts";
-import { Game } from "@/scripts/game.ts";
-import { SettingsData } from "@/settings.ts";
-import { ChatData } from "@common/net/packets/updatePacket.ts";
-import { ChatChannel } from "@common/net/packets/chatPacket.ts";
-import { Numeric } from "@common/utils/math.ts";
-import { ActionType, EntityType, GameConstants } from "@common/constants.ts";
-import { Random } from "@common/utils/random.ts";
-import { Gallery } from "@/scripts/gallery.ts";
-import { Config } from "@/config.ts";
+import { ClientApplication } from "./main";
+import { GameOverPacket } from "../../common/src/net/packets/gameOverPacket";
+import { Game } from "./scripts/game";
+import { SettingsData } from "./settings";
+import { ChatData } from "../../common/src/net/packets/updatePacket";
+import { ChatChannel } from "../../common/src/net/packets/chatPacket";
+import { Numeric } from "../../common/src/maths/math";
+import { ActionType, EntityType, GameConstants } from "../../common/src/constants";
+import { Random } from "../../common/src/utils/random";
+import { Gallery } from "./scripts/gallery";
+import { Config } from "./config";
 
-const version = `0.3.0`
+const version = "0.3.0";
 
 export function getVersion() {
     return `v${version}`;
@@ -25,19 +25,19 @@ export class UI {
     readonly version = $<HTMLDivElement>("#floer-version");
     readonly readyButton = $<HTMLDivElement>("#btn-ready");
 
-    readonly inGameScreen =  $<HTMLDivElement>("#in-game-screen");
-    readonly outGameScreen =  $<HTMLDivElement>("#out-game-screen");
+    readonly inGameScreen = $<HTMLDivElement>("#in-game-screen");
+    readonly outGameScreen = $<HTMLDivElement>("#out-game-screen");
 
     readonly transitionRing = $<HTMLDivElement>("#transition-ring");
 
-    readonly main =  $<HTMLDivElement>("#main");
+    readonly main = $<HTMLDivElement>("#main");
     readonly hud = $<HTMLDivElement>("#hud");
 
-    readonly animationContainer = $<HTMLDivElement>('#animation-container');
+    readonly animationContainer = $<HTMLDivElement>("#animation-container");
 
-    readonly petalColumn= $<HTMLDivElement>(".petal-column");
-    readonly equippedPetalRow= $<HTMLDivElement>(".equipped-petals-row");
-    readonly preparationPetalRow= $<HTMLDivElement>(".preparation-petals-row");
+    readonly petalColumn = $<HTMLDivElement>(".petal-column");
+    readonly equippedPetalRow = $<HTMLDivElement>(".equipped-petals-row");
+    readonly preparationPetalRow = $<HTMLDivElement>(".preparation-petals-row");
 
     readonly nameInput = $<HTMLInputElement>("#name");
 
@@ -49,7 +49,7 @@ export class UI {
     readonly gameOverKills = $<HTMLDivElement>("#game-over-kills");
     readonly continueButton = $<HTMLDivElement>("#btn-continue");
     readonly closeButton = $<HTMLDivElement>("#btn-close");
-    readonly abandon= $<HTMLDivElement>("#abandon");
+    readonly abandon = $<HTMLDivElement>("#abandon");
 
     readonly moveHigh = $<HTMLDivElement>("#move-high");
     readonly moveHighTime = $<HTMLDivElement>("#move-high-time");
@@ -92,15 +92,15 @@ export class UI {
     readonly serverPlayerCount = $<HTMLDivElement>("#server-player-count");
     readonly serverList = $<HTMLDivElement>("#server-list");
 
-    joystick : JQuery | null = null;
-    joystickHandle  : JQuery | null = null;
+    joystick: JQuery | null = null;
+    joystickHandle: JQuery | null = null;
 
     openedDialog?: JQuery<HTMLDivElement>;
     get game(): Game {
         return this.app.game;
     }
 
-    private transitionRunning: boolean = false;
+    private transitionRunning = false;
 
     private animationInterval: number | null = null;
 
@@ -136,32 +136,32 @@ export class UI {
 
         this.settingsButton.on("click", (e: Event) => {
             this.toggleDialog(this.settingsDialog);
-        })
+        });
 
         this.creditButton.on("click", (e: Event) => {
             this.toggleDialog(this.creditDialog);
-        })
+        });
 
         this.petalGalleryButton.on("click", (e: Event) => {
             this.toggleDialog(this.petalGalleryDialog);
-        })
+        });
 
         this.mobGalleryButton.on("click", (e: Event) => {
             this.toggleDialog(this.mobGalleryDialog);
-        })
+        });
 
         this.nameInput.val(this.app.settings.data.playerName);
 
         this.nameInput.on("input", (e: Event) => {
             this.app.settings.changeSettings("playerName", this.nameInput.val() ?? "");
-        })
+        });
 
         this.chatInput.on("focus", (e: Event) => {
-            this.chatMessagesBox.addClass("opened")
+            this.chatMessagesBox.addClass("opened");
             for (const chatMessage of this.chatMessages) {
-                chatMessage.updateOpacity(1)
+                chatMessage.updateOpacity(1);
             }
-        })
+        });
 
         this.chatInput.on("input", (e: Event) => {
             const content = this.chatInput.val();
@@ -169,24 +169,24 @@ export class UI {
             let charsCount = 0;
             let bytesCount = 0;
             for (let i = 0; i < content.length; i++) {
-                charsCount ++;
+                charsCount++;
                 bytesCount += new Blob([content.charAt(i)]).size;
                 if (bytesCount > GameConstants.player.maxChatLength) {
                     this.chatInput.val(content.substring(0, i));
                     return;
                 }
             }
-        })
+        });
 
         this.chatInput.on("blur", (e: Event) => {
-            this.chatMessagesBox.removeClass("opened")
+            this.chatMessagesBox.removeClass("opened");
             this.scrollToEnd(this.chatMessagesBox);
             for (const chatMessage of this.chatMessages) {
-                chatMessage.updateOpacity()
+                chatMessage.updateOpacity();
             }
-        })
+        });
 
-        $(document).ready(function() {
+        $(document).ready(() => {
             $("input").on({
                 focus: function() {
                     $(this).addClass("focused");
@@ -197,9 +197,8 @@ export class UI {
             });
         });
 
-        window.addEventListener("beforeunload", (ev) => {
-            if (this.game.running)
-                ev.preventDefault();
+        window.addEventListener("beforeunload", ev => {
+            if (this.game.running) { ev.preventDefault(); }
         });
 
         this.gameOverScreen.css("display", "none");
@@ -208,9 +207,9 @@ export class UI {
 
         this.startRandomEntityAnimation();
 
-        this.loader.animate({ opacity: 0 }, 100, ()=>{ this.loader.css("display", "none");});
+        this.loader.animate({ opacity: 0 }, 100, () => { this.loader.css("display", "none"); });
 
-        const content  = `floer.io ${getVersion()}`;
+        const content = `floer.io ${getVersion()}`;
         this.version.attr("textin", content);
 
         this.gallery.renderPetalGallery();
@@ -219,18 +218,18 @@ export class UI {
         this.closeButton.on("click", () => {
             this.gameOverScreen.animate({
                 opacity: "0"
-            }, () => {this.gameOverScreen.css("display", "none")})
-        })
+            }, () => { this.gameOverScreen.css("display", "none"); });
+        });
 
         this.abandon.on("click", () => {
             if (!this.transitionRunning) {
                 this.game.input.actionsToSend.add({
                     type: ActionType.Left
-                })
-                this.game.sendInput()
+                });
+                this.game.sendInput();
                 this.game.endGame();
             }
-        })
+        });
 
         this.serverButton.on("click", () => {
             if (this.serverList.hasClass("active")) {
@@ -238,37 +237,35 @@ export class UI {
             } else {
                 this.serverList.addClass("active");
             }
-        })
+        });
 
-        this.fetchServerInfo()
+        this.fetchServerInfo();
     }
 
-    serverInfo: {
-        [K: string] : { playerCount: number, build: string };
-    } = {};
+    serverInfo: Record<string, { playerCount: number, build: string }> = {};
 
     fetchServerInfo() {
         for (const server in Config.servers) {
             const data = Config.servers[server];
-            fetch(data.fetchAddress + "server_info").then(r => r.json())
-            .then((data) => {
-                this.serverInfo[server] = {
-                    playerCount: data.playerCount ?? 0,
-                    build: data.build ?? "0"
-                }
+            void fetch(`${data.fetchAddress}server_info`).then(r => r.json())
+                .then(data => {
+                    this.serverInfo[server] = {
+                        playerCount: data.playerCount ?? 0,
+                        build: data.build ?? "0"
+                    };
 
-                if (server === this.app.settings.data.server) {
-                    this.updateServerInfo()
-                }
-                this.updateServerList()
-            })
+                    if (server === this.app.settings.data.server) {
+                        this.updateServerInfo();
+                    }
+                    this.updateServerList();
+                });
         }
     }
 
     updateServerList() {
         this.serverList.empty();
         for (const server in Config.servers) {
-            if (!this.serverInfo.hasOwnProperty(server)) break;
+            if (!Object.prototype.hasOwnProperty.call(this.serverInfo, server)) break;
             const data = Config.servers[server];
             const serverInfo = this.serverInfo[server];
             const serverElement = $("<li class='server-item'></li>");
@@ -286,7 +283,7 @@ export class UI {
                 const status = $("<div class='server-item-status'></div>");
                 serverElement.append(status);
                 const unavailable = $("<div></div>");
-                unavailable.attr("textin", "Unavailable")
+                unavailable.attr("textin", "Unavailable");
                 status.append(unavailable);
             }
 
@@ -294,18 +291,18 @@ export class UI {
                 this.app.settings.changeSettings("server", server);
                 this.updateServerInfo();
                 this.serverList.removeClass("active");
-                this.game.reconnect()
-            })
+                this.game.reconnect();
+            });
         }
     }
 
     updateServerInfo() {
         const serverSelected = this.app.settings.data.server;
-        if (Config.servers.hasOwnProperty(serverSelected)) {
+        if (Object.prototype.hasOwnProperty.call(Config.servers, serverSelected)) {
             const data = Config.servers[serverSelected];
             this.serverName.attr("textin", data.name);
             const info = this.serverInfo[serverSelected];
-            this.serverPlayerCount.attr("textin", `${info.playerCount} Player${info.playerCount != 1? "s" : ""}`);
+            this.serverPlayerCount.attr("textin", `${info.playerCount} Player${info.playerCount != 1 ? "s" : ""}`);
         }
     }
 
@@ -460,9 +457,8 @@ export class UI {
             this.app.settings.changeSettings(
                 key, jq.prop("checked")
             );
-        })
+        });
     }
-
 
     startRandomEntityAnimation(): void {
         // Clear any existing interval
@@ -489,8 +485,8 @@ export class UI {
         }
 
         // Select a random entity from the appropriate array
-        const petalType =
-            this.gallery.petalGallery[Random.int(0, this.gallery.petalGallery.length - 1)]
+        const petalType
+            = this.gallery.petalGallery[Random["int"](0, this.gallery.petalGallery.length - 1)];
 
         const entity = $(`<div class="floating-entity
             petal-${petalType}-bkg"></div>`);
@@ -499,7 +495,7 @@ export class UI {
         const topPosition = Math.random() * 90 + 5;
 
         // Set random size (between 50px and 70px) mob is 1.5x
-        const size = Random.int(25, 50) * 3;
+        const size = Random["int"](25, 50) * 3;
 
         // Set random speed in seconds (between 8 and 12 seconds to cross the screen)
         const speed = Math.random() * 4 + 8;
@@ -512,17 +508,17 @@ export class UI {
 
         // Apply styles
         entity.css({
-            'position': 'fixed',
-            'top': `${topPosition}vh`,
-            'left': '-100px',
-            'width': `${size}px`,
-            'height': `${size}px`,
-            'z-index': '-6',
-            'opacity': 1,
-            'transform': `rotate(${rotation}deg)`,
-            'pointer-events': 'none',
-            'border': 'none', // petals have border by default?
-            '--spin-duration': `${spinDuration}s`
+            "position": "fixed",
+            "top": `${topPosition}vh`,
+            "left": "-100px",
+            "width": `${size}px`,
+            "height": `${size}px`,
+            "z-index": "-6",
+            "opacity": 1,
+            "transform": `rotate(${rotation}deg)`,
+            "pointer-events": "none",
+            "border": "none", // petals have border by default?
+            "--spin-duration": `${spinDuration}s`
         });
 
         // Add to container
@@ -531,9 +527,9 @@ export class UI {
         // Animate movement
         entity.animate({
             left: `${window.innerWidth + 100}px`
-        }, speed * 1000, 'linear', function() {
+        }, speed * 1000, "linear", function() {
             // Remove element when animation completes
-            entity.animate({opacity: 0}, 200, ()=>{$(this).remove()});
+            entity.animate({ opacity: 0 }, 200, () => { $(this).remove(); });
         });
     }
 
@@ -572,8 +568,8 @@ export class UI {
             this.openedDialog.css("animation", `close_dialog${isVOpenedDialog ? "_v" : ""} 0.5s cubic-bezier(0,0,.2,1) forwards`);
             dialog.css("animation", `open_dialog${isVDialog ? "_v" : ""} 0.5s cubic-bezier(0,.85,0,1) forwards`);
         }
-        this.openedDialog =
-            this.openedDialog === dialog ? undefined : dialog;
+        this.openedDialog
+            = this.openedDialog === dialog ? undefined : dialog;
     }
 
     showGameOverScreen(packet: GameOverPacket) {
@@ -581,7 +577,7 @@ export class UI {
         this.gameOverScreen.css("opacity", "0");
 
         this.gameOverMurderer.attr("textin", packet.murderer);
-        const kills = `You killed ${packet.kills} flower${packet.kills != 1 ? "s" : ""} this run.`
+        const kills = `You killed ${packet.kills} flower${packet.kills != 1 ? "s" : ""} this run.`;
         this.gameOverKills.attr("textin", kills);
 
         this.gameOverScreen.animate({
@@ -590,7 +586,7 @@ export class UI {
             if (
                 this.game.playerData.has(this.game.activePlayerID)
             ) this.gameOverScreen.css("display", "none");
-        })
+        });
     }
 
     showOverleveled(time?: number) {
@@ -609,8 +605,8 @@ export class UI {
 
     receiveChatMessage(msg: ChatData) {
         if (
-            this.app.settings.data.blockMytAnn &&
-            (msg.content.startsWith("The Mythic") || msg.content.startsWith("A Mythic"))
+            this.app.settings.data.blockMytAnn
+            && (msg.content.startsWith("The Mythic") || msg.content.startsWith("A Mythic"))
         ) return;
 
         const jq = $(
@@ -622,12 +618,12 @@ export class UI {
 
         jq.attr("textin", msg.content);
 
-        this.chatMessagesBox.append(jq)
+        this.chatMessagesBox.append(jq);
 
         setTimeout(() => {
             jq.css({
-                "transition": "transform 0.5s cubic-bezier(0,.65,0,1)",
-                "transform": "translateX(0px)"
+                transition: "transform 0.5s cubic-bezier(0,.65,0,1)",
+                transform: "translateX(0px)"
             });
         }, 10);
 
@@ -660,15 +656,15 @@ export class UI {
 
     readonly changeableChannel = [
         ChatChannel.Global,
-        ChatChannel.Local,
-    ]
+        ChatChannel.Local
+    ];
 
     chattingChannel: ChatChannel = ChatChannel.Global;
 
     changeChatChannel() {
         let index = this.changeableChannel.indexOf(this.chattingChannel) + 1;
         if (index >= this.changeableChannel.length) {
-            index = 0
+            index = 0;
         }
         this.chattingChannel = this.changeableChannel[index];
 
@@ -676,22 +672,22 @@ export class UI {
     }
 
     scrollToEnd(jq: JQuery<HTMLDivElement>) {
-        let scrollHeight = jq[0].scrollHeight;
-        let height = jq.height() ?? scrollHeight;
-        let scrollPosition = scrollHeight - height;
+        const scrollHeight = jq[0].scrollHeight;
+        const height = jq.height() ?? scrollHeight;
+        const scrollPosition = scrollHeight - height;
         jq.scrollTop(scrollPosition);
     }
 
     renderGame(): void {
         if (!this.chatInput.hasClass("focused")) {
             for (const chatMessage of this.chatMessages) {
-                chatMessage.updateOpacity()
+                chatMessage.updateOpacity();
             }
         }
     }
-    startTransition(expanding: boolean = true) {
-        if (this.transitionRunning)
-            return;
+
+    startTransition(expanding = true) {
+        if (this.transitionRunning) { return; }
 
         if (!this.inGameScreen || !this.transitionRing) return;
         this.transitionRing.css("opacity", "1"); // this need to show up nomatter what
@@ -716,14 +712,14 @@ export class UI {
             this.inGameScreen.removeClass("display");
             this.transitionRing.removeClass("expand");
             // initialize out game screen with 0 opacity so that it can fade in after animation is finished.
-            this.outGameScreen.css({"display": "block"});
-            this.outGameScreen.css({"z-index": "4"});
+            this.outGameScreen.css({ display: "block" });
+            this.outGameScreen.css({ "z-index": "4" });
             // it seems like you cant perfectly sort their zLayer so fade gameover screen out.
             // opacity needs to be set back to 1 so that it shows up next death
-            this.gameOverScreen.animate({"opacity": 0}, 250, ()=>{
+            this.gameOverScreen.animate({ opacity: 0 }, 250, () => {
                 this.gameOverScreen.css({
-                    "display": "none",
-                    "opacity": "1"
+                    display: "none",
+                    opacity: "1"
                 });
             });
         }
@@ -755,8 +751,8 @@ export class UI {
 
             const diameter = radius * 2;
             this.transitionRing.css({
-                "width": `${diameter}px`,
-                "height": `${diameter}px`
+                width: `${diameter}px`,
+                height: `${diameter}px`
             });
 
             if (progress < 1) {
@@ -764,11 +760,11 @@ export class UI {
             } else if (!expanding) {
                 // case: animation finished, expanding is false.
                 this.inGameScreen.css({
-                    "visibility": "hidden",
-                    "opacity": "0"
+                    visibility: "hidden",
+                    opacity: "0"
                 });
                 this.transitionRing.css({
-                    "opacity": "0"
+                    opacity: "0"
                 });
                 this.transitionRunning = false;
             } else {
@@ -780,13 +776,12 @@ export class UI {
                 this.inGameScreen.css("clip-path", `circle(${window.innerWidth * 10}px at center)`);
                 const diameter = window.innerWidth * 10 * 2;
                 this.transitionRing.css({
-                    "width": `${diameter}px`,
-                    "height": `${diameter}px`
+                    width: `${diameter}px`,
+                    height: `${diameter}px`
                 });
                 this.transitionRunning = false;
             }
         };
-
 
         requestAnimationFrame(animate);
     }
@@ -802,12 +797,12 @@ class ChatMessage {
         const timePassed = (Date.now() - this.createdTime) / 1000;
         if (timePassed > messageHidingTime) {
             return Numeric.clamp(
-                (1 -
-                    (timePassed - messageHidingTime) / (messageExistTime - messageHidingTime)
+                (1
+                - (timePassed - messageHidingTime) / (messageExistTime - messageHidingTime)
                 ), 0, 1
-            )
+            );
         }
-        return 1
+        return 1;
     }
 
     updateOpacity(force?: number) {

@@ -8,7 +8,7 @@ export class GameOverPacket implements Packet {
     serialize(stream: GameBitStream): void {
         stream.writeUint8(this.kills);
         stream.writeASCIIString(this.murderer);
-        stream.writeUint16(this.killerID)
+        stream.writeUint16(this.killerID);
     }
 
     deserialize(stream: GameBitStream): void {

@@ -1,11 +1,11 @@
-import { AssetsBunch, AssetsDrawer } from "@/assets/assets.ts";
-import { Numeric, P2 } from "@common/utils/math.ts";
+import { AssetsBunch } from "./assets";
+import { Numeric, P2 } from "../../../common/src/maths/math";
 
 const web = new Image();
 web.src = "img/game/web.svg";
 
 export const projectileAssets: AssetsBunch = {
-    "missile": (containerToDraw) => {
+    missile: containerToDraw => {
         const { ctx, radius } = containerToDraw;
 
         ctx.save();
@@ -19,15 +19,15 @@ export const projectileAssets: AssetsBunch = {
         ctx.lineJoin = "round";
 
         ctx.moveTo(radius, 0);
-        ctx.lineTo(-radius, radius * .6);
-        ctx.lineTo(-radius, -radius * .6);
+        ctx.lineTo(-radius, radius * 0.6);
+        ctx.lineTo(-radius, -radius * 0.6);
         ctx.lineTo(radius, 0);
         ctx.fill();
         ctx.stroke();
 
         ctx.restore();
     },
-    "dandelion": (containerToDraw) => {
+    dandelion: containerToDraw => {
         const { ctx, radius } = containerToDraw;
         ctx.beginPath();
         ctx.fillStyle = containerToDraw.getRenderColor("#333333");
@@ -38,8 +38,8 @@ export const projectileAssets: AssetsBunch = {
             radius,
             radius * 0.6,
             1.5
-        )
-        ctx.fill()
+        );
+        ctx.fill();
 
         ctx.beginPath();
         ctx.fillStyle = containerToDraw.getRenderColor("#ffffff");
@@ -50,11 +50,11 @@ export const projectileAssets: AssetsBunch = {
             0,
             radius * 0.6,
             0, P2
-        )
-        ctx.fill()
-        ctx.stroke()
+        );
+        ctx.fill();
+        ctx.stroke();
     },
-    "peas": (containerToDraw) => {
+    peas: containerToDraw => {
         const { ctx, radius } = containerToDraw;
 
         ctx.fillStyle = containerToDraw.getRenderColor("#8ac255");
@@ -67,9 +67,8 @@ export const projectileAssets: AssetsBunch = {
         ctx.fill();
         ctx.stroke();
     },
-    "red_peas": (containerToDraw) => {
+    red_peas: containerToDraw => {
         const { ctx, radius } = containerToDraw;
-
 
         const time = (Date.now() - containerToDraw.createdTime) / 1000;
 
@@ -117,17 +116,15 @@ export const projectileAssets: AssetsBunch = {
 
             ctx.arc(radius * 0.57, 0, radius / 4 + time * radius / 4, 0, P2);
 
-            ctx.rotate(P2 / 4)
+            ctx.rotate(P2 / 4);
 
             ctx.fill();
             ctx.stroke();
         }
 
-
-
         ctx.restore();
     },
-    "poison_peas": (containerToDraw) => {
+    poison_peas: containerToDraw => {
         const { ctx, radius } = containerToDraw;
 
         ctx.fillStyle = containerToDraw.getRenderColor("#ce74d8");
@@ -140,7 +137,7 @@ export const projectileAssets: AssetsBunch = {
         ctx.fill();
         ctx.stroke();
     },
-    "web": (containerToDraw) => {
+    web: containerToDraw => {
         if (!web.complete) return;
 
         const { ctx, radius } = containerToDraw;
@@ -155,7 +152,7 @@ export const projectileAssets: AssetsBunch = {
             Xy * 2
         );
     },
-    "default": (containerToDraw) => {
-        projectileAssets["missile"](containerToDraw);
-    },
-}
+    default: containerToDraw => {
+        projectileAssets.missile(containerToDraw);
+    }
+};

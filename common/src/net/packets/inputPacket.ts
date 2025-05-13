@@ -1,31 +1,32 @@
 import { type GameBitStream, type Packet } from "../net";
-import { P2 } from "../../utils/math";
+import { P2 } from "../../maths/math";
 import { ActionType } from "../../constants";
 
 export type InputAction = {
-    type: ActionType;
+    type: ActionType
 } & ({
-    type: ActionType.SwitchPetal;
-    petalIndex: number;
-    petalToIndex: number;
+    type: ActionType.SwitchPetal
+    petalIndex: number
+    petalToIndex: number
 } | {
-    type: ActionType.DeletePetal;
-    petalIndex: number;
+    type: ActionType.DeletePetal
+    petalIndex: number
 } | {
-    type: ActionType.TransformLoadout;
+    type: ActionType.TransformLoadout
 } | {
-    type: ActionType.Left;
-})
+    type: ActionType.Left
+});
 
 export class InputPacket implements Packet {
     direction = {
         direction: 0,
         mouseDirection: 0
     };
-    movementDistance: number = 0;
+
+    movementDistance = 0;
     isAttacking = false;
     isDefending = false;
-    actions: InputAction[] = []
+    actions: InputAction[] = [];
 
     serialize(stream: GameBitStream): void {
         stream.writeBoolean(this.isAttacking);
@@ -34,7 +35,7 @@ export class InputPacket implements Packet {
         stream.writeFloat(this.direction.mouseDirection, -P2, P2, 8);
         stream.writeUint8(this.movementDistance);
 
-        stream.writeArray(this.actions, 4, (action) => {
+        stream.writeArray(this.actions, 4, action => {
             stream.writeUint8(action.type);
 
             switch (action.type) {
@@ -47,9 +48,9 @@ export class InputPacket implements Packet {
                     break;
                 case ActionType.TransformLoadout:
                 case ActionType.Left:
-                    break
+                    break;
             }
-        })
+        });
     }
 
     deserialize(stream: GameBitStream): void {
@@ -68,23 +69,23 @@ export class InputPacket implements Packet {
                         type,
                         petalIndex: stream.readUint8(),
                         petalToIndex: stream.readUint8()
-                    }
+                    };
                 case ActionType.DeletePetal:
                     return {
                         type,
                         petalIndex: stream.readUint8()
-                    }
+                    };
                 case ActionType.TransformLoadout:
                 case ActionType.Left:
                     return {
                         type
-                    }
+                    };
             }
-        })
+        });
     }
 }
 
 export interface DirectionIn {
-    direction: number;
+    direction: number
     mouseDirection: number
 }

@@ -1,13 +1,13 @@
-import { Vec2, type VectorAbstract } from "@common/utils/vector.ts";
-import { type Game } from "@/scripts/game.ts";
-import { Numeric } from "@common/utils/math.ts";
-import { Tween } from "@tweenjs/tween.js"
+import { UVec2D } from "../../../../common/src/physics/utils";
+import { type Game } from "../game";
+import { Numeric } from "../../../../common/src/maths/math";
+import { Tween } from "@tweenjs/tween.js";
+import VectorAbstract from "../../../../common/src/physics/vectorAbstract";
 
 export class Camera {
-
     readonly game: Game;
 
-    position = Vec2.new(0, 0);
+    position = UVec2D["new"](0, 0);
 
     screenWidth = 1;
     screenHeight = 1;
@@ -24,7 +24,7 @@ export class Camera {
      * Scales a game vector to pixels
      */
     static vecToScreen(a: VectorAbstract): VectorAbstract {
-        return Vec2.mul(a, this.scale);
+        return UVec2D.mul(a, this.scale);
     }
 
     /**
@@ -44,11 +44,11 @@ export class Camera {
         this.game = game;
     }
 
-    init(): void{
+    init(): void {
         this.resize();
     }
 
-    scale: number = 1;
+    scale = 1;
 
     resize(): void {
         this.zoomNow = Numeric.targetEasing(this.zoomNow, this._zoom, 6);
@@ -63,20 +63,20 @@ export class Camera {
         this.scale = ((maxScreenDim * 0.5) / (this.zoomNow * Camera.scale));
     }
 
-    XOffset: number = 0;
-    YOffset: number = 0;
+    XOffset = 0;
+    YOffset = 0;
 
-    cameraPosition: VectorAbstract = Vec2.new(0, 0);
+    cameraPosition: VectorAbstract = UVec2D["new"](0, 0);
 
     render(): void {
-        this.resize()
+        this.resize();
 
         const position = this.position;
 
-        this.cameraPosition = Vec2.add(
-            Vec2.mul(position, this.scale),
-            Vec2.new(-this.screenWidth / 2, -this.screenHeight / 2)
-        )
+        this.cameraPosition = UVec2D.add(
+            UVec2D.mul(position, this.scale),
+            UVec2D["new"](-this.screenWidth / 2, -this.screenHeight / 2)
+        );
     }
 
     screenShake(): void {
@@ -92,7 +92,7 @@ export class Camera {
                     this.game.camera.XOffset = d.x;
                     this.game.camera.YOffset = d.y;
                 })
-        )
+        );
 
         this.game.addTween(
             new Tween({ x: force, y: force })
@@ -102,16 +102,16 @@ export class Camera {
                     this.XOffset = d.x;
                     this.YOffset = d.y;
                 })
-        )
+        );
 
         this.game.addTween(
             new Tween({ x: -force, y: -force })
                 .delay(tick * 2)
-                .to({ x: 0, y: 0}, tick)
+                .to({ x: 0, y: 0 }, tick)
                 .onUpdate(d => {
                     this.XOffset = d.x;
                     this.YOffset = d.y;
                 })
-        )
+        );
     }
 }

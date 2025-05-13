@@ -1,10 +1,11 @@
 import { ClientEntity } from "./clientEntity";
-import { EntityType, GameConstants, PlayerState } from "@common/constants";
-import { Game } from "@/scripts/game";
-import { Camera } from "@/scripts/render/camera.ts";
-import { Geometry, Numeric, P2 } from "@common/utils/math.ts";
-import { Vec2, VectorAbstract } from "@common/utils/vector.ts";
-import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
+import { EntityType, GameConstants, PlayerState } from "../../../../common/src/constants";
+import { Game } from "../game";
+import { Camera } from "../render/camera";
+import { Geometry, Numeric, P2 } from "../../../../common/src/maths/math";
+import { UVec2D } from "../../../../common/src/physics/utils";
+import { EntitiesNetData } from "../../../../common/src/net/packets/updatePacket";
+import VectorAbstract from "../../../../common/src/physics/vectorAbstract";
 
 export class ClientPlayer extends ClientEntity {
     type = EntityType.Player;
@@ -13,21 +14,21 @@ export class ClientPlayer extends ClientEntity {
 
     shieldPercent = 0.0;
 
-    lastGettingDamage: number = 0;
+    lastGettingDamage = 0;
 
-    invisible: boolean = false;
+    invisible = false;
 
     constructor(game: Game, id: number) {
-        super(game, id)
+        super(game, id);
         this.hitboxRadius = GameConstants.player.radius;
     }
 
-    mouthTopPosition: number = 0;
-    eyeTrianglePosition: number = 0;
+    mouthTopPosition = 0;
+    eyeTrianglePosition = 0;
 
     state: PlayerState = PlayerState.Normal;
 
-    admin: boolean = false;
+    admin = false;
 
     updateFromData(data: EntitiesNetData[EntityType.Player], isNew: boolean): void {
         this.position = data.position;
@@ -66,9 +67,9 @@ export class ClientPlayer extends ClientEntity {
                 // 只在状态改变时更新花瓣可见性
                 if (this.game.entityPool) {
                     for (const entity of this.game.entityPool) {
-                        if (entity.type === EntityType.Petal &&
-                            (entity as any).ownerId === this.id &&
-                            !updatedPetals.has(entity.id)) {
+                        if (entity.type === EntityType.Petal
+                            && (entity as any).ownerId === this.id
+                            && !updatedPetals.has(entity.id)) {
                             entity.container.visible = !newInvisible;
                             updatedPetals.add(entity.id);
                         }
@@ -111,14 +112,14 @@ export class ClientPlayer extends ClientEntity {
     render(dt: number): void {
         super.render(dt);
 
-        this.updateContainerPosition(4)
+        this.updateContainerPosition(4);
 
         if (!this.invisible) {
-            this.drawFlower()
+            this.drawFlower();
         }
     }
 
-    eyeBallPosition : VectorAbstract = Vec2.new(0, 0);
+    eyeBallPosition: VectorAbstract = UVec2D.new(0, 0);
 
     drawFlower() {
         const mouthX = 6.2;
@@ -126,7 +127,7 @@ export class ClientPlayer extends ClientEntity {
 
         this.mouthTopPosition = Numeric.targetEasing(
             this.mouthTopPosition, this.getMouthTopPosition() + mouthY
-        )
+        );
 
         const radius = Camera.unitToScreen(GameConstants.player.radius);
 
@@ -134,14 +135,14 @@ export class ClientPlayer extends ClientEntity {
         const bodyColor = this.container.getRenderColor(colors[0]);
         const borderColor = this.container.getRenderColor(colors[1]);
 
-        const firstEyeCenter = Vec2.new(-6.2,-4.8);
+        const firstEyeCenter = UVec2D.new(-6.2, -4.8);
         const eyeWidth = 3;
         const eyeHeight = 6.5;
         const eyeStroke = 4;
 
         this.eyeTrianglePosition = Numeric.targetEasing(
             this.eyeTrianglePosition, (this.state === PlayerState.Attacking ? -3.5 : -8) + firstEyeCenter.y
-        )
+        );
 
         const eyeInsideWidth = 2;
         const eyeInsideHeight = 5;
@@ -150,20 +151,20 @@ export class ClientPlayer extends ClientEntity {
 
         const ellRadius = Math.sqrt(
             (eyeInsideWidth * Math.sin(radians)) ** 2 + (eyeInsideHeight * Math.cos(radians)) ** 2
-        )
+        );
 
-        const eyeballPosition =
-            Vec2.new(
+        const eyeballPosition
+            = UVec2D.new(
                 eyeInsideWidth * eyeInsideHeight * Math.cos(radians) / ellRadius,
-                eyeInsideWidth * eyeInsideHeight * Math.sin(radians) / ellRadius,
-            )
+                eyeInsideWidth * eyeInsideHeight * Math.sin(radians) / ellRadius
+            );
 
-        this.eyeBallPosition = Vec2.targetEasing(
+        this.eyeBallPosition = UVec2D.targetEasing(
             this.eyeBallPosition,
             eyeballPosition
         );
 
-        this.ctx.beginPath()
+        this.ctx.beginPath();
         this.ctx.fillStyle = bodyColor;
         this.ctx.lineWidth = 3;
         this.ctx.strokeStyle = borderColor;
@@ -171,115 +172,115 @@ export class ClientPlayer extends ClientEntity {
             0, 0,
             radius,
             0, P2
-        )
-        this.ctx.fill()
-        this.ctx.stroke()
+        );
+        this.ctx.fill();
+        this.ctx.stroke();
 
-        this.ctx.beginPath()
+        this.ctx.beginPath();
         this.ctx.lineWidth = 1.7;
         this.ctx.strokeStyle = "#111111";
-        this.ctx.moveTo(-mouthX, mouthY)
-        this.ctx.bezierCurveTo(0, this.mouthTopPosition, 0, this.mouthTopPosition, mouthX, mouthY)
-        this.ctx.stroke()
+        this.ctx.moveTo(-mouthX, mouthY);
+        this.ctx.bezierCurveTo(0, this.mouthTopPosition, 0, this.mouthTopPosition, mouthX, mouthY);
+        this.ctx.stroke();
 
-        this.ctx.beginPath()
+        this.ctx.beginPath();
         this.ctx.fillStyle = "#111111";
         this.ctx.ellipse(
             firstEyeCenter.x, firstEyeCenter.y,
             eyeWidth, eyeHeight, 0, 0, P2
-        )
-        this.ctx.fill()
+        );
+        this.ctx.fill();
 
-        this.ctx.beginPath()
+        this.ctx.beginPath();
         this.ctx.fillStyle = "#111111";
         this.ctx.ellipse(
             -firstEyeCenter.x, firstEyeCenter.y,
             eyeWidth, eyeHeight, 0, 0, P2
-        )
-        this.ctx.fill()
+        );
+        this.ctx.fill();
 
-        this.ctx.beginPath()
+        this.ctx.beginPath();
         this.ctx.lineWidth = 1;
         this.ctx.fillStyle = "#eeeeee";
         this.ctx.arc(
             firstEyeCenter.x + this.eyeBallPosition.x, firstEyeCenter.y + this.eyeBallPosition.y,
             3.5,
             0, P2
-        )
-        this.ctx.fill()
-        this.ctx.stroke()
+        );
+        this.ctx.fill();
+        this.ctx.stroke();
 
-        this.ctx.beginPath()
+        this.ctx.beginPath();
         this.ctx.fillStyle = "#eeeeee";
         this.ctx.arc(
             -firstEyeCenter.x + this.eyeBallPosition.x, firstEyeCenter.y + this.eyeBallPosition.y,
             3.5,
             0, P2
-        )
-        this.ctx.fill()
-        this.ctx.stroke()
+        );
+        this.ctx.fill();
+        this.ctx.stroke();
 
-        this.ctx.beginPath()
+        this.ctx.beginPath();
         this.ctx.lineWidth = 2;
         this.ctx.ellipse(
             firstEyeCenter.x, firstEyeCenter.y,
             eyeWidth, eyeHeight, 0, 0, P2
-        )
-        this.ctx.stroke()
+        );
+        this.ctx.stroke();
 
-        this.ctx.beginPath()
+        this.ctx.beginPath();
         this.ctx.ellipse(
             -firstEyeCenter.x, firstEyeCenter.y,
             eyeWidth, eyeHeight, 0, 0, P2
-        )
-        this.ctx.stroke()
+        );
+        this.ctx.stroke();
 
-        this.ctx.beginPath()
+        this.ctx.beginPath();
         this.ctx.strokeStyle = bodyColor;
         this.ctx.lineWidth = eyeStroke;
         this.ctx.ellipse(
             firstEyeCenter.x, firstEyeCenter.y,
             eyeWidth + eyeStroke / 2, eyeHeight + eyeStroke / 2, 0, 0, P2
-        )
-        this.ctx.stroke()
+        );
+        this.ctx.stroke();
 
-        this.ctx.beginPath()
+        this.ctx.beginPath();
         this.ctx.ellipse(
             -firstEyeCenter.x, firstEyeCenter.y,
             eyeWidth + eyeStroke / 2, eyeHeight + eyeStroke / 2, 0, 0, P2
-        )
-        this.ctx.stroke()
+        );
+        this.ctx.stroke();
 
-        this.ctx.beginPath()
+        this.ctx.beginPath();
         this.ctx.fillStyle = bodyColor;
         this.ctx.moveTo(
             firstEyeCenter.x + eyeWidth,
             firstEyeCenter.y + this.eyeTrianglePosition
-        )
+        );
         this.ctx.lineTo(
-                firstEyeCenter.x + eyeWidth,
+            firstEyeCenter.x + eyeWidth,
             firstEyeCenter.y + this.eyeTrianglePosition + eyeWidth * 2
-        )
+        );
         this.ctx.lineTo(
-                firstEyeCenter.x - eyeWidth * 2,
+            firstEyeCenter.x - eyeWidth * 2,
             firstEyeCenter.y + this.eyeTrianglePosition
-        )
-        this.ctx.fill()
+        );
+        this.ctx.fill();
 
-        this.ctx.beginPath()
+        this.ctx.beginPath();
         this.ctx.moveTo(
             -firstEyeCenter.x - eyeWidth,
             firstEyeCenter.y + this.eyeTrianglePosition
-        )
+        );
         this.ctx.lineTo(
-                -firstEyeCenter.x - eyeWidth,
+            -firstEyeCenter.x - eyeWidth,
             firstEyeCenter.y + this.eyeTrianglePosition + eyeWidth * 2
-        )
+        );
         this.ctx.lineTo(
-                -firstEyeCenter.x + eyeWidth * 2,
+            -firstEyeCenter.x + eyeWidth * 2,
             firstEyeCenter.y + this.eyeTrianglePosition
-        )
-        this.ctx.fill()
+        );
+        this.ctx.fill();
     }
 
     staticRender(dt: number) {
@@ -288,7 +289,7 @@ export class ClientPlayer extends ClientEntity {
         if (!this.invisible) {
             const name = this.game.playerData.get(this.id)?.name ?? GameConstants.player.defaultName;
 
-            this.drawHealthBar()
+            this.drawHealthBar();
 
             const { ctx } = this;
 
@@ -310,8 +311,8 @@ export class ClientPlayer extends ClientEntity {
         const fillWidth = this.healthPercent * healthbarWidth;
         const shieldWidth = this.shieldPercent * healthbarWidth;
 
-        const healthBarVisible =
-            this.healthPercent < 1.0
+        const healthBarVisible
+            = this.healthPercent < 1.0
             || this.shieldPercent > 0;
 
         if (healthBarVisible) {
@@ -323,9 +324,9 @@ export class ClientPlayer extends ClientEntity {
 
             ctx.globalAlpha = 1;
             ctx.fillStyle = "#87e63e";
-            ctx.beginPath()
-            ctx.roundRect(-healthbarWidth / 2, healthbarY + 3 / 2, fillWidth, 7, 10)
-            ctx.fill()
+            ctx.beginPath();
+            ctx.roundRect(-healthbarWidth / 2, healthbarY + 3 / 2, fillWidth, 7, 10);
+            ctx.fill();
         }
         if (this.shieldPercent > 0) {
             ctx.fillStyle = "#000000";
@@ -336,8 +337,8 @@ export class ClientPlayer extends ClientEntity {
 
             ctx.fillStyle = "#ffffff";
             ctx.globalAlpha = 0.8;
-            ctx.beginPath()
-            ctx.roundRect(-healthbarWidth / 2,  healthbarY - 7 + 1, shieldWidth, 4, 10)
+            ctx.beginPath();
+            ctx.roundRect(-healthbarWidth / 2, healthbarY - 7 + 1, shieldWidth, 4, 10);
             ctx.fill();
         }
     }

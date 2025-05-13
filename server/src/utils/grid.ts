@@ -1,7 +1,7 @@
 import { EntityType } from "../../../common/src/constants";
 import { type Hitbox, RectHitbox } from "../../../common/src/utils/hitbox";
-import { Numeric } from "../../../common/src/utils/math";
-import { Vec2, type VectorAbstract } from "../../../common/src/utils/vector";
+import { Numeric } from "../../../common/src/maths/math";
+import { UVec2D } from "../../../common/src/physics/utils";
 import { type ServerEntity } from "../entities/serverEntity";
 import { type ServerPlayer } from "../entities/serverPlayer";
 import { ServerPetal } from "../entities/serverPetal";
@@ -9,6 +9,7 @@ import { ServerMob } from "../entities/serverMob";
 import { ServerLoot } from "../entities/serverLoot";
 import { ServerProjectile } from "../entities/serverProjectile";
 import { ServerWall } from "../entities/serverWall";
+import VectorAbstract from "../../../common/src/physics/vectorAbstract";
 
 /**
  * A Grid to filter collision detection of game entities
@@ -34,7 +35,7 @@ export class Grid {
         [EntityType.Mob]: new Set<ServerMob>(),
         [EntityType.Loot]: new Set<ServerLoot>(),
         [EntityType.Projectile]: new Set<ServerProjectile>(),
-        [EntityType.Wall]: new Set<ServerWall>(),
+        [EntityType.Wall]: new Set<ServerWall>()
     };
 
     constructor(width: number, height: number) {
@@ -77,7 +78,7 @@ export class Grid {
             const xRow = this._grid[x];
             for (let y = min.y; y <= max.y; y++) {
                 xRow[y].set(entity.id, entity);
-                cells.push(Vec2.new(x, y));
+                cells.push(UVec2D.new(x, y));
             }
         }
         // Store the cells this entity is occupying
