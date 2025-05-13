@@ -4,6 +4,7 @@ import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../../definit
 import { MobDefinition, Mobs } from "../../definitions/mobs";
 import { Projectiles, ProjectileDefinition } from "../../definitions/projectiles";
 import VectorAbstract from "../../physics/vectorAbstract";
+import { P2 } from "../../maths/math";
 
 export interface EntitiesNetData {
     [EntityType.Player]: {
@@ -50,6 +51,7 @@ export interface EntitiesNetData {
     [EntityType.Projectile]: {
         position: VectorAbstract
         direction: VectorAbstract
+        rotation?: number
 
         full?: {
             definition: ProjectileDefinition
@@ -191,15 +193,29 @@ export const EntitySerializations: { [K in EntityType]: EntitySerialization<K> }
         serializePartial(stream, data): void {
             stream.writePosition(data.position);
             stream.writeUnit(data.direction, 8);
+            if ("rotation" in data && data.rotation !== undefined) {
+                stream.writeBoolean(true);
+                const normalizedRotation = ((data.rotation % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+                stream.writeFloat(normalizedRotation, 0, P2, 8);
+            } else {
+                stream.writeBoolean(false);
+            }
         },
         serializeFull(stream, data): void {
             Projectiles.writeToStream(stream, data.definition);
             stream.writeFloat(data.hitboxRadius, 0, 10, 8);
         },
         deserializePartial(stream) {
+            const position = stream.readPosition();
+            const direction = stream.readUnit(8);
+
+            const hasRotation = stream.readBoolean();
+            const rotation = hasRotation ? stream.readFloat(0, P2, 8) : undefined;
+
             return {
-                position: stream.readPosition(),
-                direction: stream.readUnit(8)
+                position,
+                direction,
+                rotation
             };
         },
         deserializeFull(stream) {

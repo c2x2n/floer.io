@@ -1,6 +1,5 @@
 import { ClientEntity } from "./clientEntity";
 import { EntityType } from "../../../../common/src/constants";
-import { Game } from "../game";
 import { EntitiesNetData } from "../../../../common/src/net/packets/updatePacket";
 import { ProjectileDefinition } from "../../../../common/src/definitions/projectiles";
 import { Camera } from "../render/camera";

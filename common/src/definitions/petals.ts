@@ -431,7 +431,7 @@ export const Petals = new Definitions<PetalDefinition>([
         isDuplicate: true,
         isShowedInOne: true,
         pieceAmount: 5,
-        rarity: RarityName["super"],
+        rarity: RarityName.super,
         undroppable: true,
         usingAssets: "stinger"
     },
@@ -607,7 +607,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 45
         },
         attributes: {
-            boost: 10
+            boost: 7.5
         },
         reloadTime: 3.5,
         hitboxRadius: 0.5,
@@ -636,7 +636,7 @@ export const Petals = new Definitions<PetalDefinition>([
         isShowedInOne: false,
         isDuplicate: true,
         pieceAmount: 2,
-        rarity: RarityName["super"],
+        rarity: RarityName.super,
         usingAssets: "bubble",
         undroppable: true
     },
@@ -759,7 +759,7 @@ export const Petals = new Definitions<PetalDefinition>([
         isShowedInOne: false,
         pieceAmount: 50,
         usingAssets: "dandelion",
-        rarity: RarityName["super"]
+        rarity: RarityName.super
     },
     {
         idString: "op_missile",
@@ -797,7 +797,7 @@ export const Petals = new Definitions<PetalDefinition>([
         isShowedInOne: false,
         pieceAmount: 50,
         usingAssets: "missile",
-        rarity: RarityName["super"]
+        rarity: RarityName.super
     },
     {
         idString: "missile",
@@ -875,7 +875,7 @@ export const Petals = new Definitions<PetalDefinition>([
         extendable: true,
         images: {
             selfGameRotation: 0.02,
-            slotDisplaySize: 45,
+            slotDisplaySize: 60,
             slotRotation: 0.8,
             centerXOffset: -1,
             centerYOffset: -1,
@@ -887,9 +887,15 @@ export const Petals = new Definitions<PetalDefinition>([
                 hitboxRadius: 0.6,
                 damage: 50,
                 health: 20,
-                despawnTime: 3,
-                speed: 12,
-                definition: Projectiles.fromString("missile")
+                despawnTime: 10,
+                speed: 5,
+                definition: Projectiles.fromString("myt_big_missile"),
+                tracking: {
+                    enabled: true,
+                    turnSpeed: 4,
+                    detectionRange: 30,
+                    preferClosest: true
+                }
             }
         },
         useTime: 0.1,
@@ -897,8 +903,7 @@ export const Petals = new Definitions<PetalDefinition>([
         hitboxRadius: 0.6,
         isDuplicate: false,
         pieceAmount: 1,
-        rarity: RarityName.mythic,
-        usingAssets: "missile"
+        rarity: RarityName.mythic
     }, {
         idString: "iris",
         displayName: "Iris",
@@ -1116,7 +1121,7 @@ export const Petals = new Definitions<PetalDefinition>([
         isDuplicate: true,
         isShowedInOne: true,
         pieceAmount: 7,
-        rarity: RarityName["super"],
+        rarity: RarityName.super,
         undroppable: true,
         usingAssets: "blood_stinger"
     },
@@ -1146,18 +1151,18 @@ export const Petals = new Definitions<PetalDefinition>([
         health: 1,
         extendable: false,
         usable: true,
-        useTime: 0,
+        useTime: 0.1,
         images: {
             slotDisplaySize: 45
         },
         attributes: {
             boost: 5
         },
-        reloadTime: 1.5,
+        reloadTime: 1.4,
         hitboxRadius: 0.5,
         isDuplicate: false,
         pieceAmount: 1,
-        rarity: RarityName.legendary,
+        rarity: RarityName.mythic,
         usingAssets: "bubble"
     },
     {
@@ -1615,7 +1620,7 @@ export const Petals = new Definitions<PetalDefinition>([
             zoom: 120
         },
         undroppable: true,
-        rarity: RarityName["super"],
+        rarity: RarityName.super,
         usingAssets: "antennae"
     },
     {
@@ -1694,7 +1699,7 @@ export const Petals = new Definitions<PetalDefinition>([
         modifiers: {
             extraDistance: 10
         },
-        rarity: RarityName["super"],
+        rarity: RarityName.super,
         undroppable: true,
         usingAssets: "tentacles"
     },
@@ -1756,7 +1761,7 @@ export const Petals = new Definitions<PetalDefinition>([
         isShowedInOne: true,
         effectiveFirstReload: true,
         undroppable: true,
-        rarity: RarityName["super"],
+        rarity: RarityName.super,
         usingAssets: "yggdrasil"
     },
     {
@@ -2108,7 +2113,7 @@ export const Petals = new Definitions<PetalDefinition>([
         hitboxRadius: 0.55,
         isDuplicate: false,
         pieceAmount: 1,
-        rarity: RarityName["super"],
+        rarity: RarityName.super,
         usingAssets: "jelly",
         undroppable: true
     },
@@ -2250,7 +2255,7 @@ export const Petals = new Definitions<PetalDefinition>([
         hitboxRadius: 0.6,
         isDuplicate: false,
         pieceAmount: 1,
-        rarity: RarityName["super"],
+        rarity: RarityName.super,
         usingAssets: "lightning"
     },
     {
@@ -2327,7 +2332,7 @@ export const Petals = new Definitions<PetalDefinition>([
         rarity: RarityName.epic
     },
     {
-        idString: "tri_poison_cactus",
+        idString: "myt_cactus",
         displayName: "Cactus",
         description: "Not very strong, but somehow increases your maximum health",
         damage: 5,
@@ -2335,7 +2340,7 @@ export const Petals = new Definitions<PetalDefinition>([
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 52,
+            slotDisplaySize: 68,
             selfGameRotation: 18
         },
         modifiers: {
@@ -2353,11 +2358,9 @@ export const Petals = new Definitions<PetalDefinition>([
         },
         reloadTime: 1,
         hitboxRadius: 0.7,
-        distanceToCenter: 0.62,
-        isDuplicate: true,
-        isShowedInOne: true,
-        pieceAmount: 3,
-        rarity: RarityName.mythic
+        isDuplicate: false,
+        rarity: RarityName.mythic,
+        pieceAmount: 1
     }
 ] satisfies PetalDefinition[]);
 

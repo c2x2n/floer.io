@@ -25,7 +25,10 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
     damage = 0;
 
     existingTime = 0;
-    direction: VectorAbstract = UVec2D["new"](0, 0);
+    direction: VectorAbstract = UVec2D.new(0, 0);
+    rotation = 0;
+    initialDirection: VectorAbstract = UVec2D.new(0, 0);
+    hasLockedTarget = false;
     source: damageSource;
     elasticity = 0;
     knockback = 0.002;
@@ -60,6 +63,11 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
         from?: ServerPetal) {
         super(source.game, position);
 
+        const angle = Math.atan2(direction.y, direction.x);
+        this.rotation = ((angle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+
+        this.parameters = parameters;
+
         this.hitbox = new CircleHitbox(parameters.hitboxRadius);
         this.position = position;
         this.direction = direction;
@@ -82,6 +90,80 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
         this.existingTime += this.game.dt;
         if (this.existingTime >= this.parameters.despawnTime) {
             this.destroy();
+        }
+
+        if (this.parameters.tracking?.enabled) {
+            const { turnSpeed, detectionRange, preferClosest } = this.parameters.tracking;
+
+            let nearestEntity: damageableEntity | null = null;
+            let nearestDistance = preferClosest ? Number.MAX_VALUE : 0;
+
+            const direction = UVec2D.new(this.direction.x, this.direction.y);
+            const normalizedDirection = UVec2D.normalize(direction);
+
+            const searchHitbox = new CircleHitbox(detectionRange);
+            searchHitbox.position = this.position;
+
+            const nearbyEntities = this.game.grid.intersectsHitbox(searchHitbox);
+
+            for (const entity of nearbyEntities) {
+                if (isDamageableEntity(entity) && this.canReceiveDamageFrom(entity)) {
+                    const toEntity = UVec2D.sub(entity.position, this.position);
+                    const distance = UVec2D.length(toEntity);
+
+                    if (this.source.type === EntityType.Player) {
+                        const sourceToCurrent = UVec2D.sub(this.position, this.source.position);
+                        const sourceToEntity = UVec2D.sub(entity.position, this.source.position);
+
+                        const crossProduct = Math.abs(
+                            sourceToCurrent.x * sourceToEntity.y - sourceToCurrent.y * sourceToEntity.x
+                        );
+                        const projDistance = crossProduct / UVec2D.length(sourceToCurrent);
+
+                        if (preferClosest) {
+                            if (projDistance < nearestDistance && distance <= detectionRange) {
+                                nearestDistance = projDistance;
+                                nearestEntity = entity;
+                            }
+                        } else if (projDistance < detectionRange * 0.3 && distance > nearestDistance) {
+                            nearestDistance = distance;
+                            nearestEntity = entity;
+                        }
+                    } else if (distance < nearestDistance || nearestEntity === null) {
+                        nearestDistance = distance;
+                        nearestEntity = entity;
+                    }
+                }
+            }
+
+            if (nearestEntity) {
+                // 找到目标，标记为已锁定
+                this.hasLockedTarget = true;
+
+                const toTarget = UVec2D.sub(nearestEntity.position, this.position);
+                const targetDirection = UVec2D.normalize(toTarget);
+
+                const currentAngle = Math.atan2(this.direction.y, this.direction.x);
+                const targetAngle = Math.atan2(targetDirection.y, targetDirection.x);
+
+                let angleToTurn = targetAngle - currentAngle;
+                if (angleToTurn > Math.PI) angleToTurn -= Math.PI * 2;
+                if (angleToTurn < -Math.PI) angleToTurn += Math.PI * 2;
+
+                const maxTurnAngle = turnSpeed * this.game.dt;
+                angleToTurn = Math.max(-maxTurnAngle, Math.min(maxTurnAngle, angleToTurn));
+
+                const newAngle = currentAngle + angleToTurn;
+                this.direction = Geometry.radiansToDirection(newAngle);
+
+                this.rotation = ((newAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+            } else if (!this.hasLockedTarget) {
+                const initialAngle = Math.atan2(this.initialDirection.y, this.initialDirection.x);
+                this.rotation = ((initialAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+            }
+        } else {
+            const angle = Math.atan2(this.direction.y, this.direction.x);
+            this.rotation = ((angle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
         }
 
         this.setAcceleration(UVec2D.mul(this.direction, this.parameters.speed));
@@ -157,6 +239,7 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
         return {
             position: this.position,
             direction: this.direction,
+            rotation: this.rotation,
             full: {
                 hitboxRadius: this.parameters.hitboxRadius,
                 definition: this.definition
@@ -189,7 +272,7 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
                     new ServerMob(
                         this.game,
                         position,
-                        Geometry.radiansToDirection(Random["float"](-P2, P2)),
+                        Geometry.radiansToDirection(Random.float(-P2, P2)),
                         spawner.spawn
                     );
                 }

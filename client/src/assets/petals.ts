@@ -1,6 +1,7 @@
 import { AssetsBunch } from "./assets";
 import { P2 } from "../../../common/src/maths/math";
 import { loadPathFromSVG } from "./pathLoader";
+import { strokeColor } from "../../../common/src/utils/misc";
 
 export const petalAssets: AssetsBunch = {
     "basic": containerToDraw => {
@@ -393,6 +394,104 @@ export const petalAssets: AssetsBunch = {
         ctx.lineTo(radius, 0);
         ctx.fill();
         ctx.stroke();
+
+        ctx.restore();
+    },
+    "myt_big_missile": containerToDraw => {
+        const { ctx, radius } = containerToDraw;
+
+        // 计算时间，用于动态效果
+        const time = (Date.now() - containerToDraw.createdTime) / 1000;
+        // 用时间创建波动效果 (0.8 到 1.2 之间波动)
+        const fireWave = 0.8 + Math.sin(time * 10) * 0.2;
+        // 火焰摆动效果
+        const fireAngle = Math.sin(time * 5) * 0.1;
+
+        ctx.save();
+        ctx.beginPath();
+
+        // 导弹主体 - 深灰色
+        ctx.fillStyle = containerToDraw.getRenderColor("#333333");
+        ctx.strokeStyle = containerToDraw.getRenderColor("#222222");
+        ctx.lineWidth = radius * 0.1;
+
+        // 绘制导弹主体 - 圆柱形
+        ctx.beginPath();
+        ctx.roundRect(-radius * 0.2, -radius * 0.5, radius * 1.5, radius, radius * 0.3);
+        ctx.fill();
+        ctx.stroke();
+
+        // 绘制导弹尾部的喷射口
+        ctx.beginPath();
+        ctx.fillStyle = containerToDraw.getRenderColor("#555555");
+        ctx.roundRect(-radius * 0.7, -radius * 0.4, radius * 0.5, radius * 0.8, radius * 0.2);
+        ctx.fill();
+        ctx.stroke();
+
+        // 绘制导弹头部 - 锥形
+        ctx.beginPath();
+        ctx.fillStyle = containerToDraw.getRenderColor("#444444");
+        ctx.moveTo(radius * 1.3, 0);
+        ctx.lineTo(radius * 0.8, -radius * 0.4);
+        ctx.lineTo(radius * 0.8, radius * 0.4);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // 绘制导弹上的标记
+        ctx.beginPath();
+        ctx.fillStyle = containerToDraw.getRenderColor("#FF3333");
+        ctx.arc(radius * 0.4, 0, radius * 0.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 保存当前上下文状态以便旋转火焰
+        ctx.save();
+        // 应用旋转角度使火焰产生摆动效果
+        ctx.rotate(fireAngle);
+
+        // 动态外层火焰 - 根据时间变化形状和大小
+        ctx.beginPath();
+        const outerFireColor = Math.sin(time * 3) > 0 ? "#FF6600" : "#FF4500";
+        ctx.fillStyle = containerToDraw.getRenderColor(outerFireColor);
+
+        // 动态长度的火焰
+        const flameLength = radius * (1.5 * fireWave);
+        ctx.moveTo(-radius * 0.7, -radius * 0.3);
+        ctx.lineTo(-radius * 0.7 - flameLength, 0);
+        ctx.lineTo(-radius * 0.7, radius * 0.3);
+        ctx.closePath();
+        ctx.fill();
+
+        // 动态内层火焰
+        ctx.beginPath();
+        // 根据时间调整内层火焰颜色
+        const innerFireColor = Math.sin(time * 8) > 0 ? "#FFCC00" : "#FFDD33";
+        ctx.fillStyle = containerToDraw.getRenderColor(innerFireColor);
+
+        // 内层火焰也有动态长度
+        const innerFlameLength = radius * (1.2 * fireWave);
+        ctx.moveTo(-radius * 0.7, -radius * 0.15);
+        ctx.lineTo(-radius * 0.7 - innerFlameLength, 0);
+        ctx.lineTo(-radius * 0.7, radius * 0.15);
+        ctx.closePath();
+        ctx.fill();
+
+        // 绘制火焰粒子效果
+        const particleCount = 3 + Math.floor(Math.random() * 3); // 随机粒子数量
+        ctx.fillStyle = containerToDraw.getRenderColor("#FFFF66");
+
+        for (let i = 0; i < particleCount; i++) {
+            const particleSize = radius * 0.08 * Math.random();
+            const particleX = -radius * 0.7 - radius * (0.5 + Math.random() * 0.6 * fireWave);
+            const particleY = (Math.random() - 0.5) * radius * 0.4;
+
+            ctx.beginPath();
+            ctx.arc(particleX, particleY, particleSize, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // 恢复旋转前的上下文
+        ctx.restore();
 
         ctx.restore();
     },
@@ -864,17 +963,11 @@ export const petalAssets: AssetsBunch = {
         loadPathFromSVG({
             containerToDraw,
             pathS: "m 190.9104,100.00044 q -28.83584,25.7134 -26.62977,64.28139 Q 125.71264,162.07576 99.999241,190.9116 74.290071,162.07576 35.717846,164.28183 37.923913,125.71384 9.0880745,100.00044 37.923913,74.291273 35.717846,35.719044 74.285831,37.925111 99.999241,9.0935154 125.7084,37.925111 164.28063,35.719044 162.07456,74.287031 190.9104,100.00044",
-            fill: "#2da14d",
+            fill: "#38c75f",
             stroke: {
-                width: 25,
+                width: 20,
                 color: "#2da14d"
             }
-        });
-
-        loadPathFromSVG({
-            containerToDraw,
-            pathS: "m 190.9104,100.00044 q -28.83584,25.7134 -26.62977,64.28139 Q 125.71264,162.07576 99.999241,190.9116 74.290071,162.07576 35.717846,164.28183 37.923913,125.71384 9.0880745,100.00044 37.923913,74.291273 35.717846,35.719044 74.285831,37.925111 99.999241,9.0935154 125.7084,37.925111 164.28063,35.719044 162.07456,74.287031 190.9104,100.00044",
-            fill: "#38c75f"
         });
 
         ctx.beginPath();
@@ -897,15 +990,9 @@ export const petalAssets: AssetsBunch = {
             pathS: "m 190.9104,100.00044 q -28.83584,25.7134 -26.62977,64.28139 Q 125.71264,162.07576 99.999241,190.9116 74.290071,162.07576 35.717846,164.28183 37.923913,125.71384 9.0880745,100.00044 37.923913,74.291273 35.717846,35.719044 74.285831,37.925111 99.999241,9.0935154 125.7084,37.925111 164.28063,35.719044 162.07456,74.287031 190.9104,100.00044",
             fill: "#b03ac8",
             stroke: {
-                width: 25,
+                width: 20,
                 color: "#9d2fae"
             }
-        });
-
-        loadPathFromSVG({
-            containerToDraw,
-            pathS: "m 190.9104,100.00044 q -28.83584,25.7134 -26.62977,64.28139 Q 125.71264,162.07576 99.999241,190.9116 74.290071,162.07576 35.717846,164.28183 37.923913,125.71384 9.0880745,100.00044 37.923913,74.291273 35.717846,35.719044 74.285831,37.925111 99.999241,9.0935154 125.7084,37.925111 164.28063,35.719044 162.07456,74.287031 190.9104,100.00044",
-            fill: "#b03ac8"
         });
 
         ctx.beginPath();
@@ -1066,35 +1153,36 @@ export const petalAssets: AssetsBunch = {
         ctx.stroke();
         ctx.restore();
     },
-    "tri_poison_cactus": containerToDraw => {
+    "myt_cactus": containerToDraw => {
         const { ctx, radius } = containerToDraw;
 
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
+        const innercolor = "#19b1b4";
+        const outercolor = "#00878a";
 
         loadPathFromSVG({
             containerToDraw,
             pathS: "m 190.9104,100.00044 q -28.83584,25.7134 -26.62977,64.28139 Q 125.71264,162.07576 99.999241,190.9116 74.290071,162.07576 35.717846,164.28183 37.923913,125.71384 9.0880745,100.00044 37.923913,74.291273 35.717846,35.719044 74.285831,37.925111 99.999241,9.0935154 125.7084,37.925111 164.28063,35.719044 162.07456,74.287031 190.9104,100.00044",
-            fill: "#b03ac8",
+            fill: outercolor,
             stroke: {
-                width: 25,
-                color: "#540a0b"
+                width: 20,
+                color: strokeColor(outercolor)
             }
         });
 
-        loadPathFromSVG({
-            containerToDraw,
-            pathS: "m 190.9104,100.00044 q -28.83584,25.7134 -26.62977,64.28139 Q 125.71264,162.07576 99.999241,190.9116 74.290071,162.07576 35.717846,164.28183 37.923913,125.71384 9.0880745,100.00044 37.923913,74.291273 35.717846,35.719044 74.285831,37.925111 99.999241,9.0935154 125.7084,37.925111 164.28063,35.719044 162.07456,74.287031 190.9104,100.00044",
-            fill: "#ab0f10"
-        });
-
         ctx.beginPath();
-        ctx.fillStyle = containerToDraw.getRenderColor("#e60e0f");
+        ctx.fillStyle = containerToDraw.getRenderColor(innercolor);
         ctx.arc(
             0, 0,
             radius * 0.5, 0, P2
         );
+        ctx.fill();
 
+        ctx.beginPath();
+        ctx.fillStyle = containerToDraw.getRenderColor("#1ed3cb");
+        ctx.lineWidth = radius / 3;
+        ctx.arc(0, 0, radius * 0.25, 0, Math.PI * 2);
         ctx.fill();
     },
     "disc": containerToDraw => {

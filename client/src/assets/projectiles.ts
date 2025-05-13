@@ -154,5 +154,96 @@ export const projectileAssets: AssetsBunch = {
     },
     default: containerToDraw => {
         projectileAssets.missile(containerToDraw);
+    },
+    myt_big_missile: containerToDraw => {
+        const { ctx, radius } = containerToDraw;
+
+        const time = (Date.now() - containerToDraw.createdTime) / 1000;
+
+        const fireWave = 0.8 + Math.sin(time * 10) * 0.2;
+
+        const fireAngle = Math.sin(time * 5) * 0.1;
+
+        // 根据导弹的旋转角度确定方向
+        // 使用容器的rotation属性
+        const rotationAngle = containerToDraw.rotation;
+
+        // 保存当前上下文状态
+        ctx.save();
+
+        ctx.beginPath();
+
+        ctx.fillStyle = containerToDraw.getRenderColor("#333333");
+        ctx.strokeStyle = containerToDraw.getRenderColor("#222222");
+        ctx.lineWidth = radius * 0.1;
+
+        ctx.beginPath();
+        ctx.roundRect(-radius * 0.2, -radius * 0.5, radius * 1.5, radius, radius * 0.3);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.fillStyle = containerToDraw.getRenderColor("#555555");
+        ctx.roundRect(-radius * 0.7, -radius * 0.4, radius * 0.5, radius * 0.8, radius * 0.2);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.fillStyle = containerToDraw.getRenderColor("#444444");
+        ctx.moveTo(radius * 1.3, 0);
+        ctx.lineTo(radius * 0.8, -radius * 0.4);
+        ctx.lineTo(radius * 0.8, radius * 0.4);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.fillStyle = containerToDraw.getRenderColor("#FF3333");
+        ctx.arc(radius * 0.4, 0, radius * 0.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.save();
+
+        ctx.rotate(fireAngle);
+
+        ctx.beginPath();
+        const outerFireColor = Math.sin(time * 3) > 0 ? "#FF6600" : "#FF4500";
+        ctx.fillStyle = containerToDraw.getRenderColor(outerFireColor);
+
+        const flameLength = radius * (1.5 * fireWave);
+        ctx.moveTo(-radius * 0.7, -radius * 0.3);
+        ctx.lineTo(-radius * 0.7 - flameLength, 0);
+        ctx.lineTo(-radius * 0.7, radius * 0.3);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.beginPath();
+
+        const innerFireColor = Math.sin(time * 8) > 0 ? "#FFCC00" : "#FFDD33";
+        ctx.fillStyle = containerToDraw.getRenderColor(innerFireColor);
+
+        const innerFlameLength = radius * (1.2 * fireWave);
+        ctx.moveTo(-radius * 0.7, -radius * 0.15);
+        ctx.lineTo(-radius * 0.7 - innerFlameLength, 0);
+        ctx.lineTo(-radius * 0.7, radius * 0.15);
+        ctx.closePath();
+        ctx.fill();
+
+        const particleCount = 3 + Math.floor(Math.random() * 3);
+        ctx.fillStyle = containerToDraw.getRenderColor("#FFFF66");
+
+        for (let i = 0; i < particleCount; i++) {
+            const particleSize = radius * 0.08 * Math.random();
+            const particleX = -radius * 0.7 - radius * (0.5 + Math.random() * 0.6 * fireWave);
+            const particleY = (Math.random() - 0.5) * radius * 0.4;
+
+            ctx.beginPath();
+            ctx.arc(particleX, particleY, particleSize, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        ctx.restore();
+
+        ctx.restore();
     }
 };
