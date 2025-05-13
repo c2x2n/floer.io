@@ -8,7 +8,8 @@ export enum MobCategory{
     Fixed,
     Unactive,
     Enemy,
-    Passive
+    Passive,
+    Friendly
 }
 
 
@@ -53,7 +54,7 @@ export type MobCategoryType =  {
 } | (({
     readonly category: MobCategory.Unactive
 } | {
-    readonly category: MobCategory.Enemy | MobCategory.Passive
+    readonly category: MobCategory.Enemy | MobCategory.Passive | MobCategory.Friendly
     readonly aggroRadius: number
 }) & {
     readonly speed: number
@@ -1541,7 +1542,7 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         skills: {},
         modifiers: {
-            healPerSecond: 50
+            healPerSecond: 100
         },
         lootTable: {
             "sand": 1,
@@ -1553,5 +1554,26 @@ export const Mobs = new Definitions<MobDefinition>([
         rarity: RarityName.mythic,
         exp: 500,
         usingAssets: "starfish"
+    },{
+        idString: "digger",
+        displayName: "Digger",
+        damage: 40,
+        health: 1800,
+        category: MobCategory.Friendly,
+        aggroRadius: 25,
+        hitboxRadius: 7.5,
+        speed: 3.2,
+        description: "Wrong game, bud.",
+        images: {
+            slotDisplaySize: 85,
+        },
+        lootTable: {
+            "uranium": 0.04,
+            "cutter": 0.6,
+            "smasher": 0.4,
+            "disc": 0.4
+        },
+        rarity: RarityName.legendary,
+        exp: 1000
     }
 ] satisfies MobDefinition[]);

@@ -1450,7 +1450,130 @@ export const mobAssets: AssetsBunch = {
         ctx.fill();
         ctx.stroke();
     },
+    "digger": (containerToDraw) => {
+        const { ctx, radius } = containerToDraw;
 
+        ctx.save();
+
+        const rotationSpeed = 3;
+        const currentTime = Date.now();
+        const elapsedTime = (currentTime - containerToDraw.createdTime) / 1000;
+        const rotation = (elapsedTime * rotationSpeed) % (Math.PI * 2);
+
+        ctx.save();
+        ctx.rotate(rotation);
+        
+        const spikeCount = 8;
+        const outerRadius = radius * 0.9;
+        const innerRadius = radius * 0.85;
+        const spikeLength = radius * 0.4;
+        
+        ctx.fillStyle = containerToDraw.getRenderColor("#333333");
+        
+        ctx.beginPath();
+        
+        const firstSpikeX = (outerRadius + spikeLength) * Math.cos(0.5 / spikeCount * P2);
+        const firstSpikeY = (outerRadius + spikeLength) * Math.sin(0.5 / spikeCount * P2);
+        
+        ctx.moveTo(firstSpikeX, firstSpikeY);
+        
+        for (let i = 0; i < spikeCount; i++) {
+            const currentAngle = ((i + 0.5) / spikeCount) * P2;
+            const nextAngle = ((i + 1.5) / spikeCount) * P2;
+
+            const spikeX = (outerRadius + spikeLength) * Math.cos(currentAngle);
+            const spikeY = (outerRadius + spikeLength) * Math.sin(currentAngle);
+
+            const arcX = outerRadius * Math.cos((i + 1) / spikeCount * P2);
+            const arcY = outerRadius * Math.sin((i + 1) / spikeCount * P2);
+
+            const nextSpikeX = (outerRadius + spikeLength) * Math.cos(nextAngle);
+            const nextSpikeY = (outerRadius + spikeLength) * Math.sin(nextAngle);
+
+            ctx.quadraticCurveTo(arcX, arcY, nextSpikeX, nextSpikeY);
+        }
+        
+        ctx.arc(0, 0, innerRadius, 0, P2, true);
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.restore();
+ 
+        ctx.save();
+
+        ctx.rotate(-containerToDraw.rotation);
+
+        const bodyColor = containerToDraw.getRenderColor("#888888");
+        const borderColor = containerToDraw.getRenderColor("#666666");
+        
+        ctx.beginPath();
+        ctx.fillStyle = bodyColor;
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = borderColor;
+        ctx.arc(
+            0, 0,
+            radius * 0.85,
+            0, P2
+        );
+        ctx.fill();
+        ctx.stroke();
+
+        const mouthX = radius * 0.22;
+        const mouthY = radius * 0.32;
+
+        ctx.beginPath();
+        ctx.lineWidth = 1.7;
+        ctx.strokeStyle = "#111111";
+        ctx.moveTo(-mouthX, mouthY);
+        ctx.bezierCurveTo(0, mouthY - radius * 0.15, 0, mouthY - radius * 0.15, mouthX, mouthY);
+        ctx.stroke();
+
+        const eyeCenterX = radius * 0.22;
+        const eyeCenterY = -radius * 0.17;
+        const eyeWidth = radius * 0.11;
+        const eyeHeight = radius * 0.23;
+
+        ctx.beginPath();
+        ctx.fillStyle = "#111111";
+        ctx.ellipse(
+            -eyeCenterX, eyeCenterY,
+            eyeWidth, eyeHeight, 0, 0, P2
+        );
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.ellipse(
+            eyeCenterX, eyeCenterY,
+            eyeWidth, eyeHeight, 0, 0, P2
+        );
+        ctx.fill();
+
+        const eyeballSize = radius * 0.12;
+
+        ctx.beginPath();
+        ctx.fillStyle = "#eeeeee";
+        ctx.arc(
+            -eyeCenterX, eyeCenterY,
+            eyeballSize,
+            0, P2
+        );
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.fillStyle = "#eeeeee";
+        ctx.arc(
+            eyeCenterX, eyeCenterY,
+            eyeballSize,
+            0, P2
+        );
+        ctx.fill();
+        ctx.stroke();
+        
+        ctx.restore();
+
+        ctx.restore();
+    },
     "default": (containerToDraw) => {
         mobAssets["rock"](containerToDraw);
     },
