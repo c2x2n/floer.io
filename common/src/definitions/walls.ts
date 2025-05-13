@@ -5,4 +5,4 @@ export interface WallDefinition {
     readonly height: number
 }
 
-export const Walls: WallDefinition[] = []
+export const Walls: WallDefinition[] = [];

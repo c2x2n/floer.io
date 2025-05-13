@@ -1,14 +1,15 @@
-import { type GameEntity } from "@common/utils/entityPool";
-import { EntityType } from "@common/constants";
-import { Vec2, VectorAbstract } from "@common/utils/vector";
-import { Game } from "@/scripts/game";
-import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
+import { type GameEntity } from "../../../../common/src/utils/entityPool";
+import { EntityType } from "../../../../common/src/constants";
+import { UVec2D } from "../../../../common/src/physics/utils";
+import { Game } from "../game";
+import { EntitiesNetData } from "../../../../common/src/net/packets/updatePacket";
 import { Tween } from "@tweenjs/tween.js";
-import { Numeric, P2 } from "@common/utils/math.ts";
-import { Camera } from "@/scripts/render/camera.ts";
-import { RenderContainer } from "@/scripts/utils/render.ts";
+import { Numeric, P2 } from "../../../../common/src/maths/math";
+import { Camera } from "../render/camera";
+import { RenderContainer } from "../utils/render";
+import VectorAbstract from "../../../../common/src/physics/vectorAbstract";
 
-export abstract class ClientEntity<T extends EntityType = EntityType> implements GameEntity{
+export abstract class ClientEntity<T extends EntityType = EntityType> implements GameEntity {
     readonly game: Game;
 
     readonly id: number;
@@ -16,11 +17,11 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
 
     ctx: CanvasRenderingContext2D;
 
-    lastReceivePacket: number = 0;
+    lastReceivePacket = 0;
 
-    oldPosition: VectorAbstract = Vec2.new(0, 0);
-    _position: VectorAbstract = Vec2.new(0, 0);
-    hitboxRadius: number = 0;
+    oldPosition: VectorAbstract = UVec2D.new(0, 0);
+    _position: VectorAbstract = UVec2D.new(0, 0);
+    hitboxRadius = 0;
 
     get position(): VectorAbstract {
         return this._position;
@@ -31,8 +32,8 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
         this._position = position;
     }
 
-    oldDirection: VectorAbstract = Vec2.new(0, 0);
-    _direction: VectorAbstract = Vec2.new(0, 0);
+    oldDirection: VectorAbstract = UVec2D.new(0, 0);
+    _direction: VectorAbstract = UVec2D.new(0, 0);
 
     get direction(): VectorAbstract {
         return this._direction;
@@ -43,7 +44,7 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
         this._direction = direction;
     }
 
-    lastGettingDamage: number = 0;
+    lastGettingDamage = 0;
 
     container: RenderContainer;
 
@@ -57,7 +58,7 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
         );
 
         this.container.renderFunc = this.render.bind(this);
-        this.container.staticRenderFunc = this.staticRender.bind(this)
+        this.container.staticRenderFunc = this.staticRender.bind(this);
 
         game.app.renderer.addContainer(this.container);
     }
@@ -82,65 +83,64 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
         );
     }
 
-
     updateContainerPosition(n?: number): void {
         if (n) {
-            this.container.position =
-                Vec2.targetEasing(
+            this.container.position
+                = UVec2D.targetEasing(
                     this.container.position,
                     Camera.vecToScreen(this.position),
                     n
-                )
+                );
         } else {
             this.container.position = Camera.vecToScreen(
-                Vec2.lerp(this.oldPosition, this.position, this.interpolationFactor)
+                UVec2D.lerp(this.oldPosition, this.position, this.interpolationFactor)
             );
         }
     }
 
     getDamageAnimation(disableFilter?: boolean) {
-        if (Date.now() - this.lastGettingDamage < 200) return
+        if (Date.now() - this.lastGettingDamage < 200) return;
 
         this.lastGettingDamage = Date.now();
         const tick = 30;
 
-        if (disableFilter){
+        if (disableFilter) {
             this.game.addTween(
                 new Tween({ color: { r: 555, g: 0, b: 0 } })
-                    .to({ color: { r: 255, g: 255, b: 255 } }, tick * 2 )
+                    .to({ color: { r: 255, g: 255, b: 255 } }, tick * 2)
                     .onUpdate(d => {
                         this.container.tint = d.color;
                     })
-            )
+            );
             return;
         }
 
         this.game.addTween(
             new Tween({ color: { r: 555, g: 0, b: 0 } })
-                .to({ color: { r: 255, g: 255, b: 255 } }, tick )
+                .to({ color: { r: 255, g: 255, b: 255 } }, tick)
                 .onUpdate(d => {
                     this.container.tint = d.color;
                 })
-        )
+        );
 
         this.game.addTween(
             new Tween({ brightness: 1 })
                 .delay(tick)
-                .to({ brightness: 4 }, tick )
+                .to({ brightness: 4 }, tick)
                 .onUpdate(d => {
                     this.container.brightness = d.brightness;
                 })
-        )
+        );
 
         this.game.addTween(
             new Tween({ brightness: 4 })
                 .delay(tick * 2)
-                .to({ brightness: 1 }, tick )
+                .to({ brightness: 1 }, tick)
                 .onUpdate(d => {
                     this.container.brightness = d.brightness;
                 })
-            ,() => this.container.brightness = 1
-        )
+            , () => this.container.brightness = 1
+        );
     }
 
     staticRender(dt: number): void {
@@ -148,7 +148,7 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
         else if (this.drawedHitbox) this.renderHitbox(true);
     }
 
-    drawedHitbox: boolean = false;
+    drawedHitbox = false;
 
     renderHitbox(hide?: boolean): void {
         this.drawedHitbox = !hide;
@@ -164,8 +164,8 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
                 0, 0,
                 screenRadius,
                 0, P2
-            )
-            ctx.stroke()
+            );
+            ctx.stroke();
             ctx.restore();
             ctx.globalAlpha = 1;
         }

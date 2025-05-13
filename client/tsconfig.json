@@ -11,17 +11,12 @@
         "skipLibCheck": true,
         "moduleResolution": "bundler",
         "resolvePackageJsonExports": true,
-        "allowImportingTsExtensions": true,
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": true,
         "strictNullChecks": true,
         "strict": true,
-        "types": ["vite/client"],
-        "paths": {
-            "@common/*": ["../common/src/*"],
-            "@/*": ["./src/*"]
-        }
+        "types": ["vite/client"]
     },
     "include": [
         "src",

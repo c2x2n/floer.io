@@ -1,12 +1,12 @@
-import { UI } from "@/ui.ts";
-import { PetalDefinition, Petals } from "@common/definitions/petals.ts";
-import { Rarity } from "@common/definitions/rarities.ts";
-import { renderPetal } from "@/scripts/inventory.ts";
+import { UI } from "../ui";
+import { PetalDefinition, Petals } from "../../../common/src/definitions/petals";
+import { Rarity } from "../../../common/src/definitions/rarities";
+import { renderPetal } from "./inventory";
 import $ from "jquery";
-import { applyTooltip, createMobTooltip, createPetalTooltip } from "@/scripts/shown/tooltip.ts";
-import { MobDefinition, Mobs } from "@common/definitions/mobs.ts";
+import { applyTooltip, createMobTooltip, createPetalTooltip } from "./shown/tooltip";
+import { MobDefinition, Mobs } from "../../../common/src/definitions/mobs";
 
-export class Gallery{
+export class Gallery {
     petalGallery: string[] = [];
     mobGallery: string[] = [];
 
@@ -15,16 +15,14 @@ export class Gallery{
 
         if (petalGallery) {
             const parsed = JSON.parse(petalGallery);
-            if (parsed instanceof Array && parsed.length > 0 && typeof parsed[0] === "string")
-                this.petalGallery = parsed
+            if (parsed instanceof Array && parsed.length > 0 && typeof parsed[0] === "string") { this.petalGallery = parsed; }
         }
 
         const mobGallery = localStorage.getItem("mobGallery");
 
         if (mobGallery) {
             const parsed = JSON.parse(mobGallery);
-            if (parsed instanceof Array && parsed.length > 0 && typeof parsed[0] === "string")
-                this.mobGallery = parsed
+            if (parsed instanceof Array && parsed.length > 0 && typeof parsed[0] === "string") { this.mobGallery = parsed; }
         }
     }
 
@@ -52,11 +50,11 @@ export class Gallery{
     renderPetalGallery() {
         this.ui.petalGalleryContents.empty();
 
-        const sortedDefintions =
-            Petals.definitions.concat([])
+        const sortedDefintions
+            = Petals.definitions.concat([])
                 .sort((a, b) =>
-                    Rarity.fromString(a.rarity).level -Rarity.fromString(b.rarity).level
-                )
+                    Rarity.fromString(a.rarity).level - Rarity.fromString(b.rarity).level
+                );
 
         for (const definition of sortedDefintions) {
             const rarity = Rarity.fromString(definition.rarity);
@@ -71,7 +69,7 @@ export class Gallery{
 
                     applyTooltip(
                         content, createPetalTooltip(definition)
-                    )
+                    );
                 } else {
                     this.ui.petalGalleryContents.append(
                         $(
@@ -86,11 +84,11 @@ export class Gallery{
     renderMobGallery() {
         this.ui.mobGalleryContents.empty();
 
-        const sortedDefintions =
-            Mobs.definitions.concat([])
+        const sortedDefintions
+            = Mobs.definitions.concat([])
                 .sort((a, b) =>
-                    Rarity.fromString(a.rarity).level -Rarity.fromString(b.rarity).level
-                )
+                    Rarity.fromString(a.rarity).level - Rarity.fromString(b.rarity).level
+                );
 
         for (const definition of sortedDefintions) {
             const rarity = Rarity.fromString(definition.rarity);
@@ -106,7 +104,7 @@ export class Gallery{
 
                     applyTooltip(
                         content, createMobTooltip(this, definition)
-                    )
+                    );
                 } else {
                     const content = $(`<div class="unknown mob-${definition.idString}-silhouette"></div>`);
                     this.ui.mobGalleryContents.append(content);

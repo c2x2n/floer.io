@@ -1,8 +1,8 @@
 import { type WebSocket } from "ws";
 import { ServerEntity } from "./serverEntity";
-import { Vec2, VectorAbstract } from "../../../common/src/utils/vector";
+import { UVec2D } from "../../../common/src/physics/utils";
 import { GameBitStream, type Packet, PacketStream } from "../../../common/src/net/net";
-import { createHash } from "crypto"
+import { createHash } from "crypto";
 import { type Game } from "../game";
 import {
     ChatData,
@@ -13,7 +13,7 @@ import {
 } from "../../../common/src/net/packets/updatePacket";
 import { CircleHitbox, RectHitbox } from "../../../common/src/utils/hitbox";
 import { Random } from "../../../common/src/utils/random";
-import { Geometry, Numeric } from "../../../common/src/utils/math";
+import { Geometry, Numeric } from "../../../common/src/maths/math";
 import { InputAction, InputPacket } from "../../../common/src/net/packets/inputPacket";
 import { JoinPacket } from "../../../common/src/net/packets/joinPacket";
 import { ActionType, EntityType, GameConstants, PlayerState } from "../../../common/src/constants";
@@ -33,16 +33,17 @@ import { PoisonEffect } from "../utils/effects";
 import { MobDefinition } from "../../../common/src/definitions/mobs";
 import { spawnLoot } from "../misc/spawning";
 import { applyCommand, CommandResolving } from "../misc/command";
+import VectorAbstract from "../../../common/src/physics/vectorAbstract";
 
 // 闪避
 enum curveType {
     LINEAR,
     SINE,
-    CBRT,
+    CBRT
 }
 
 function curve(x: number, curve: curveType) {
-    let res: number = 0;
+    let res = 0;
     x = Math.max(0, Math.min(1, x));
     switch (curve) {
         case curveType.LINEAR:
@@ -69,14 +70,14 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     name = "";
 
     direction: {
-        direction: VectorAbstract,
+        direction: VectorAbstract
         mouseDirection: VectorAbstract
     } = {
-        direction: Vec2.new(0, 0),
-        mouseDirection: Vec2.new(0, 0)
-    };
+            direction: UVec2D.new(0, 0),
+            mouseDirection: UVec2D.new(0, 0)
+        };
 
-    distance: number = 0;
+    distance = 0;
     isAttacking = false;
     isDefending = false;
 
@@ -84,13 +85,13 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
     inventory: Inventory;
 
-    joined: boolean = false;
+    joined = false;
 
     damage: number = GameConstants.player.defaultBodyDamage;
 
     private _health = GameConstants.player.defaultModifiers().maxHealth;
 
-    actions: InputAction[] = []
+    actions: InputAction[] = [];
 
     get health(): number {
         return this._health;
@@ -110,7 +111,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
     set maxHealth(maxHealth: number) {
         if (maxHealth === this._maxHealth) return;
-        this._health = Numeric.clamp(this._health  * maxHealth / this._maxHealth, 0, maxHealth);
+        this._health = Numeric.clamp(this._health * maxHealth / this._maxHealth, 0, maxHealth);
         this._maxHealth = maxHealth;
         this.maxShield = this.maxHealth * 0.75;
         this.shield = Numeric.clamp(this.shield, 0, this.maxShield);
@@ -120,7 +121,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
     maxShield = this._maxHealth * 0.75;
 
-    private _shield: number = 0;
+    private _shield = 0;
 
     get shield(): number {
         return this._shield;
@@ -163,35 +164,35 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         this.dirty.zoom = true;
     }
 
-    get petalEntities(): ServerPetal[]{
+    get petalEntities(): ServerPetal[] {
         return this.inventory.petalBunches
-            .reduce(
-                (pre, petalBunch) =>
-                    pre.concat(petalBunch.petals),
-                [] as ServerPetal[]
-            )
+            .reduce<ServerPetal[]>(
+            (pre, petalBunch) =>
+                pre.concat(petalBunch.petals),
+            []
+        );
     }
 
     modifiers: PlayerModifiers = GameConstants.player.defaultModifiers();
-    otherModifiers: Partial<PlayerModifiers>[] = [];
+    otherModifiers: Array<Partial<PlayerModifiers>> = [];
 
-    persistentSpeedModifier: number = 1;
+    persistentSpeedModifier = 1;
 
-    persistentZoomModifier: number = 1;
+    persistentZoomModifier = 1;
 
-    godMode: boolean = false;
+    godMode = false;
 
-    spectatorMode: boolean = false;
+    spectatorMode = false;
 
-    invisible: boolean = false;
+    invisible = false;
 
-    frozen: boolean = false;
+    frozen = false;
 
-    exp: number = 0;
-    level: number = 1;
+    exp = 0;
+    level = 1;
     levelInformation = getLevelInformation(0);
 
-    overleveled: boolean = false;
+    overleveled = false;
     overleveledTimeRemains: number = GameConstants.player.overleveledTime;
 
     chatMessagesToSend: ChatData[] = [];
@@ -199,12 +200,11 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
     killedBy?: damageSource;
 
-    isAdmin: boolean = false;
+    isAdmin = false;
 
-    knockback: number = 3;
+    knockback = 3;
 
     canCollideWith(entity: ServerEntity): boolean {
-
         if (this.spectatorMode) return false;
 
         if (this.invisible) return false;
@@ -217,10 +217,10 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
         switch (source.type) {
             case EntityType.Player:
-                return source != this
+                return source != this;
             case EntityType.Mob:
                 if (source instanceof ServerFriendlyMob) return source.owner !== this;
-                return true
+                return true;
             case EntityType.Petal:
                 return source.owner != this;
             case EntityType.Projectile:
@@ -242,14 +242,13 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
         this.inventory = new Inventory(this);
 
-
         this.updateModifiers();
     }
 
     tick(): void {
         super.tick();
 
-        this.setAcceleration(Vec2.mul(
+        this.setAcceleration(UVec2D.mul(
             this.direction.direction,
             Numeric.remap(this.distance, 0, 150, 0, GameConstants.player.maxSpeed) * this.modifiers.speed
         ));
@@ -260,24 +259,23 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         let targetRange = GameConstants.player.defaultPetalDistance;
 
         if (this.isDefending) {
-            this.sendEvent(AttributeEvents.DEFEND, undefined)
+            this.sendEvent(AttributeEvents.DEFEND, undefined);
             targetRange = GameConstants.player.defaultPetalDefendingDistance;
         }
 
         if (this.isAttacking) {
-            targetRange = GameConstants.player.defaultPetalAttackingDistance
+            targetRange = GameConstants.player.defaultPetalAttackingDistance;
             if (isFinite(this.modifiers.extraDistance)) {
-                targetRange += this.modifiers.extraDistance
+                targetRange += this.modifiers.extraDistance;
             }
-            this.sendEvent(AttributeEvents.ATTACK, undefined)
+            this.sendEvent(AttributeEvents.ATTACK, undefined);
         }
 
         this.inventory.range = targetRange;
 
         this.inventory.tick();
 
-        if (this.health < this.modifiers.maxHealth)
-            this.sendEvent(AttributeEvents.HEALING, undefined)
+        if (this.health < this.modifiers.maxHealth) { this.sendEvent(AttributeEvents.HEALING, undefined); }
 
         this.heal(this.modifiers.healPerSecond * this.game.dt);
 
@@ -308,7 +306,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             }
         }
 
-        if(this.actions.length) this.runAction(this.actions.shift());
+        if (this.actions.length) this.runAction(this.actions.shift());
     }
 
     runAction(action: InputAction | undefined) {
@@ -322,11 +320,11 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                 break;
             case ActionType.TransformLoadout:
                 for (let i = 0; i < this.inventory.slot; i++) {
-                    this.inventory.switchPetal(i, i + this.inventory.slot)
+                    this.inventory.switchPetal(i, i + this.inventory.slot);
                 }
                 break;
             case ActionType.Left:
-                this.destroy()
+                this.destroy();
                 break;
         }
     }
@@ -338,7 +336,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         this.level = this.levelInformation.level;
     }
 
-    dealDamageTo(to: damageableEntity): void{
+    dealDamageTo(to: damageableEntity): void {
         // 观察者模式下不造成伤害
         if (this.spectatorMode) return;
 
@@ -355,27 +353,27 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         // 无敌模式下不接受任何伤害
         if (this.godMode) return;
 
-        if ( (this.modifiers.damageAvoidanceChance > 0 && Math.random() < this.modifiers.damageAvoidanceChance)
-			|| (this.modifiers.damageAvoidanceByDamage && Math.random() < curve(amount / 100, curveType.CBRT)) ) {
+        if ((this.modifiers.damageAvoidanceChance > 0 && Math.random() < this.modifiers.damageAvoidanceChance)
+            || (this.modifiers.damageAvoidanceByDamage && Math.random() < curve(amount / 100, curveType.CBRT))) {
             return;
         }
 
         // 检查是否为毒素伤害
-        const isPoisonDamage =
+        const isPoisonDamage
             // 玩家自身处于中毒状态
-            this.state.poison ||
+            = this.state.poison
             // 来源是PoisonEffect实例
-            (source && source instanceof PoisonEffect) ||
+            || (source && source instanceof PoisonEffect)
             // 来源是中毒的玩家
-            (source && source instanceof ServerPlayer && source.state.poison) ||
+            || (source && source instanceof ServerPlayer && source.state.poison)
             // 自毒伤害(uranium辐射)
-            (disableEvent && this.modifiers.selfPoison > 0);
+            || (disableEvent && this.modifiers.selfPoison > 0);
 
         // 检查是否为碰撞伤害（来自玩家或怪物，但不是花瓣和投射物）
-        const isCollisionDamage = source &&
-            (source instanceof ServerPlayer ||
-             (source instanceof ServerEntity && source.type === EntityType.Mob)) &&
-            !isPoisonDamage;
+        const isCollisionDamage = source
+            && (source instanceof ServerPlayer
+            || (source instanceof ServerEntity && source.type === EntityType.Mob))
+            && !isPoisonDamage;
 
         // 如果是碰撞伤害，应用伤害减免
         if (isCollisionDamage && this.modifiers.bodyDamageReduction > 0) {
@@ -407,9 +405,9 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             this.sendEvent(
                 AttributeEvents.FLOWER_GET_DAMAGE, {
                     entity: source,
-                    damage: amount,
+                    damage: amount
                 }
-            )
+            );
         }
 
         if (amount > 0) this.gotDamage = true;
@@ -418,8 +416,8 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             if (this.modifiers.revive) {
                 const revHealthP = this.modifiers.revive.healthPercent || 100;
                 const shieldP = this.modifiers.revive.shieldPercent || 0;
-                this.health = this.maxHealth * revHealthP/100
-                this.shield = this.maxHealth * shieldP/100;
+                this.health = this.maxHealth * revHealthP / 100;
+                this.shield = this.maxHealth * shieldP / 100;
                 if (this.modifiers.revive.destroyAfterUse) {
                     for (let i = 0; i < this.inventory.inventory.length; i++) {
                         const petalData = this.inventory.inventory[i];
@@ -441,7 +439,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             this.destroy();
 
             if (source instanceof ServerPlayer) {
-                source.addExp(this.exp / 2)
+                source.addExp(this.exp / 2);
             }
         }
     }
@@ -454,8 +452,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     sendPackets() {
         if (!this.joined) return;
 
-        if (this.destroyed && this.killedBy && !this.killedBy.destroyed)
-            this.position = this.killedBy.position
+        if (this.destroyed && this.killedBy && !this.killedBy.destroyed) { this.position = this.killedBy.position; }
 
         // calculate visible, deleted, and dirty entities
         // and send them to the client
@@ -529,7 +526,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                     let health = 1;
                     let reloadingTime = 0;
                     for (const im of e.petals) {
-                        if (!im.isReloading){
+                        if (!im.isReloading) {
                             reloading = false;
                             if (e.definition.health && typeof im.health === "number") {
                                 maxHealth += e.definition.health;
@@ -565,10 +562,10 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                 }
             }
 
-            data.percent = Numeric.clamp(data.percent, 0, 1)
+            data.percent = Numeric.clamp(data.percent, 0, 1);
 
             datas.push(data);
-        })
+        });
 
         updatePacket.petalData = datas;
 
@@ -585,7 +582,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
     readonly packetsToSend: Packet[] = [];
 
-    send(): void{
+    send(): void {
         this.packetStream.stream.index = 0;
 
         for (const packet of this.packetsToSend) {
@@ -621,7 +618,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             }
             case packet instanceof ChatPacket: {
                 const content = packet.chat.trim();
-                if (this.isAdmin && content.startsWith('/')) return this.processCommand(content); // we do not want admin commands to show up for everyone else
+                if (this.isAdmin && content.startsWith("/")) return this.processCommand(content); // we do not want admin commands to show up for everyone else
                 if (content) this.sendChatMessage(content, packet.channel);
                 break;
             }
@@ -651,8 +648,8 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
         console.log(`Game | "${this.name}" joined the game`);
 
-        if (packet.secret && this.game.adminSecret ===
-            createHash("sha256").update(packet.secret).digest("hex")) {
+        if (packet.secret && this.game.adminSecret
+            === createHash("sha256").update(packet.secret).digest("hex")) {
             this.isAdmin = true;
         }
 
@@ -673,10 +670,10 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         }
 
         if (this.isAdmin && packet.petals.length > 0) {
-            let index = 0
+            let index = 0;
             for (const petal of packet.petals) {
                 this.inventory.updateInventory(index, petal);
-                index ++;
+                index++;
             }
         }
     }
@@ -684,8 +681,8 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     processInput(packet: InputPacket): void {
         if (!this.isActive() || this.frozen) {
             this.direction = {
-                direction: Vec2.new(0, 0),
-                mouseDirection: Vec2.new(0, 0)
+                direction: UVec2D.new(0, 0),
+                mouseDirection: UVec2D.new(0, 0)
             };
             this.distance = 0;
             this.isAttacking = false;
@@ -694,7 +691,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         }
 
         // if the direction changed set to dirty
-        if (!Vec2.equals(this.direction.direction, Geometry.radiansToDirection(packet.direction.direction))) {
+        if (!UVec2D.equals(this.direction.direction, Geometry.radiansToDirection(packet.direction.direction))) {
             this.setDirty();
         }
         this.direction = {
@@ -705,15 +702,15 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         this.isAttacking = packet.isAttacking;
         this.isDefending = packet.isDefending;
 
-        packet.actions.forEach((action) => {
+        packet.actions.forEach(action => {
             this.actions.push(action);
-        })
+        });
     }
 
     sendEvent<T extends AttributeEvents>(
         event: T, data: EventFunctionArguments[T], petal?: ServerPetal
     ) {
-        if (!petal){
+        if (!petal) {
             return this.inventory.eventManager.sendEvent<T>(event, data);
         }
         this.inventory.eventManager.sendEventByPetal<T>(petal, event, data);
@@ -725,10 +722,10 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         if (this.isAttacking) return PlayerState.Attacking;
         if (this.isDefending) return PlayerState.Defending;
         if (this.modifiers.speed < 1) return PlayerState.Debuffed;
-        return PlayerState.Normal
+        return PlayerState.Normal;
     }
 
-    gotDamage: boolean = false;
+    gotDamage = false;
 
     get data(): Required<EntitiesNetData[EntityType.Player]> {
         const data = {
@@ -758,7 +755,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         now.revolutionSpeed += extra.revolutionSpeed ?? 0;
         now.zoom += extra.zoom ?? 0;
         now.damageAvoidanceChance += extra.damageAvoidanceChance ?? 0;
-		now.damageAvoidanceByDamage = extra.damageAvoidanceByDamage ?? now.damageAvoidanceByDamage;
+        now.damageAvoidanceByDamage = extra.damageAvoidanceByDamage ?? now.damageAvoidanceByDamage;
         now.selfPoison += extra.selfPoison ?? 0;
         now.yinYangAmount += extra.yinYangAmount ?? 0;
         now.extraDistance += extra.extraDistance ?? 0;
@@ -777,7 +774,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     updateModifiers(): void {
         let modifiersNow = GameConstants.player.defaultModifiers();
 
-        let effectedPetals: PetalDefinition[] = []
+        const effectedPetals: PetalDefinition[] = [];
 
         // 闪避
         let avoidanceFailureChance = 1;
@@ -790,7 +787,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                 if (petal.definition.unstackable && effectedPetals.includes(petal.definition)) continue;
                 if (modifier.damageAvoidanceChance) {
                     avoidanceFailureChance *= (1 - modifier.damageAvoidanceChance);
-                    const modifierWithoutAvoidance = {...modifier};
+                    const modifierWithoutAvoidance = { ...modifier };
                     delete modifierWithoutAvoidance.damageAvoidanceChance;
 
                     modifiersNow = this.calcModifiers(modifiersNow, modifierWithoutAvoidance);
@@ -798,7 +795,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                     modifiersNow = this.calcModifiers(modifiersNow, modifier);
                 }
 
-                effectedPetals.push(petal.definition)
+                effectedPetals.push(petal.definition);
             }
         }
 
@@ -806,25 +803,25 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             if (effect.modifier) {
                 if (effect.modifier.damageAvoidanceChance) {
                     avoidanceFailureChance *= (1 - effect.modifier.damageAvoidanceChance);
-                    const modifierWithoutAvoidance = {...effect.modifier};
+                    const modifierWithoutAvoidance = { ...effect.modifier };
                     delete modifierWithoutAvoidance.damageAvoidanceChance;
                     modifiersNow = this.calcModifiers(modifiersNow, modifierWithoutAvoidance);
                 } else {
                     modifiersNow = this.calcModifiers(modifiersNow, effect.modifier);
                 }
             }
-        })
+        });
 
         this.otherModifiers.forEach(effect => {
             if (effect.damageAvoidanceChance) {
                 avoidanceFailureChance *= (1 - effect.damageAvoidanceChance);
-                const modifierWithoutAvoidance = {...effect};
+                const modifierWithoutAvoidance = { ...effect };
                 delete modifierWithoutAvoidance.damageAvoidanceChance;
                 modifiersNow = this.calcModifiers(modifiersNow, modifierWithoutAvoidance);
             } else {
                 modifiersNow = this.calcModifiers(modifiersNow, effect);
             }
-        })
+        });
 
         this.otherModifiers = [];
 
@@ -852,18 +849,17 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
         this.inventory.changeSlotAmountTo(
             GameConstants.player.defaultSlot + this.levelInformation.extraSlot
-        )
+        );
     }
 
     destroy() {
         if (this.destroyed) return;
 
-        if (this.game.leaderboard()[0] == this){
-            let content = `The Leader ${this.name} with ${this.exp.toFixed(0)} scores was killed`
-            if (this.killedBy instanceof ServerPlayer)
-                content += ` by ${this.killedBy.name}`
+        if (this.game.leaderboard()[0] == this) {
+            let content = `The Leader ${this.name} with ${this.exp.toFixed(0)} scores was killed`;
+            if (this.killedBy instanceof ServerPlayer) { content += ` by ${this.killedBy.name}`; }
             this.game.sendGlobalMessage({
-                content: content + `!`,
+                content: `${content}!`,
                 color: 0x9f5c4b
             });
         }
@@ -879,14 +875,14 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         this.addPacketToSend(gameOverPacket);
 
         super.destroy();
-        for (const i of this.petalEntities){
+        for (const i of this.petalEntities) {
             i.destroy();
         }
         spawnLoot(
             this.game,
             this.inventory.drop(3),
             this.position
-        )
+        );
 
         this.exp = getLevelExpCost(Math.floor(this.level * 0.75) + 1);
 
@@ -908,7 +904,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
         if (channel === ChatChannel.Local) {
             for (const player of players) {
-                if (!player.hitbox.collidesWith(hitbox)) continue
+                if (!player.hitbox.collidesWith(hitbox)) continue;
                 player.chatMessagesToSend.push(modifiedMessage);
             }
         } else if (channel === ChatChannel.Global) {
@@ -916,7 +912,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             modifiedMessage = {
                 color: isAnno ? 0xff0000 : 0xffffff,
                 content: `[Global] ${this.name}: ${isAnno ? message.substring(1) : message}`
-            }
+            };
             this.game.sendGlobalMessage(modifiedMessage);
         }
     }

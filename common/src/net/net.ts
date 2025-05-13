@@ -1,7 +1,6 @@
 import { BitStream } from "bit-buffer";
-import { type VectorAbstract } from "../utils/vector";
 import { GameConstants } from "../constants";
-import { Numeric } from "../utils/math";
+import { Numeric } from "../maths/math";
 import { JoinPacket } from "./packets/joinPacket";
 import { InputPacket } from "./packets/inputPacket";
 import { UpdatePacket } from "./packets/updatePacket";
@@ -9,6 +8,7 @@ import { GameOverPacket } from "./packets/gameOverPacket";
 import { LogInPacket } from "./packets/logInPacket";
 import { LoggedInPacket } from "./packets/loggedInPacket";
 import { ChatPacket } from "./packets/chatPacket";
+import VectorAbstract from "../physics/vectorAbstract";
 
 export class GameBitStream extends BitStream {
     static create(size: number): GameBitStream {
@@ -125,8 +125,8 @@ export class GameBitStream extends BitStream {
 
         return {
             x: (negaX ? -1 : 1) * (this.readUint16() / 65536) * GameConstants.maxPosition,
-            y: (negaY ? -1 : 1) *(this.readUint16() / 65536) * GameConstants.maxPosition
-        }
+            y: (negaY ? -1 : 1) * (this.readUint16() / 65536) * GameConstants.maxPosition
+        };
     }
 
     static unitEps = 1.0001;

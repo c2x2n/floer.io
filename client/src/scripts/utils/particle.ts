@@ -1,8 +1,9 @@
-import { EasingFunctions, Numeric, P2 } from "@common/utils/math.ts";
-import { Random } from "@common/utils/random.ts";
-import { Vec2, type VectorAbstract } from "@common/utils/vector.ts";
-import { type Game } from "../game.ts";
-import { RenderContainer } from "@/scripts/utils/render.ts";
+import { EasingFunctions, Numeric, P2 } from "../../../../common/src/maths/math";
+import { Random } from "../../../../common/src/utils/random";
+import { UVec2D } from "../../../../common/src/physics/utils";
+import { type Game } from "../game";
+import { RenderContainer } from "./render";
+import VectorAbstract from "../../../../common/src/physics/vectorAbstract";
 
 export class ParticleManager {
     particles: Particle[] = [];
@@ -82,7 +83,7 @@ function getMinMax(option: ParticleOption) {
     let start: number;
     let end: number;
     if ("min" in option) {
-        start = end = Random.float(option.min, option.max);
+        start = end = Random["float"](option.min, option.max);
     } else if ("start" in option && "end" in option) {
         start = option.start;
         end = option.end;
@@ -126,7 +127,7 @@ class Particle {
         if (typeof options.lifeTime === "number") {
             this.end = options.lifeTime;
         } else {
-            this.end = Random.float(options.lifeTime.min, options.lifeTime.max);
+            this.end = Random["float"](options.lifeTime.min, options.lifeTime.max);
         }
 
         this.data = {
@@ -139,7 +140,7 @@ class Particle {
 
         this.container = new RenderContainer(ctx);
 
-        this.container.renderFunc = this.draw.bind(this)
+        this.container.renderFunc = this.draw.bind(this);
     }
 
     render(dt: number) {
@@ -155,10 +156,9 @@ class Particle {
             data!.value = Numeric.lerp(data!.start, data!.end, data!.easing(t));
         }
 
-
-        this.position = Vec2.add(
+        this.position = UVec2D.add(
             this.position,
-            Vec2.fromPolar(this.data.direction.value, this.data.speed.value * dt)
+            UVec2D.fromPolar(this.data.direction.value, this.data.speed.value * dt)
         );
 
         if (!this.options.tint) return;
@@ -173,7 +173,7 @@ class Particle {
         this.container.alpha = alpha;
         this.container.scale = scale;
 
-        this.container.render(dt)
+        this.container.render(dt);
     }
 
     draw() {
@@ -182,15 +182,15 @@ class Particle {
         const { ctx } = this;
 
         ctx.fillStyle = this.options.tint;
-        ctx.beginPath()
+        ctx.beginPath();
 
         ctx.arc(
             0,
             0,
             1,
             0, P2
-        )
+        );
 
-        ctx.fill()
+        ctx.fill();
     }
 }

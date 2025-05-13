@@ -1,86 +1,10 @@
-import { Geometry, Numeric } from "./math";
-
-/**
- * 2D vector
- */
-export interface VectorAbstract {
-    x: number
-    y: number
-}
-
-class Vector implements VectorAbstract{
-    constructor(public x: number = 0, public y: number = 0){}
-
-    public add(vec: VectorAbstract): this {
-        this.x += vec.x;
-        this.y += vec.y;
-        return this
-    }
-
-    public set(vec: VectorAbstract): this {
-        this.x = vec.x;
-        this.y = vec.y;
-        return this
-    }
-
-    public sub(vec: VectorAbstract): this {
-        this.x -= vec.x;
-        this.y -= vec.y;
-        return this
-    }
-
-    public mul(n: number): this {
-        this.x *= n;
-        this.y *= n;
-        return this;
-    }
-
-    public mulByVector(n: VectorAbstract): this {
-        this.x *= n.x;
-        this.y *= n.y;
-        return this;
-    }
-
-    public div(n: number): this {
-        this.x /= n;
-        this.y /= n;
-        return this;
-    }
-
-    public clone(): Vector {
-        return new Vector(this.x, this.y);
-    }
-
-    public getAbstract(): VectorAbstract {
-        return {
-            x: this.x,
-            y: this.y
-        }
-    }
-
-    public get angle(): number {
-        return Geometry.directionToRadians(this);
-    }
-
-    public set angle(value: number) {
-        const magnitude = this.magnitude;
-        this.mulByVector(Geometry.radiansToDirection(value)).mul(magnitude);
-    }
-
-    public set magnitude(value: number) {
-        const angle = this.angle;
-        this.mulByVector(Geometry.radiansToDirection(angle)).mul(value);
-    }
-
-    public get magnitude(): number {
-        return Vec2.length(this);
-    }
-}
+import { Numeric } from "../maths/math";
+import VectorAbstract from "./vectorAbstract";
 
 /**
  * Vector util functions for 2D ( that's what "2" means lol )
  */
-export const Vec2 = {
+export const UVec2D = {
     /**
     * Creates a new Vector
     * @param x - The horizontal (x-axis) coordinate
@@ -98,7 +22,7 @@ export const Vec2 = {
     * @returns A new Vector resulting from the addition of vectors a and b
     */
     add(a: VectorAbstract, b: VectorAbstract): VectorAbstract {
-        return Vec2.new(a.x + b.x, a.y + b.y);
+        return UVec2D.new(a.x + b.x, a.y + b.y);
     },
 
     /**
@@ -109,7 +33,7 @@ export const Vec2 = {
     * @returns A new Vector resulting from the addition of a, and x and y
     */
     add2(a: VectorAbstract, x: number, y: number): VectorAbstract {
-        return Vec2.new(a.x + x, a.y + y);
+        return UVec2D.new(a.x + x, a.y + y);
     },
 
     /**
@@ -119,7 +43,7 @@ export const Vec2 = {
     * @returns A new Vector resulting from the subtraction of vector b from vector a
     */
     sub(a: VectorAbstract, b: VectorAbstract): VectorAbstract {
-        return Vec2.new(a.x - b.x, a.y - b.y);
+        return UVec2D.new(a.x - b.x, a.y - b.y);
     },
 
     /**
@@ -130,7 +54,7 @@ export const Vec2 = {
     * @returns A new Vector resulting from the subtraction of and x and y from vector a
     */
     sub2(a: VectorAbstract, x: number, y: number): VectorAbstract {
-        return Vec2.new(a.x - x, a.y - y);
+        return UVec2D.new(a.x - x, a.y - y);
     },
 
     /**
@@ -140,7 +64,7 @@ export const Vec2 = {
     * @returns A new Vector resulting from the multiplication of vector a and scalar n
     */
     mul(a: VectorAbstract, n: number): VectorAbstract {
-        return Vec2.new(a.x * n, a.y * n);
+        return UVec2D.new(a.x * n, a.y * n);
     },
 
     /**
@@ -150,7 +74,7 @@ export const Vec2 = {
     * @returns A new Vector resulting from the division of vector a and scalar n
     */
     div(a: VectorAbstract, n: number): VectorAbstract {
-        return Vec2.new(a.x / n, a.y / n);
+        return UVec2D.new(a.x / n, a.y / n);
     },
 
     /**
@@ -159,7 +83,7 @@ export const Vec2 = {
     * @returns A new Vector with the same coordinates as the input Vector
     */
     clone(vector: VectorAbstract): VectorAbstract {
-        return Vec2.new(vector.x, vector.y);
+        return UVec2D.new(vector.x, vector.y);
     },
 
     /**
@@ -168,7 +92,7 @@ export const Vec2 = {
     * @returns A new Vector resulting from inverting vector a
     */
     invert(a: VectorAbstract): VectorAbstract {
-        return Vec2.new(-a.x, -a.y);
+        return UVec2D.new(-a.x, -a.y);
     },
 
     /**
@@ -180,7 +104,7 @@ export const Vec2 = {
     rotate(vector: VectorAbstract, angle: number): VectorAbstract {
         const cos = Math.cos(angle);
         const sin = Math.sin(angle);
-        return Vec2.new(vector.x * cos - vector.y * sin, vector.x * sin + vector.y * cos);
+        return UVec2D.new(vector.x * cos - vector.y * sin, vector.x * sin + vector.y * cos);
     },
 
     /**
@@ -198,7 +122,7 @@ export const Vec2 = {
      * @returns The length of Vector a
      */
     length(a: VectorAbstract): number {
-        return Math.sqrt(Vec2.lengthSqr(a));
+        return Math.sqrt(UVec2D.lengthSqr(a));
     },
 
     /**
@@ -208,8 +132,8 @@ export const Vec2 = {
     * @returns The distance between Vector a and b
     */
     distanceBetween(a: VectorAbstract, b: VectorAbstract): number {
-        const diff = Vec2.sub(a, b);
-        return Vec2.length(diff);
+        const diff = UVec2D.sub(a, b);
+        return UVec2D.length(diff);
     },
 
     /**
@@ -219,7 +143,7 @@ export const Vec2 = {
      */
     normalize(a: VectorAbstract): VectorAbstract {
         const eps = 0.000001;
-        const len = Vec2.length(a);
+        const len = UVec2D.length(a);
         return {
             x: len > eps ? a.x / len : a.x,
             y: len > eps ? a.y / len : a.y
@@ -227,9 +151,9 @@ export const Vec2 = {
     },
 
     normalizeSafe(a: VectorAbstract, b?: VectorAbstract): VectorAbstract {
-        b = b ?? Vec2.new(1.0, 0.0);
+        b = b ?? UVec2D.new(1.0, 0.0);
         const eps = 0.000001;
-        const len = Vec2.length(a);
+        const len = UVec2D.length(a);
         return {
             x: len > eps ? a.x / len : b.x,
             y: len > eps ? a.y / len : b.y
@@ -243,7 +167,7 @@ export const Vec2 = {
      * @param interpFactor The interpolation factor ranging from 0 to 1
      */
     lerp(start: VectorAbstract, end: VectorAbstract, interpFactor: number): VectorAbstract {
-        return Vec2.add(Vec2.mul(start, 1 - interpFactor), Vec2.mul(end, interpFactor));
+        return UVec2D.add(UVec2D.mul(start, 1 - interpFactor), UVec2D.mul(end, interpFactor));
     },
 
     /**
@@ -278,23 +202,18 @@ export const Vec2 = {
         };
     },
 
-    targetEasing(a: VectorAbstract, b: VectorAbstract, n: number = 4): VectorAbstract {
-        return  Vec2.add(a, Vec2.div(Vec2.sub(b, a), n));
+    targetEasing(a: VectorAbstract, b: VectorAbstract, n = 4): VectorAbstract {
+        return UVec2D.add(a, UVec2D.div(UVec2D.sub(b, a), n));
     },
 
-    clampWithXY(vector: VectorAbstract, minX: number, maxX: number, minY: number, maxY: number): VectorAbstract{
-        let clampedVector = Vec2.clone(vector);
+    clampWithXY(vector: VectorAbstract, minX: number, maxX: number, minY: number, maxY: number): VectorAbstract {
+        const clampedVector = UVec2D.clone(vector);
         clampedVector.x = Numeric.clamp(clampedVector.x, minX, maxX);
         clampedVector.y = Numeric.clamp(clampedVector.y, minY, maxY);
         return clampedVector;
     },
 
-    clampWithVector(vector: VectorAbstract, min: VectorAbstract, max: VectorAbstract): VectorAbstract{
-        return Vec2.clampWithXY(vector,min.x,max.x,min.y,max.y);
+    clampWithVector(vector: VectorAbstract, min: VectorAbstract, max: VectorAbstract): VectorAbstract {
+        return UVec2D.clampWithXY(vector, min.x, max.x, min.y, max.y);
     }
 };
-
-export interface Velocity {
-    vector: VectorAbstract;
-    downing: number;
-}

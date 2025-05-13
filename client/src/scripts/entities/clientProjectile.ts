@@ -1,26 +1,18 @@
 import { ClientEntity } from "./clientEntity";
-import { EntityType } from "@common/constants";
-import { Game } from "@/scripts/game";
-import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
-import { ProjectileDefinition } from "@common/definitions/projectiles.ts";
-import { petalAssets } from "@/assets/petals.ts";
-import { projectileAssets } from "@/assets/projectiles.ts";
-import { Camera } from "@/scripts/render/camera.ts";
-import { Vec2 } from "@common/utils/vector.ts";
+import { EntityType } from "../../../../common/src/constants";
+import { EntitiesNetData } from "../../../../common/src/net/packets/updatePacket";
+import { ProjectileDefinition } from "../../../../common/src/definitions/projectiles";
+import { Camera } from "../render/camera";
 import { Tween } from "@tweenjs/tween.js";
-import { Geometry, P2 } from "@common/utils/math.ts";
-import { getAssets } from "@/assets/assets.ts";
+import { Geometry, P2 } from "../../../../common/src/maths/math";
+import { getAssets } from "../../assets/assets";
 
 export class ClientProjectile extends ClientEntity {
     type = EntityType.Projectile;
 
     definition?: ProjectileDefinition;
 
-    visible: boolean = true;
-
-    constructor(game: Game, id: number) {
-        super(game, id);
-    }
+    visible = true;
 
     render(dt: number) {
         super.render(dt);
@@ -38,37 +30,31 @@ export class ClientProjectile extends ClientEntity {
     updateFromData(data: EntitiesNetData[EntityType.Projectile], isNew: boolean): void {
         this.position = data.position;
         this.direction = data.direction;
-        
-        const rotation = data.rotation !== undefined ? 
-            data.rotation : 
-            Geometry.directionToRadians(data.direction);
 
-        this.container.rotation = rotation;
-
-        if (data.full){
+        if (data.full) {
             if (isNew) {
-                this.container.position = Camera.vecToScreen(this.position)
+                this.container.position = Camera.vecToScreen(this.position);
                 this.definition = data.full.definition;
 
                 this.hitboxRadius = data.full.hitboxRadius;
                 this.container.radius = Camera.unitToScreen(this.hitboxRadius);
-
-                if (this.definition.onGround){
-                    this.container.zIndex = -999
+                this.container.rotation = Geometry.directionToRadians(data.direction);
+                if (this.definition.onGround) {
+                    this.container.zIndex = -999;
                 }
 
                 if (this.definition.showingCrossBackground) {
                     const amount = this.definition.showingCrossBackground;
-                    this.container.dotsData = []
+                    this.container.dotsData = [];
                     let radiansNow = 0;
-                    console.log(this.id, radiansNow)
+                    console.log(this.id, radiansNow);
                     for (let i = 0; i < amount; i++) {
-                        const { x, y } =
-                            Geometry.getPositionOnCircle(
+                        const { x, y }
+                            = Geometry.getPositionOnCircle(
                                 radiansNow, 4000
-                            )
+                            );
 
-                        this.container.dotsData.push({x, y})
+                        this.container.dotsData.push({ x, y });
 
                         radiansNow += P2 / amount;
                     }
@@ -81,13 +67,13 @@ export class ClientProjectile extends ClientEntity {
 
     destroy() {
         this.game.addTween(
-            new Tween({ scale: 1, alpha: 1 },)
-                .to({ scale: 3, alpha: 0 }, 150 )
+            new Tween({ scale: 1, alpha: 1 })
+                .to({ scale: 3, alpha: 0 }, 150)
                 .onUpdate(d => {
                     this.container.scale = d.scale;
                     this.container.alpha = d.alpha;
                 })
             , super.destroy.bind(this)
-        )
+        );
     }
 }

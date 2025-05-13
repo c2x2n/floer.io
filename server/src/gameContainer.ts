@@ -6,7 +6,7 @@ import { Socket } from "node:net";
 import Cluster, { Worker } from "node:cluster";
 
 export interface GameData {
-    playerCount: number;
+    playerCount: number
 }
 
 export const games: GameContainer[] = [];
@@ -18,16 +18,16 @@ export class GameContainer {
     constructor() {
         games.push(this);
         this.worker.on("message", (data: Partial<GameData>) => {
-            this.data = { ...this.data , ...data };
-        })
+            this.data = { ...this.data, ...data };
+        });
     }
 
     data: GameData = {
         playerCount: 0
-    }
+    };
 
     send(data: ProcessMessage, socket: Socket) {
-        this.worker.send(data, socket)
+        this.worker.send(data, socket);
     }
 }
 
@@ -44,11 +44,11 @@ if (Cluster.isWorker) {
 
             wssocket.on("message", (msg: ArrayBuffer) => {
                 game.handleMessage(msg, wssocket);
-            })
+            });
 
             wssocket.on("close", () => {
                 game.removePlayer(wssocket);
-            })
+            });
         });
     });
 }

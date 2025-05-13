@@ -1,5 +1,6 @@
-import { VectorAbstract, Vec2 } from "@common/utils/vector.ts";
-import { Numeric } from "@common/utils/math.ts";
+import { UVec2D } from "../../../../common/src/physics/utils";
+import { Numeric } from "../../../../common/src/maths/math";
+import VectorAbstract from "../../../../common/src/physics/vectorAbstract";
 
 export type ColorLike = Color | string | number;
 export type RenderFunc = (dt: number) => void;
@@ -16,42 +17,43 @@ function getColor(color: ColorLike): Color {
             r: parseInt(color.substring(1, 3), 16),
             g: parseInt(color.substring(3, 5), 16),
             b: parseInt(color.substring(5, 7), 16)
-        }
+        };
     } else if (typeof color === "number") {
-        return getColor("#" + color.toString(16).padStart(6, "0"))
+        return getColor(`#${color.toString(16).padStart(6, "0")}`);
     }
 
-    return color
+    return color;
 }
 
 export interface Dot { x: number, y: number, size?: number }
 
 export class RenderContainer {
-    alpha: number = 1;
-    rotation: number = 0;
-    scale: number = 1;
+    alpha = 1;
+    rotation = 0;
+    scale = 1;
 
-    radius: number = 0;
+    radius = 0;
 
-    position: VectorAbstract = Vec2.new(0, 0);
+    position: VectorAbstract = UVec2D["new"](0, 0);
     tint: Color = {
         r: 255,
         g: 255,
         b: 255
     };
-    brightness: number = 1;
 
-    visible: boolean = true;
+    brightness = 1;
+
+    visible = true;
 
     renderFunc?: RenderFunc;
     staticRenderFunc?: RenderFunc;
 
-    lastRenderTime: number = 0;
-    transing: number = 0;
+    lastRenderTime = 0;
+    transing = 0;
     readonly createdTime: number = Date.now();
     dotsData?: Dot[];
-    noCustoming: boolean = false;
-    zIndex: number = 0;
+    noCustoming = false;
+    zIndex = 0;
 
     constructor(public ctx: CanvasRenderingContext2D) {}
 
@@ -64,11 +66,11 @@ export class RenderContainer {
 
         ctx.globalAlpha = visible ? alpha : 0;
 
-        ctx.save()
+        ctx.save();
 
         if (this.renderFunc) this.renderFunc(dt);
 
-        ctx.restore()
+        ctx.restore();
 
         ctx.globalAlpha = 1;
 
@@ -94,15 +96,15 @@ export class RenderContainer {
             r: Math.round(color.r * this.tint.r / 255 * this.brightness),
             g: Math.round(color.g * this.tint.g / 255 * this.brightness),
             b: Math.round(color.b * this.tint.b / 255 * this.brightness)
-        }
+        };
 
         // Clamp to avoid errors
         color = {
             r: Numeric.clamp(color.r, 0, 255),
             g: Numeric.clamp(color.g, 0, 255),
             b: Numeric.clamp(color.b, 0, 255)
-        }
+        };
 
-        return `rgb(${color.r}, ${color.g}, ${color.b})`
+        return `rgb(${color.r}, ${color.g}, ${color.b})`;
     }
 }

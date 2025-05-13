@@ -69,7 +69,7 @@ export class Definitions<Def extends ObjectDefinition = ObjectDefinition> {
 
     fromStringData<Spec extends Def = Def>(idString: string): Spec | null {
         const gotten = this.idStringToDefMap.get(idString);
-        if (gotten === undefined) return null
+        if (gotten === undefined) return null;
         return gotten as Spec;
     }
 

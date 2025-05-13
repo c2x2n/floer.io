@@ -1,23 +1,22 @@
-import { RenderContainer } from "@/scripts/utils/render.ts";
-import { ObjectDefinition } from "@common/utils/definitions.ts";
-import { projectileAssets } from "@/assets/projectiles.ts";
-import { mobAssets } from "@/assets/mobs.ts";
-import { petalAssets } from "@/assets/petals.ts";
+import { RenderContainer } from "../scripts/utils/render";
+import { ObjectDefinition } from "../../../common/src/utils/definitions";
+import { projectileAssets } from "./projectiles";
+import { mobAssets } from "./mobs";
+import { petalAssets } from "./petals";
 
 export type AssetsDrawer =
     (containerToDraw: RenderContainer) => void;
 
-export type AssetsBunch = { [K: string]: AssetsDrawer };
-
+export type AssetsBunch = Record<string, AssetsDrawer>;
 
 export function getGameAssetsName(
     reify: ObjectDefinition
 ): string {
-    if (reify.usingAssets) return `${reify.usingAssets}`;
-    return `${reify.idString}`;
+    if (reify.usingAssets) return reify.usingAssets;
+    return reify.idString;
 }
 
-export function getAssets(type: "mob" | "petal" | "projectile" , definition: ObjectDefinition): AssetsDrawer| null {
+export function getAssets(type: "mob" | "petal" | "projectile", definition: ObjectDefinition): AssetsDrawer | null {
     const name = getGameAssetsName(definition);
 
     let assetsBunch: AssetsBunch;
@@ -34,7 +33,7 @@ export function getAssets(type: "mob" | "petal" | "projectile" , definition: Obj
             break;
     }
 
-    if (assetsBunch.hasOwnProperty(name)) {
+    if (Object.prototype.hasOwnProperty.call(assetsBunch, name)) {
         return assetsBunch[name];
     }
 

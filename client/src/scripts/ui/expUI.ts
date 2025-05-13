@@ -1,25 +1,24 @@
-import { Game } from "@/scripts/game.ts";
-import { Numeric } from "@common/utils/math.ts";
-import { getLevelInformation } from "@common/utils/levels.ts";
+import { Game } from "../game";
+import { Numeric } from "../../../../common/src/maths/math";
+import { getLevelInformation } from "../../../../common/src/utils/levels";
 
 export class ExpUI {
-
-    positionX: number = 0;
-    positionY: number = 0;
-    exp: number = 0;
-    currentExpWidth: number = 30;
+    positionX = 0;
+    positionY = 0;
+    exp = 0;
+    currentExpWidth = 30;
     readonly width: number = 340;
     readonly height: number = 39;
 
     constructor(private game: Game) {}
 
-    render(ctx: CanvasRenderingContext2D){
+    render(ctx: CanvasRenderingContext2D) {
         ctx.save();
 
         ctx.translate(
             this.positionX,
             this.positionY
-        )
+        );
 
         const levelInfo = getLevelInformation(this.exp);
 
@@ -40,20 +39,20 @@ export class ExpUI {
             this.width,
             this.height,
             100
-        )
-        ctx.fill()
+        );
+        ctx.fill();
 
         ctx.fillStyle = "#D8F060";
         ctx.globalAlpha = 1;
         ctx.beginPath();
         ctx.roundRect(
-            6/2,
-            6/2,
+            6 / 2,
+            6 / 2,
             this.currentExpWidth,
             this.height - 6,
             100
-        )
-        ctx.fill()
+        );
+        ctx.fill();
 
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
@@ -67,12 +66,12 @@ export class ExpUI {
             `Lvl ${levelInfo.level} Flower`,
             this.width / 2,
             this.height / 2
-        )
+        );
         ctx.fillText(
             `Lvl ${levelInfo.level} Flower`,
             this.width / 2,
             this.height / 2
-        )
+        );
 
         if (levelInfo.nextExtraSlot !== 0) {
             ctx.font = "14px Ubuntu";
@@ -80,36 +79,36 @@ export class ExpUI {
             ctx.strokeText(
                 `Extra petal slot at level ${levelInfo.nextExtraSlot}`,
                 this.width / 2, this.height + 10
-            )
+            );
             ctx.fillText(
                 `Extra petal slot at level ${levelInfo.nextExtraSlot}`,
                 this.width / 2, this.height + 10
-            )
+            );
         }
 
         ctx.font = "22.5px Ubuntu";
         ctx.lineWidth = 2.1;
 
-        const name = this.game.activePlayerName
+        const name = this.game.activePlayerName;
         ctx.strokeText(
             name,
             this.width / 2,
             -18.5
-        )
+        );
         ctx.fillText(
             name,
             this.width / 2,
             -18.5
-        )
+        );
 
         ctx.restore();
     }
 
     resize(): void {
-        if (this.game.playerIsOnMobile){
+        if (this.game.playerIsOnMobile) {
             this.positionX = 10;
             this.positionY = 40;
-            return
+            return;
         }
         const screenHeight = this.game.screenHeight;
 

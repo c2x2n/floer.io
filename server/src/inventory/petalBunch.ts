@@ -1,11 +1,12 @@
 import { getDisplayedPieces, SavedPetalDefinitionData } from "../../../common/src/definitions/petals";
 import { ServerPetal } from "../entities/serverPetal";
-import { Geometry, Numeric, P2 } from "../../../common/src/utils/math";
-import { Vec2, VectorAbstract } from "../../../common/src/utils/vector";
+import { Geometry, Numeric, P2 } from "../../../common/src/maths/math";
+import { UVec2D } from "../../../common/src/physics/utils";
 import { Inventory } from "./inventory";
 import { GameConstants } from "../../../common/src/constants";
 import { ServerPlayer } from "../entities/serverPlayer";
 import { PetalUsingAnimations } from "../utils/attributeRealizes";
+import VectorAbstract from "../../../common/src/physics/vectorAbstract";
 
 export class PetalBunch {
     position: VectorAbstract;
@@ -20,7 +21,7 @@ export class PetalBunch {
     readonly totalDisplayedPieces: number = 0;
 
     get displayedPieces(): number {
-        return Math.min(this.totalDisplayedPieces,this.petals.filter(petal => !petal.hidden).length);
+        return Math.min(this.totalDisplayedPieces, this.petals.filter(petal => !petal.hidden).length);
     }
 
     readonly definition: SavedPetalDefinitionData;
@@ -45,7 +46,7 @@ export class PetalBunch {
             for (let i = 0; i < this.totalPieces; i++) {
                 const petal = new ServerPetal(this, definition);
                 this.petals.push(petal);
-                if (player.joined && player.isActive()) petal.join()
+                if (player.joined && player.isActive()) petal.join();
 
                 inventory.eventManager.loadPetal(petal);
             }
@@ -59,8 +60,8 @@ export class PetalBunch {
         if (!this.definition) return;
         if (this.definition.equipment) return;
 
-        if (newR > GameConstants.player.defaultPetalDistance){
-            if (!this.definition.extendable){
+        if (newR > GameConstants.player.defaultPetalDistance) {
+            if (!this.definition.extendable) {
                 if (this.nowRange < GameConstants.player.defaultPetalDistance) {
                     this.nowRange = GameConstants.player.defaultPetalDistance;
                 }
@@ -76,8 +77,8 @@ export class PetalBunch {
         this.nowRange = newR;
     }
 
-    extraRange: number = 0;
-    swingingBack: boolean = false;
+    extraRange = 0;
+    swingingBack = false;
 
     tick(revolutionRadians: number, singleOccupiedRadians: number): void {
         if (!this.definition) return;
@@ -85,19 +86,19 @@ export class PetalBunch {
 
         const target = this.nowRange + this.extraRange;
 
-        if (this.player.isAttacking){
+        if (this.player.isAttacking) {
             if (this.definition.moreExtendDistance) {
-                this.extraRange = this.definition.moreExtendDistance
+                this.extraRange = this.definition.moreExtendDistance;
             } else if (this.definition.swinging) {
-                const morer = this.definition.swinging.distance
+                const morer = this.definition.swinging.distance;
                 if (this.extraRange >= morer && !this.swingingBack) this.swingingBack = true;
                 if (this.extraRange <= 0 && this.swingingBack) this.swingingBack = false;
 
-                const target =
-                    this.swingingBack ? -1 : 1;
+                const target
+                    = this.swingingBack ? -1 : 1;
 
-                this.extraRange +=
-                    target * this.player.game.dt * morer / this.definition.swinging.time;
+                this.extraRange
+                    += target * this.player.game.dt * morer / this.definition.swinging.time;
             }
         }
 
@@ -105,7 +106,7 @@ export class PetalBunch {
             this.range,
             target,
             2
-        )
+        );
 
         const radius = this.range;
 
@@ -113,7 +114,7 @@ export class PetalBunch {
 
         this.rotationRadians += 0.01;
 
-        const firstPetalCenter = Vec2.add(
+        const firstPetalCenter = UVec2D.add(
             this.position,
             Geometry.getPositionOnCircle(revolutionRadians, radius)
         );
@@ -135,7 +136,7 @@ export class PetalBunch {
                             definition.distanceToCenter ?? GameConstants.petal.rotationRadius,
                             firstPetalCenter
                         )
-                    )
+                    );
 
                     rotationRadians += singleRotatedRadians;
                 });
@@ -145,13 +146,13 @@ export class PetalBunch {
                 this.petals.forEach(petal => {
                     petal.setPositionSafe(
                         Geometry.getPositionOnCircle(radiansNow, radius, this.position)
-                    )
+                    );
 
                     radiansNow += singleOccupiedRadians;
                 });
             }
         } else {
-            this.petals[0].setPositionSafe(firstPetalCenter)
+            this.petals[0].setPositionSafe(firstPetalCenter);
         }
     }
 
@@ -159,6 +160,6 @@ export class PetalBunch {
         this.petals.forEach(petal => {
             petal.destroy();
             this.inventory.eventManager.removePetal(petal);
-        })
+        });
     }
 }

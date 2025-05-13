@@ -1,13 +1,13 @@
 import {
     StType,
     StTyped,
-    StTypeToRealType,
+    StTypeToRealType
 } from "../typings";
 
 export type CommandDefinition = {
     readonly description: string
     readonly parameters: CommandParametersDefinition[]
-}
+};
 
 export type CommandParametersDefinition<T extends StType = StType> = {
     readonly type: T
@@ -19,10 +19,10 @@ export type CommandParametersDefinition<T extends StType = StType> = {
         readonly optional: true
         readonly default: StTypeToRealType<T>
     }
-)
+);
 
 export const CommandDefinitions = {
-    "name": {
+    name: {
         description: "Renames yourself or other players.",
         parameters: [
             {
@@ -38,7 +38,7 @@ export const CommandDefinitions = {
             }
         ]
     },
-    "exp": {
+    exp: {
         description: "Gives exp to yourself or other players.",
         parameters: [
             {
@@ -54,7 +54,7 @@ export const CommandDefinitions = {
             }
         ]
     },
-    "give": {
+    give: {
         description: "Gives player petals.",
         parameters: [
             {
@@ -76,7 +76,7 @@ export const CommandDefinitions = {
             }
         ]
     },
-    "spawn": {
+    spawn: {
         description: "Spawns mobs in front of a player.",
         parameters: [
             {
@@ -98,7 +98,7 @@ export const CommandDefinitions = {
             }
         ]
     },
-    "cleanup": {
+    cleanup: {
         description: "Cleans up all mobs and invaild petals. Give a True boolean for parameter to clean up loots too.",
         parameters: [
             {
@@ -109,7 +109,7 @@ export const CommandDefinitions = {
             }
         ]
     },
-    "kill": {
+    kill: {
         description: "Kills someone. Without target, it will kill yourself.",
         parameters: [
             {
@@ -120,7 +120,7 @@ export const CommandDefinitions = {
             }
         ]
     },
-    "ban": {
+    ban: {
         description: "Bans someone. Must have a target.",
         parameters: [
             {
@@ -130,7 +130,7 @@ export const CommandDefinitions = {
             }
         ]
     },
-    "tp": {
+    tp: {
         description: "Teleport to someone. Or teleport someone to another people. Without target, it will teleport you to the target player.",
         parameters: [
             {
@@ -146,15 +146,15 @@ export const CommandDefinitions = {
             }
         ]
     },
-    "list": {
+    list: {
         description: "List all players' ID and name for help.",
         parameters: []
     },
-    "help": {
+    help: {
         description: "Show this help menu.",
         parameters: []
     },
-    "spectator": {
+    spectator: {
         description: "Toggle spectator mode for yourself or another player. In spectator mode, you can't collide, take damage, or use petals.",
         parameters: [
             {
@@ -165,7 +165,7 @@ export const CommandDefinitions = {
             }
         ]
     },
-    "speed": {
+    speed: {
         description: "Set movement speed multiplier for yourself or another player.",
         parameters: [
             {
@@ -181,7 +181,7 @@ export const CommandDefinitions = {
             }
         ]
     },
-    "zoom": {
+    zoom: {
         description: "Set zoom level (field of view) for yourself or another player. Higher values mean you can see further.",
         parameters: [
             {
@@ -197,7 +197,7 @@ export const CommandDefinitions = {
             }
         ]
     },
-    "god": {
+    god: {
         description: "Toggle god mode for yourself or another player. In god mode, you cannot take any damage.",
         parameters: [
             {
@@ -208,7 +208,7 @@ export const CommandDefinitions = {
             }
         ]
     },
-    "invisible": {
+    invisible: {
         description: "Toggle invisibility for yourself or another player.",
         parameters: [
             {
@@ -219,7 +219,7 @@ export const CommandDefinitions = {
             }
         ]
     },
-    "freeze": {
+    freeze: {
         description: "Freeze or unfreeze a player.",
         parameters: [
             {
@@ -229,7 +229,7 @@ export const CommandDefinitions = {
             }
         ]
     },
-    "heal": {
+    heal: {
         description: "Restore health and shield to full for yourself or another player.",
         parameters: [
             {
@@ -240,7 +240,7 @@ export const CommandDefinitions = {
             }
         ]
     }
-} as const satisfies Readonly<{ [K: string]: CommandDefinition}>;
+} as const satisfies Readonly<Record<string, CommandDefinition>>;
 
 export type CommandName = keyof typeof CommandDefinitions;
 
@@ -250,20 +250,20 @@ type CommandParameters<T extends CommandName> =
 export type CommandParameterType
     <
         T extends CommandName,
-        K extends Readonly<CommandParametersDefinition>[] = CommandParameters<T>,
-        N extends Readonly<StTyped>[] = []
+        K extends Array<Readonly<CommandParametersDefinition>> = CommandParameters<T>,
+        N extends Array<Readonly<StTyped>> = []
     > =
     K extends [infer H extends Readonly<CommandParametersDefinition>, ...infer R
-            extends Readonly<CommandParametersDefinition>[]]
+    extends Array<Readonly<CommandParametersDefinition>>]
         ? H["type"] extends infer S extends Readonly<StType>
             ? CommandParameterType<T, R, [...N,
                 S extends "string"
-                ? string
-                : S extends "number"
-                    ? number
-                    : S extends "boolean"
-                        ? boolean
-                        : never
+                    ? string
+                    : S extends "number"
+                        ? number
+                        : S extends "boolean"
+                            ? boolean
+                            : never
             ]>
             : never
         : N;

@@ -45,23 +45,23 @@ if (Cluster.isPrimary) {
         * */
         if (req.url?.startsWith("/floer/server_info")) {
             if (games.length > 0) {
-                const game = games[0]
+                const game = games[0];
                 res.setHeader("Content-Type", "application/json").end(
                     JSON.stringify({
                         playerCount: game.data.playerCount,
                         build: BUILD_VERSION
                     })
-                )
+                );
             } else {
-                res.setHeader("Content-Type", "application/json").end(JSON.stringify({}))
+                res.setHeader("Content-Type", "application/json").end(JSON.stringify({}));
             }
             return;
         }
 
         showNotFound(res);
-    })
+    });
 
-    app.on("upgrade", async(req, socket, head) => {
+    app.on("upgrade", (req, socket, head) => {
         // const ip = req.socket.remoteAddress;
 
         /*

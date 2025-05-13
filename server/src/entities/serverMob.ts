@@ -1,11 +1,11 @@
 import { ServerEntity } from "./serverEntity";
-import { Vec2, type VectorAbstract } from "../../../common/src/utils/vector";
+import { UVec2D } from "../../../common/src/physics/utils";
 import { type EntitiesNetData } from "../../../common/src/net/packets/updatePacket";
 import { CircleHitbox } from "../../../common/src/utils/hitbox";
 import { EntityType, GameConstants } from "../../../common/src/constants";
 import { Game } from "../game";
 import { MobCategory, MobDefinition, Mobs } from "../../../common/src/definitions/mobs";
-import { Geometry, Numeric, P2 } from "../../../common/src/utils/math";
+import { Geometry, Numeric, P2 } from "../../../common/src/maths/math";
 import { ServerPlayer } from "./serverPlayer";
 import { Random } from "../../../common/src/utils/random";
 import { PetalDefinition, Petals } from "../../../common/src/definitions/petals";
@@ -22,6 +22,7 @@ import { Modifiers } from "../../../common/src/typings";
 import { Rarity, RarityName } from "../../../common/src/definitions/rarities";
 import { ServerWall } from "./serverWall";
 import { spawnLoot } from "../misc/spawning";
+import VectorAbstract from "../../../common/src/physics/vectorAbstract";
 
 export class ServerMob extends ServerEntity<EntityType.Mob> {
     type: EntityType.Mob = EntityType.Mob;
@@ -30,7 +31,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
     definition: MobDefinition;
 
     get name(): string {
-        return this.definition.displayName
+        return this.definition.displayName;
     }
 
     readonly damage: number;
@@ -41,7 +42,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
     }
 
     set health(value: number) {
-        if (value === this._health) return
+        if (value === this._health) return;
         this._health = Numeric.clamp(value, 0, this.definition.health);
 
         this.setFullDirty();
@@ -49,28 +50,27 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
     aggroTarget?: damageSource;
 
-    _direction: VectorAbstract = Vec2.new(0, 0);
+    _direction: VectorAbstract = UVec2D["new"](0, 0);
 
     get direction(): VectorAbstract {
-        return this._direction
+        return this._direction;
     }
 
     set direction(value: VectorAbstract) {
-        if (value === this._direction) return
+        if (value === this._direction) return;
         this._direction = value;
 
         this.setDirty();
     }
 
     get speed(): number {
-        if (this.definition.category !== MobCategory.Fixed)
-            return this.definition.speed * this.modifiers.speed;
+        if (this.definition.category !== MobCategory.Fixed) { return this.definition.speed * this.modifiers.speed; }
         return 0;
     }
 
-    walkingReload: number = 0;
-    walkingTime: number = 0;
-    shootReload: number = 0;
+    walkingReload = 0;
+    walkingTime = 0;
+    shootReload = 0;
 
     canReceiveDamageFrom(entity: ServerEntity): boolean {
         if (entity instanceof ServerProjectile) {
@@ -103,25 +103,25 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
         return !(
             this.definition.category === MobCategory.Fixed
-                && this.definition.onGround
-                && entity.type === this.type
-            )
-            && entity != this;
+            && this.definition.onGround
+            && entity.type === this.type
+        )
+        && entity != this;
     }
 
     lastSegment?: ServerMob;
 
-    damageFrom = new Map<ServerPlayer, number>;
+    damageFrom = new Map<ServerPlayer, number>();
 
     spawnTime: number = Date.now();
 
-    healingToFull: boolean = false;
+    healingToFull = false;
 
     constructor(game: Game
-                , position: VectorAbstract
-                , direction: VectorAbstract
-                , definition: MobDefinition
-                , lastSegment?: ServerMob) {
+        , position: VectorAbstract
+        , direction: VectorAbstract
+        , definition: MobDefinition
+        , lastSegment?: ServerMob) {
         super(game, position);
 
         this.definition = definition;
@@ -193,21 +193,24 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         }
     }
 
-    shootDirection: VectorAbstract = Vec2.new(0, 0);
+    shootDirection: VectorAbstract = UVec2D["new"](0, 0);
     shootSpeedForNow?: number;
-    lastShootTime: number = 0;
+    lastShootTime = 0;
 
     shoot(shoot: ProjectileParameters): void {
-        const position = shoot.definition.onGround ? this.position
-           : Vec2.add(this.position,Vec2.mul(this.shootDirection, this.hitbox.radius))
+        const position = shoot.definition.onGround
+            ? this.position
+            : UVec2D.add(this.position, UVec2D.mul(this.shootDirection, this.hitbox.radius));
 
         const projectile = new ServerProjectile(this,
             position,
             this.shootDirection, shoot);
 
-        if(shoot.velocityAtFirst) projectile.addVelocity(
-            Vec2.mul(this.shootDirection, shoot.velocityAtFirst)
-        )
+        if (shoot.velocityAtFirst) {
+            projectile.addVelocity(
+                UVec2D.mul(this.shootDirection, shoot.velocityAtFirst)
+            );
+        }
     }
 
     shootTick(): void {
@@ -215,13 +218,13 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
         if (!this.shootSpeedForNow) {
             if (typeof this.definition.shootSpeed === "number") {
-                this.shootSpeedForNow = this.definition.shootSpeed
+                this.shootSpeedForNow = this.definition.shootSpeed;
             } else {
-                this.shootSpeedForNow =
-                    Random.float(
+                this.shootSpeedForNow
+                    = Random["float"](
                         this.definition.shootSpeed.min,
                         this.definition.shootSpeed.max
-                    )
+                    );
             }
         }
 
@@ -241,7 +244,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
     }
 
     move(): void {
-        this.setAcceleration(Vec2.mul(
+        this.setAcceleration(UVec2D.mul(
             this.direction, this.speed
         ));
     }
@@ -250,8 +253,8 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
     notCollidingMobs: string[] = [];
 
-    tick(): void{
-        super.tick()
+    tick(): void {
+        super.tick();
 
         this.otherModifiers.push(this.definition.modifiers ?? {});
 
@@ -266,7 +269,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
                 this.position = Geometry.getPositionOnCircle(
                     Geometry.directionToRadians(
-                        this.direction,
+                        this.direction
                     ),
                     this.definition.hitboxRadius + this.lastSegment.definition.hitboxRadius,
                     this.lastSegment.position
@@ -275,14 +278,14 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                 if (this.lastSegment.aggroTarget) {
                     if (this.definition.shootable) {
                         this.shootDirection = Geometry.radiansToDirection(
-                            Random.float(-P2, P2)
-                        )
+                            Random["float"](-P2, P2)
+                        );
                         this.shootTick();
                     }
 
                     this.changeAggroTo(this.lastSegment.aggroTarget);
-                } else  {
-                    this.changeAggroTo()
+                } else {
+                    this.changeAggroTo();
                 }
 
                 if (
@@ -291,7 +294,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                 ) {
                     this.notCollidingMobs.push(
                         ...this.lastSegment.notCollidingMobs
-                    )
+                    );
                 }
 
                 if (this.lastSegment.sharingHealthBetweenSegments) {
@@ -300,21 +303,20 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                     if (this.lastSegment.health != this.health) this.health = this.lastSegment.health;
                 }
 
-                return ;
+                return;
             } else {
-                if (this.sharingHealthBetweenSegments)
-                    this.destroy()
+                if (this.sharingHealthBetweenSegments) { this.destroy(); }
             }
         }
 
         if (this.definition.hasSegments) {
-            if (this.definition.notCollideWithSegments && !this.notCollidingMobs.length)
+            if (this.definition.notCollideWithSegments && !this.notCollidingMobs.length) {
                 this.notCollidingMobs.push(
                     this.definition.segmentDefinitionIdString,
                     this.definition.idString
-                )
-            if (this.definition.sharingHealth && !this.sharingHealthBetweenSegments)
-                this.sharingHealthBetweenSegments = true
+                );
+            }
+            if (this.definition.sharingHealth && !this.sharingHealthBetweenSegments) { this.sharingHealthBetweenSegments = true; }
         }
 
         if (this.modifiers.healPerSecond) {
@@ -349,7 +351,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
             && this.aggroTarget)
         {
             if (this.aggroTarget.destroyed) return this.changeAggroTo();
-            const distanceBetween = Vec2.distanceBetween(this.aggroTarget.position, this.position);
+            const distanceBetween = UVec2D.distanceBetween(this.aggroTarget.position, this.position);
             if (distanceBetween > this.definition.aggroRadius * 2.2) return this.changeAggroTo();
 
             this.direction = Geometry.directionBetweenPoints(
@@ -360,14 +362,14 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
             );
 
             if (this.definition.shootable) {
-                if (this.shootSpeedForNow && this.definition.movement && this.definition.movement.reachingAway) {
+                if (this.shootSpeedForNow && this.definition.movement?.reachingAway) {
                     const reachingAwayRadius = Math.max(15, this.definition.aggroRadius * 0.8);
                     if (distanceBetween <= reachingAwayRadius) {
                         this.shootTick();
                         if (
                             this.definition.turningHead
                             && this.shootReload >= this.shootSpeedForNow * 0.6
-                        ) this.direction = Vec2.mul(this.direction, -1);
+                        ) this.direction = UVec2D.mul(this.direction, -1);
                     } else {
                         this.move();
                     }
@@ -381,7 +383,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         } else {
             this.walkingReload += this.game.dt;
 
-            if (this.definition.movement && this.definition.movement.sandstormLike) {
+            if (this.definition.movement?.sandstormLike) {
                 const changeDirectionInterval = 1 + Math.random() * 0.5;
                 if (this.walkingReload >= changeDirectionInterval) {
                     const entities = this.game.grid.intersectsHitbox(new CircleHitbox(30, this.position));
@@ -390,7 +392,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
                     for (const entity of entities) {
                         if (entity instanceof ServerPlayer) {
-                            const distance = Vec2.distanceBetween(this.position, entity.position);
+                            const distance = UVec2D.distanceBetween(this.position, entity.position);
                             if (distance < nearestDistance) {
                                 nearestDistance = distance;
                                 nearestPlayer = entity;
@@ -402,21 +404,19 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                     const randomSpeedMultiplier = 0.6 + Math.random() * 0.5;
 
                     if (this instanceof ServerFriendlyMob && this.isSummoned && nearestPlayer && Math.random() < 0.7) {
-                        moveDirection = Vec2.new(nearestPlayer.direction.direction.x, nearestPlayer.direction.direction.y);
+                        moveDirection = UVec2D["new"](nearestPlayer.direction.direction.x, nearestPlayer.direction.direction.y);
                         moveDirection.x += (Math.random() * 0.6 - 0.3);
                         moveDirection.y += (Math.random() * 0.6 - 0.3);
-                        moveDirection = Vec2.normalize(moveDirection);
-                        this.setAcceleration(Vec2.mul(
+                        moveDirection = UVec2D.normalize(moveDirection);
+                        this.setAcceleration(UVec2D.mul(
                             moveDirection, 2 * this.speed * randomSpeedMultiplier
                         ));
                     } else {
                         moveDirection = Random.vector(-1, 1, -1, 1);
-                        this.setAcceleration(Vec2.mul(
+                        this.setAcceleration(UVec2D.mul(
                             moveDirection, this.speed * randomSpeedMultiplier
                         ));
                     }
-
-
                 }
 
                 if (this.definition.despawnTime) {
@@ -429,9 +429,9 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
             } else if (this.walkingReload >= GameConstants.mob.walkingReload) {
                 if (this.walkingTime === 0) this.direction = Random.vector(-1, 1, -1, 1);
 
-                this.setAcceleration(Vec2.mul(
+                this.setAcceleration(UVec2D.mul(
                     this.direction, this.speed * GameConstants.mob.walkingTime
-                ))
+                ));
 
                 this.walkingTime += this.game.dt;
 
@@ -477,7 +477,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         return now;
     }
 
-    lastPopped: number = 1;
+    lastPopped = 1;
 
     receiveDamage(amount: number, source: damageSource, disableEvent?: boolean): void {
         if (!this.isActive()) return;
@@ -498,10 +498,10 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
             const lastPopped = this.lastPopped;
             for (const popKey in pop) {
                 const popPercents = pop[popKey];
-                popPercents.forEach((popPercent) => {
+                popPercents.forEach(popPercent => {
                     if (popPercent >= percent && lastPopped >= popPercent) {
                         new ServerMob(this.game,
-                            Geometry.getPositionOnCircle(Random.float(-P2, P2), 4,this.position),
+                            Geometry.getPositionOnCircle(Random["float"](-P2, P2), 4, this.position),
                             this.direction,
                             Mobs.fromString(popKey)).changeAggroTo(source)
                         
@@ -514,13 +514,13 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                         
                         if (this.lastPopped > percent) this.lastPopped = percent;
                     }
-                })
+                });
             }
         }
 
         if (source instanceof ServerPlayer) {
-            const get = this.damageFrom.get(source)
-            this.damageFrom.set(source, (get ?? 0) + amount)
+            const get = this.damageFrom.get(source);
+            this.damageFrom.set(source, (get ?? 0) + amount);
         }
 
         this.destroyCheck();
@@ -532,7 +532,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         }
     }
 
-    get data(): Required<EntitiesNetData[EntityType.Mob]>{
+    get data(): Required<EntitiesNetData[EntityType.Mob]> {
         return {
             position: this.position,
             direction: this.direction,
@@ -543,40 +543,40 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         };
     };
 
-    destroy(noDrops: boolean = false) {
+    destroy(noDrops = false) {
         super.destroy();
 
         const lootTable = this.definition.lootTable;
 
-        let loots: PetalDefinition[] = []
+        const loots: PetalDefinition[] = [];
 
         const randomMax = 10000000000;
 
         for (const lootsKey in lootTable) {
             if (!Petals.hasString(lootsKey)) continue;
-            const random = Random.int(0, randomMax);
-            if (random <= lootTable[lootsKey] * randomMax){
+            const random = Random["int"](0, randomMax);
+            if (random <= lootTable[lootsKey] * randomMax) {
                 loots.push(Petals.fromString(lootsKey));
             }
         }
 
         if (!noDrops) spawnLoot(this.game, loots, this.position);
 
-        const highestPlayer =
-            Array.from(this.damageFrom).filter(e => e[0].isActive())
-                .sort((a, b) => b[1] - a[1])[0]
+        const highestPlayer
+            = Array.from(this.damageFrom).filter(e => e[0].isActive())
+                .sort((a, b) => b[1] - a[1])[0];
 
-        if (!(highestPlayer && highestPlayer.length && highestPlayer[0].isActive())) return;
+        if (!(highestPlayer?.length && highestPlayer[0].isActive())) return;
 
         const rarity = Rarity.fromString(this.definition.rarity);
         if (rarity.globalMessage && !this.definition.hideInformation) {
-            let content = `The ${rarity.displayName} ${this.definition.displayName} has been defeated`
+            let content = `The ${rarity.displayName} ${this.definition.displayName} has been defeated`;
             content += ` by ${highestPlayer[0].name}`;
 
             this.game.sendGlobalMessage({
-                content: content +"!",
+                content: `${content}!`,
                 color: parseInt(rarity.color.substring(1), 16)
-            })
+            });
         }
 
         highestPlayer[0].addExp(this.definition.exp);
@@ -588,26 +588,26 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
 export class ServerFriendlyMob extends ServerMob {
     // 表示是否是被玩家召唤的生物（true）还是自然生成的（false）
-    isSummoned: boolean = true;
+    isSummoned = true;
 
     canReceiveDamageFrom(source: damageableEntity): boolean {
         switch (source.type) {
             case EntityType.Player:
-                return source != this.owner
+                return source != this.owner;
             case EntityType.Mob:
                 if (source instanceof ServerFriendlyMob) return source.owner !== this.owner;
                 return true;
             case EntityType.Petal:
-                return source.owner != this.owner
+                return source.owner != this.owner;
             case EntityType.Projectile:
                 return source.source != this
-                   && source.source !== this.owner;
+                    && source.source !== this.owner;
         }
     }
 
     canCollideWith(entity: collideableEntity): boolean {
-        if(entity instanceof ServerFriendlyMob) return true;
-        if(isDamageableEntity(entity)) return this.owner.canReceiveDamageFrom(entity)
+        if (entity instanceof ServerFriendlyMob) return true;
+        if (isDamageableEntity(entity)) return this.owner.canReceiveDamageFrom(entity);
         else return false;
     }
 
@@ -618,13 +618,13 @@ export class ServerFriendlyMob extends ServerMob {
     }
 
     changeAggroTo(entity?: damageSource) {
-        if(!this.gettingBackToOwner) super.changeAggroTo(entity);
+        if (!this.gettingBackToOwner) super.changeAggroTo(entity);
     }
 
     constructor(game: Game
         , public owner: ServerPlayer
         , definition: MobDefinition
-        , isSummoned: boolean = true) {
+        , isSummoned = true) {
         super(game
             , Random.pointInsideCircle(owner.position, 12)
             , owner.direction.direction
@@ -633,31 +633,29 @@ export class ServerFriendlyMob extends ServerMob {
         this.isSummoned = isSummoned;
     }
 
-    gettingBackToOwner: boolean = false;
+    gettingBackToOwner = false;
 
     tick() {
-        const distanceToOwner = Vec2.distanceBetween(this.position, this.owner.position);
+        const distanceToOwner = UVec2D.distanceBetween(this.position, this.owner.position);
         if (distanceToOwner > Math.max(8 * this.definition.hitboxRadius, 25)) {
             this.gettingBackToOwner = true;
         }
 
         if (this.gettingBackToOwner) {
             this.aggroTarget = undefined;
-            this.direction =
-                Geometry.directionBetweenPoints(this.owner.position, this.position);
-            this.setAcceleration(Vec2.mul(
+            this.direction
+                = Geometry.directionBetweenPoints(this.owner.position, this.position);
+            this.setAcceleration(UVec2D.mul(
                 this.direction, this.speed
             ));
-            if (distanceToOwner < 3 * this.definition.hitboxRadius)
-                this.gettingBackToOwner = false;
+            if (distanceToOwner < 3 * this.definition.hitboxRadius) { this.gettingBackToOwner = false; }
         }
 
         super.tick();
     }
 
     dealDamageTo(to: damageableEntity) {
-        if (to.canReceiveDamageFrom(this))
-            to.receiveDamage(this.damage, this.owner);
+        if (to.canReceiveDamageFrom(this)) { to.receiveDamage(this.damage, this.owner); }
     }
 
     destroy() {

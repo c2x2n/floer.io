@@ -1,10 +1,10 @@
-import { Game } from "@/scripts/game.ts";
-import { MobDefinition } from "@common/definitions/mobs.ts";
-import { Rarity } from "@common/definitions/rarities.ts";
+import { Game } from "../game";
+import { MobDefinition } from "../../../../common/src/definitions/mobs";
+import { Rarity } from "../../../../common/src/definitions/rarities";
 
 export interface BossbarData {
-    mob: MobDefinition;
-    healthPercent: number;
+    mob: MobDefinition
+    healthPercent: number
 }
 
 export class Bossbar {
@@ -12,8 +12,8 @@ export class Bossbar {
     readonly height: number = 30;
     readonly maxLength: number = 10;
 
-    positionX: number = 0;
-    positionY: number = 0;
+    positionX = 0;
+    positionY = 0;
 
     bossbarDatas = new Map<number, BossbarData>();
 
@@ -22,7 +22,7 @@ export class Bossbar {
     render(ctx: CanvasRenderingContext2D): void {
         ctx.save();
 
-        ctx.translate(this.positionX, this.positionY)
+        ctx.translate(this.positionX, this.positionY);
 
         let index = 0;
         let yPosition = 0;
@@ -32,7 +32,7 @@ export class Bossbar {
         for (const data of this.bossbarDatas.values()) {
             if (index >= this.maxLength) break;
 
-            let clampedWidth = this.width * data.healthPercent;
+            const clampedWidth = this.width * data.healthPercent;
             let clampedHeight = this.height;
 
             if (clampedWidth < stroke * 3) {
@@ -48,19 +48,19 @@ export class Bossbar {
                 this.width + stroke,
                 this.height + stroke,
                 20
-            )
+            );
             ctx.fill();
 
             ctx.fillStyle = "#87e63e";
             ctx.globalAlpha = 0.8;
-            ctx.beginPath()
+            ctx.beginPath();
             ctx.roundRect(
                 -this.width / 2,
-                yPosition - this.height / 2 + (this.height - clampedHeight) / 2 + stroke / 2 ,
+                yPosition - this.height / 2 + (this.height - clampedHeight) / 2 + stroke / 2,
                 clampedWidth,
                 clampedHeight,
                 20
-            )
+            );
             ctx.fill();
 
             ctx.globalAlpha = 0.9;
@@ -74,11 +74,11 @@ export class Bossbar {
             ctx.strokeText(
                 data.mob.displayName,
                 0, yPosition - this.height / 2 - 1.5
-            )
+            );
             ctx.fillText(
                 data.mob.displayName,
                 0, yPosition - this.height / 2 - 1.5
-            )
+            );
 
             const rarity = Rarity.fromString(data.mob.rarity);
 
@@ -90,14 +90,14 @@ export class Bossbar {
                 rarity.displayName,
                 0,
                 yPosition + (this.height + stroke) / 2 + 1
-            )
+            );
             ctx.fillText(
                 rarity.displayName,
                 0,
                 yPosition + (this.height + stroke) / 2 + 1
-            )
+            );
             yPosition += this.height + 40;
-            index ++;
+            index++;
         }
 
         ctx.restore();

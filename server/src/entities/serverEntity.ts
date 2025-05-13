@@ -3,15 +3,18 @@ import { EntityType, GameConstants } from "../../../common/src/constants";
 import { GameBitStream } from "../../../common/src/net/net";
 import { type EntitiesNetData, EntitySerializations } from "../../../common/src/net/packets/updatePacket";
 import { CircleHitbox, type Hitbox } from "../../../common/src/utils/hitbox";
-import { Vec2, type VectorAbstract, Velocity } from "../../../common/src/utils/vector";
+import { UVec2D } from "../../../common/src/physics/utils";
 import { type Game } from "../game";
 import { CollisionResponse } from "../../../common/src/utils/collision";
 import { EffectManager, PoisonEffect } from "../utils/effects";
 import { Modifiers } from "../../../common/src/typings";
 import { collideableEntity, damageSource } from "../typings";
 import { ServerPlayer } from "./serverPlayer";
+import Vector from "../../../common/src/physics/vector";
+import VectorAbstract from "../../../common/src/physics/vectorAbstract";
+import Velocity from "../../../common/src/physics/velocity";
 
-export abstract class ServerEntity<T extends EntityType = EntityType> implements GameEntity{
+export abstract class ServerEntity<T extends EntityType = EntityType> implements GameEntity {
     abstract type: T;
     game: Game;
     id: number;
@@ -20,14 +23,15 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
     _oldPosition?: VectorAbstract;
 
     modifiers: Modifiers = GameConstants.defaultModifiers();
-    otherModifiers: Partial<Modifiers>[] = [];
+    otherModifiers: Array<Partial<Modifiers>> = [];
 
-    hasInited: boolean = false;
-    destroyed: boolean = false;
+    hasInited = false;
+    destroyed = false;
 
     get position(): VectorAbstract {
         return this._position;
     }
+
     set position(pos: VectorAbstract) {
         this.updatePosition(pos);
     }
@@ -39,15 +43,12 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
     partialStream!: GameBitStream;
     fullStream!: GameBitStream;
 
-    weight: number = 5;
-    elasticity: number = 0.7;
-    knockback: number = 1;
+    weight = 5;
+    elasticity = 0.7;
+    knockback = 1;
 
-    velocity: Velocity[] = [{
-        vector: Vec2.new(0,0),
-        downing: 0.7
-    }];
-    acceleration: VectorAbstract = Vec2.new(0,0);
+    acceleration: Vector = new Vector();
+    velocity: Velocity = new Velocity();
 
     state: {
         poison?: PoisonEffect
@@ -72,37 +73,11 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
     }
 
     tick() {
-        const newVelocity = this.velocity.concat([]);
+        this.effects.tick();
+    }
 
-        let position = Vec2.clone(this.position);
-
-        for (const aVelocity of newVelocity) {
-            const index = newVelocity.indexOf(aVelocity);
-
-            if (index === 0) {
-                aVelocity.vector = Vec2.mul(aVelocity.vector, aVelocity.downing);
-                aVelocity.vector = Vec2.add(aVelocity.vector, Vec2.mul(this.acceleration, this.game.dt));
-
-                this.acceleration = Vec2.new(0, 0);
-
-                position = Vec2.add(position, aVelocity.vector);
-
-                continue;
-            }
-
-            position = Vec2.add(position, Vec2.mul(aVelocity.vector, this.game.dt))
-
-            aVelocity.vector = Vec2.mul(aVelocity.vector, aVelocity.downing);
-
-            if (Vec2.length(aVelocity.vector) < 1) {
-                newVelocity.splice(index, 1);
-            }
-        }
-
-        this.velocity = newVelocity;
-        this.position = position;
-
-        this.effects.tick()
+    applyPhysics(): void {
+        if (this.destroyed) return;
     }
 
     init(): void {
@@ -112,7 +87,6 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
         this.serializeFull();
         this.hasInited = true;
     }
-
 
     serializePartial(): void {
         this.partialStream.index = 0;
@@ -154,7 +128,7 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
                 position, this.hitbox.radius, this.hitbox.radius
             );
             this._position = this.hitbox.position;
-        }else {
+        } else {
             this._position = position;
         }
 
@@ -165,40 +139,41 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
         this.game.grid.updateEntity(this);
     }
 
-    addVelocity(vec: VectorAbstract, downing: number = 0.7): void {
-        this.velocity.push({
-            vector: vec,
-            downing: downing
-        });
+    addVelocity(vec: VectorAbstract, downing = 0.7): void {
+
     }
 
     setAcceleration(vec: VectorAbstract): void {
-        this.acceleration = vec;
+
     }
 
-    collideWith(collision: CollisionResponse, entity: collideableEntity): void{
+    addAcceleration(vec: VectorAbstract): void {
+        this.acceleration;
+    }
+
+    collideWith(collision: CollisionResponse, entity: collideableEntity): void {
         if (!entity.canCollideWith(this) || !this.canCollideWith(entity)) return;
-        const knockbackBetween: { [K in collideableEntity["type"]]: number} = {
+        const knockbackBetween: { [K in collideableEntity["type"]]: number } = {
             [EntityType.Mob]: 0,
             [EntityType.Petal]: 0,
             [EntityType.Player]: 1.5,
             [EntityType.Projectile]: 0,
             [EntityType.Loot]: 0,
-            [EntityType.Wall]: 0,
-        }
+            [EntityType.Wall]: 0
+        };
         if (collision) {
             if (entity.knockback === 0) {
-                this.position = Vec2.add(
+                this.position = UVec2D.add(
                     this.position,
-                    Vec2.mul(collision.dir, collision.pen)
-                )
+                    UVec2D.mul(collision.dir, collision.pen)
+                );
 
-                for (const aVelocity of this.velocity) {
-                    aVelocity.vector = Vec2.add(
-                        aVelocity.vector,
-                        Vec2.mul(collision.dir, collision.pen)
-                    )
-                }
+                // for (const aVelocity of this.velocity) {
+                //     aVelocity.vector = UVec2D.add(
+                //         aVelocity.vector,
+                //         UVec2D.mul(collision.dir, collision.pen)
+                //     );
+                // }
 
                 return;
             }
@@ -210,7 +185,7 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
             }
 
             this.addVelocity(
-                Vec2.mul(
+                UVec2D.mul(
                     collision.dir,
                     (collision.pen + (entity.type !== this.type ? entity.knockback : knockbackBetween[entity.type]))
                     * entity.weight
@@ -220,14 +195,13 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
                     / this.game.dt
                 ),
                 this.elasticity
-            )
+            );
         }
     }
 
     receivePoison(source: damageSource,
-                  damagePerSecond: number,
-                  duration: number): void {
-
+        damagePerSecond: number,
+        duration: number): void {
         if (this.state.poison) {
             const poison = this.state.poison;
             if (poison.duration * poison.damagePerSecond > damagePerSecond * duration) return;
@@ -239,7 +213,7 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
             source,
             damagePerSecond,
             duration
-        })
+        });
         this.state.poison.start();
     }
 
@@ -257,11 +231,11 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
             if (effect.modifier) {
                 modifiersNow = this.calcModifiers(modifiersNow, effect.modifier);
             }
-        })
+        });
 
         this.otherModifiers.forEach(effect => {
-            modifiersNow = this.calcModifiers(modifiersNow, effect)
-        })
+            modifiersNow = this.calcModifiers(modifiersNow, effect);
+        });
 
         this.otherModifiers = [];
 
@@ -270,7 +244,7 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
 
     abstract get data(): Required<EntitiesNetData[EntityType]>;
 
-    destroy(noDrops: boolean = false): void {
+    destroy(noDrops = false): void {
         this.destroyed = true;
         this.game.grid.remove(this);
     }

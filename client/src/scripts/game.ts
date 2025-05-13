@@ -1,34 +1,34 @@
-import { UI } from "@/ui.ts";
-import { EntityPool } from "@common/utils/entityPool";
-import { ClientPlayer } from "@/scripts/entities/clientPlayer.ts";
-import { Camera } from "@/scripts/render/camera.ts";
-import { ClientEntity } from "@/scripts/entities/clientEntity.ts";
-import { EntityType, GameConstants } from "@common/constants.ts";
-import { Inventory } from "@/scripts/inventory.ts";
-import { ClientApplication } from "../main.ts";
-import { JoinPacket } from "@common/net/packets/joinPacket.ts";
-import { GameBitStream, Packet, PacketStream } from "@common/net/net.ts";
-import { EntitiesNetData, UpdatePacket } from "@common/net/packets/updatePacket.ts";
-import { ClientPetal } from "@/scripts/entities/clientPetal.ts";
-import { Input } from "@/scripts/input.ts";
-import { InputPacket } from "@common/net/packets/inputPacket.ts";
-import { ClientMob } from "@/scripts/entities/clientMob.ts";
-import { GameOverPacket } from "@common/net/packets/gameOverPacket.ts";
-import { Tween } from '@tweenjs/tween.js';
-import { ClientLoot } from "@/scripts/entities/clientLoot.ts";
-import { ClientProjectile } from "@/scripts/entities/clientProjectile.ts";
-import { Config } from "@/config.ts";
-import { LoggedInPacket } from "@common/net/packets/loggedInPacket.ts";
-import { Petals, SavedPetalDefinitionData } from "@common/definitions/petals.ts";
-import { ChatChannel, ChatPacket } from "@common/net/packets/chatPacket.ts";
-import { ClientWall } from "@/scripts/entities/clientWall.ts";
-import { Settings } from "@/settings.ts";
-import { Minimap } from "@/scripts/ui/minimap.ts";
-import { Leaderboard } from "@/scripts/ui/leaderboard.ts";
-import { ExpUI } from "@/scripts/ui/expUI.ts";
-import { ParticleManager } from "@/scripts/utils/particle.ts";
-import { Bossbar } from "@/scripts/ui/bossbar.ts";
-import $ from "jquery"
+import { UI } from "../ui";
+import { EntityPool } from "../../../common/src/utils/entityPool";
+import { ClientPlayer } from "./entities/clientPlayer";
+import { Camera } from "./render/camera";
+import { ClientEntity } from "./entities/clientEntity";
+import { EntityType, GameConstants } from "../../../common/src/constants";
+import { Inventory } from "./inventory";
+import { ClientApplication } from "../main";
+import { JoinPacket } from "../../../common/src/net/packets/joinPacket";
+import { GameBitStream, Packet, PacketStream } from "../../../common/src/net/net";
+import { EntitiesNetData, UpdatePacket } from "../../../common/src/net/packets/updatePacket";
+import { ClientPetal } from "./entities/clientPetal";
+import { Input } from "./input";
+import { InputPacket } from "../../../common/src/net/packets/inputPacket";
+import { ClientMob } from "./entities/clientMob";
+import { GameOverPacket } from "../../../common/src/net/packets/gameOverPacket";
+import { Tween } from "@tweenjs/tween.js";
+import { ClientLoot } from "./entities/clientLoot";
+import { ClientProjectile } from "./entities/clientProjectile";
+import { Config } from "../config";
+import { LoggedInPacket } from "../../../common/src/net/packets/loggedInPacket";
+import { Petals, SavedPetalDefinitionData } from "../../../common/src/definitions/petals";
+import { ChatChannel, ChatPacket } from "../../../common/src/net/packets/chatPacket";
+import { ClientWall } from "./entities/clientWall";
+import { Settings } from "../settings";
+import { Minimap } from "./ui/minimap";
+import { Leaderboard } from "./ui/leaderboard";
+import { ExpUI } from "./ui/expUI";
+import { ParticleManager } from "./utils/particle";
+import { Bossbar } from "./ui/bossbar";
+import $ from "jquery";
 
 const typeToEntity = {
     [EntityType.Player]: ClientPlayer,
@@ -37,7 +37,7 @@ const typeToEntity = {
     [EntityType.Loot]: ClientLoot,
     [EntityType.Projectile]: ClientProjectile,
     [EntityType.Wall]: ClientWall
-}
+};
 
 export class Game {
     socket?: WebSocket | undefined;
@@ -50,44 +50,45 @@ export class Game {
     // This means which player are controlled by the user
     activePlayerID = -1;
 
-    gameWidth: number = 0;
-    gameHeight: number = 0;
+    gameWidth = 0;
+    gameHeight = 0;
 
-    screenWidth: number = 0;
-    screenHeight: number = 0;
+    screenWidth = 0;
+    screenHeight = 0;
 
     debug: {
-        fps: number,
-        ping: number,
-        particles: number,
+        fps: number
+        ping: number
+        particles: number
         entities: {
-            mobs: number,
-            loot: number,
-            projectiles: number,
-            players: number,
-            petals: number,
+            mobs: number
+            loot: number
+            projectiles: number
+            players: number
+            petals: number
         }
     } = {
-        fps: 0,
-        ping: 0,
-        particles: 0,
-        entities: {
-            mobs: 0,
-            loot: 0,
-            projectiles: 0,
-            players: 0,
-            petals: 0,
-        }
-    }
+            fps: 0,
+            ping: 0,
+            particles: 0,
+            entities: {
+                mobs: 0,
+                loot: 0,
+                projectiles: 0,
+                players: 0,
+                petals: 0
+            }
+        };
 
-    tweens = new Set<Tween>;
-    private lastUpdateTime: number = 0;
+    tweens = new Set<Tween>();
+    private lastUpdateTime = 0;
 
     get activePlayer(): ClientPlayer | undefined {
         if (this.activePlayerID) return this.entityPool.get(this.activePlayerID) as ClientPlayer;
         return undefined;
     }
-    activePlayerName: string = "";
+
+    activePlayerName = "";
 
     readonly entityPool = new EntityPool<ClientEntity>();
     readonly playerData = new Map<number,
@@ -117,9 +118,9 @@ export class Game {
 
         const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
 
-        const isTouchScreen = ('ontouchstart' in window) || ((navigator as any).msMaxTouchPoints > 0);
+        const isTouchScreen = ("ontouchstart" in window) || ((navigator as any).msMaxTouchPoints > 0);
 
-        this.playerIsOnMobile =  mobileRegex.test(userAgent) || isTouchScreen;
+        this.playerIsOnMobile = mobileRegex.test(userAgent) || isTouchScreen;
 
         if (this.playerIsOnMobile) {
             this.ui.mobileInit();
@@ -130,16 +131,16 @@ export class Game {
 
     inventory: Inventory;
 
-    serverDt: number = 0;
+    serverDt = 0;
 
-    addTween(tween: Tween, resolve?: Function): Tween {
+    addTween(tween: Tween, resolve?: () => void): Tween {
         this.tweens.add(tween);
         tween.start();
         tween.onComplete(() => {
             this.removeTween(tween);
-            if(resolve) resolve();
-        })
-        return tween
+            if (resolve) resolve();
+        });
+        return tween;
     }
 
     removeTween(tween: Tween): void {
@@ -149,7 +150,7 @@ export class Game {
     async init() {
         window.onresize = () => {
             this.resize();
-        }
+        };
 
         this.resize();
 
@@ -177,10 +178,10 @@ export class Game {
 
         this.running = true;
 
-        if(this.ui.openedDialog) this.ui.toggleDialog(this.ui.openedDialog);
+        if (this.ui.openedDialog) this.ui.toggleDialog(this.ui.openedDialog);
 
         if (!this.playerIsOnMobile) this.ui.hud.append(this.ui.settingsButton);
-        this.ui.canvas.insertBefore(this.ui.hud)
+        this.ui.canvas.insertBefore(this.ui.hud);
         this.ui.canvas.css("opacity", 1);
 
         this.app.renderer.containers.clear();
@@ -193,7 +194,7 @@ export class Game {
         this.input.actionsToSend.clear();
 
         this.ui.startTransition(true);
-        this.inventory.loadInventoryData(loggedInPacket.inventory)
+        this.inventory.loadInventoryData(loggedInPacket.inventory);
         this.inventory.updatePetalRows();
 
         if (!this.alreadyStartedRender) {
@@ -205,14 +206,14 @@ export class Game {
     endGame() {
         this.running = false;
 
-        this.ui.settingsButton.insertBefore(this.ui.creditButton)
+        this.ui.settingsButton.insertBefore(this.ui.creditButton);
         this.ui.canvas.css("opacity", 0.8);
         const body = $("body");
 
         body.append(this.ui.canvas);
         body.css("background-size", "0");
-        this.ui.stopRandomEntityAnimation()
-        $(".floating-entity").remove()
+        this.ui.stopRandomEntityAnimation();
+        $(".floating-entity").remove();
 
         this.ui.startTransition(false);
         this.ui.gallery.renderPetalGallery();
@@ -223,11 +224,11 @@ export class Game {
     }
 
     get follower(): ClientEntity | undefined {
-        if (this.followID)
-            return this.entityPool.get(this.followID) as ClientEntity;
+        if (this.followID) { return this.entityPool.get(this.followID)!; }
         return undefined;
     }
-    followID: number = -1;
+
+    followID = -1;
 
     onMessage(data: ArrayBuffer): void {
         const packetStream = new PacketStream(data);
@@ -269,10 +270,10 @@ export class Game {
 
         if (packet.playerDataDirty.zoom) {
             this.camera.zoom = packet.playerData.zoom;
-            this.camera.resize()
+            this.camera.resize();
         }
 
-        if (packet.playerDataDirty.slot)  {
+        if (packet.playerDataDirty.slot) {
             this.inventory.setSlotAmount(packet.playerData.slot, GameConstants.player.defaultPrepareSlot);
         }
 
@@ -286,14 +287,14 @@ export class Game {
 
         if (packet.playerDataDirty.overleveled) {
             this.ui.showOverleveled(packet.playerData.overleveled);
-        }else {
+        } else {
             this.ui.showOverleveled();
         }
 
         if (packet.playerDataDirty.collect) {
             packet.playerData.collect.forEach(e => {
                 this.ui.gallery.addMobGallery(e);
-            })
+            });
         }
 
         for (const id of packet.deletedEntities) {
@@ -307,7 +308,7 @@ export class Game {
                 name: newPlayer.name,
                 exp: newPlayer.exp,
                 id: newPlayer.id
-            })
+            });
         }
 
         for (const entityData of packet.fullEntities) {
@@ -326,20 +327,20 @@ export class Game {
             const entity = this.entityPool.get(entityPartialData.id);
 
             if (!entity) {
-                console.warn(`Unknown partial Entity with ID ${entityPartialData.id}`)
+                console.warn(`Unknown partial Entity with ID ${entityPartialData.id}`);
                 continue;
             }
             this.needUpdateEntities.set(entity, entityPartialData.data);
         }
 
         if (packet.chatDirty) {
-            packet.chatMessages.forEach((msg) => {
-                this.ui.receiveChatMessage(msg)
-            })
+            packet.chatMessages.forEach(msg => {
+                this.ui.receiveChatMessage(msg);
+            });
         }
 
         if (packet.petalData.length) {
-            this.inventory.petalData = packet.petalData
+            this.inventory.petalData = packet.petalData;
         }
 
         if (packet.mapDirty) {
@@ -354,8 +355,8 @@ export class Game {
 
     reconnect() {
         this.socket?.close();
-        if (Config.servers.hasOwnProperty(this.app.settings.data.server)){
-            this.connect(Config.servers[this.app.settings.data.server].address + "play");
+        if (Object.prototype.hasOwnProperty.call(Config.servers, this.app.settings.data.server)) {
+            this.connect(`${Config.servers[this.app.settings.data.server].address}play`);
         }
     }
 
@@ -396,8 +397,8 @@ export class Game {
         this.inventory.setSlotAmount(GameConstants.player.defaultSlot, GameConstants.player.defaultPrepareSlot);
         this.inventory.loadArrays(
             GameConstants.player.defaultEquippedPetals,
-            GameConstants.player.defaultPreparationPetals,
-        )
+            GameConstants.player.defaultPreparationPetals
+        );
 
         this.inventory.updatePetalRows();
     }
@@ -410,7 +411,7 @@ export class Game {
         joinPacket.secret = localStorage.getItem("secret") ?? "";
         const petals = JSON.parse(localStorage.getItem("petals") ?? "[]");
         if (petals instanceof Array && petals.length > 0) {
-            let petalData: SavedPetalDefinitionData[] = [];
+            const petalData: SavedPetalDefinitionData[] = [];
             for (const petal of petals) {
                 petalData.push(Petals.fromStringData(petal));
             }
@@ -420,12 +421,12 @@ export class Game {
     }
 
     lastRenderTime = Date.now();
-    dt: number = 0;
+    dt = 0;
 
     lastFPSCountingTime: number = performance.now();
-    FPS: number = 0;
+    FPS = 0;
 
-    private lastPingTime: number = 0;
+    private lastPingTime = 0;
     // private pingSentTime: number = 0;
 
     alreadyStartedRender = false;
@@ -440,13 +441,11 @@ export class Game {
             this.FPS = 0;
             this.lastFPSCountingTime = performance.now();
         }
-        this.FPS ++;
+        this.FPS++;
 
-        if (this.follower)
-            this.camera.position = this.follower.container.position;
+        if (this.follower) { this.camera.position = this.follower.container.position; }
 
-        if (this.app.settings.data.debug)
-            this.ui.renderDebug()
+        if (this.app.settings.data.debug) { this.ui.renderDebug(); }
 
         this.camera.render();
         this.app.renderer.render();
@@ -462,7 +461,7 @@ export class Game {
 
         this.tweens.forEach(tween => {
             tween.update();
-        })
+        });
 
         this.needUpdateEntities.clear();
 
@@ -472,10 +471,10 @@ export class Game {
     sendInput() {
         const inputPacket = new InputPacket();
         inputPacket.isAttacking = this.input.isInputDown("Mouse0")
-            || this.input.isInputDown("Space");
+        || this.input.isInputDown("Space");
         inputPacket.isDefending = this.input.isInputDown("Mouse2")
-            || this.input.isInputDown("ShiftLeft")
-            || this.input.isInputDown("ShiftRight");
+        || this.input.isInputDown("ShiftLeft")
+        || this.input.isInputDown("ShiftRight");
 
         inputPacket.direction = this.input.direction;
         inputPacket.movementDistance = this.input.moveDistance;
@@ -502,7 +501,7 @@ export class Game {
         canvas.height = this.screenHeight;
 
         this.miniMap.resize();
-        this.leaderboard.resize()
+        this.leaderboard.resize();
         this.expUI.resize();
         this.bossbar.resize();
     }

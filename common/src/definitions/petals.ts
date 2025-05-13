@@ -4,7 +4,7 @@ import { PlayerModifiers } from "../typings";
 import { ProjectileParameters, Projectiles } from "./projectiles";
 import { MobCategory, MobDefinition, Mobs } from "./mobs";
 import { EntityType } from "../constants";
-import { halfPI, P2 } from "../utils/math";
+import { halfPI, P2 } from "../maths/math";
 
 export type SavedPetalDefinitionData = PetalDefinition | null;
 
@@ -16,8 +16,8 @@ export type PetalDefinition = ObjectDefinition & {
     readonly undroppable?: boolean
     readonly unstackable?: boolean
     readonly hitboxRadius: number
-    readonly effectiveFirstReload?: boolean;
-    readonly noAnnouncement?: boolean;
+    readonly effectiveFirstReload?: boolean
+    readonly noAnnouncement?: boolean
     readonly doesNotDamage?: EntityType[]
     readonly images?: {
         readonly slotDisplaySize?: number
@@ -55,7 +55,7 @@ type PetalEquipmentType = ({
     }
 } & PetalPieceType & PetalUsageType) | {
     readonly equipment: true
-}
+};
 
 type PetalPieceType = {
     readonly isDuplicate: false
@@ -73,12 +73,12 @@ type PetalUsageType = {
 } | {
     readonly usable: true
     readonly useTime: number
-}
+};
 
 export type AttributeParameters = {
     readonly absorbing_heal?: number
     readonly absorbing_shield?: number
-    readonly boost?: number,
+    readonly boost?: number
     readonly poison?: {
         readonly damagePerSecond: number
         readonly duration: number
@@ -134,7 +134,7 @@ export type AttributeParameters = {
         readonly bounces: number
     }
     readonly damage_reduction_percent?: number
-}
+};
 
 export function getDisplayedPieces(petal: PetalDefinition): number {
     if (petal.equipment) return 0;
@@ -142,7 +142,7 @@ export function getDisplayedPieces(petal: PetalDefinition): number {
     return petal.pieceAmount;
 }
 
-export let Petals = new Definitions<PetalDefinition>([
+export const Petals = new Definitions<PetalDefinition>([
     {
         idString: "fast",
         displayName: "Fast",
@@ -159,7 +159,7 @@ export let Petals = new Definitions<PetalDefinition>([
         usingAssets: "light",
         modifiers: {
             speed: 1.006
-        },
+        }
     },
     {
         idString: "twin",
@@ -178,7 +178,7 @@ export let Petals = new Definitions<PetalDefinition>([
         usingAssets: "light",
         modifiers: {
             speed: 1.005
-        },
+        }
     },
     {
         idString: "penta",
@@ -197,7 +197,7 @@ export let Petals = new Definitions<PetalDefinition>([
         usingAssets: "light",
         modifiers: {
             speed: 1.01
-        },
+        }
     },
     {
         idString: "wing",
@@ -209,7 +209,7 @@ export let Petals = new Definitions<PetalDefinition>([
             time: 0.5,
             distance: 2.6
         },
-        images:{
+        images: {
             slotDisplaySize: 60,
             selfGameRotation: 360
         },
@@ -231,7 +231,7 @@ export let Petals = new Definitions<PetalDefinition>([
             time: 0.5,
             distance: 2.6
         },
-        images:{
+        images: {
             slotDisplaySize: 45,
             selfGameRotation: 360,
             slotRevolution: P2 / 3
@@ -264,8 +264,8 @@ export let Petals = new Definitions<PetalDefinition>([
         usingAssets: "light",
         modifiers: {
             speed: 1.004
-        },
-    },{
+        }
+    }, {
         idString: "faster",
         displayName: "Faster",
         description: "Quickly.",
@@ -281,7 +281,7 @@ export let Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.rare
-    },{
+    }, {
         idString: "faster_wing",
         displayName: "Wing",
         description: "It comes and goes quickly.",
@@ -293,7 +293,7 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         extendable: true,
         reloadTime: 1.25,
-        images:{
+        images: {
             slotDisplaySize: 60,
             selfGameRotation: 360
         },
@@ -304,8 +304,8 @@ export let Petals = new Definitions<PetalDefinition>([
         hitboxRadius: 0.6,
         isDuplicate: false,
         pieceAmount: 1,
-        rarity: RarityName.legendary,
-    },{
+        rarity: RarityName.legendary
+    }, {
         idString: "tri_faster",
         displayName: "Fastest",
         description: "Quickly.",
@@ -349,7 +349,7 @@ export let Petals = new Definitions<PetalDefinition>([
         hitboxRadius: 0.55,
         isDuplicate: false,
         pieceAmount: 1,
-        rarity: RarityName.unusual,
+        rarity: RarityName.unusual
     },
     {
         idString: "tri_leaf",
@@ -406,7 +406,7 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         images: {
             selfGameRotation: 18,
-            slotDisplaySize: 25,
+            slotDisplaySize: 25
         },
         usable: false,
         hitboxRadius: 0.3,
@@ -444,7 +444,7 @@ export let Petals = new Definitions<PetalDefinition>([
         reloadTime: 1,
         images: {
             selfGameRotation: 18,
-            slotDisplaySize: 25,
+            slotDisplaySize: 25
         },
         extendable: true,
         usable: false,
@@ -465,7 +465,7 @@ export let Petals = new Definitions<PetalDefinition>([
         usable: true,
         useTime: 1.5,
         images: {
-            slotDisplaySize: 35,
+            slotDisplaySize: 35
         },
         attributes: {
             absorbing_heal: 12
@@ -475,7 +475,7 @@ export let Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.unusual
-    },{
+    }, {
         idString: "tri_rose",
         displayName: "Rose",
         description: "Its healing properties are amazing. Not so good at combat though",
@@ -490,7 +490,7 @@ export let Petals = new Definitions<PetalDefinition>([
         reloadTime: 3.5,
         images: {
             selfGameRotation: 18,
-            slotDisplaySize: 28,
+            slotDisplaySize: 28
         },
         hitboxRadius: 0.3,
         isDuplicate: true,
@@ -498,7 +498,7 @@ export let Petals = new Definitions<PetalDefinition>([
         pieceAmount: 3,
         rarity: RarityName.rare,
         usingAssets: "rose"
-    },{
+    }, {
         idString: "epic_rose",
         displayName: "Rose",
         description: "Extremely powerful rose, almost unheard of",
@@ -520,7 +520,7 @@ export let Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.epic
-    },{
+    }, {
         idString: "myt_tri_rose",
         displayName: "Rose",
         description: "This is a miracle rose, only one in the world",
@@ -566,7 +566,7 @@ export let Petals = new Definitions<PetalDefinition>([
         hitboxRadius: 0.45,
         isDuplicate: false,
         pieceAmount: 1,
-        rarity: RarityName.epic,
+        rarity: RarityName.epic
     },
     {
         idString: "tri_triangle",
@@ -604,10 +604,10 @@ export let Petals = new Definitions<PetalDefinition>([
         usable: true,
         useTime: 0.2,
         images: {
-            slotDisplaySize: 45,
+            slotDisplaySize: 45
         },
         attributes: {
-            boost: 10
+            boost: 7.5
         },
         reloadTime: 3.5,
         hitboxRadius: 0.5,
@@ -629,7 +629,7 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         modifiers: {
             maxHealth: 66666,
-            healPerSecond: 66666,
+            healPerSecond: 66666
         },
         reloadTime: 0,
         hitboxRadius: 0.6,
@@ -649,7 +649,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 38,
+            slotDisplaySize: 38
         },
         reloadTime: 2.5,
         hitboxRadius: 0.55,
@@ -675,7 +675,7 @@ export let Petals = new Definitions<PetalDefinition>([
         hitboxRadius: 0.55,
         isDuplicate: false,
         pieceAmount: 1,
-        rarity: RarityName.unique,
+        rarity: RarityName.unique
     },
     {
         idString: "dandelion",
@@ -695,7 +695,7 @@ export let Petals = new Definitions<PetalDefinition>([
         attributes: {
             healing_debuff: {
                 healing: 0,
-                duration: 10,
+                duration: 10
             },
             shoot: {
                 hitboxRadius: 0.6,
@@ -717,7 +717,7 @@ export let Petals = new Definitions<PetalDefinition>([
         hitboxRadius: 0.6,
         isDuplicate: false,
         pieceAmount: 1,
-        rarity: RarityName.rare,
+        rarity: RarityName.rare
     },
     {
         idString: "super_dandelion",
@@ -737,7 +737,7 @@ export let Petals = new Definitions<PetalDefinition>([
         attributes: {
             healing_debuff: {
                 healing: 0,
-                duration: 1,
+                duration: 1
             },
             shoot: {
                 hitboxRadius: 1,
@@ -759,7 +759,7 @@ export let Petals = new Definitions<PetalDefinition>([
         isShowedInOne: false,
         pieceAmount: 50,
         usingAssets: "dandelion",
-        rarity: RarityName.super,
+        rarity: RarityName.super
     },
     {
         idString: "op_missile",
@@ -797,7 +797,7 @@ export let Petals = new Definitions<PetalDefinition>([
         isShowedInOne: false,
         pieceAmount: 50,
         usingAssets: "missile",
-        rarity: RarityName.super,
+        rarity: RarityName.super
     },
     {
         idString: "missile",
@@ -830,7 +830,7 @@ export let Petals = new Definitions<PetalDefinition>([
         hitboxRadius: 0.6,
         isDuplicate: false,
         pieceAmount: 1,
-        rarity: RarityName.rare,
+        rarity: RarityName.rare
     },
     {
         idString: "big_missile",
@@ -922,7 +922,7 @@ export let Petals = new Definitions<PetalDefinition>([
         hitboxRadius: 0.3,
         isDuplicate: false,
         pieceAmount: 1,
-        rarity: RarityName.unusual,
+        rarity: RarityName.unusual
     },
     {
         idString: "siris",
@@ -964,7 +964,7 @@ export let Petals = new Definitions<PetalDefinition>([
         hitboxRadius: 0.7,
         isDuplicate: false,
         pieceAmount: 1,
-        rarity: RarityName.rare,
+        rarity: RarityName.rare
     },
     {
         idString: "poison_cactus",
@@ -995,7 +995,7 @@ export let Petals = new Definitions<PetalDefinition>([
         hitboxRadius: 0.7,
         isDuplicate: false,
         pieceAmount: 1,
-        rarity: RarityName.epic,
+        rarity: RarityName.epic
     },
     {
         idString: "tri_cactus",
@@ -1019,7 +1019,7 @@ export let Petals = new Definitions<PetalDefinition>([
         isShowedInOne: true,
         pieceAmount: 3,
         rarity: RarityName.legendary,
-        usingAssets: "cactus",
+        usingAssets: "cactus"
     },
     {
         idString: "salt",
@@ -1030,10 +1030,10 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: true,
         images: {
             slotDisplaySize: 60,
-            selfGameRotation: 15,
+            selfGameRotation: 15
         },
         usable: false,
-        attributes:{
+        attributes: {
             damage_reflection: 0.20
         },
         reloadTime: 2.5,
@@ -1109,7 +1109,7 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 8,
         extendable: true,
         attributes: {
-            self_damage: 1,
+            self_damage: 1
         },
         images: {
             slotRotation: 3.14,
@@ -1133,7 +1133,7 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 5,
         extendable: true,
         reloadTime: 0.04,
-        images:{
+        images: {
             slotDisplaySize: 57,
             selfGameRotation: 18
         },
@@ -1151,18 +1151,18 @@ export let Petals = new Definitions<PetalDefinition>([
         health: 1,
         extendable: false,
         usable: true,
-        useTime: 0,
+        useTime: 0.1,
         images: {
-            slotDisplaySize: 45,
+            slotDisplaySize: 45
         },
         attributes: {
             boost: 5
         },
-        reloadTime: 1.5,
+        reloadTime: 1.4,
         hitboxRadius: 0.5,
         isDuplicate: false,
         pieceAmount: 1,
-        rarity: RarityName.legendary,
+        rarity: RarityName.mythic,
         usingAssets: "bubble"
     },
     {
@@ -1174,7 +1174,7 @@ export let Petals = new Definitions<PetalDefinition>([
         extendable: false,
         usable: false,
         images: {
-            slotDisplaySize: 35,
+            slotDisplaySize: 35
         },
         modifiers: {
             speed: 1.128
@@ -1246,7 +1246,7 @@ export let Petals = new Definitions<PetalDefinition>([
         pieceAmount: 3,
         isShowedInOne: true,
         rarity: RarityName.legendary,
-        usingAssets: "web",
+        usingAssets: "web"
     },
     {
         idString: "myt_tri_web",
@@ -1278,7 +1278,7 @@ export let Petals = new Definitions<PetalDefinition>([
         pieceAmount: 3,
         isShowedInOne: false,
         rarity: RarityName.mythic,
-        usingAssets: "web",
+        usingAssets: "web"
     },
     {
         idString: "peas",
@@ -1292,7 +1292,7 @@ export let Petals = new Definitions<PetalDefinition>([
         images: {
             slotDisplaySize: 30,
             selfGameRotation: 18,
-            slotRotation: 0.2,
+            slotRotation: 0.2
         },
         attributes: {
             peas_shoot: {
@@ -1312,7 +1312,7 @@ export let Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.rare,
-        usingAssets: "4peas",
+        usingAssets: "4peas"
     },
     {
         idString: "poison_peas",
@@ -1326,7 +1326,7 @@ export let Petals = new Definitions<PetalDefinition>([
         images: {
             slotDisplaySize: 30,
             selfGameRotation: 18,
-            slotRotation: 0.2,
+            slotRotation: 0.2
         },
         attributes: {
             peas_shoot: {
@@ -1354,7 +1354,7 @@ export let Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.epic,
-        usingAssets: "4poison_peas",
+        usingAssets: "4poison_peas"
     },
     {
         idString: "leg_poison_peas",
@@ -1368,7 +1368,7 @@ export let Petals = new Definitions<PetalDefinition>([
         images: {
             slotDisplaySize: 40,
             selfGameRotation: 18,
-            slotRotation: 0.2,
+            slotRotation: 0.2
         },
         attributes: {
             peas_shoot: {
@@ -1396,7 +1396,7 @@ export let Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.legendary,
-        usingAssets: "4poison_peas",
+        usingAssets: "4poison_peas"
     },
     {
         idString: "myt_poison_peas",
@@ -1435,7 +1435,7 @@ export let Petals = new Definitions<PetalDefinition>([
         pieceAmount: 5,
         isShowedInOne: true,
         rarity: RarityName.mythic,
-        usingAssets: "poison_peas",
+        usingAssets: "poison_peas"
     },
     {
         idString: "speas",
@@ -1447,7 +1447,7 @@ export let Petals = new Definitions<PetalDefinition>([
         usable: true,
         useTime: 0.03,
         images: {
-            slotDisplaySize: 45,
+            slotDisplaySize: 45
         },
         attributes: {
             around_circle_shoot: {
@@ -1475,7 +1475,7 @@ export let Petals = new Definitions<PetalDefinition>([
         rarity: RarityName.phantasmagoric,
         undroppable: true,
         doesNotDamage: [EntityType.Player],
-        usingAssets: "poison_peas",
+        usingAssets: "poison_peas"
     },
     {
         idString: "corn",
@@ -1541,7 +1541,7 @@ export let Petals = new Definitions<PetalDefinition>([
         hitboxRadius: 0.65,
         isDuplicate: false,
         pieceAmount: 1,
-        rarity: RarityName.rare,
+        rarity: RarityName.rare
     },
     {
         idString: "pincer",
@@ -1571,16 +1571,16 @@ export let Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.epic
-    },{
+    }, {
         idString: "antennae",
         displayName: "Antennae",
         description: "Allows your flower to sense foes farther away",
         equipment: true,
         images: {
             slotDisplaySize: 60,
-            equipmentStyles:{
+            equipmentStyles: {
                 noRender: false,
-                coordsToOwner:{
+                coordsToOwner: {
                     x: 0,
                     y: 27,
                     scale: 1
@@ -1592,7 +1592,7 @@ export let Petals = new Definitions<PetalDefinition>([
             zoom: 30
         },
         rarity: RarityName.legendary
-    },{
+    }, {
         idString: "myt_antennae",
         displayName: "Antennae",
         description: "Allows your flower to sense foes farther farther away",
@@ -1634,7 +1634,7 @@ export let Petals = new Definitions<PetalDefinition>([
             fontSizeMultiplier: 0.8,
             equipmentStyles: {
                 noRender: false,
-               // thirdEye: true,
+                // thirdEye: true,
                 coordsToOwner: {
                     x: 0,
                     y: 10.5,
@@ -1644,7 +1644,7 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         hitboxRadius: 0.6,
         modifiers: {
-            controlRotation: true,
+            controlRotation: true
         },
         rarity: RarityName.unique
     },
@@ -1663,17 +1663,17 @@ export let Petals = new Definitions<PetalDefinition>([
                     y: -25,
                     scale: 1.5,
                     rotation: Math.PI,
-                    zIndex: -1,
+                    zIndex: -1
                 }
             }
         },
         hitboxRadius: 0.6,
         unstackable: true,
         modifiers: {
-            extraDistance: 1,
+            extraDistance: 1
         },
         rarity: RarityName.legendary,
-        undroppable: true, // TEMPORARY: TOREMOVE: spawn in game for testing purposes, remove this when added to drops
+        undroppable: true // TEMPORARY: TOREMOVE: spawn in game for testing purposes, remove this when added to drops
     },
     {
         idString: "stentacles",
@@ -1682,7 +1682,7 @@ export let Petals = new Definitions<PetalDefinition>([
         equipment: true,
         images: {
             slotDisplaySize: 60,
-          //  centerYOffset: -1.25,
+            //  centerYOffset: -1.25,
             fontSizeMultiplier: 0.85,
             equipmentStyles: {
                 noRender: false,
@@ -1691,13 +1691,13 @@ export let Petals = new Definitions<PetalDefinition>([
                     y: -25,
                     scale: 1.5,
                     rotation: Math.PI,
-                    zIndex: -1,
+                    zIndex: -1
                 }
             }
         },
         hitboxRadius: 0.6,
         modifiers: {
-            extraDistance: 10,
+            extraDistance: 10
         },
         rarity: RarityName.super,
         undroppable: true,
@@ -1715,7 +1715,7 @@ export let Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 50,
             fontSizeMultiplier: 0.87
 
-     //       selfGameRotation: 0.02
+            //       selfGameRotation: 0.02
         },
         modifiers: {
             revive: {
@@ -1731,7 +1731,7 @@ export let Petals = new Definitions<PetalDefinition>([
         effectiveFirstReload: true,
         noAnnouncement: true,
         undroppable: true,
-        rarity: RarityName.unique,
+        rarity: RarityName.unique
     },
     {
         idString: "sygg",
@@ -1745,7 +1745,7 @@ export let Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 50,
             fontSizeMultiplier: 0.9
 
-     //       selfGameRotation: 0.02
+            //       selfGameRotation: 0.02
         },
         modifiers: {
             revive: {
@@ -1762,7 +1762,7 @@ export let Petals = new Definitions<PetalDefinition>([
         effectiveFirstReload: true,
         undroppable: true,
         rarity: RarityName.super,
-        usingAssets: 'yggdrasil'
+        usingAssets: "yggdrasil"
     },
     {
         idString: "stick",
@@ -1775,7 +1775,7 @@ export let Petals = new Definitions<PetalDefinition>([
         useTime: 5,
         images: {
             slotDisplaySize: 50,
-            centerYOffset: 0.05,
+            centerYOffset: 0.05
         },
         attributes: {
             spawner: {
@@ -1806,7 +1806,7 @@ export let Petals = new Definitions<PetalDefinition>([
         pieceAmount: 1,
         effectiveFirstReload: true,
         undroppable: true, // TEMPORARY: TOREMOVE: spawn in game for testing purposes, remove this when added to drops
-        rarity: RarityName.legendary,
+        rarity: RarityName.legendary
     },
     {
         idString: "pollen",
@@ -1833,7 +1833,7 @@ export let Petals = new Definitions<PetalDefinition>([
         isDuplicate: true,
         pieceAmount: 3,
         isShowedInOne: false,
-        rarity: RarityName.epic,
+        rarity: RarityName.epic
     },
     {
         idString: "myt_pollen",
@@ -1943,14 +1943,14 @@ export let Petals = new Definitions<PetalDefinition>([
         },
         modifiers: {
             // damageAvoidanceChance: 0.12
-			damageAvoidanceByDamage: true
+            damageAvoidanceByDamage: true
         },
-		// unstackable: true,
+        // unstackable: true,
         reloadTime: 2.5,
         hitboxRadius: 0.45,
         isDuplicate: false,
         pieceAmount: 1,
-        rarity: RarityName.epic,
+        rarity: RarityName.epic
     },
     {
         idString: "yinyang",
@@ -1973,7 +1973,7 @@ export let Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         effectiveFirstReload: true,
         pieceAmount: 1,
-        rarity: RarityName.epic,
+        rarity: RarityName.epic
     },
     {
         idString: "uranium",
@@ -1990,7 +1990,7 @@ export let Petals = new Definitions<PetalDefinition>([
         attributes: {
             area_poison: {
                 radius: 15,
-                damagePerSecond: 10,
+                damagePerSecond: 10
             }
         },
         modifiers: {
@@ -2082,7 +2082,7 @@ export let Petals = new Definitions<PetalDefinition>([
         images: {
             slotDisplaySize: 45,
             selfGameRotation: 0.01,
-            slotRotation: 0.3,
+            slotRotation: 0.3
         },
         attributes: {
             boost: -20
@@ -2104,7 +2104,7 @@ export let Petals = new Definitions<PetalDefinition>([
         images: {
             slotDisplaySize: 45,
             selfGameRotation: 0.01,
-            slotRotation: 0.3,
+            slotRotation: 0.3
         },
         attributes: {
             boost: -300
@@ -2145,8 +2145,8 @@ export let Petals = new Definitions<PetalDefinition>([
         usable: false,
         images: {
             slotDisplaySize: 78,
-            slotRotation: -(90-32.5)*(Math.PI/180),
-            facingOut:true,
+            slotRotation: -(90 - 32.5) * (Math.PI / 180),
+            facingOut: true
 
         },
         modifiers: {
@@ -2171,7 +2171,7 @@ export let Petals = new Definitions<PetalDefinition>([
         usable: false,
         images: {
             slotDisplaySize: 43,
-            selfGameRotation: 0.25,
+            selfGameRotation: 0.25
 
         },
         attributes: {
@@ -2230,7 +2230,7 @@ export let Petals = new Definitions<PetalDefinition>([
         hitboxRadius: 0.6,
         isDuplicate: false,
         pieceAmount: 1,
-        rarity: RarityName.rare,
+        rarity: RarityName.rare
     },
     {
         idString: "slightning",
@@ -2265,7 +2265,7 @@ export let Petals = new Definitions<PetalDefinition>([
         equipment: true,
         images: {
             slotDisplaySize: 55,
-            slotRotation: -(22.5)*(Math.PI/180),
+            slotRotation: -(22.5) * (Math.PI / 180),
             fontSizeMultiplier: 0.8,
             equipmentStyles: {
                 noRender: false,
@@ -2305,7 +2305,7 @@ export let Petals = new Definitions<PetalDefinition>([
         modifiers: {
             knockbackReduction: 0.5
         },
-        rarity: RarityName.epic,
+        rarity: RarityName.epic
     },
     {
         idString: "disc",
@@ -2329,7 +2329,7 @@ export let Petals = new Definitions<PetalDefinition>([
         modifiers: {
             bodyDamageReduction: 0.5
         },
-        rarity: RarityName.epic,
+        rarity: RarityName.epic
     },
     {
         idString: "myt_cactus",

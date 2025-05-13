@@ -1,5 +1,5 @@
-import { ClientApplication } from "@/main.ts";
-import { Config } from "@/config.ts";
+import { ClientApplication } from "./main";
+import { Config } from "./config";
 
 export interface SettingsData {
     keyboardMovement: boolean
@@ -14,11 +14,11 @@ export interface SettingsData {
 
 export class Settings {
     data: SettingsData = {
-        keyboardMovement : false,
-        newControl : false,
+        keyboardMovement: false,
+        newControl: false,
         blockMytAnn: false,
         screenShake: true,
-        playerName : "",
+        playerName: "",
         hitbox: false,
         debug: false,
         server: "sh"
@@ -32,7 +32,7 @@ export class Settings {
             Object.assign(this.data, json);
         }
 
-        if (!Config.servers.hasOwnProperty(this.data.server)) {
+        if (!Object.prototype.hasOwnProperty.call(Config.servers, this.data.server)) {
             this.data.server = "sh";
         }
 
@@ -44,7 +44,7 @@ export class Settings {
     }
 
     changeSettings(key: string, to: SettingsData[keyof SettingsData]): void {
-        if (this.data.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(this.data, key)) {
             Object.assign(this.data, {
                 [key]: to
             });

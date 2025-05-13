@@ -1,5 +1,6 @@
-import { Geometry, Numeric } from "./math";
-import { Vec2, type VectorAbstract } from "./vector";
+import { Geometry, Numeric } from "../maths/math";
+import { UVec2D } from "../physics/utils";
+import VectorAbstract from "../physics/vectorAbstract";
 
 export type CollisionResponse = { dir: VectorAbstract, pen: number } | null;
 export type LineIntersection = { point: VectorAbstract, normal: VectorAbstract } | null;
@@ -67,7 +68,7 @@ export const Collision = {
             const x4 = x3 + x2 - x1;
             if (x3 * x4 < 0) {
                 const t = x3 / (x3 - x4);
-                return Vec2.add(a0, Vec2.mul(Vec2.sub(a1, a0), t));
+                return UVec2D.add(a0, UVec2D.mul(UVec2D.sub(a1, a0), t));
             }
         }
         return null;
@@ -82,12 +83,12 @@ export const Collision = {
      * @return An intersection response with the intersection position and normal Vectors, returns null if they don't intersect
     */
     lineIntersectsCircle(s0: VectorAbstract, s1: VectorAbstract, pos: VectorAbstract, rad: number): LineIntersection {
-        let d = Vec2.sub(s1, s0);
-        const len = Math.max(Vec2.length(d), 0.000001);
-        d = Vec2.div(d, len);
-        const m = Vec2.sub(s0, pos);
-        const b = Vec2.dot(m, d);
-        const c = Vec2.dot(m, m) - rad * rad;
+        let d = UVec2D.sub(s1, s0);
+        const len = Math.max(UVec2D.length(d), 0.000001);
+        d = UVec2D.div(d, len);
+        const m = UVec2D.sub(s0, pos);
+        const b = UVec2D.dot(m, d);
+        const c = UVec2D.dot(m, m) - rad * rad;
         if (c > 0 && b > 0.0) {
             return null;
         }
@@ -101,10 +102,10 @@ export const Collision = {
             t = -b + disc;
         }
         if (t <= len) {
-            const point = Vec2.add(s0, Vec2.mul(d, t));
+            const point = UVec2D.add(s0, UVec2D.mul(d, t));
             return {
                 point,
-                normal: Vec2.normalize(Vec2.sub(point, pos))
+                normal: UVec2D.normalize(UVec2D.sub(point, pos))
             };
         }
         return null;
@@ -123,9 +124,9 @@ export const Collision = {
         let tmax = Number.MAX_VALUE;
         const eps = 0.00001;
         const r = s0;
-        let d = Vec2.sub(s1, s0);
-        const dist = Vec2.length(d);
-        d = dist > eps ? Vec2.div(d, dist) : Vec2.new(1, 0);
+        let d = UVec2D.sub(s1, s0);
+        const dist = UVec2D.length(d);
+        d = dist > eps ? UVec2D.div(d, dist) : UVec2D.new(1, 0);
 
         let absDx = Math.abs(d.x);
         let absDy = Math.abs(d.y);
@@ -161,18 +162,18 @@ export const Collision = {
             return null;
         }
         // Hit
-        const point = Vec2.add(s0, Vec2.mul(d, tmin));
+        const point = UVec2D.add(s0, UVec2D.mul(d, tmin));
         // Intersection normal
-        const c = Vec2.add(min, Vec2.mul(Vec2.sub(max, min), 0.5));
-        const p0 = Vec2.sub(point, c);
-        const d0 = Vec2.mul(Vec2.sub(min, max), 0.5);
+        const c = UVec2D.add(min, UVec2D.mul(UVec2D.sub(max, min), 0.5));
+        const p0 = UVec2D.sub(point, c);
+        const d0 = UVec2D.mul(UVec2D.sub(min, max), 0.5);
 
         const x = p0.x / Math.abs(d0.x) * 1.001;
         const y = p0.y / Math.abs(d0.y) * 1.001;
-        const normal = Vec2.normalizeSafe({
+        const normal = UVec2D.normalizeSafe({
             x: x < 0 ? Math.ceil(x) : Math.floor(x),
             y: y < 0 ? Math.ceil(y) : Math.floor(y)
-        }, Vec2.new(1, 0));
+        }, UVec2D.new(1, 0));
         return {
             point,
             normal
@@ -189,12 +190,12 @@ export const Collision = {
     */
     circleCircleIntersection(pos0: VectorAbstract, rad0: number, pos1: VectorAbstract, rad1: number): CollisionResponse {
         const r = rad0 + rad1;
-        const toP1 = Vec2.sub(pos1, pos0);
-        const distSqr = Vec2.lengthSqr(toP1);
+        const toP1 = UVec2D.sub(pos1, pos0);
+        const distSqr = UVec2D.lengthSqr(toP1);
         if (distSqr < r * r) {
             const dist = Math.sqrt(distSqr);
             return {
-                dir: dist > 0.00001 ? Vec2.div(toP1, dist) : Vec2.new(1.0, 0.0),
+                dir: dist > 0.00001 ? UVec2D.div(toP1, dist) : UVec2D.new(1.0, 0.0),
                 pen: r - dist
             };
         }
@@ -211,35 +212,35 @@ export const Collision = {
     */
     rectCircleIntersection(min: VectorAbstract, max: VectorAbstract, pos: VectorAbstract, radius: number): CollisionResponse {
         if (pos.x >= min.x && pos.x <= max.x && pos.y >= min.y && pos.y <= max.y) {
-            const e = Vec2.mul(Vec2.sub(max, min), 0.5);
-            const c = Vec2.add(min, e);
-            const p = Vec2.sub(pos, c);
+            const e = UVec2D.mul(UVec2D.sub(max, min), 0.5);
+            const c = UVec2D.add(min, e);
+            const p = UVec2D.sub(pos, c);
             const xp = Math.abs(p.x) - e.x - radius;
             const yp = Math.abs(p.y) - e.y - radius;
             if (xp > yp) {
                 return {
-                    dir: Vec2.new(p.x > 0.0 ? 1.0 : -1.0, 0.0),
+                    dir: UVec2D.new(p.x > 0.0 ? 1.0 : -1.0, 0.0),
                     pen: -xp
                 };
             }
             return {
-                dir: Vec2.new(0.0, p.y > 0.0 ? 1.0 : -1.0),
+                dir: UVec2D.new(0.0, p.y > 0.0 ? 1.0 : -1.0),
                 pen: -yp
             };
         }
-        const cpt = Vec2.new(
+        const cpt = UVec2D.new(
             Numeric.clamp(pos.x, min.x, max.x),
             Numeric.clamp(pos.y, min.y, max.y)
         );
-        let dir = Vec2.sub(pos, cpt);
+        let dir = UVec2D.sub(pos, cpt);
 
-        dir = Vec2.sub(pos, cpt);
+        dir = UVec2D.sub(pos, cpt);
 
-        const dstSqr = Vec2.lengthSqr(dir);
+        const dstSqr = UVec2D.lengthSqr(dir);
         if (dstSqr < radius * radius) {
             const dst = Math.sqrt(dstSqr);
             return {
-                dir: dst > 0.0001 ? Vec2.div(dir, dst) : Vec2.new(1.0, 0.0),
+                dir: dst > 0.0001 ? UVec2D.div(dir, dst) : UVec2D.new(1.0, 0.0),
                 pen: radius - dst
             };
         }
@@ -256,23 +257,23 @@ export const Collision = {
     * @return An intersection response with the intersection direction and pen, returns null if they don't intersect
     */
     rectRectIntersection(min0: VectorAbstract, max0: VectorAbstract, min1: VectorAbstract, max1: VectorAbstract): CollisionResponse {
-        const e0 = Vec2.mul(Vec2.sub(max0, min0), 0.5);
-        const c0 = Vec2.add(min0, e0);
-        const e1 = Vec2.mul(Vec2.sub(max1, min1), 0.5);
-        const c1 = Vec2.add(min1, e1);
-        const n = Vec2.sub(c1, c0);
+        const e0 = UVec2D.mul(UVec2D.sub(max0, min0), 0.5);
+        const c0 = UVec2D.add(min0, e0);
+        const e1 = UVec2D.mul(UVec2D.sub(max1, min1), 0.5);
+        const c1 = UVec2D.add(min1, e1);
+        const n = UVec2D.sub(c1, c0);
         const xo = e0.x + e1.x - Math.abs(n.x);
         if (xo > 0.0) {
             const yo = e0.y + e1.y - Math.abs(n.y);
             if (yo > 0.0) {
                 if (xo > yo) {
                     return {
-                        dir: n.x < 0.0 ? Vec2.new(-1.0, 0.0) : Vec2.new(1.0, 0.0),
+                        dir: n.x < 0.0 ? UVec2D.new(-1.0, 0.0) : UVec2D.new(1.0, 0.0),
                         pen: xo
                     };
                 }
                 return {
-                    dir: n.y < 0.0 ? Vec2.new(0.0, -1.0) : Vec2.new(0.0, 1.0),
+                    dir: n.y < 0.0 ? UVec2D.new(0.0, -1.0) : UVec2D.new(0.0, 1.0),
                     pen: yo
                 };
             }

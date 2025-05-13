@@ -1,38 +1,32 @@
 import { ClientEntity } from "./clientEntity";
-import { EntityType } from "@common/constants";
-import { Game } from "@/scripts/game";
-import { Camera } from "@/scripts/render/camera.ts";
-import { VectorAbstract } from "@common/utils/vector.ts";
-import { EntitiesNetData } from "@common/net/packets/updatePacket.ts";
-
+import { EntityType } from "../../../../common/src/constants";
+import { Camera } from "../render/camera";
+import { EntitiesNetData } from "../../../../common/src/net/packets/updatePacket";
+import VectorAbstract from "../../../../common/src/physics/vectorAbstract";
 
 export class ClientWall extends ClientEntity {
     type = EntityType.Wall;
 
-    constructor(game: Game, id: number) {
-        super(game, id);
-    }
-
     render(dt: number) {
         super.render(dt);
 
-        if (!this.min || !this.max) return
+        if (!this.min || !this.max) return;
 
         const { ctx } = this;
 
         ctx.fillStyle = "#000000";
         ctx.globalAlpha = 0.3;
 
-        ctx.beginPath()
+        ctx.beginPath();
         ctx.roundRect(
             this.min.x,
             this.min.y,
             this.max.x - this.min.x,
             this.max.y - this.min.y,
             10
-        )
+        );
 
-        ctx.fill()
+        ctx.fill();
     }
 
     min?: VectorAbstract;

@@ -7,16 +7,16 @@ export enum ChatChannel {
 }
 
 export class ChatPacket implements Packet {
-    chat: string = "";
+    chat = "";
     channel: ChatChannel = ChatChannel.Local;
 
     serialize(stream: GameBitStream): void {
         stream.writeUTF8String(this.chat, GameConstants.player.maxChatLength);
-        stream.writeUint8(this.channel)
+        stream.writeUint8(this.channel);
     }
 
     deserialize(stream: GameBitStream): void {
         this.chat = stream.readUTF8String(GameConstants.player.maxChatLength);
-        this.channel = stream.readUint8()
+        this.channel = stream.readUint8();
     }
 }

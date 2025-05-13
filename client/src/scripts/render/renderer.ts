@@ -1,7 +1,7 @@
-import { ClientApplication } from "@/main.ts";
-import { ZoneName, Zones } from "@common/definitions/zones.ts";
-import { Camera } from "@/scripts/render/camera.ts";
-import { RenderContainer } from "@/scripts/utils/render.ts";
+import { ClientApplication } from "../../main";
+import { ZoneName, Zones } from "../../../../common/src/definitions/zones";
+import { Camera } from "./camera";
+import { RenderContainer } from "../utils/render";
 
 export class Renderer {
     containers = new Set<RenderContainer>();
@@ -9,6 +9,7 @@ export class Renderer {
     addContainer(container: RenderContainer) {
         this.containers.add(container);
     }
+
     removeContainer(container: RenderContainer) {
         this.containers.delete(container);
     }
@@ -24,7 +25,7 @@ export class Renderer {
 
         if (!ctx) throw new Error("Failed to get canvas context.");
 
-        this.ctx = ctx
+        this.ctx = ctx;
     }
 
     render() {
@@ -40,7 +41,7 @@ export class Renderer {
 
         ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-        ctx.beginPath()
+        ctx.beginPath();
 
         const { miniMap, leaderboard, expUI, bossbar } = this.app.game;
         miniMap.render(ctx);
@@ -59,15 +60,15 @@ export class Renderer {
         ctx.clearRect(
             0, 0,
             canvas.width, canvas.height
-        )
+        );
 
-        ctx.beginPath()
+        ctx.beginPath();
 
         const { XOffset, YOffset, scale, cameraPosition } = this.app.game.camera;
 
-        ctx.translate(-cameraPosition.x + XOffset, -cameraPosition.y + YOffset)
+        ctx.translate(-cameraPosition.x + XOffset, -cameraPosition.y + YOffset);
 
-        ctx.scale(scale, scale)
+        ctx.scale(scale, scale);
 
         this.drawWorldMap();
 
@@ -76,14 +77,14 @@ export class Renderer {
         if (!this.oldSortedContainer || this.oldContainer !== this.containers) {
             this.oldContainer = this.containers;
 
-            this.oldSortedContainer =
-                Array.from(this.containers)
-                    .sort((a, b) => b.zIndex - a.zIndex)
+            this.oldSortedContainer
+                = Array.from(this.containers)
+                    .sort((a, b) => b.zIndex - a.zIndex);
         }
 
-        this.oldSortedContainer =
-            Array.from(this.containers)
-                .sort((a, b) => a.zIndex - b.zIndex)
+        this.oldSortedContainer
+            = Array.from(this.containers)
+                .sort((a, b) => a.zIndex - b.zIndex);
 
         for (const container of this.oldSortedContainer) {
             ctx.save();
@@ -92,7 +93,7 @@ export class Renderer {
         }
     }
 
-    oldContainer = new Set<RenderContainer>;
+    oldContainer = new Set<RenderContainer>();
     oldSortedContainer?: RenderContainer[];
 
     zonePaths?: Path2D[];
@@ -107,7 +108,7 @@ export class Renderer {
             for (const zone in Zones) {
                 const data = Zones[zone as ZoneName];
                 ctx.fillStyle = data.backgroundColor;
-                ctx.fill(this.zonePaths[index])
+                ctx.fill(this.zonePaths[index]);
                 index++;
             }
         }
@@ -132,13 +133,13 @@ export class Renderer {
         const borderDistance = 999;
 
         if (!this.zonePaths) {
-            this.zonePaths = []
+            this.zonePaths = [];
 
             let index = 0;
             for (const zonesKey in Zones) {
                 const data = Zones[zonesKey as ZoneName];
                 this.zonePaths.push(new Path2D());
-                const path = this.zonePaths[index]
+                const path = this.zonePaths[index];
 
                 const y = (data.y ?? 0);
                 const height = (data.height ?? gameHeight);
@@ -202,28 +203,28 @@ export class Renderer {
                 Camera.unitToScreen(-borderDistance),
                 Camera.unitToScreen(gameWidth + borderDistance * 2),
                 Camera.unitToScreen(borderDistance)
-            )
+            );
 
             path.rect(
                 Camera.unitToScreen(-borderDistance),
                 Camera.unitToScreen(0),
                 Camera.unitToScreen(borderDistance),
                 Camera.unitToScreen(gameHeight + borderDistance * 2)
-            )
+            );
 
             path.rect(
                 Camera.unitToScreen(gameWidth),
                 Camera.unitToScreen(0),
                 Camera.unitToScreen(borderDistance),
                 Camera.unitToScreen(gameHeight + borderDistance)
-            )
+            );
 
             path.rect(
                 Camera.unitToScreen(0),
                 Camera.unitToScreen(gameHeight),
                 Camera.unitToScreen(gameWidth),
                 Camera.unitToScreen(borderDistance)
-            )
+            );
         }
 
         if (!this.gridPath) {

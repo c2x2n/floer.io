@@ -41,10 +41,10 @@ export const GameConstants = Object.freeze({
         maxNameLength: 20,
         defaultSlot: 10,
         defaultPrepareSlot: 10,
-        defaultEquippedPetals: ["basic","basic","basic","basic","basic"],
+        defaultEquippedPetals: ["basic", "basic", "basic", "basic", "basic"],
         mutateDefaultPetals: {
-            equippedPetals: ["yggdrasil","basic","basic","basic","basic"],
-            chance: 1 / 1000,
+            equippedPetals: ["yggdrasil", "basic", "basic", "basic", "basic"],
+            chance: 1 / 1000
         },
         defaultPreparationPetals: [],
         defaultPetalDistance: 3.5,
@@ -69,7 +69,7 @@ export const GameConstants = Object.freeze({
             bodyDamage: 1,
             knockbackReduction: 0,
             bodyDamageReduction: 0
-        }),
+        })
     },
     petal: {
         rotationRadius: 0.5
@@ -81,7 +81,7 @@ export const GameConstants = Object.freeze({
     loot: {
         radius: 0.6,
         spawnRadius: 3,
-        despawnTime: [30,30,30,50,90,120,180,0.5,0.5,0.5] // super is 1 so that if accidentally dev super petals are dropped, noone can pick it
+        despawnTime: [30, 30, 30, 50, 90, 120, 180, 0.5, 0.5, 0.5] // super is 1 so that if accidentally dev super petals are dropped, noone can pick it
     },
     mob: {
         maxHealth: 10000000,
