@@ -1,5 +1,5 @@
-import { RenderContainer } from "../scripts/utils/render";
-import { ObjectDefinition } from "../../../common/src/utils/definitions";
+import { RenderContainer } from "../scripts/render/misc";
+import { ObjectDefinition } from "../../../common/src/definitions/definitions";
 import { projectileAssets } from "./projectiles";
 import { mobAssets } from "./mobs";
 import { petalAssets } from "./petals";

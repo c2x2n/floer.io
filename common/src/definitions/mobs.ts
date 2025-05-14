@@ -1,4 +1,4 @@
-import { Definitions, ObjectDefinition } from "../utils/definitions";
+import { Definitions, ObjectDefinition } from "./definitions";
 import { Projectiles, ProjectileParameters } from "./projectiles";
 import { RarityName } from "./rarities";
 import { Modifiers } from "../typings";
@@ -121,11 +121,11 @@ export const Mobs = new Definitions<MobDefinition>([
     {
         idString: "massiver_ladybug",
         displayName: "Ladybug",
-        damage: 20,
+        damage: 0,
         health: 2000,
         category: MobCategory.Unactive,
         hitboxRadius: 50,
-        speed: 3,
+        speed: 0,
         usingAssets: "ladybug",
         lootTable: {
             rose: 1,

@@ -3,7 +3,7 @@ import { Game } from "./scripts/game";
 import { UI } from "./ui";
 import { Settings } from "./settings";
 import { Renderer } from "./scripts/render/renderer";
-import { loadStyleSheet } from "./scripts/utils/icons";
+import { loadStyleSheet } from "./scripts/ui/shown/icons";
 
 void document.fonts.ready.then(() => {
     loadStyleSheet();

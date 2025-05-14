@@ -1,4 +1,4 @@
-import { Game } from "./game";
+import { ServerGame } from "./game";
 import { Config } from "./config";
 import { ProcessMessage } from "./server";
 import { WebSocketServer } from "ws";
@@ -32,7 +32,7 @@ export class GameContainer {
 }
 
 if (Cluster.isWorker) {
-    const game = new Game(Config);
+    const game = new ServerGame(Config);
 
     process.on("message", (data: ProcessMessage, socket?: Socket) => {
         const { req } = data;

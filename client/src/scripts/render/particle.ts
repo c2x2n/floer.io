@@ -1,9 +1,11 @@
-import { EasingFunctions, Numeric, P2 } from "../../../../common/src/maths/math";
-import { Random } from "../../../../common/src/utils/random";
-import { UVec2D } from "../../../../common/src/physics/utils";
+import { P2 } from "../../../../common/src/maths/constants";
+import { Random } from "../../../../common/src/maths/random";
+import { UVector2D } from "../../../../common/src/physics/uvector";
 import { type Game } from "../game";
-import { RenderContainer } from "./render";
+import { RenderContainer } from "./misc";
 import VectorAbstract from "../../../../common/src/physics/vectorAbstract";
+import { Numeric } from "../../../../common/src/maths/numeric";
+import { EasingFunctions } from "../../../../common/src/maths/easing";
 
 export class ParticleManager {
     particles: Particle[] = [];
@@ -156,9 +158,9 @@ class Particle {
             data!.value = Numeric.lerp(data!.start, data!.end, data!.easing(t));
         }
 
-        this.position = UVec2D.add(
+        this.position = UVector2D.add(
             this.position,
-            UVec2D.fromPolar(this.data.direction.value, this.data.speed.value * dt)
+            UVector2D.fromPolar(this.data.direction.value, this.data.speed.value * dt)
         );
 
         if (!this.options.tint) return;

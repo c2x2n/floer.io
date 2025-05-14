@@ -1,13 +1,13 @@
 import { ServerEntity } from "./serverEntity";
-import { UVec2D } from "../../../common/src/physics/utils";
+import { UVector2D } from "../../../common/src/physics/uvector";
 import { type EntitiesNetData } from "../../../common/src/net/packets/updatePacket";
-import { CircleHitbox } from "../../../common/src/utils/hitbox";
+import { CircleHitbox } from "../../../common/src/physics/hitbox";
 import { EntityType, GameConstants } from "../../../common/src/constants";
-import { Game } from "../game";
+import { ServerGame } from "../game";
 import { MobCategory, MobDefinition, Mobs } from "../../../common/src/definitions/mobs";
-import { Geometry, Numeric, P2 } from "../../../common/src/maths/math";
+import { P2 } from "../../../common/src/maths/constants";
 import { ServerPlayer } from "./serverPlayer";
-import { Random } from "../../../common/src/utils/random";
+import { Random } from "../../../common/src/maths/random";
 import { PetalDefinition, Petals } from "../../../common/src/definitions/petals";
 import { ServerProjectile } from "./serverProjectile";
 import {
@@ -23,6 +23,8 @@ import { Rarity, RarityName } from "../../../common/src/definitions/rarities";
 import { ServerWall } from "./serverWall";
 import { spawnLoot } from "../misc/spawning";
 import VectorAbstract from "../../../common/src/physics/vectorAbstract";
+import { Geometry } from "../../../common/src/maths/geometry";
+import { Numeric } from "../../../common/src/maths/numeric";
 
 export class ServerMob extends ServerEntity<EntityType.Mob> {
     type: EntityType.Mob = EntityType.Mob;
@@ -50,7 +52,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
     aggroTarget?: damageSource;
 
-    _direction: VectorAbstract = UVec2D["new"](0, 0);
+    _direction: VectorAbstract = UVector2D.new(0, 0);
 
     get direction(): VectorAbstract {
         return this._direction;
@@ -87,6 +89,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
         if (entity instanceof ServerMob) {
             if (this.notCollidingMobs.includes(entity.definition.idString)) return false;
+            return false;
         }
 
         return !(
@@ -105,7 +108,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
     healingToFull = false;
 
-    constructor(game: Game
+    constructor(game: ServerGame
         , position: VectorAbstract
         , direction: VectorAbstract
         , definition: MobDefinition
@@ -160,19 +163,19 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                     && aggro.collidesWith(e.hitbox)) as damageSource[];
 
             if (aggroable.length) {
-                this.changeAggroTo(aggroable[Random["int"](0, aggroable.length - 1)]);
+                this.changeAggroTo(aggroable[Random.int(0, aggroable.length - 1)]);
             }
         }
     }
 
-    shootDirection: VectorAbstract = UVec2D["new"](0, 0);
+    shootDirection: VectorAbstract = UVector2D.new(0, 0);
     shootSpeedForNow?: number;
     lastShootTime = 0;
 
     shoot(shoot: ProjectileParameters): void {
         const position = shoot.definition.onGround
             ? this.position
-            : UVec2D.add(this.position, UVec2D.mul(this.shootDirection, this.hitbox.radius));
+            : UVector2D.add(this.position, UVector2D.mul(this.shootDirection, this.hitbox.radius));
 
         const projectile = new ServerProjectile(this,
             position,
@@ -180,7 +183,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
         if (shoot.velocityAtFirst) {
             projectile.addVelocity(
-                UVec2D.mul(this.shootDirection, shoot.velocityAtFirst)
+                UVector2D.mul(this.shootDirection, shoot.velocityAtFirst)
             );
         }
     }
@@ -193,7 +196,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                 this.shootSpeedForNow = this.definition.shootSpeed;
             } else {
                 this.shootSpeedForNow
-                    = Random["float"](
+                    = Random.float(
                         this.definition.shootSpeed.min,
                         this.definition.shootSpeed.max
                     );
@@ -216,8 +219,8 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
     }
 
     move(): void {
-        this.setAcceleration(UVec2D.mul(
-            this.direction, this.speed
+        this.addAcceleration(UVector2D.mul(
+            this.direction, this.speed * 0.2
         ));
     }
 
@@ -250,7 +253,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                 if (this.lastSegment.aggroTarget) {
                     if (this.definition.shootable) {
                         this.shootDirection = Geometry.radiansToDirection(
-                            Random["float"](-P2, P2)
+                            Random.float(-P2, P2)
                         );
                         this.shootTick();
                     }
@@ -317,7 +320,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
             || this.definition.category === MobCategory.Passive)
             && this.aggroTarget) {
             if (this.aggroTarget.destroyed) return this.changeAggroTo();
-            const distanceBetween = UVec2D.distanceBetween(this.aggroTarget.position, this.position);
+            const distanceBetween = UVector2D.distanceBetween(this.aggroTarget.position, this.position);
             if (distanceBetween > this.definition.aggroRadius * 2.2) return this.changeAggroTo();
 
             this.direction = Geometry.directionBetweenPoints(
@@ -335,7 +338,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                         if (
                             this.definition.turningHead
                             && this.shootReload >= this.shootSpeedForNow * 0.6
-                        ) this.direction = UVec2D.mul(this.direction, -1);
+                        ) this.direction = UVector2D.mul(this.direction, -1);
                     } else {
                         this.move();
                     }
@@ -358,7 +361,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
                     for (const entity of entities) {
                         if (entity instanceof ServerPlayer) {
-                            const distance = UVec2D.distanceBetween(this.position, entity.position);
+                            const distance = UVector2D.distanceBetween(this.position, entity.position);
                             if (distance < nearestDistance) {
                                 nearestDistance = distance;
                                 nearestPlayer = entity;
@@ -370,16 +373,16 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                     const randomSpeedMultiplier = 0.6 + Math.random() * 0.5;
 
                     if (this instanceof ServerFriendlyMob && this.isSummoned && nearestPlayer && Math.random() < 0.7) {
-                        moveDirection = UVec2D["new"](nearestPlayer.direction.direction.x, nearestPlayer.direction.direction.y);
+                        moveDirection = UVector2D.new(nearestPlayer.direction.direction.x, nearestPlayer.direction.direction.y);
                         moveDirection.x += (Math.random() * 0.6 - 0.3);
                         moveDirection.y += (Math.random() * 0.6 - 0.3);
-                        moveDirection = UVec2D.normalize(moveDirection);
-                        this.setAcceleration(UVec2D.mul(
+                        moveDirection = UVector2D.normalize(moveDirection);
+                        this.setAcceleration(UVector2D.mul(
                             moveDirection, 2 * this.speed * randomSpeedMultiplier
                         ));
                     } else {
                         moveDirection = Random.vector(-1, 1, -1, 1);
-                        this.setAcceleration(UVec2D.mul(
+                        this.setAcceleration(UVector2D.mul(
                             moveDirection, this.speed * randomSpeedMultiplier
                         ));
                     }
@@ -395,8 +398,8 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
             } else if (this.walkingReload >= GameConstants.mob.walkingReload) {
                 if (this.walkingTime === 0) this.direction = Random.vector(-1, 1, -1, 1);
 
-                this.setAcceleration(UVec2D.mul(
-                    this.direction, this.speed * GameConstants.mob.walkingTime
+                this.addAcceleration(UVector2D.mul(
+                    this.direction, this.speed * 0.2
                 ));
 
                 this.walkingTime += this.game.dt;
@@ -454,7 +457,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                 popPercents.forEach(popPercent => {
                     if (popPercent >= percent && lastPopped >= popPercent) {
                         new ServerMob(this.game,
-                            Geometry.getPositionOnCircle(Random["float"](-P2, P2), 4, this.position),
+                            Geometry.getPositionOnCircle(Random.float(-P2, P2), 4, this.position),
                             this.direction,
                             Mobs.fromString(popKey)).changeAggroTo(source);
                         if (this.lastPopped > percent) this.lastPopped = percent;
@@ -499,7 +502,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
         for (const lootsKey in lootTable) {
             if (!Petals.hasString(lootsKey)) continue;
-            const random = Random["int"](0, randomMax);
+            const random = Random.int(0, randomMax);
             if (random <= lootTable[lootsKey] * randomMax) {
                 loots.push(Petals.fromString(lootsKey));
             }
@@ -566,7 +569,7 @@ export class ServerFriendlyMob extends ServerMob {
         if (!this.gettingBackToOwner) super.changeAggroTo(entity);
     }
 
-    constructor(game: Game
+    constructor(game: ServerGame
         , public owner: ServerPlayer
         , definition: MobDefinition
         , isSummoned = true) {
@@ -581,7 +584,7 @@ export class ServerFriendlyMob extends ServerMob {
     gettingBackToOwner = false;
 
     tick() {
-        const distanceToOwner = UVec2D.distanceBetween(this.position, this.owner.position);
+        const distanceToOwner = UVector2D.distanceBetween(this.position, this.owner.position);
         if (distanceToOwner > Math.max(8 * this.definition.hitboxRadius, 25)) {
             this.gettingBackToOwner = true;
         }
@@ -590,7 +593,7 @@ export class ServerFriendlyMob extends ServerMob {
             this.aggroTarget = undefined;
             this.direction
                 = Geometry.directionBetweenPoints(this.owner.position, this.position);
-            this.setAcceleration(UVec2D.mul(
+            this.setAcceleration(UVector2D.mul(
                 this.direction, this.speed
             ));
             if (distanceToOwner < 3 * this.definition.hitboxRadius) { this.gettingBackToOwner = false; }

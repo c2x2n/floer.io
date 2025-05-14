@@ -1,6 +1,6 @@
-import { UVec2D } from "../../../../common/src/physics/utils";
-import { Numeric } from "../../../../common/src/maths/math";
+import { UVector2D } from "../../../../common/src/physics/uvector";
 import VectorAbstract from "../../../../common/src/physics/vectorAbstract";
+import { Numeric } from "../../../../common/src/maths/numeric";
 
 export type ColorLike = Color | string | number;
 export type RenderFunc = (dt: number) => void;
@@ -34,7 +34,7 @@ export class RenderContainer {
 
     radius = 0;
 
-    position: VectorAbstract = UVec2D["new"](0, 0);
+    position: VectorAbstract = UVector2D["new"](0, 0);
     tint: Color = {
         r: 255,
         g: 255,

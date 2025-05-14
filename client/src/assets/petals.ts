@@ -1,7 +1,7 @@
 import { AssetsBunch } from "./assets";
-import { P2 } from "../../../common/src/maths/math";
+import { P2 } from "../../../common/src/maths/constants";
 import { loadPathFromSVG } from "./pathLoader";
-import { strokeColor } from "../../../common/src/utils/misc";
+import { strokeColor } from "../../../common/src/misc/colors";
 
 export const petalAssets: AssetsBunch = {
     "basic": containerToDraw => {

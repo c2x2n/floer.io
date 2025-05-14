@@ -1,12 +1,12 @@
 import { ServerEntity } from "./serverEntity";
 import { type EntitiesNetData } from "../../../common/src/net/packets/updatePacket";
-import { CircleHitbox } from "../../../common/src/utils/hitbox";
+import { CircleHitbox } from "../../../common/src/physics/hitbox";
 import { EntityType, GameConstants } from "../../../common/src/constants";
 import { PetalDefinition } from "../../../common/src/definitions/petals";
 import { ServerPlayer } from "./serverPlayer";
-import { Game } from "../game";
+import { ServerGame } from "../game";
 import { Rarity } from "../../../common/src/definitions/rarities";
-import { CollisionResponse } from "../../../common/src/utils/collision";
+import { CollisionResponse } from "../../../common/src/physics/collision";
 import { collideableEntity } from "../typings";
 import VectorAbstract from "../../../common/src/physics/vectorAbstract";
 
@@ -22,7 +22,7 @@ export class ServerLoot extends ServerEntity<EntityType.Loot> {
         return false;
     }
 
-    constructor(game: Game, position: VectorAbstract, definition: PetalDefinition) {
+    constructor(game: ServerGame, position: VectorAbstract, definition: PetalDefinition) {
         super(game, position);
         this.hitbox = new CircleHitbox(GameConstants.loot.radius * 2.5);
 

@@ -1,9 +1,9 @@
 import { type WebSocket } from "ws";
 import { ServerEntity } from "./serverEntity";
-import { UVec2D } from "../../../common/src/physics/utils";
+import { UVector2D } from "../../../common/src/physics/uvector";
 import { GameBitStream, type Packet, PacketStream } from "../../../common/src/net/net";
 import { createHash } from "crypto";
-import { type Game } from "../game";
+import { type ServerGame } from "../game";
 import {
     ChatData,
     type EntitiesNetData,
@@ -11,9 +11,8 @@ import {
     PetalState,
     UpdatePacket
 } from "../../../common/src/net/packets/updatePacket";
-import { CircleHitbox, RectHitbox } from "../../../common/src/utils/hitbox";
-import { Random } from "../../../common/src/utils/random";
-import { Geometry, Numeric } from "../../../common/src/maths/math";
+import { CircleHitbox, RectHitbox } from "../../../common/src/physics/hitbox";
+import { Random } from "../../../common/src/maths/random";
 import { InputAction, InputPacket } from "../../../common/src/net/packets/inputPacket";
 import { JoinPacket } from "../../../common/src/net/packets/joinPacket";
 import { ActionType, EntityType, GameConstants, PlayerState } from "../../../common/src/constants";
@@ -24,16 +23,18 @@ import { PetalDefinition, SavedPetalDefinitionData } from "../../../common/src/d
 import { AttributeEvents } from "../utils/attributeRealizes";
 import { PlayerModifiers } from "../../../common/src/typings";
 import { EventFunctionArguments } from "../utils/petalEvents";
-import { getLevelExpCost, getLevelInformation } from "../../../common/src/utils/levels";
+import { getLevelExpCost, getLevelInformation } from "../../../common/src/definitions/levels";
 import { damageableEntity, damageSource } from "../typings";
 import { LoggedInPacket } from "../../../common/src/net/packets/loggedInPacket";
 import { ServerFriendlyMob } from "./serverMob";
 import { ChatChannel, ChatPacket } from "../../../common/src/net/packets/chatPacket";
-import { PoisonEffect } from "../utils/effects";
+import { PoisonEffect } from "../effect/poisonEffect";
 import { MobDefinition } from "../../../common/src/definitions/mobs";
 import { spawnLoot } from "../misc/spawning";
 import { applyCommand, CommandResolving } from "../misc/command";
 import VectorAbstract from "../../../common/src/physics/vectorAbstract";
+import { Geometry } from "../../../common/src/maths/geometry";
+import { Numeric } from "../../../common/src/maths/numeric";
 
 // 闪避
 enum curveType {
@@ -73,8 +74,8 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         direction: VectorAbstract
         mouseDirection: VectorAbstract
     } = {
-            direction: UVec2D.new(0, 0),
-            mouseDirection: UVec2D.new(0, 0)
+            direction: UVector2D.new(0, 0),
+            mouseDirection: UVector2D.new(0, 0)
         };
 
     distance = 0;
@@ -229,7 +230,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         }
     }
 
-    constructor(game: Game, socket: WebSocket) {
+    constructor(game: ServerGame, socket: WebSocket) {
         const position = Random.vector(
             0,
             game.width,
@@ -248,9 +249,9 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     tick(): void {
         super.tick();
 
-        this.setAcceleration(UVec2D.mul(
+        this.addAcceleration(UVector2D.mul(
             this.direction.direction,
-            Numeric.remap(this.distance, 0, 150, 0, GameConstants.player.maxSpeed) * this.modifiers.speed
+            Numeric.remap(this.distance, 0, 150, 0, GameConstants.player.maxSpeed) * this.modifiers.speed * 0.03
         ));
 
         // 观察者模式下只处理移动，不处理花瓣和其他功能
@@ -681,8 +682,8 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     processInput(packet: InputPacket): void {
         if (!this.isActive() || this.frozen) {
             this.direction = {
-                direction: UVec2D.new(0, 0),
-                mouseDirection: UVec2D.new(0, 0)
+                direction: UVector2D.new(0, 0),
+                mouseDirection: UVector2D.new(0, 0)
             };
             this.distance = 0;
             this.isAttacking = false;
@@ -691,7 +692,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         }
 
         // if the direction changed set to dirty
-        if (!UVec2D.equals(this.direction.direction, Geometry.radiansToDirection(packet.direction.direction))) {
+        if (!UVector2D.equals(this.direction.direction, Geometry.radiansToDirection(packet.direction.direction))) {
             this.setDirty();
         }
         this.direction = {

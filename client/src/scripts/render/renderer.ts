@@ -1,7 +1,7 @@
 import { ClientApplication } from "../../main";
 import { ZoneName, Zones } from "../../../../common/src/definitions/zones";
 import { Camera } from "./camera";
-import { RenderContainer } from "../utils/render";
+import { RenderContainer } from "./misc";
 
 export class Renderer {
     containers = new Set<RenderContainer>();

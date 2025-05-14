@@ -1,6 +1,6 @@
-import { Geometry } from "../maths/math";
 import VectorAbstract from "./vectorAbstract";
-import { UVec2D } from "./utils";
+import { UVector2D } from "./uvector";
+import { Geometry } from "../maths/geometry";
 
 export default class Vector implements VectorAbstract {
     x: number;
@@ -20,6 +20,12 @@ export default class Vector implements VectorAbstract {
     set(vec: VectorAbstract): this {
         this.x = vec.x;
         this.y = vec.y;
+        return this;
+    }
+
+    clear(): this {
+        this.x = 0;
+        this.y = 0;
         return this;
     }
 
@@ -73,6 +79,15 @@ export default class Vector implements VectorAbstract {
     }
 
     get magnitude(): number {
-        return UVec2D.length(this);
+        return UVector2D.length(this);
+    }
+
+    static fromPolar(theta: number, magnitude: number): Vector {
+        const newVector = new Vector(1, 1);
+
+        newVector.angle = theta;
+        newVector.magnitude = magnitude;
+
+        return newVector;
     }
 }

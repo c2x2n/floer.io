@@ -1,5 +1,5 @@
 import { type GameBitStream, type Packet } from "../net";
-import { P2 } from "../../maths/math";
+import { P2 } from "../../maths/constants";
 import { ActionType } from "../../constants";
 
 export type InputAction = {

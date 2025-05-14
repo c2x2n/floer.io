@@ -1,7 +1,6 @@
 import { EntityType } from "../../../common/src/constants";
-import { type Hitbox, RectHitbox } from "../../../common/src/utils/hitbox";
-import { Numeric } from "../../../common/src/maths/math";
-import { UVec2D } from "../../../common/src/physics/utils";
+import { type Hitbox, RectHitbox } from "../../../common/src/physics/hitbox";
+import { UVector2D } from "../../../common/src/physics/uvector";
 import { type ServerEntity } from "../entities/serverEntity";
 import { type ServerPlayer } from "../entities/serverPlayer";
 import { ServerPetal } from "../entities/serverPetal";
@@ -10,6 +9,7 @@ import { ServerLoot } from "../entities/serverLoot";
 import { ServerProjectile } from "../entities/serverProjectile";
 import { ServerWall } from "../entities/serverWall";
 import VectorAbstract from "../../../common/src/physics/vectorAbstract";
+import { Numeric } from "../../../common/src/maths/numeric";
 
 /**
  * A Grid to filter collision detection of game entities
@@ -78,7 +78,7 @@ export class Grid {
             const xRow = this._grid[x];
             for (let y = min.y; y <= max.y; y++) {
                 xRow[y].set(entity.id, entity);
-                cells.push(UVec2D.new(x, y));
+                cells.push(UVector2D.new(x, y));
             }
         }
         // Store the cells this entity is occupying

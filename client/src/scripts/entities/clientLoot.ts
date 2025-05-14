@@ -6,9 +6,9 @@ import { Camera } from "../render/camera";
 import { PetalDefinition } from "../../../../common/src/definitions/petals";
 import { Rarity } from "../../../../common/src/definitions/rarities";
 import { Tween } from "@tweenjs/tween.js";
-import { ICON_drawPetal } from "../utils/icons";
-import { Random } from "../../../../common/src/utils/random";
-import { halfPI, P2 } from "../../../../common/src/maths/math";
+import { ICON_drawPetal } from "../ui/shown/icons";
+import { Random } from "../../../../common/src/maths/random";
+import { halfPI, P2 } from "../../../../common/src/maths/constants";
 
 export class ClientLoot extends ClientEntity {
     type = EntityType.Loot;

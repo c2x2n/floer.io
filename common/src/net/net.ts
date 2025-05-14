@@ -1,6 +1,5 @@
 import { BitStream } from "bit-buffer";
 import { GameConstants } from "../constants";
-import { Numeric } from "../maths/math";
 import { JoinPacket } from "./packets/joinPacket";
 import { InputPacket } from "./packets/inputPacket";
 import { UpdatePacket } from "./packets/updatePacket";
@@ -9,6 +8,7 @@ import { LogInPacket } from "./packets/logInPacket";
 import { LoggedInPacket } from "./packets/loggedInPacket";
 import { ChatPacket } from "./packets/chatPacket";
 import VectorAbstract from "../physics/vectorAbstract";
+import { Numeric } from "../maths/numeric";
 
 export class GameBitStream extends BitStream {
     static create(size: number): GameBitStream {

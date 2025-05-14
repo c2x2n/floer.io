@@ -1,5 +1,5 @@
 import { UI } from "../ui";
-import { EntityPool } from "../../../common/src/utils/entityPool";
+import { EntityPool } from "../../../common/src/misc/entityPool";
 import { ClientPlayer } from "./entities/clientPlayer";
 import { Camera } from "./render/camera";
 import { ClientEntity } from "./entities/clientEntity";
@@ -23,11 +23,11 @@ import { Petals, SavedPetalDefinitionData } from "../../../common/src/definition
 import { ChatChannel, ChatPacket } from "../../../common/src/net/packets/chatPacket";
 import { ClientWall } from "./entities/clientWall";
 import { Settings } from "../settings";
-import { Minimap } from "./ui/minimap";
-import { Leaderboard } from "./ui/leaderboard";
-import { ExpUI } from "./ui/expUI";
-import { ParticleManager } from "./utils/particle";
-import { Bossbar } from "./ui/bossbar";
+import { Minimap } from "./ui/game/minimap";
+import { Leaderboard } from "./ui/game/leaderboard";
+import { ExpUI } from "./ui/game/expUI";
+import { ParticleManager } from "./render/particle";
+import { Bossbar } from "./ui/game/bossbar";
 import $ from "jquery";
 
 const typeToEntity = {

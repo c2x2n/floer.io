@@ -5,11 +5,11 @@ import { Game } from "./scripts/game";
 import { SettingsData } from "./settings";
 import { ChatData } from "../../common/src/net/packets/updatePacket";
 import { ChatChannel } from "../../common/src/net/packets/chatPacket";
-import { Numeric } from "../../common/src/maths/math";
 import { ActionType, EntityType, GameConstants } from "../../common/src/constants";
-import { Random } from "../../common/src/utils/random";
+import { Random } from "../../common/src/maths/random";
 import { Gallery } from "./scripts/gallery";
 import { Config } from "./config";
+import { Numeric } from "../../common/src/maths/numeric";
 
 const version = "0.3.0";
 

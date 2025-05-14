@@ -1,14 +1,14 @@
-import { ZoneDefinition, ZoneName, Zones } from "../../common/src/definitions/zones";
-import { UVec2D } from "../../common/src/physics/utils";
-import { Random } from "../../common/src/utils/random";
-import { Game } from "./game";
-import { CircleHitbox, RectHitbox } from "../../common/src/utils/hitbox";
-import { EntityType } from "../../common/src/constants";
-import VectorAbstract from "../../common/src/physics/vectorAbstract";
+import { ZoneDefinition, ZoneName, Zones } from "../../../common/src/definitions/zones";
+import { UVector2D } from "../../../common/src/physics/uvector";
+import { Random } from "../../../common/src/maths/random";
+import { ServerGame } from "../game";
+import { CircleHitbox, RectHitbox } from "../../../common/src/physics/hitbox";
+import { EntityType } from "../../../common/src/constants";
+import VectorAbstract from "../../../common/src/physics/vectorAbstract";
 
 export class ZonesManager {
     zones = new Map<ZoneName, Zone>();
-    constructor(private game: Game) {
+    constructor(private game: ServerGame) {
         Object.keys(ZoneName).forEach(name => {
             const zoneName = name as ZoneName;
             this.zones.set(zoneName, new Zone(this.game, Zones[zoneName]));
@@ -40,9 +40,9 @@ export class Zone {
         return this.data.density / 15 * this.data.width * this.height / 20 / lagDowner;
     }
 
-    constructor(private game: Game, public data: ZoneDefinition) {
+    constructor(private game: ServerGame, public data: ZoneDefinition) {
         this.hitbox = new RectHitbox(
-            UVec2D.new(data.x, this.y), UVec2D.new(data.x + data.width, this.y + this.height)
+            UVector2D.new(data.x, this.y), UVector2D.new(data.x + data.width, this.y + this.height)
         );
     }
 

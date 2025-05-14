@@ -1,7 +1,7 @@
-import { Game } from "../game";
-import { Numeric } from "../../../../common/src/maths/math";
-import { RectHitbox } from "../../../../common/src/utils/hitbox";
-import { UVec2D } from "../../../../common/src/physics/utils";
+import { Game } from "../../game";
+import { RectHitbox } from "../../../../../common/src/physics/hitbox";
+import { UVector2D } from "../../../../../common/src/physics/uvector";
+import { Numeric } from "../../../../../common/src/maths/numeric";
 
 export class Leaderboard {
     width = 200;
@@ -200,19 +200,19 @@ export class Leaderboard {
         this.positionY = positionY;
 
         this.buttonHbx = new RectHitbox(
-            UVec2D["new"](
+            UVector2D["new"](
                 this.game.screenWidth - 60, 10
             ),
-            UVec2D["new"](
+            UVector2D["new"](
                 this.game.screenWidth - 20, 30
             )
         );
 
         this.leaderboardHbx = new RectHitbox(
-            UVec2D["new"](
+            UVector2D["new"](
                 this.positionX, this.positionY
             ),
-            UVec2D["new"](
+            UVector2D["new"](
                 this.positionX + this.width, this.positionY + this.height
             )
         );

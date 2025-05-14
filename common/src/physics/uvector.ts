@@ -1,10 +1,10 @@
-import { Numeric } from "../maths/math";
 import VectorAbstract from "./vectorAbstract";
+import { Numeric } from "../maths/numeric";
 
 /**
  * Vector util functions for 2D ( that's what "2" means lol )
  */
-export const UVec2D = {
+export const UVector2D = {
     /**
     * Creates a new Vector
     * @param x - The horizontal (x-axis) coordinate
@@ -22,7 +22,7 @@ export const UVec2D = {
     * @returns A new Vector resulting from the addition of vectors a and b
     */
     add(a: VectorAbstract, b: VectorAbstract): VectorAbstract {
-        return UVec2D.new(a.x + b.x, a.y + b.y);
+        return UVector2D.new(a.x + b.x, a.y + b.y);
     },
 
     /**
@@ -33,7 +33,7 @@ export const UVec2D = {
     * @returns A new Vector resulting from the addition of a, and x and y
     */
     add2(a: VectorAbstract, x: number, y: number): VectorAbstract {
-        return UVec2D.new(a.x + x, a.y + y);
+        return UVector2D.new(a.x + x, a.y + y);
     },
 
     /**
@@ -43,7 +43,7 @@ export const UVec2D = {
     * @returns A new Vector resulting from the subtraction of vector b from vector a
     */
     sub(a: VectorAbstract, b: VectorAbstract): VectorAbstract {
-        return UVec2D.new(a.x - b.x, a.y - b.y);
+        return UVector2D.new(a.x - b.x, a.y - b.y);
     },
 
     /**
@@ -54,7 +54,7 @@ export const UVec2D = {
     * @returns A new Vector resulting from the subtraction of and x and y from vector a
     */
     sub2(a: VectorAbstract, x: number, y: number): VectorAbstract {
-        return UVec2D.new(a.x - x, a.y - y);
+        return UVector2D.new(a.x - x, a.y - y);
     },
 
     /**
@@ -64,7 +64,7 @@ export const UVec2D = {
     * @returns A new Vector resulting from the multiplication of vector a and scalar n
     */
     mul(a: VectorAbstract, n: number): VectorAbstract {
-        return UVec2D.new(a.x * n, a.y * n);
+        return UVector2D.new(a.x * n, a.y * n);
     },
 
     /**
@@ -74,7 +74,7 @@ export const UVec2D = {
     * @returns A new Vector resulting from the division of vector a and scalar n
     */
     div(a: VectorAbstract, n: number): VectorAbstract {
-        return UVec2D.new(a.x / n, a.y / n);
+        return UVector2D.new(a.x / n, a.y / n);
     },
 
     /**
@@ -83,7 +83,7 @@ export const UVec2D = {
     * @returns A new Vector with the same coordinates as the input Vector
     */
     clone(vector: VectorAbstract): VectorAbstract {
-        return UVec2D.new(vector.x, vector.y);
+        return UVector2D.new(vector.x, vector.y);
     },
 
     /**
@@ -92,7 +92,7 @@ export const UVec2D = {
     * @returns A new Vector resulting from inverting vector a
     */
     invert(a: VectorAbstract): VectorAbstract {
-        return UVec2D.new(-a.x, -a.y);
+        return UVector2D.new(-a.x, -a.y);
     },
 
     /**
@@ -104,7 +104,7 @@ export const UVec2D = {
     rotate(vector: VectorAbstract, angle: number): VectorAbstract {
         const cos = Math.cos(angle);
         const sin = Math.sin(angle);
-        return UVec2D.new(vector.x * cos - vector.y * sin, vector.x * sin + vector.y * cos);
+        return UVector2D.new(vector.x * cos - vector.y * sin, vector.x * sin + vector.y * cos);
     },
 
     /**
@@ -122,7 +122,7 @@ export const UVec2D = {
      * @returns The length of Vector a
      */
     length(a: VectorAbstract): number {
-        return Math.sqrt(UVec2D.lengthSqr(a));
+        return Math.sqrt(UVector2D.lengthSqr(a));
     },
 
     /**
@@ -132,8 +132,8 @@ export const UVec2D = {
     * @returns The distance between Vector a and b
     */
     distanceBetween(a: VectorAbstract, b: VectorAbstract): number {
-        const diff = UVec2D.sub(a, b);
-        return UVec2D.length(diff);
+        const diff = UVector2D.sub(a, b);
+        return UVector2D.length(diff);
     },
 
     /**
@@ -143,7 +143,7 @@ export const UVec2D = {
      */
     normalize(a: VectorAbstract): VectorAbstract {
         const eps = 0.000001;
-        const len = UVec2D.length(a);
+        const len = UVector2D.length(a);
         return {
             x: len > eps ? a.x / len : a.x,
             y: len > eps ? a.y / len : a.y
@@ -151,9 +151,9 @@ export const UVec2D = {
     },
 
     normalizeSafe(a: VectorAbstract, b?: VectorAbstract): VectorAbstract {
-        b = b ?? UVec2D.new(1.0, 0.0);
+        b = b ?? UVector2D.new(1.0, 0.0);
         const eps = 0.000001;
-        const len = UVec2D.length(a);
+        const len = UVector2D.length(a);
         return {
             x: len > eps ? a.x / len : b.x,
             y: len > eps ? a.y / len : b.y
@@ -167,7 +167,7 @@ export const UVec2D = {
      * @param interpFactor The interpolation factor ranging from 0 to 1
      */
     lerp(start: VectorAbstract, end: VectorAbstract, interpFactor: number): VectorAbstract {
-        return UVec2D.add(UVec2D.mul(start, 1 - interpFactor), UVec2D.mul(end, interpFactor));
+        return UVector2D.add(UVector2D.mul(start, 1 - interpFactor), UVector2D.mul(end, interpFactor));
     },
 
     /**
@@ -203,17 +203,17 @@ export const UVec2D = {
     },
 
     targetEasing(a: VectorAbstract, b: VectorAbstract, n = 4): VectorAbstract {
-        return UVec2D.add(a, UVec2D.div(UVec2D.sub(b, a), n));
+        return UVector2D.add(a, UVector2D.div(UVector2D.sub(b, a), n));
     },
 
     clampWithXY(vector: VectorAbstract, minX: number, maxX: number, minY: number, maxY: number): VectorAbstract {
-        const clampedVector = UVec2D.clone(vector);
+        const clampedVector = UVector2D.clone(vector);
         clampedVector.x = Numeric.clamp(clampedVector.x, minX, maxX);
         clampedVector.y = Numeric.clamp(clampedVector.y, minY, maxY);
         return clampedVector;
     },
 
     clampWithVector(vector: VectorAbstract, min: VectorAbstract, max: VectorAbstract): VectorAbstract {
-        return UVec2D.clampWithXY(vector, min.x, max.x, min.y, max.y);
+        return UVector2D.clampWithXY(vector, min.x, max.x, min.y, max.y);
     }
 };

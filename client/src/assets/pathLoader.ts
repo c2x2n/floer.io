@@ -1,4 +1,4 @@
-import { RenderContainer } from "../scripts/utils/render";
+import { RenderContainer } from "../scripts/render/misc";
 
 export interface PathLoaderArguments {
     containerToDraw: RenderContainer
@@ -15,7 +15,8 @@ export function loadPathFromSVG(
     loader: PathLoaderArguments
 ) {
     const { containerToDraw, pathS } = loader;
-    let { ctx, radius } = containerToDraw;
+    let { radius } = containerToDraw;
+    const { ctx } = containerToDraw;
     const path = new Path2D(pathS);
     radius *= loader.scale ?? 1;
 

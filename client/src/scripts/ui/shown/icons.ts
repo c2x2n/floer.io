@@ -1,15 +1,16 @@
 import $ from "jquery";
-import { UVec2D } from "../../../../common/src/physics/utils";
-import { PetalDefinition, Petals } from "../../../../common/src/definitions/petals";
-import { RenderContainer } from "./render";
-import { Camera } from "../render/camera";
-import { Geometry, P2, PI } from "../../../../common/src/maths/math";
-import { MobDefinition, Mobs } from "../../../../common/src/definitions/mobs";
-import { getAssets, getGameAssetsName } from "../../assets/assets";
-import { petalAssets } from "../../assets/petals";
-import { mobAssets } from "../../assets/mobs";
+import { UVector2D } from "../../../../../common/src/physics/uvector";
+import { PetalDefinition, Petals } from "../../../../../common/src/definitions/petals";
+import { RenderContainer } from "../../render/misc";
+import { Camera } from "../../render/camera";
+import { P2, PI } from "../../../../../common/src/maths/constants";
+import { MobDefinition, Mobs } from "../../../../../common/src/definitions/mobs";
+import { getAssets, getGameAssetsName } from "../../../assets/assets";
+import { petalAssets } from "../../../assets/petals";
+import { mobAssets } from "../../../assets/mobs";
+import { Geometry } from "../../../../../common/src/maths/geometry";
 
-const defaultCenter = UVec2D.new(0, -4);
+const defaultCenter = UVector2D.new(0, -4);
 const defaultRadius = 8;
 const defaultBoxSize = 50;
 
@@ -25,7 +26,7 @@ function ICON_drawPetalPiece(
     const container = new RenderContainer(ctx);
     container.radius = Camera.unitToScreen(displaySize / defaultBoxSize / 2);
 
-    container.position = UVec2D.new(
+    container.position = UVector2D.new(
         xOffset,
         yOffset
     );
@@ -63,7 +64,7 @@ export function ICON_drawPetal(
         for (let i = 0; i < count; i++) {
             const { x, y }
                 = Geometry.getPositionOnCircle(
-                    radiansNow, defaultRadius, UVec2D.new(offsetX, offsetY)
+                    radiansNow, defaultRadius, UVector2D.new(offsetX, offsetY)
                 );
             ICON_drawPetalPiece(ctx, cx + x, cy + y, displaySize, petal, radians, silhouette);
             radiansNow += P2 / count;
@@ -122,7 +123,7 @@ export function ICON_drawMob(
 
         ctx.restore();
     }
-    container.position = UVec2D.new(
+    container.position = UVector2D.new(
         cx + offsetX,
         cy + offsetY
     );

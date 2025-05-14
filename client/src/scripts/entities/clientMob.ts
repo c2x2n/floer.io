@@ -4,11 +4,12 @@ import { Game } from "../game";
 import { EntitiesNetData } from "../../../../common/src/net/packets/updatePacket";
 import { Camera } from "../render/camera";
 import { MobDefinition } from "../../../../common/src/definitions/mobs";
-import { UVec2D } from "../../../../common/src/physics/utils";
+import { UVector2D } from "../../../../common/src/physics/uvector";
 import { Rarity } from "../../../../common/src/definitions/rarities";
 import { Tween, Easing } from "@tweenjs/tween.js";
-import { Geometry, Numeric } from "../../../../common/src/maths/math";
 import { getAssets, getGameAssetsName } from "../../assets/assets";
+import { Geometry } from "../../../../common/src/maths/geometry";
+import { Numeric } from "../../../../common/src/maths/numeric";
 
 export class ClientMob extends ClientEntity {
     type = EntityType.Mob;
@@ -40,7 +41,7 @@ export class ClientMob extends ClientEntity {
             } else {
                 const actualDirection = this.direction;
                 this.container.rotation
-                    = Geometry.directionToRadians(UVec2D.targetEasing(
+                    = Geometry.directionToRadians(UVector2D.targetEasing(
                         Geometry.radiansToDirection(this.container.rotation),
                         actualDirection, 6)
                     );
@@ -49,7 +50,7 @@ export class ClientMob extends ClientEntity {
 
         this.updateContainerPosition(8);
 
-        const movementDistance = UVec2D.distanceBetween(this.oldPosition, this.position);
+        const movementDistance = UVector2D.distanceBetween(this.oldPosition, this.position);
         if (movementDistance) {
             this.playMovementAnimation(movementDistance);
         }

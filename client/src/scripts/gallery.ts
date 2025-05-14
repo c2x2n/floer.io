@@ -3,7 +3,7 @@ import { PetalDefinition, Petals } from "../../../common/src/definitions/petals"
 import { Rarity } from "../../../common/src/definitions/rarities";
 import { renderPetal } from "./inventory";
 import $ from "jquery";
-import { applyTooltip, createMobTooltip, createPetalTooltip } from "./shown/tooltip";
+import { applyTooltip, createMobTooltip, createPetalTooltip } from "./ui/shown/tooltip";
 import { MobDefinition, Mobs } from "../../../common/src/definitions/mobs";
 
 export class Gallery {

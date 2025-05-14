@@ -1,4 +1,4 @@
-import { Definitions, ObjectDefinition } from "../utils/definitions";
+import { Definitions, ObjectDefinition } from "./definitions";
 import { Modifiers, PlayerModifiers } from "../typings";
 import { EntityType } from "../constants";
 import { MobDefinition } from "./mobs";

@@ -1,10 +1,10 @@
-import { Definitions, ObjectDefinition } from "../utils/definitions";
+import { Definitions, ObjectDefinition } from "./definitions";
 import { RarityName } from "./rarities";
 import { PlayerModifiers } from "../typings";
 import { ProjectileParameters, Projectiles } from "./projectiles";
 import { MobCategory, MobDefinition, Mobs } from "./mobs";
 import { EntityType } from "../constants";
-import { halfPI, P2 } from "../maths/math";
+import { halfPI, P2 } from "../maths/constants";
 
 export type SavedPetalDefinitionData = PetalDefinition | null;
 

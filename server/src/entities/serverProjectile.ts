@@ -1,7 +1,7 @@
 import { ServerEntity } from "./serverEntity";
-import { UVec2D } from "../../../common/src/physics/utils";
+import { UVector2D } from "../../../common/src/physics/uvector";
 import { type EntitiesNetData } from "../../../common/src/net/packets/updatePacket";
-import { CircleHitbox } from "../../../common/src/utils/hitbox";
+import { CircleHitbox } from "../../../common/src/physics/hitbox";
 import { EntityType } from "../../../common/src/constants";
 import { ProjectileDefinition, ProjectileParameters } from "../../../common/src/definitions/projectiles";
 import { AttributeEvents } from "../utils/attributeRealizes";
@@ -9,10 +9,11 @@ import { ServerPetal } from "./serverPetal";
 import { damageableEntity, damageSource, isDamageableEntity } from "../typings";
 import { ServerFriendlyMob, ServerMob } from "./serverMob";
 import { ServerPlayer } from "./serverPlayer";
-import { Random } from "../../../common/src/utils/random";
-import { Geometry, P2 } from "../../../common/src/maths/math";
-import { Effect } from "../utils/effects";
+import { Random } from "../../../common/src/maths/random";
+import { P2 } from "../../../common/src/maths/constants";
 import VectorAbstract from "../../../common/src/physics/vectorAbstract";
+import { Geometry } from "../../../common/src/maths/geometry";
+import { Effect } from "../effect/effect";
 
 export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
     type: EntityType.Projectile = EntityType.Projectile;
@@ -25,9 +26,9 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
     damage = 0;
 
     existingTime = 0;
-    direction: VectorAbstract = UVec2D.new(0, 0);
+    direction: VectorAbstract = UVector2D.new(0, 0);
     rotation = 0;
-    initialDirection: VectorAbstract = UVec2D.new(0, 0);
+    initialDirection: VectorAbstract = UVector2D.new(0, 0);
     hasLockedTarget = false;
     source: damageSource;
     elasticity = 0;
@@ -98,8 +99,8 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
             let nearestEntity: damageableEntity | null = null;
             let nearestDistance = preferClosest ? Number.MAX_VALUE : 0;
 
-            const direction = UVec2D.new(this.direction.x, this.direction.y);
-            const normalizedDirection = UVec2D.normalize(direction);
+            const direction = UVector2D.new(this.direction.x, this.direction.y);
+            const normalizedDirection = UVector2D.normalize(direction);
 
             const searchHitbox = new CircleHitbox(detectionRange);
             searchHitbox.position = this.position;
@@ -108,17 +109,17 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
 
             for (const entity of nearbyEntities) {
                 if (isDamageableEntity(entity) && this.canReceiveDamageFrom(entity)) {
-                    const toEntity = UVec2D.sub(entity.position, this.position);
-                    const distance = UVec2D.length(toEntity);
+                    const toEntity = UVector2D.sub(entity.position, this.position);
+                    const distance = UVector2D.length(toEntity);
 
                     if (this.source.type === EntityType.Player) {
-                        const sourceToCurrent = UVec2D.sub(this.position, this.source.position);
-                        const sourceToEntity = UVec2D.sub(entity.position, this.source.position);
+                        const sourceToCurrent = UVector2D.sub(this.position, this.source.position);
+                        const sourceToEntity = UVector2D.sub(entity.position, this.source.position);
 
                         const crossProduct = Math.abs(
                             sourceToCurrent.x * sourceToEntity.y - sourceToCurrent.y * sourceToEntity.x
                         );
-                        const projDistance = crossProduct / UVec2D.length(sourceToCurrent);
+                        const projDistance = crossProduct / UVector2D.length(sourceToCurrent);
 
                         if (preferClosest) {
                             if (projDistance < nearestDistance && distance <= detectionRange) {
@@ -140,8 +141,8 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
                 // 找到目标，标记为已锁定
                 this.hasLockedTarget = true;
 
-                const toTarget = UVec2D.sub(nearestEntity.position, this.position);
-                const targetDirection = UVec2D.normalize(toTarget);
+                const toTarget = UVector2D.sub(nearestEntity.position, this.position);
+                const targetDirection = UVector2D.normalize(toTarget);
 
                 const currentAngle = Math.atan2(this.direction.y, this.direction.x);
                 const targetAngle = Math.atan2(targetDirection.y, targetDirection.x);
@@ -166,7 +167,7 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
             this.rotation = ((angle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
         }
 
-        this.setAcceleration(UVec2D.mul(this.direction, this.parameters.speed));
+        this.setAcceleration(UVector2D.mul(this.direction, this.parameters.speed));
     }
 
     dealDamageTo(to: damageableEntity): void {
@@ -231,7 +232,7 @@ export class ServerProjectile extends ServerEntity<EntityType.Projectile> {
     updatePosition(position: VectorAbstract): void {
         super.updatePosition(position);
         if (
-            this.definition && !this.definition.onGround && !UVec2D.equals(position, this._position)
+            this.definition && !this.definition.onGround && !UVector2D.equals(position, this._position)
         ) this.destroy();
     }
 

@@ -5,12 +5,14 @@ import { EntitiesNetData } from "../../../../common/src/net/packets/updatePacket
 import { Camera } from "../render/camera";
 import { Tween } from "@tweenjs/tween.js";
 import { PetalDefinition } from "../../../../common/src/definitions/petals";
-import { EasingFunctions, Geometry, Numeric } from "../../../../common/src/maths/math";
 import { Rarity } from "../../../../common/src/definitions/rarities";
-import { UVec2D } from "../../../../common/src/physics/utils";
+import { UVector2D } from "../../../../common/src/physics/uvector";
 import { getAssets } from "../../assets/assets";
 import Velocity from "../../../../common/src/physics/velocity";
 import VectorAbstract from "../../../../common/src/physics/vectorAbstract";
+import { Geometry } from "../../../../common/src/maths/geometry";
+import { Numeric } from "../../../../common/src/maths/numeric";
+import { EasingFunctions } from "../../../../common/src/maths/easing";
 
 export class ClientPetal extends ClientEntity {
     type = EntityType.Petal;
@@ -49,9 +51,9 @@ export class ClientPetal extends ClientEntity {
                     const scale = this.definition.images?.equipmentStyles?.coordsToOwner?.scale ?? 1;
                     const rotation = this.definition.images?.equipmentStyles?.coordsToOwner?.rotation ?? 0;
                     const ZI = this.definition.images?.equipmentStyles?.coordsToOwner?.zIndex ?? 3;
-                    this.container.position = UVec2D.sub(
+                    this.container.position = UVector2D.sub(
                         owner.container.position,
-                        UVec2D.new(x, y)
+                        UVector2D.new(x, y)
                     );
 
                     this.container.zIndex = ZI;
@@ -164,8 +166,8 @@ export class ClientPetal extends ClientEntity {
         }
     }
 
-    ownerPosition: VectorAbstract = UVec2D.new(0, 0);
-    toCenterPosition: VectorAbstract = UVec2D.new(0, 0);
+    ownerPosition: VectorAbstract = UVector2D.new(0, 0);
+    toCenterPosition: VectorAbstract = UVector2D.new(0, 0);
 
     updateFromData(data: EntitiesNetData[EntityType.Petal], isNew: boolean): void {
         this.position = data.position;
@@ -183,8 +185,8 @@ export class ClientPetal extends ClientEntity {
             if (owner) this.ownerPosition = owner.position;
         }
         const length
-            = UVec2D.distanceBetween(this.toCenterPosition, data.position);
-        const vector = UVec2D.mul(Geometry.directionBetweenPoints(
+            = UVector2D.distanceBetween(this.toCenterPosition, data.position);
+        const vector = UVector2D.mul(Geometry.directionBetweenPoints(
             data.position, this.toCenterPosition
         ), length * 1.1);
 

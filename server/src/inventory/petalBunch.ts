@@ -1,12 +1,14 @@
 import { getDisplayedPieces, SavedPetalDefinitionData } from "../../../common/src/definitions/petals";
 import { ServerPetal } from "../entities/serverPetal";
-import { Geometry, Numeric, P2 } from "../../../common/src/maths/math";
-import { UVec2D } from "../../../common/src/physics/utils";
+import { P2 } from "../../../common/src/maths/constants";
+import { UVector2D } from "../../../common/src/physics/uvector";
 import { Inventory } from "./inventory";
 import { GameConstants } from "../../../common/src/constants";
 import { ServerPlayer } from "../entities/serverPlayer";
 import { PetalUsingAnimations } from "../utils/attributeRealizes";
 import VectorAbstract from "../../../common/src/physics/vectorAbstract";
+import { Geometry } from "../../../common/src/maths/geometry";
+import { Numeric } from "../../../common/src/maths/numeric";
 
 export class PetalBunch {
     position: VectorAbstract;
@@ -114,7 +116,7 @@ export class PetalBunch {
 
         this.rotationRadians += 0.01;
 
-        const firstPetalCenter = UVec2D.add(
+        const firstPetalCenter = UVector2D.add(
             this.position,
             Geometry.getPositionOnCircle(revolutionRadians, radius)
         );

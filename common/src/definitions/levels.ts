@@ -1,4 +1,4 @@
-import { ZoneName } from "../definitions/zones";
+import { ZoneName } from "./zones";
 
 interface LevelInformation {
     level: number

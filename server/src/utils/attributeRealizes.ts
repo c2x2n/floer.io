@@ -1,16 +1,17 @@
 import { ServerPetal } from "../entities/serverPetal";
-import { Geometry, P2 } from "../../../common/src/maths/math";
-import { UVec2D } from "../../../common/src/physics/utils";
+import { P2 } from "../../../common/src/maths/constants";
+import { UVector2D } from "../../../common/src/physics/uvector";
 import { AttributeNames, AttributeParameters } from "../../../common/src/definitions/petals";
 import { EventInitializer } from "./petalEvents";
-import { Effect } from "./effects";
 import { EntityType } from "../../../common/src/constants";
 import { ServerPlayer } from "../entities/serverPlayer";
 import { ServerFriendlyMob, ServerMob } from "../entities/serverMob";
 import { ServerProjectile } from "../entities/serverProjectile";
 import { isDamageableEntity } from "../typings";
-import { CircleHitbox } from "../../../common/src/utils/hitbox";
+import { CircleHitbox } from "../../../common/src/physics/hitbox";
 import { ServerEntity } from "../entities/serverEntity";
+import { Geometry } from "../../../common/src/maths/geometry";
+import { Effect } from "../effect/effect";
 
 export enum AttributeEvents {
     HEALING = "HEALING",
@@ -71,7 +72,7 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                         const direction
                             = Geometry.directionBetweenPoints(petal.owner.position, petal.position);
                         petal.owner.addVelocity(
-                            UVec2D.mul(direction, data * 10)
+                            UVector2D.mul(direction, data * 10)
                         );
                     }
                 }
@@ -99,7 +100,7 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                             knockbackMultiplier = Math.min(1.0, baseRadius / entityRadius);
                         }
                         entity.addVelocity(
-                            UVec2D.mul(entityToPlayerDirection, Math.abs(data) * 10 * knockbackMultiplier)
+                            UVector2D.mul(entityToPlayerDirection, Math.abs(data) * 10 * knockbackMultiplier)
                         );
                     }
                 }
@@ -185,8 +186,8 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                 const position = petal.position;
                 const projectile = new ServerProjectile(
                     petal.owner, position, direction, data, petal);
-                projectile.addVelocity(UVec2D.mul(direction, data.velocityAtFirst ?? data.speed * 6));
-                if (data.definition.onGround) { projectile.addVelocity(UVec2D.mul(direction, 80 * data.hitboxRadius / 5)); }
+                projectile.addVelocity(UVector2D.mul(direction, data.velocityAtFirst ?? data.speed * 6));
+                if (data.definition.onGround) { projectile.addVelocity(UVector2D.mul(direction, 80 * data.hitboxRadius / 5)); }
             }, PetalUsingAnimations.NORMAL);
         }
     },
@@ -200,7 +201,7 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                 const position = petal.position;
                 const projectile = new ServerProjectile(
                     petal.owner, position, direction, data, petal);
-                projectile.addVelocity(UVec2D.mul(direction, data.velocityAtFirst ?? data.speed * 6));
+                projectile.addVelocity(UVector2D.mul(direction, data.velocityAtFirst ?? data.speed * 6));
             }, PetalUsingAnimations.NORMAL);
         }
     },
@@ -225,7 +226,7 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                         = Geometry.directionBetweenPoints(position, petal.petalBunch.centerPosition);
                     const projectile = new ServerProjectile(
                         petal.owner, position, direction, para, petal);
-                    projectile.addVelocity(UVec2D.mul(direction, para.velocityAtFirst ?? para.speed * 6));
+                    projectile.addVelocity(UVector2D.mul(direction, para.velocityAtFirst ?? para.speed * 6));
 
                     radianNow += radianStep;
                 }
@@ -242,8 +243,8 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                 const position = petal.position;
                 const projectile = new ServerProjectile(
                     petal.owner, position, direction, data, petal);
-                projectile.addVelocity(UVec2D.mul(direction, data.velocityAtFirst ?? data.speed * 6));
-                if (data.definition.onGround) { projectile.addVelocity(UVec2D.mul(direction, 80 * data.hitboxRadius / 5)); }
+                projectile.addVelocity(UVector2D.mul(direction, data.velocityAtFirst ?? data.speed * 6));
+                if (data.definition.onGround) { projectile.addVelocity(UVector2D.mul(direction, 80 * data.hitboxRadius / 5)); }
             }, PetalUsingAnimations.NORMAL);
 
             on(AttributeEvents.DEFEND, () => {
@@ -513,10 +514,10 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                         if (validTargets.length === 0) break;
 
                         let nextTarget = validTargets[0];
-                        let minDistance = UVec2D.distanceBetween(currentTarget.position, nextTarget.position);
+                        let minDistance = UVector2D.distanceBetween(currentTarget.position, nextTarget.position);
 
                         for (let i = 1; i < validTargets.length; i++) {
-                            const distance = UVec2D.distanceBetween(currentTarget.position, validTargets[i].position);
+                            const distance = UVector2D.distanceBetween(currentTarget.position, validTargets[i].position);
                             if (distance < minDistance) {
                                 minDistance = distance;
                                 nextTarget = validTargets[i];

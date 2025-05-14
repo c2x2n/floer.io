@@ -1,22 +1,24 @@
-import { type GameEntity } from "../../../common/src/utils/entityPool";
+import { type GameEntity } from "../../../common/src/misc/entityPool";
 import { EntityType, GameConstants } from "../../../common/src/constants";
 import { GameBitStream } from "../../../common/src/net/net";
 import { type EntitiesNetData, EntitySerializations } from "../../../common/src/net/packets/updatePacket";
-import { CircleHitbox, type Hitbox } from "../../../common/src/utils/hitbox";
-import { UVec2D } from "../../../common/src/physics/utils";
-import { type Game } from "../game";
-import { CollisionResponse } from "../../../common/src/utils/collision";
-import { EffectManager, PoisonEffect } from "../utils/effects";
+import { CircleHitbox, type Hitbox } from "../../../common/src/physics/hitbox";
+import { UVector2D } from "../../../common/src/physics/uvector";
+import { type ServerGame } from "../game";
+import { CollisionResponse } from "../../../common/src/physics/collision";
+import { PoisonEffect } from "../effect/poisonEffect";
 import { Modifiers } from "../../../common/src/typings";
 import { collideableEntity, damageSource } from "../typings";
 import { ServerPlayer } from "./serverPlayer";
 import Vector from "../../../common/src/physics/vector";
 import VectorAbstract from "../../../common/src/physics/vectorAbstract";
 import Velocity from "../../../common/src/physics/velocity";
+import { EffectManager } from "../effect/effectManager";
+import { Geometry } from "../../../common/src/maths/geometry";
 
 export abstract class ServerEntity<T extends EntityType = EntityType> implements GameEntity {
     abstract type: T;
-    game: Game;
+    game: ServerGame;
     id: number;
 
     _position: VectorAbstract;
@@ -44,11 +46,13 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
     fullStream!: GameBitStream;
 
     weight = 5;
-    elasticity = 0.7;
-    knockback = 1;
+    damagedEntityThisTick: ServerEntity[] = [];
 
     acceleration: Vector = new Vector();
     velocity: Velocity = new Velocity();
+
+    absorbKnockback = 8;
+    pushFactor = 1;
 
     state: {
         poison?: PoisonEffect
@@ -66,18 +70,35 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
         return !this.destroyed;
     }
 
-    constructor(game: Game, pos: VectorAbstract) {
+    constructor(game: ServerGame, pos: VectorAbstract) {
         this.game = game;
         this.id = game.nextEntityID;
         this._position = pos;
     }
 
     tick() {
+        this.damagedEntityThisTick = [];
+
         this.effects.tick();
+
+        this.velocity.setPosition(this.position);
+
+        this.applyPhysics();
     }
 
     applyPhysics(): void {
         if (this.destroyed) return;
+
+        this.addAcceleration(this.velocity.clone().mul(-0.2));
+        this.velocity.add(this.acceleration);
+
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
+        if (this.velocity.magnitude < 0.01) this.velocity.magnitude = 0;
+
+        this.updatePosition(this.position);
+
+        this.acceleration.clear();
     }
 
     init(): void {
@@ -139,63 +160,34 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
         this.game.grid.updateEntity(this);
     }
 
-    addVelocity(vec: VectorAbstract, downing = 0.7): void {
-
-    }
+    addVelocity(vec: VectorAbstract, downing = 0.7): void {}
 
     setAcceleration(vec: VectorAbstract): void {
-
+        this.acceleration.set(vec);
     }
 
     addAcceleration(vec: VectorAbstract): void {
-        this.acceleration;
+        this.acceleration.add(vec);
+    }
+
+    receiveKnockback(entity: collideableEntity): void {
+        this.addAcceleration(
+            UVector2D.fromPolar(
+                Geometry.angleBetweenPoints(entity.position, this.position),
+                -2
+            )
+        );
     }
 
     collideWith(collision: CollisionResponse, entity: collideableEntity): void {
         if (!entity.canCollideWith(this) || !this.canCollideWith(entity)) return;
-        const knockbackBetween: { [K in collideableEntity["type"]]: number } = {
-            [EntityType.Mob]: 0,
-            [EntityType.Petal]: 0,
-            [EntityType.Player]: 1.5,
-            [EntityType.Projectile]: 0,
-            [EntityType.Loot]: 0,
-            [EntityType.Wall]: 0
-        };
+
         if (collision) {
-            if (entity.knockback === 0) {
-                this.position = UVec2D.add(
-                    this.position,
-                    UVec2D.mul(collision.dir, collision.pen)
-                );
-
-                // for (const aVelocity of this.velocity) {
-                //     aVelocity.vector = UVec2D.add(
-                //         aVelocity.vector,
-                //         UVec2D.mul(collision.dir, collision.pen)
-                //     );
-                // }
-
-                return;
-            }
-
-            let knockbackMultiplier = 1;
-            if (this.type === EntityType.Player) {
-                const player = this as unknown as ServerPlayer;
-                knockbackMultiplier = Math.max(0, 1 - (player.modifiers.knockbackReduction || 0));
-            }
-
-            this.addVelocity(
-                UVec2D.mul(
-                    collision.dir,
-                    (collision.pen + (entity.type !== this.type ? entity.knockback : knockbackBetween[entity.type]))
-                    * entity.weight
-                    * (-1)
-                    * knockbackMultiplier
-                    / (this.weight + entity.weight)
-                    / this.game.dt
-                ),
-                this.elasticity
+            this.position = UVector2D.add(
+                this.position,
+                Vector.fromPolar(Geometry.directionToRadians(collision.dir), -collision.pen)
             );
+            this.velocity.updateVelocity();
         }
     }
 

@@ -1,7 +1,8 @@
-import { UVec2D } from "../../../common/src/physics/utils";
+import { UVector2D } from "../../../common/src/physics/uvector";
 import { type Game } from "./game";
-import { Geometry, halfPI, PI } from "../../../common/src/maths/math";
+import { halfPI, PI } from "../../../common/src/maths/constants";
 import { DirectionIn, InputAction } from "../../../common/src/net/packets/inputPacket";
+import { Geometry } from "../../../common/src/maths/geometry";
 
 export class Input {
     readonly game: Game;
@@ -23,8 +24,8 @@ export class Input {
     setVirtualMousePosition(x: number, y: number): void {
         this.clientDirection = Math.atan2(y - window.innerHeight / 2, x - window.innerWidth / 2);
 
-        this.mouseMovementDistance = UVec2D.length(
-            UVec2D.new(
+        this.mouseMovementDistance = UVector2D.length(
+            UVector2D.new(
                 y - window.innerHeight / 2, x - window.innerWidth / 2
             )
         );
@@ -61,7 +62,7 @@ export class Input {
             const vDir = Geometry.radiansToDirection(vRad);
 
             if (hMove != 0 && vMove != 0) {
-                return Geometry.directionToRadians(UVec2D.add(vDir, hDir));
+                return Geometry.directionToRadians(UVector2D.add(vDir, hDir));
             } else if (hMove != 0) {
                 return hRad;
             } else if (vMove != 0) {
@@ -120,8 +121,8 @@ export class Input {
 
             this.clientDirection = Math.atan2(e.clientY - window.innerHeight / 2, e.clientX - window.innerWidth / 2);
 
-            this.mouseMovementDistance = UVec2D.length(
-                UVec2D.new(
+            this.mouseMovementDistance = UVector2D.length(
+                UVector2D.new(
                     e.clientY - window.innerHeight / 2, e.clientX - window.innerWidth / 2
                 )
             );

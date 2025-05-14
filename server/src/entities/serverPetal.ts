@@ -1,15 +1,15 @@
 import { ServerEntity } from "./serverEntity";
 import { type EntitiesNetData } from "../../../common/src/net/packets/updatePacket";
-import { CircleHitbox } from "../../../common/src/utils/hitbox";
+import { CircleHitbox } from "../../../common/src/physics/hitbox";
 import { EntityType } from "../../../common/src/constants";
 import { PetalDefinition } from "../../../common/src/definitions/petals";
 import { ServerPlayer } from "./serverPlayer";
-import { CollisionResponse } from "../../../common/src/utils/collision";
+import { CollisionResponse } from "../../../common/src/physics/collision";
 import { AttributeEvents, PetalUsingAnimations } from "../utils/attributeRealizes";
 import { collideableEntity, damageableEntity, damageSource } from "../typings";
 import { PetalBunch } from "../inventory/petalBunch";
 import { ServerFriendlyMob, ServerMob } from "./serverMob";
-import { UVec2D } from "../../../common/src/physics/utils";
+import { UVector2D } from "../../../common/src/physics/uvector";
 
 export class ServerPetal extends ServerEntity<EntityType.Petal> {
     type: EntityType.Petal = EntityType.Petal;
@@ -225,7 +225,7 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
 
     get data(): Required<EntitiesNetData[EntityType.Petal]> {
         const data = {
-            position: UVec2D.mul(UVec2D.sub(this.position, this.owner.position), 100),
+            position: UVector2D.mul(UVector2D.sub(this.position, this.owner.position), 100),
             isReloading: this.isReloading || this.hidden,
             gotDamage: this.gotDamage,
             full: {

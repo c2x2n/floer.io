@@ -1,12 +1,13 @@
 import { Game } from "./game";
 import $ from "jquery";
-import { Numeric, P2 } from "../../../common/src/maths/math";
+import { P2 } from "../../../common/src/maths/constants";
 import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../../../common/src/definitions/petals";
 import { UI } from "../ui";
 import { Rarity } from "../../../common/src/definitions/rarities";
 import { ActionType } from "../../../common/src/constants";
-import { applyTooltip, createPetalTooltip } from "./shown/tooltip";
+import { applyTooltip, createPetalTooltip } from "./ui/shown/tooltip";
 import { PetalData, PetalState } from "../../../common/src/net/packets/updatePacket";
+import { Numeric } from "../../../common/src/maths/numeric";
 
 interface EasingData {
     x: number

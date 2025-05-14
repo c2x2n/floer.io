@@ -1,7 +1,7 @@
 export const Config: Readonly<ServerConfig> = Object.freeze({
     host: "0.0.0.0",
     port: 12563,
-    tps: 60,
+    tps: 25,
     adminSecret: "72502bd1646d5d37a75fb1aa76b9bd3d53e2129ebd6913b5040da31960181d41"
 });
 

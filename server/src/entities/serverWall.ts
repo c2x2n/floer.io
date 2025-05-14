@@ -1,9 +1,9 @@
 import { ServerEntity } from "./serverEntity";
 import { type EntitiesNetData } from "../../../common/src/net/packets/updatePacket";
-import { CircleHitbox, RectHitbox } from "../../../common/src/utils/hitbox";
+import { CircleHitbox, RectHitbox } from "../../../common/src/physics/hitbox";
 import { EntityType, GameConstants } from "../../../common/src/constants";
-import { Game } from "../game";
-import { CollisionResponse } from "../../../common/src/utils/collision";
+import { ServerGame } from "../game";
+import { CollisionResponse } from "../../../common/src/physics/collision";
 import { collideableEntity } from "../typings";
 import VectorAbstract from "../../../common/src/physics/vectorAbstract";
 
@@ -18,7 +18,7 @@ export class ServerWall extends ServerEntity<EntityType.Wall> {
 
     knockback = 0;
 
-    constructor(game: Game, min: VectorAbstract, max: VectorAbstract) {
+    constructor(game: ServerGame, min: VectorAbstract, max: VectorAbstract) {
         super(game, min);
         this.hitbox = new RectHitbox(min, max);
         this.position = min;

@@ -1,15 +1,16 @@
-import { Game } from "../game";
+import { ServerGame } from "../game";
 import { PetalDefinition } from "../../../common/src/definitions/petals";
 import { Rarity } from "../../../common/src/definitions/rarities";
-import { Geometry, P2 } from "../../../common/src/maths/math";
+import { P2 } from "../../../common/src/maths/constants";
 import { ServerLoot } from "../entities/serverLoot";
 import { GameConstants } from "../../../common/src/constants";
 import { MobDefinition, Mobs } from "../../../common/src/definitions/mobs";
 import { ServerMob } from "../entities/serverMob";
-import { Random } from "../../../common/src/utils/random";
+import { Random } from "../../../common/src/maths/random";
 import VectorAbstract from "../../../common/src/physics/vectorAbstract";
+import { Geometry } from "../../../common/src/maths/geometry";
 
-export function spawnLoot(game: Game, loots: PetalDefinition[], position: VectorAbstract, bypassLimitations = false): void {
+export function spawnLoot(game: ServerGame, loots: PetalDefinition[], position: VectorAbstract, bypassLimitations = false): void {
     const spawnedLoots = loots.concat([]);
 
     loots.forEach(loot => {
@@ -46,7 +47,7 @@ export function spawnLoot(game: Game, loots: PetalDefinition[], position: Vector
     }
 }
 
-export function spawnSegmentMobs(game: Game, definition: MobDefinition, head_position: VectorAbstract): ServerMob {
+export function spawnSegmentMobs(game: ServerGame, definition: MobDefinition, head_position: VectorAbstract): ServerMob {
     const hitboxRadius = definition.hitboxRadius;
     let direction = Random["float"](-P2, P2);
     let positionNow = head_position;

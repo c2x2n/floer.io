@@ -1,13 +1,14 @@
-import { type GameEntity } from "../../../../common/src/utils/entityPool";
+import { type GameEntity } from "../../../../common/src/misc/entityPool";
 import { EntityType } from "../../../../common/src/constants";
-import { UVec2D } from "../../../../common/src/physics/utils";
+import { UVector2D } from "../../../../common/src/physics/uvector";
 import { Game } from "../game";
 import { EntitiesNetData } from "../../../../common/src/net/packets/updatePacket";
 import { Tween } from "@tweenjs/tween.js";
-import { Numeric, P2 } from "../../../../common/src/maths/math";
+import { P2 } from "../../../../common/src/maths/constants";
 import { Camera } from "../render/camera";
-import { RenderContainer } from "../utils/render";
+import { RenderContainer } from "../render/misc";
 import VectorAbstract from "../../../../common/src/physics/vectorAbstract";
+import { Numeric } from "../../../../common/src/maths/numeric";
 
 export abstract class ClientEntity<T extends EntityType = EntityType> implements GameEntity {
     readonly game: Game;
@@ -19,8 +20,8 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
 
     lastReceivePacket = 0;
 
-    oldPosition: VectorAbstract = UVec2D.new(0, 0);
-    _position: VectorAbstract = UVec2D.new(0, 0);
+    oldPosition: VectorAbstract = UVector2D.new(0, 0);
+    _position: VectorAbstract = UVector2D.new(0, 0);
     hitboxRadius = 0;
 
     get position(): VectorAbstract {
@@ -32,8 +33,8 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
         this._position = position;
     }
 
-    oldDirection: VectorAbstract = UVec2D.new(0, 0);
-    _direction: VectorAbstract = UVec2D.new(0, 0);
+    oldDirection: VectorAbstract = UVector2D.new(0, 0);
+    _direction: VectorAbstract = UVector2D.new(0, 0);
 
     get direction(): VectorAbstract {
         return this._direction;
@@ -86,14 +87,14 @@ export abstract class ClientEntity<T extends EntityType = EntityType> implements
     updateContainerPosition(n?: number): void {
         if (n) {
             this.container.position
-                = UVec2D.targetEasing(
+                = UVector2D.targetEasing(
                     this.container.position,
                     Camera.vecToScreen(this.position),
                     n
                 );
         } else {
             this.container.position = Camera.vecToScreen(
-                UVec2D.lerp(this.oldPosition, this.position, this.interpolationFactor)
+                UVector2D.lerp(this.oldPosition, this.position, this.interpolationFactor)
             );
         }
     }

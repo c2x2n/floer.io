@@ -1,37 +1,38 @@
 import { type WebSocket } from "ws";
 import { ServerPlayer } from "./entities/serverPlayer";
 import { ServerEntity } from "./entities/serverEntity";
-import { Grid } from "./utils/grid";
-import { EntityPool } from "../../common/src/utils/entityPool";
+import { Grid } from "./map/grid";
+import { EntityPool } from "../../common/src/misc/entityPool";
 import { EntityType, GameConstants } from "../../common/src/constants";
 import NanoTimer from "nanotimer";
 import { Config, type ServerConfig } from "./config";
-import { IDAllocator } from "./utils/idAllocator";
-import { UVec2D } from "../../common/src/physics/utils";
+import { IDAllocator } from "./idAllocator";
+import { UVector2D } from "../../common/src/physics/uvector";
 import { ServerMob } from "./entities/serverMob";
 import { MobDefinition, Mobs } from "../../common/src/definitions/mobs";
-import { CollisionResponse } from "../../common/src/utils/collision";
-import { Random } from "../../common/src/utils/random";
+import { CollisionResponse } from "../../common/src/physics/collision";
+import { Random } from "../../common/src/maths/random";
 import { collideableEntity, isCollideableEntity, isDamageableEntity } from "./typings";
 import { PacketStream } from "../../common/src/net/net";
 import { JoinPacket } from "../../common/src/net/packets/joinPacket";
 import { PetalDefinition } from "../../common/src/definitions/petals";
-import { Geometry, P2 } from "../../common/src/maths/math";
+import { P2 } from "../../common/src/maths/constants";
 import { Rarity, RarityName } from "../../common/src/definitions/rarities";
 import { ChatData } from "../../common/src/net/packets/updatePacket";
 import { MobSpawner, SpecialSpawn, ZoneName } from "../../common/src/definitions/zones";
 import jwt from "jsonwebtoken";
-import { getLevelInformation } from "../../common/src/utils/levels";
-import { Zone, ZonesManager } from "./zones";
+import { getLevelInformation } from "../../common/src/definitions/levels";
+import { Zone, ZonesManager } from "./map/zones";
 import { ServerWall } from "./entities/serverWall";
 import { spawnSegmentMobs } from "./misc/spawning";
 import { Walls } from "../../common/src/definitions/walls";
 import { GameData } from "./gameContainer";
 import VectorAbstract from "../../common/src/physics/vectorAbstract";
+import { Geometry } from "../../common/src/maths/geometry";
 
 type SpecialSpawningTimer = { timer: number, toNextTimer: number, spawned?: ServerMob };
 
-export class Game {
+export class ServerGame {
     players = new EntityPool<ServerPlayer>();
 
     activePlayers = new EntityPool<ServerPlayer>();
@@ -46,7 +47,7 @@ export class Game {
 
     adminSecret: string = Config.adminSecret;
 
-    maxVector = UVec2D.new(GameConstants.game.width, GameConstants.game.height);
+    maxVector = UVector2D.new(GameConstants.game.width, GameConstants.game.height);
 
     mapDirty = false;
 
@@ -75,16 +76,16 @@ export class Game {
 
         for (const wall of Walls) {
             const { x, y, width, height } = wall;
-            new ServerWall(this, UVec2D.new(x, y), UVec2D.new(x + width, y + height));
+            new ServerWall(this, UVector2D.new(x, y), UVector2D.new(x + width, y + height));
         }
     }
 
     clampPosition(p: VectorAbstract, width: number, height: number): VectorAbstract {
-        const maxVector = UVec2D.sub(this.maxVector, UVec2D.new(width, height));
-        const position = UVec2D.clone(p);
-        return UVec2D.clampWithVector(
+        const maxVector = UVector2D.sub(this.maxVector, UVector2D.new(width, height));
+        const position = UVector2D.clone(p);
+        return UVector2D.clampWithVector(
             position,
-            UVec2D.new(width, height),
+            UVector2D.new(width, height),
             maxVector
         );
     }
@@ -169,8 +170,6 @@ export class Game {
 
         const activeEntities = new Set<ServerEntity>();
 
-        const collisionTasks = new Set<CollisionTask>();
-
         // update entities
         for (const entity of this.grid.entities.values()) {
             if (entity.isActive()) activeEntities.add(entity);
@@ -188,27 +187,20 @@ export class Game {
                     = entity.hitbox.getIntersection(collidedEntity.hitbox);
 
                 if (collision) {
-                    if (isDamageableEntity(entity) && isDamageableEntity(collidedEntity)) {
+                    if (isDamageableEntity(entity)
+                        && !entity.damagedEntityThisTick.includes(collidedEntity)
+                        && isDamageableEntity(collidedEntity)) {
+                        collidedEntity.damagedEntityThisTick.push(entity);
                         entity.dealDamageTo(collidedEntity);
+                        // collidedEntity.receiveKnockback(entity);
+                        collidedEntity.dealDamageTo(entity);
+                        // entity.receiveKnockback(entity);
                     }
-
-                    if (isCollideableEntity(entity) && isCollideableEntity(collidedEntity)) {
-                        const task: CollisionTask = {
-                            source: entity,
-                            target: collidedEntity,
-                            collision
-                        };
-
-                        collisionTasks.add(task);
-                    }
+                    // if (isCollideableEntity(entity) && isCollideableEntity(collidedEntity)) {
+                    //     entity.collideWith(collision, collidedEntity);
+                    //     collidedEntity.collideWith(collision, entity);
+                    // }
                 }
-            }
-        }
-
-        for (const collisionTask of collisionTasks) {
-            const { source, target, collision } = collisionTask;
-            if (collision) {
-                source.collideWith(collision, target);
             }
         }
 
@@ -380,10 +372,4 @@ export class Game {
     leaderboard(): ServerPlayer[] {
         return Array.from(this.activePlayers).sort((a, b) => b.exp - a.exp);
     }
-}
-
-interface CollisionTask {
-    source: collideableEntity
-    target: collideableEntity
-    collision: CollisionResponse
 }

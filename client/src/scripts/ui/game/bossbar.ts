@@ -1,6 +1,6 @@
-import { Game } from "../game";
-import { MobDefinition } from "../../../../common/src/definitions/mobs";
-import { Rarity } from "../../../../common/src/definitions/rarities";
+import { Game } from "../../game";
+import { MobDefinition } from "../../../../../common/src/definitions/mobs";
+import { Rarity } from "../../../../../common/src/definitions/rarities";
 
 export interface BossbarData {
     mob: MobDefinition

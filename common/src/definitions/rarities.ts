@@ -1,5 +1,5 @@
-import { Definitions, ObjectDefinition } from "../utils/definitions";
-import { strokeColor } from "../utils/misc";
+import { Definitions, ObjectDefinition } from "./definitions";
+import { strokeColor } from "../misc/colors";
 
 export enum RarityName {
     common = "common",

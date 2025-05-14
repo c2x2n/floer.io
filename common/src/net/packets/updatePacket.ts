@@ -4,7 +4,7 @@ import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../../definit
 import { MobDefinition, Mobs } from "../../definitions/mobs";
 import { Projectiles, ProjectileDefinition } from "../../definitions/projectiles";
 import VectorAbstract from "../../physics/vectorAbstract";
-import { P2 } from "../../maths/math";
+import { P2 } from "../../maths/constants";
 
 export interface EntitiesNetData {
     [EntityType.Player]: {

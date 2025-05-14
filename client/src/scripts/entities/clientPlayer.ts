@@ -2,10 +2,12 @@ import { ClientEntity } from "./clientEntity";
 import { EntityType, GameConstants, PlayerState } from "../../../../common/src/constants";
 import { Game } from "../game";
 import { Camera } from "../render/camera";
-import { Geometry, Numeric, P2 } from "../../../../common/src/maths/math";
-import { UVec2D } from "../../../../common/src/physics/utils";
+import { P2 } from "../../../../common/src/maths/constants";
+import { UVector2D } from "../../../../common/src/physics/uvector";
 import { EntitiesNetData } from "../../../../common/src/net/packets/updatePacket";
 import VectorAbstract from "../../../../common/src/physics/vectorAbstract";
+import { Geometry } from "../../../../common/src/maths/geometry";
+import { Numeric } from "../../../../common/src/maths/numeric";
 
 export class ClientPlayer extends ClientEntity {
     type = EntityType.Player;
@@ -119,9 +121,10 @@ export class ClientPlayer extends ClientEntity {
         }
     }
 
-    eyeBallPosition: VectorAbstract = UVec2D.new(0, 0);
+    eyeBallPosition: VectorAbstract = UVector2D.new(0, 0);
 
     drawFlower() {
+        console.log(this.position)
         const mouthX = 6.2;
         const mouthY = 9;
 
@@ -135,7 +138,7 @@ export class ClientPlayer extends ClientEntity {
         const bodyColor = this.container.getRenderColor(colors[0]);
         const borderColor = this.container.getRenderColor(colors[1]);
 
-        const firstEyeCenter = UVec2D.new(-6.2, -4.8);
+        const firstEyeCenter = UVector2D.new(-6.2, -4.8);
         const eyeWidth = 3;
         const eyeHeight = 6.5;
         const eyeStroke = 4;
@@ -154,12 +157,12 @@ export class ClientPlayer extends ClientEntity {
         );
 
         const eyeballPosition
-            = UVec2D.new(
+            = UVector2D.new(
                 eyeInsideWidth * eyeInsideHeight * Math.cos(radians) / ellRadius,
                 eyeInsideWidth * eyeInsideHeight * Math.sin(radians) / ellRadius
             );
 
-        this.eyeBallPosition = UVec2D.targetEasing(
+        this.eyeBallPosition = UVector2D.targetEasing(
             this.eyeBallPosition,
             eyeballPosition
         );

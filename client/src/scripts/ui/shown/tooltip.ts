@@ -1,10 +1,10 @@
-import { Rarity } from "../../../../common/src/definitions/rarities";
-import { AttributeNames, AttributeParameters, PetalDefinition, Petals } from "../../../../common/src/definitions/petals";
-import { Modifiers, PlayerModifiers } from "../../../../common/src/typings";
-import { renderPetal } from "../inventory";
+import { Rarity } from "../../../../../common/src/definitions/rarities";
+import { AttributeNames, AttributeParameters, PetalDefinition, Petals } from "../../../../../common/src/definitions/petals";
+import { Modifiers, PlayerModifiers } from "../../../../../common/src/typings";
+import { renderPetal } from "../../inventory";
 import $ from "jquery";
-import { MobDefinition, Mobs } from "../../../../common/src/definitions/mobs";
-import { Gallery } from "../gallery";
+import { MobDefinition, Mobs } from "../../../../../common/src/definitions/mobs";
+import { Gallery } from "../../gallery";
 import Big from "big.js";
 
 const tooltipTemplate = $("<div class='tooltip information'></div>");
