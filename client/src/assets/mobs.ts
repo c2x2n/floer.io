@@ -98,16 +98,16 @@ export const mobAssets: AssetsBunch = {
                     attempts++;
 
                     const size
-                        = Random["float"](
+                        = Random.float(
                             Math.max(Math.log(containerToDraw.radius * 0.7)
                                 , 5)
                             , Math.log(containerToDraw.radius) * 2
                         );
 
                     const svgX
-                        = Random["float"](-SVG_WIDTH, SVG_WIDTH);
+                        = Random.float(-SVG_WIDTH, SVG_WIDTH);
                     const svgY
-                        = Random["float"](-SVG_HEIGHT, SVG_HEIGHT);
+                        = Random.float(-SVG_HEIGHT, SVG_HEIGHT);
 
                     const isInBody
                         = tempCtx.isPointInPath(ladybugBodyPath2D, svgX, svgY);
@@ -190,16 +190,16 @@ export const mobAssets: AssetsBunch = {
                     attempts++;
 
                     const size
-                        = Random["float"](
+                        = Random.float(
                             Math.max(Math.log(containerToDraw.radius * 0.7)
                                 , 5)
                             , Math.log(containerToDraw.radius) * 2
                         );
 
                     const svgX
-                        = Random["float"](-SVG_WIDTH, SVG_WIDTH);
+                        = Random.float(-SVG_WIDTH, SVG_WIDTH);
                     const svgY
-                        = Random["float"](-SVG_HEIGHT, SVG_HEIGHT);
+                        = Random.float(-SVG_HEIGHT, SVG_HEIGHT);
 
                     const isInBody
                         = tempCtx.isPointInPath(ladybugBodyPath2D, svgX, svgY);
@@ -282,16 +282,16 @@ export const mobAssets: AssetsBunch = {
                     attempts++;
 
                     const size
-                        = Random["float"](
+                        = Random.float(
                             Math.max(Math.log(containerToDraw.radius * 0.7)
                                 , 5)
                             , Math.log(containerToDraw.radius) * 2
                         );
 
                     const svgX
-                        = Random["float"](-SVG_WIDTH, SVG_WIDTH);
+                        = Random.float(-SVG_WIDTH, SVG_WIDTH);
                     const svgY
-                        = Random["float"](-SVG_HEIGHT, SVG_HEIGHT);
+                        = Random.float(-SVG_HEIGHT, SVG_HEIGHT);
 
                     const isInBody
                         = tempCtx.isPointInPath(ladybugBodyPath2D, svgX, svgY);
@@ -1446,7 +1446,7 @@ export const mobAssets: AssetsBunch = {
         ctx.fill();
         ctx.stroke();
     },
-    "digger": (containerToDraw) => {
+    digger: containerToDraw => {
         const { ctx, radius } = containerToDraw;
 
         ctx.save();
@@ -1458,21 +1458,21 @@ export const mobAssets: AssetsBunch = {
 
         ctx.save();
         ctx.rotate(rotation);
-        
+
         const spikeCount = 8;
         const outerRadius = radius * 0.85;
         const innerRadius = radius * 0.85;
         const spikeLength = radius * 0.3;
-        
+
         ctx.fillStyle = containerToDraw.getRenderColor("#000000");
-        
+
         ctx.beginPath();
-        
+
         const firstSpikeX = (outerRadius + spikeLength) * Math.cos(0.5 / spikeCount * P2);
         const firstSpikeY = (outerRadius + spikeLength) * Math.sin(0.5 / spikeCount * P2);
-        
+
         ctx.moveTo(firstSpikeX, firstSpikeY);
-        
+
         for (let i = 0; i < spikeCount; i++) {
             const currentAngle = ((i + 0.5) / spikeCount) * P2;
             const nextAngle = ((i + 1.5) / spikeCount) * P2;
@@ -1488,20 +1488,20 @@ export const mobAssets: AssetsBunch = {
 
             ctx.quadraticCurveTo(arcX, arcY, nextSpikeX, nextSpikeY);
         }
-        
+
         ctx.arc(0, 0, innerRadius, 0, P2, true);
         ctx.closePath();
         ctx.fill();
-        
+
         ctx.restore();
- 
+
         ctx.save();
 
         ctx.rotate(-containerToDraw.rotation);
 
         const bodyColor = containerToDraw.getRenderColor("#888888");
         const borderColor = containerToDraw.getRenderColor("#555555");
-        
+
         ctx.beginPath();
         ctx.fillStyle = bodyColor;
         ctx.lineWidth = radius * 0.1;
@@ -1533,7 +1533,7 @@ export const mobAssets: AssetsBunch = {
         ctx.beginPath();
         ctx.fillStyle = "#111111";
         ctx.rect(
-            -eyeCenterX - eyeWidth/2, eyeCenterY - eyeHeight/2,
+            -eyeCenterX - eyeWidth / 2, eyeCenterY - eyeHeight / 2,
             eyeWidth, eyeHeight
         );
         ctx.fill();
@@ -1541,7 +1541,7 @@ export const mobAssets: AssetsBunch = {
         ctx.beginPath();
         ctx.fillStyle = "#111111";
         ctx.rect(
-            eyeCenterX - eyeWidth/2, eyeCenterY - eyeHeight/2,
+            eyeCenterX - eyeWidth / 2, eyeCenterY - eyeHeight / 2,
             eyeWidth, eyeHeight
         );
         ctx.fill();
@@ -1552,8 +1552,8 @@ export const mobAssets: AssetsBunch = {
         const eyeInsideHeight = eyeHeight * 0.4;
 
         const ellRadius = Math.sqrt(
-            (eyeInsideWidth * Math.sin(radians)) ** 2 + 
-            (eyeInsideHeight * Math.cos(radians)) ** 2
+            (eyeInsideWidth * Math.sin(radians)) ** 2
+            + (eyeInsideHeight * Math.cos(radians)) ** 2
         );
 
         const eyeOffsetX = eyeInsideWidth * eyeInsideHeight * Math.cos(radians) / ellRadius;
@@ -1565,7 +1565,7 @@ export const mobAssets: AssetsBunch = {
         ctx.save();
         ctx.beginPath();
         ctx.rect(
-            -eyeCenterX - eyeWidth/2, eyeCenterY - eyeHeight/2,
+            -eyeCenterX - eyeWidth / 2, eyeCenterY - eyeHeight / 2,
             eyeWidth, eyeHeight
         );
         ctx.clip();
@@ -1573,8 +1573,8 @@ export const mobAssets: AssetsBunch = {
         ctx.beginPath();
         ctx.fillStyle = "#eeeeee";
         ctx.rect(
-            -eyeCenterX + eyeOffsetX - eyeballWidth/2, 
-            eyeCenterY + eyeOffsetY - eyeballHeight/2,
+            -eyeCenterX + eyeOffsetX - eyeballWidth / 2,
+            eyeCenterY + eyeOffsetY - eyeballHeight / 2,
             eyeballWidth, eyeballHeight
         );
         ctx.fill();
@@ -1586,7 +1586,7 @@ export const mobAssets: AssetsBunch = {
         ctx.save();
         ctx.beginPath();
         ctx.rect(
-            eyeCenterX - eyeWidth/2, eyeCenterY - eyeHeight/2,
+            eyeCenterX - eyeWidth / 2, eyeCenterY - eyeHeight / 2,
             eyeWidth, eyeHeight
         );
         ctx.clip();
@@ -1594,19 +1594,19 @@ export const mobAssets: AssetsBunch = {
         ctx.beginPath();
         ctx.fillStyle = "#eeeeee";
         ctx.rect(
-            eyeCenterX + eyeOffsetX - eyeballWidth/2, 
-            eyeCenterY + eyeOffsetY - eyeballHeight/2,
+            eyeCenterX + eyeOffsetX - eyeballWidth / 2,
+            eyeCenterY + eyeOffsetY - eyeballHeight / 2,
             eyeballWidth, eyeballHeight
         );
         ctx.fill();
         ctx.stroke();
         ctx.restore();
-        
+
         ctx.restore();
 
         ctx.restore();
     },
-    "default": (containerToDraw) => {
-        mobAssets["rock"](containerToDraw);
-    },
-}
+    default: containerToDraw => {
+        mobAssets.rock(containerToDraw);
+    }
+};
