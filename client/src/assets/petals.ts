@@ -914,9 +914,6 @@ export const petalAssets: AssetsBunch = {
         ctx.save();
         ctx.beginPath();
 
-        const rotation = Math.sin(time * 2) * 0.1;
-        ctx.rotate(rotation);
-
         ctx.beginPath();
         const corners = 6;
         const diceRadius = radius * 0.8;
@@ -935,7 +932,7 @@ export const petalAssets: AssetsBunch = {
         ctx.closePath();
 
         const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
-        const pulseValue = (Math.sin(time * 3) + 1) / 2; // 0到1之间脉动
+        const pulseValue = (Math.sin(time * 3) + 1) / 2;
 
         gradient.addColorStop(0, "rgba(100, 0, 0, 1)");
         gradient.addColorStop(0.5, "rgba(80, 0, 50, 1)");

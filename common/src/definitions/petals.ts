@@ -1536,8 +1536,8 @@ export const Petals = new Definitions<PetalDefinition>([
         idString: "myt_dice",
         displayName: "Omen",
         description: "check your destiny.",
-        damage: 20,
-        health: 50,
+        damage: 24,
+        health: 64,
         extendable: true,
         images: {
             slotDisplaySize: 55,
@@ -1585,12 +1585,20 @@ export const Petals = new Definitions<PetalDefinition>([
                     }
                 },
                 {
-                    attribute: "paralyze",
+                    attribute: "lightning",
                     weight: 1,
                     value: {
-                        duration: 10,
-                        speedReduction: 0.8,
-                        revolutionReduction: 0.8
+                        range: 15,
+                        bounces: 10,
+                        attenuation: 0.9
+                    }
+                },
+                {
+                    attribute: "health_percent_damage",
+                    weight: 1,
+                    value: {
+                        percent: 0.25,
+                        maxDamage: 100
                     }
                 }
             ]
