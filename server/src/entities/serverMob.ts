@@ -76,9 +76,21 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
     canReceiveDamageFrom(entity: ServerEntity): boolean {
         if (entity instanceof ServerProjectile) {
+            if (this.definition.category === MobCategory.Friendly && 
+                entity.source.type === EntityType.Player) 
+                return false;
             return entity.source.type != this.type;
         }
-        if (entity instanceof ServerFriendlyMob) { return true; }
+        if (entity instanceof ServerFriendlyMob)
+            return true;
+        if (this.definition.category === MobCategory.Friendly && 
+            (entity.type === EntityType.Player || entity.type === EntityType.Petal)) 
+            return false;
+        if (this.definition.category === MobCategory.Friendly && entity instanceof ServerMob) {
+            if (entity.definition.category === MobCategory.Friendly)
+                return false;
+            return true;
+        }
         return !(entity instanceof ServerMob);
     }
 
@@ -133,12 +145,16 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
     }
 
     changeAggroTo(entity?: damageSource): void {
-        if (![MobCategory.Enemy, MobCategory.Passive].includes(this.definition.category)) return;
+        if (![MobCategory.Enemy, MobCategory.Passive, MobCategory.Friendly].includes(this.definition.category)) return;
 
         if (this.aggroTarget && !entity) {
             this.aggroTarget = undefined;
         } else if (!this.aggroTarget && entity) {
             if (!this.canReceiveDamageFrom(entity)) return;
+            if (this.definition.category === MobCategory.Friendly && 
+                entity.type === EntityType.Player) 
+                return;
+            
             this.aggroTarget = entity;
         }
 
@@ -148,19 +164,31 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
     }
 
     getRandomAggroAround() {
-        if (this.definition.category === MobCategory.Enemy
+        if ((this.definition.category === MobCategory.Enemy || 
+            this.definition.category === MobCategory.Friendly)
             && !this.aggroTarget) {
             const aggro = new CircleHitbox(
                 this.definition.aggroRadius, this.position
             );
 
-            const entities
-                = this.game.grid.intersectsHitbox(aggro);
-
-            const aggroable = Array.from(entities)
-                .filter(e =>
-                    isDamageSourceEntity(e)
-                    && aggro.collidesWith(e.hitbox)) as damageSource[];
+            const entities =
+                this.game.grid.intersectsHitbox(aggro);
+            
+            let aggroable: damageSource[] = [];
+            
+            if (this.definition.category === MobCategory.Enemy) {
+                aggroable = Array.from(entities)
+                    .filter(e =>
+                        isDamageSourceEntity(e)
+                        && aggro.collidesWith(e.hitbox)) as damageSource[];
+            } else if (this.definition.category === MobCategory.Friendly) {
+                aggroable = Array.from(entities)
+                    .filter(e =>
+                        e instanceof ServerMob &&
+                        e.definition.category !== MobCategory.Friendly &&
+                        e !== this &&
+                        aggro.collidesWith(e.hitbox)) as damageSource[];
+            }
 
             if (aggroable.length) {
                 this.changeAggroTo(aggroable[Random.int(0, aggroable.length - 1)]);
@@ -316,9 +344,15 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
 
         if (this.definition.category === MobCategory.Fixed) return;
 
+        if (this.definition.category === MobCategory.Friendly) {
+            this.getRandomAggroAround();
+        }
+
         if ((this.definition.category === MobCategory.Enemy
-            || this.definition.category === MobCategory.Passive)
-            && this.aggroTarget) {
+            || this.definition.category === MobCategory.Passive
+            || this.definition.category === MobCategory.Friendly)
+            && this.aggroTarget)
+        {
             if (this.aggroTarget.destroyed) return this.changeAggroTo();
             const distanceBetween = UVector2D.distanceBetween(this.aggroTarget.position, this.position);
             if (distanceBetween > this.definition.aggroRadius * 2.2) return this.changeAggroTo();
@@ -414,8 +448,21 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         }
     }
 
-    dealDamageTo(to: damageableEntity): void {
-        if (to.canReceiveDamageFrom(this)) { to.receiveDamage(this.damage, this); }
+    dealDamageTo(to: damageableEntity): void{
+        if (this.definition.category === MobCategory.Friendly && 
+            (to.type === EntityType.Player || to.type === EntityType.Petal))
+            return;
+            
+        if (this.definition.category === MobCategory.Friendly && 
+            to instanceof ServerMob) {
+            if (to.definition.category === MobCategory.Friendly)
+                return;
+            to.receiveDamage(this.damage, this);
+            return;
+        }
+            
+        if (to.canReceiveDamageFrom(this))
+            to.receiveDamage(this.damage, this);
     }
 
     calcModifiers(now: Modifiers, extra: Partial<Modifiers>): Modifiers {
@@ -459,7 +506,15 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                         new ServerMob(this.game,
                             Geometry.getPositionOnCircle(Random.float(-P2, P2), 4, this.position),
                             this.direction,
-                            Mobs.fromString(popKey)).changeAggroTo(source);
+                            Mobs.fromString(popKey)).changeAggroTo(source)
+                        
+                        if (this.definition.idString === "ant_hole" && popKey === "queen_ant" && Math.random() < 0.2) {
+                            new ServerMob(this.game,
+                                Geometry.getPositionOnCircle(Random.float(-P2, P2), 6, this.position),
+                                this.direction,
+                                Mobs.fromString("digger")).changeAggroTo(source)
+                        }
+                        
                         if (this.lastPopped > percent) this.lastPopped = percent;
                     }
                 });
