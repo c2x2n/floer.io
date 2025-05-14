@@ -1088,7 +1088,7 @@ export const Petals = new Definitions<PetalDefinition>([
     },
     {
         idString: "pinger",
-        displayName: "Stinger",
+        displayName: "Apex",
         description: "It really hurts, but it's very fragile",
         damage: 75,
         health: 10,
@@ -2075,7 +2075,7 @@ export const Petals = new Definitions<PetalDefinition>([
         attributes: {
             area_poison: {
                 radius: 15,
-                damagePerSecond: 10
+                damagePerSecond: 20
             }
         },
         modifiers: {

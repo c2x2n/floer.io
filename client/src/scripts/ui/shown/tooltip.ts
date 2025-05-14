@@ -346,7 +346,7 @@ const attributesShowingConfigs: { [K in AttributeNames]: AttributeShowingFunctio
 
                     const displayName = attrName.charAt(0).toUpperCase() + attrName.slice(1).replace(/_/g, " ");
                     results.push({
-                        displayName: `- ${displayName} (${weightPercent}%)`,
+                        displayName: `-\u00A0\u00A0${displayName} (${weightPercent}%)`,
                         value: "",
                         color: "#7788dd"
                     });
@@ -357,7 +357,7 @@ const attributesShowingConfigs: { [K in AttributeNames]: AttributeShowingFunctio
                             for (let i = 1; i < attrResults.length; i++) {
                                 const paramResult = attrResults[i];
                                 results.push({
-                                    displayName: `----${paramResult.displayName}`,
+                                    displayName: `\u00A0\u00A0\u00A0\u00A0\u00A0${paramResult.displayName}`,
                                     value: paramResult.value,
                                     color: paramResult.color
                                 });
@@ -366,7 +366,7 @@ const attributesShowingConfigs: { [K in AttributeNames]: AttributeShowingFunctio
                             const singleResult = attrResults[0];
                             if (singleResult.value) {
                                 results.push({
-                                    displayName: `----${singleResult.displayName}`,
+                                    displayName: `\u00A0\u00A0\u00A0\u00A0\u00A0${singleResult.displayName}`,
                                     value: singleResult.value,
                                     color: singleResult.color
                                 });
@@ -376,7 +376,7 @@ const attributesShowingConfigs: { [K in AttributeNames]: AttributeShowingFunctio
 
                     if (data.length > 1) {
                         results.push({
-                            displayName: `- ...still ${data.length - 1} more effects`,
+                            displayName: `...still ${data.length - 1} more effects`,
                             value: "",
                             color: "#999999"
                         });
