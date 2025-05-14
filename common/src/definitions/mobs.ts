@@ -1552,7 +1552,7 @@ export const Mobs = new Definitions<MobDefinition>([
         rarity: RarityName.mythic,
         exp: 500,
         usingAssets: "starfish"
-    },{
+    }, {
         idString: "digger",
         displayName: "Digger",
         damage: 40,
@@ -1563,13 +1563,13 @@ export const Mobs = new Definitions<MobDefinition>([
         speed: 3.2,
         description: "Wrong game, bud.",
         images: {
-            slotDisplaySize: 85,
+            slotDisplaySize: 85
         },
         lootTable: {
-            "uranium": 0.04,
-            "cutter": 0.6,
-            "smasher": 0.4,
-            "disc": 0.4
+            uranium: 0.04,
+            cutter: 0.6,
+            smasher: 0.4,
+            disc: 0.4
         },
         rarity: RarityName.legendary,
         exp: 1000
