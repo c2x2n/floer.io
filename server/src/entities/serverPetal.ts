@@ -191,18 +191,21 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
         if (this.owner.spectatorMode) {
             return;
         }
+
         if (this.damage && to.canReceiveDamageFrom(this)) {
             const owner = this.owner;
             const originalIsPetalAttack = owner.isPetalAttack;
             owner.isPetalAttack = true;
-
-            to.receiveDamage(this.damage, owner);
 
             owner.sendEvent(
                 AttributeEvents.PETAL_DEAL_DAMAGE,
                 to,
                 this
             );
+
+            if (this.definition.attributes?.true_damage === undefined) {
+                to.receiveDamage(this.damage, owner);
+            }
 
             owner.isPetalAttack = originalIsPetalAttack;
         }

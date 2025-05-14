@@ -37,6 +37,68 @@ export interface AttributeRealize<T extends AttributeNames = AttributeNames> {
     ) => void
 }
 
+function applyTrueDamage(entity: ServerEntity, damage: number, petal: ServerPetal): boolean {
+    if (!isDamageableEntity(entity) || damage <= 0 || !entity.canReceiveDamageFrom(petal.owner)) {
+        return false;
+    }
+
+    const trueDamageRatio = petal.definition.attributes?.true_damage;
+    if (trueDamageRatio === undefined || trueDamageRatio <= 0) {
+        return false;
+    }
+
+    const trueDamage = damage * trueDamageRatio;
+    const normalDamage = damage * (1 - trueDamageRatio);
+
+    if (trueDamage > 0) {
+        if (entity instanceof ServerPlayer) {
+            entity.health -= trueDamage;
+            if (entity.health <= 0) {
+                entity.receiveDamage(0, petal.owner, true);
+            }
+        } else if (typeof entity.health === "number") {
+            entity.health -= trueDamage;
+            if (entity.health <= 0) {
+                if (entity instanceof ServerMob && entity.destroyCheck) {
+                    entity.destroyCheck();
+                } else if (entity.destroy) {
+                    entity.destroy();
+                }
+            }
+        }
+    }
+
+    if (normalDamage > 0) {
+        entity.receiveDamage(normalDamage, petal.owner);
+    }
+
+    return true;
+}
+
+function selectRandomAttribute(attributes: Required<AttributeParameters>["random"]) {
+    if (!attributes || attributes.length === 0) return null;
+
+    const totalWeight = attributes.reduce((sum, attr) => sum + attr.weight, 0);
+
+    const random = Math.random() * totalWeight;
+
+    let cumulativeWeight = 0;
+    for (const attr of attributes) {
+        cumulativeWeight += attr.weight;
+        if (random <= cumulativeWeight) {
+            return {
+                name: attr.attribute,
+                value: attr.value
+            };
+        }
+    }
+
+    return {
+        name: attributes[attributes.length - 1].attribute,
+        value: attributes[attributes.length - 1].value
+    };
+}
+
 export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K> } = {
     absorbing_heal: {
         callback: (on, petal, data) => {
@@ -291,7 +353,11 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                 entity => {
                     if (!entity || !data) return;
                     if (Math.random() < data.chance && isDamageableEntity(entity) && petal.damage) {
-                        entity.receiveDamage(petal.damage * (data.multiplier - 1), petal.owner);
+                        const criticalDamage = petal.damage * (data.multiplier - 1);
+
+                        if (!applyTrueDamage(entity, criticalDamage, petal)) {
+                            entity.receiveDamage(criticalDamage, petal.owner);
+                        }
                     }
                 }
             );
@@ -309,7 +375,10 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                         const limitedDamage = data.maxDamage !== undefined
                             ? Math.min(additionalDamage, data.maxDamage)
                             : additionalDamage;
-                        entity.receiveDamage(limitedDamage, petal.owner);
+
+                        if (!applyTrueDamage(entity, limitedDamage, petal)) {
+                            entity.receiveDamage(limitedDamage, petal.owner);
+                        }
                     }
                 }
             );
@@ -318,13 +387,14 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
 
     damage_avoidance: {
         callback: (on, petal, data) => {
-            const originalReceiveDamage = petal.receiveDamage;
+            const originalReceiveDamage = (amount: number, source: any) =>
+                petal.receiveDamage.call(petal, amount, source);
 
             petal.receiveDamage = function(amount: number, source: any) {
                 if (data && Math.random() < data.chance) {
                     return;
                 }
-                originalReceiveDamage.call(this, amount, source);
+                originalReceiveDamage(amount, source);
             };
         }
     },
@@ -408,12 +478,12 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
     area_poison: {
         callback: (on, petal, data) => {
             if (!data) return;
-            const originalTick = petal.tick;
+            const originalTick = () => petal.tick.call(petal);
             let timeSinceLastTick = 0;
             const tickInterval = data.tickInterval || 1;
 
             petal.tick = function() {
-                originalTick.call(this);
+                originalTick();
 
                 if (this.isReloading || this.destroyed) return;
 
@@ -472,13 +542,14 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
     },
     armor: {
         callback: (on, petal, data) => {
-            const originalReceiveDamage = petal.receiveDamage;
+            const originalReceiveDamage = (amount: number, source: any) =>
+                petal.receiveDamage.call(petal, amount, source);
 
             petal.receiveDamage = function(amount: number, source: any) {
                 if (data) {
                     amount = Math.max(0, amount - data);
                 }
-                originalReceiveDamage.call(this, amount, source);
+                originalReceiveDamage(amount, source);
             };
         }
     },
@@ -551,7 +622,8 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
     },
     damage_reduction_percent: {
         callback: (on, petal, data) => {
-            const originalReceiveDamage = petal.receiveDamage;
+            const originalReceiveDamage = (amount: number, source: any) =>
+                petal.receiveDamage.call(petal, amount, source);
 
             petal.receiveDamage = function(amount: number, source: any) {
                 let shouldReduceDamage = false;
@@ -570,8 +642,83 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                     }
                 }
 
-                originalReceiveDamage.call(this, amount, source);
+                originalReceiveDamage(amount, source);
             };
+        }
+    },
+    true_damage: {
+        callback: (on, petal, data) => {
+            on<AttributeEvents.PETAL_DEAL_DAMAGE>(
+                AttributeEvents.PETAL_DEAL_DAMAGE,
+                entity => {
+                    if (!entity || !data || !petal.damage) return;
+                    if (isDamageableEntity(entity) && entity.canReceiveDamageFrom(petal.owner)) {
+                        const trueDamage = petal.damage * data;
+                        const normalDamage = petal.damage * (1 - data);
+
+                        if (trueDamage > 0) {
+                            if (entity instanceof ServerPlayer) {
+                                entity.health -= trueDamage;
+                                if (entity.health <= 0) {
+                                    entity.receiveDamage(0, petal.owner, true);
+                                }
+                            } else if (typeof entity.health === "number") {
+                                entity.health -= trueDamage;
+                                if (entity.health <= 0) {
+                                    if (entity instanceof ServerMob && entity.destroyCheck) {
+                                        entity.destroyCheck();
+                                    } else if (entity.destroy) {
+                                        entity.destroy();
+                                    }
+                                }
+                            }
+                        }
+
+                        if (normalDamage > 0) {
+                            entity.receiveDamage(normalDamage, petal.owner);
+                        }
+                    }
+                }
+            );
+        }
+    },
+    random: {
+        callback: (on, petal, data) => {
+            if (!data || data.length === 0) return;
+            const eventTypes = [
+                AttributeEvents.ATTACK,
+                AttributeEvents.DEFEND,
+                AttributeEvents.FLOWER_DEAL_DAMAGE,
+                AttributeEvents.FLOWER_GET_DAMAGE,
+                AttributeEvents.HEALING,
+                AttributeEvents.PETAL_DEAL_DAMAGE,
+                AttributeEvents.PROJECTILE_DEAL_DAMAGE,
+                AttributeEvents.USABLE
+            ];
+
+            eventTypes.forEach(eventType => {
+                on(eventType, eventData => {
+                    const selected = selectRandomAttribute(data);
+                    if (!selected) return;
+
+                    const attrName = selected.name;
+                    if (!(attrName in PetalAttributeRealizes)) return;
+
+                    const handler = PetalAttributeRealizes[attrName];
+                    if (!handler) return;
+
+                    const tempOn = (registeredEventType: AttributeEvents, callback: any, animation?: PetalUsingAnimations) => {
+                        if (registeredEventType === eventType) {
+                            callback(eventData);
+                            if (animation && eventType === AttributeEvents.USABLE) {
+                                petal.startUsing(animation);
+                            }
+                        }
+                    };
+
+                    handler.callback(tempOn, petal, selected.value);
+                });
+            });
         }
     }
 } as const;

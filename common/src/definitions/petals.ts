@@ -134,6 +134,12 @@ export type AttributeParameters = {
         readonly bounces: number
     }
     readonly damage_reduction_percent?: number
+    readonly true_damage?: number
+    readonly random?: Array<{
+        readonly attribute: keyof AttributeParameters
+        readonly weight: number
+        readonly value: any
+    }>
 };
 
 export function getDisplayedPieces(petal: PetalDefinition): number {
@@ -1098,8 +1104,14 @@ export const Petals = new Definitions<PetalDefinition>([
         isDuplicate: true,
         isShowedInOne: true,
         pieceAmount: 5,
-        rarity: RarityName.mythic,
-        usingAssets: "stinger"
+        attributes: {
+            true_damage: 1.0,
+            health_percent_damage: {
+                percent: 0.25,
+                maxDamage: 100
+            }
+        },
+        rarity: RarityName.mythic
     },
     {
         idString: "blood_sepinger",
@@ -1519,6 +1531,71 @@ export const Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.epic
+    },
+    {
+        idString: "myt_dice",
+        displayName: "Omen",
+        description: "check your destiny.",
+        damage: 20,
+        health: 50,
+        extendable: true,
+        images: {
+            slotDisplaySize: 55,
+            selfGameRotation: 18
+        },
+        reloadTime: 3,
+        usable: false,
+        hitboxRadius: 0.5,
+        isDuplicate: false,
+        pieceAmount: 1,
+        attributes: {
+            random: [
+                {
+                    attribute: "poison",
+                    weight: 1,
+                    value: {
+                        damagePerSecond: 12,
+                        duration: 10
+                    }
+                },
+                {
+                    attribute: "paralyze",
+                    weight: 1,
+                    value: {
+                        duration: 10,
+                        speedReduction: 0.5,
+                        revolutionReduction: 0
+                    }
+                },
+                {
+                    attribute: "paralyze",
+                    weight: 1,
+                    value: {
+                        duration: 10,
+                        speedReduction: 0,
+                        revolutionReduction: 0.5
+                    }
+                },
+                {
+                    attribute: "healing_debuff",
+                    weight: 1,
+                    value: {
+                        healing: 0,
+                        duration: 10
+                    }
+                },
+                {
+                    attribute: "paralyze",
+                    weight: 1,
+                    value: {
+                        duration: 10,
+                        speedReduction: 0.8,
+                        revolutionReduction: 0.8
+                    }
+                }
+            ]
+        },
+        rarity: RarityName.mythic
     },
     {
         idString: "chip",

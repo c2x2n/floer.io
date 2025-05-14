@@ -116,6 +116,11 @@ const petalDefinitionShowingConfigs: Record<string, DefinitionShowingConfig>
             displayName: "Emergency Heal",
             color: "#58fd48",
             noValue: true
+        },
+        true_damage: {
+            displayName: "True Damage",
+            color: "#fd6565",
+            noValue: true
         }
     };
 
@@ -300,7 +305,90 @@ const attributesShowingConfigs: { [K in AttributeNames]: AttributeShowingFunctio
                 value: `${data}%`,
                 color: "#3344ff"
             }];
-        }
+        },
+        true_damage: data => {
+            return [{
+                displayName: "True Damage",
+                value: `${data * 100}%`,
+                color: "#fd6565"
+            }];
+        },
+        random: (function() {
+            let lastRandomTime = 0;
+            let lastRandomResults: Array<{
+                displayName: string
+                value: string
+                color: string
+            }> | null = null;
+
+            return (data: Array<{
+                attribute: string
+                weight: number
+                value: any
+            }>) => {
+                const currentTime = Date.now();
+
+                if (!lastRandomResults || currentTime - lastRandomTime > 1000) {
+                    const results = [{
+                        displayName: "Random Effect",
+                        value: "",
+                        color: "#9966cc"
+                    }];
+
+                    if (!data || data.length === 0) return results;
+
+                    const randomIndex = Math.floor(Math.random() * data.length);
+                    const randomAttr = data[randomIndex];
+
+                    const attrName = randomAttr.attribute;
+                    const totalWeight = data.reduce((sum, attr) => sum + attr.weight, 0);
+                    const weightPercent = Math.round((randomAttr.weight / totalWeight) * 100);
+
+                    const displayName = attrName.charAt(0).toUpperCase() + attrName.slice(1).replace(/_/g, " ");
+                    results.push({
+                        displayName: `- ${displayName} (${weightPercent}%)`,
+                        value: "",
+                        color: "#7788dd"
+                    });
+                    const handler = attributesShowingConfigs[attrName as keyof typeof attributesShowingConfigs];
+                    if (handler) {
+                        const attrResults = handler(randomAttr.value);
+                        if (attrResults.length > 1) {
+                            for (let i = 1; i < attrResults.length; i++) {
+                                const paramResult = attrResults[i];
+                                results.push({
+                                    displayName: `----${paramResult.displayName}`,
+                                    value: paramResult.value,
+                                    color: paramResult.color
+                                });
+                            }
+                        } else if (attrResults.length === 1) {
+                            const singleResult = attrResults[0];
+                            if (singleResult.value) {
+                                results.push({
+                                    displayName: `----${singleResult.displayName}`,
+                                    value: singleResult.value,
+                                    color: singleResult.color
+                                });
+                            }
+                        }
+                    }
+
+                    if (data.length > 1) {
+                        results.push({
+                            displayName: `- ...still ${data.length - 1} more effects`,
+                            value: "",
+                            color: "#999999"
+                        });
+                    }
+
+                    lastRandomResults = results;
+                    lastRandomTime = currentTime;
+                }
+
+                return lastRandomResults;
+            };
+        })()
     };
 
 export function createPetalTooltip(definition: PetalDefinition): JQuery {
