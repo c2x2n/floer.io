@@ -765,7 +765,16 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         now.bodyDamage *= extra.bodyDamage ?? 1;
         now.knockbackReduction += extra.knockbackReduction ?? 0;
         if (extra.conditionalHeal) {
-            now.conditionalHeal = extra.conditionalHeal;
+            if (!now.conditionalHeal) {
+                now.conditionalHeal = extra.conditionalHeal;
+            } else {
+                if (extra.conditionalHeal.healthPercent < now.conditionalHeal.healthPercent
+                    || (extra.conditionalHeal.healthPercent === now.conditionalHeal.healthPercent
+                    && extra.conditionalHeal.healAmount > now.conditionalHeal.healAmount)) {
+                    now.conditionalHeal.healthPercent = extra.conditionalHeal.healthPercent;
+                }
+                now.conditionalHeal.healAmount += extra.conditionalHeal.healAmount;
+            }
         }
         now.extraSlot += extra.extraSlot ?? 0;
         now.bodyDamageReduction += extra.bodyDamageReduction ?? 0;

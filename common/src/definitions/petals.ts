@@ -1588,17 +1588,17 @@ export const Petals = new Definitions<PetalDefinition>([
                     attribute: "lightning",
                     weight: 1,
                     value: {
-                        range: 15,
-                        bounces: 10,
-                        attenuation: 0.9
+                        range: 30,
+                        bounces: 5,
+                        attenuation: 1.25
                     }
                 },
                 {
                     attribute: "health_percent_damage",
-                    weight: 1,
+                    weight: 0.1,
                     value: {
-                        percent: 0.25,
-                        maxDamage: 100
+                        percent: 2,
+                        maxDamage: 500
                     }
                 }
             ]

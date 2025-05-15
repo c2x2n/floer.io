@@ -353,22 +353,13 @@ const attributesShowingConfigs: { [K in AttributeNames]: AttributeShowingFunctio
                     const handler = attributesShowingConfigs[attrName as keyof typeof attributesShowingConfigs];
                     if (handler) {
                         const attrResults = handler(randomAttr.value);
-                        if (attrResults.length > 1) {
-                            for (let i = 1; i < attrResults.length; i++) {
+                        if (attrResults.length > 0) {
+                            for (let i = 0; i < attrResults.length; i++) {
                                 const paramResult = attrResults[i];
                                 results.push({
                                     displayName: `\u00A0\u00A0\u00A0\u00A0\u00A0${paramResult.displayName}`,
                                     value: paramResult.value,
                                     color: paramResult.color
-                                });
-                            }
-                        } else if (attrResults.length === 1) {
-                            const singleResult = attrResults[0];
-                            if (singleResult.value) {
-                                results.push({
-                                    displayName: `\u00A0\u00A0\u00A0\u00A0\u00A0${singleResult.displayName}`,
-                                    value: singleResult.value,
-                                    color: singleResult.color
                                 });
                             }
                         }

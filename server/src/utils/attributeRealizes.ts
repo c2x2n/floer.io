@@ -413,7 +413,6 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                     let newSpeedMod = 1 - data.speedReduction;
                     let revolutionReduction = data.revolutionReduction || 0;
                     if (existingParalyze) {
-                        existingParalyze.destroy();
                         if (existingParalyze.modifier?.speed !== undefined) {
                             newSpeedMod *= existingParalyze.modifier.speed;
                         }
@@ -449,7 +448,6 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                     let newSpeedMod = 1 - data.speedReduction;
                     let revolutionReduction = data.revolutionReduction || 0;
                     if (existingParalyze) {
-                        existingParalyze.destroy();
                         if (existingParalyze.modifier?.speed !== undefined) {
                             newSpeedMod *= existingParalyze.modifier.speed;
                         }
