@@ -151,6 +151,52 @@ export const petalAssets: AssetsBunch = {
         ctx.fill();
         ctx.stroke();
     },
+    "pinger": containerToDraw => {
+        const { ctx, radius } = containerToDraw;
+        const time = Date.now() / 1000;
+
+        ctx.beginPath();
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.moveTo(radius, 0);
+        ctx.lineTo(-radius / Math.sqrt(3), -radius);
+        ctx.lineTo(-radius / Math.sqrt(3), radius);
+        ctx.lineTo(radius, 0);
+
+        const pulseIntensity = Math.sin(time * 2) * 0.2 + 0.8;
+
+        const baseColor = {
+            r: 220,
+            g: 30 + Math.sin(time) * 20,
+            b: 50 + Math.sin(time * 1.5) * 20
+        };
+
+        const gradient = ctx.createRadialGradient(
+            radius * 0.2, -radius * 0.2, 0,
+            0, 0, radius * 1.5
+        );
+
+        gradient.addColorStop(0, `rgb(${baseColor.r + 35}, ${baseColor.g + 20}, ${baseColor.b + 20})`);
+        gradient.addColorStop(0.5, `rgb(${baseColor.r * pulseIntensity}, ${baseColor.g * pulseIntensity}, ${baseColor.b * pulseIntensity})`);
+        gradient.addColorStop(1, `rgb(${baseColor.r / 3}, ${baseColor.g / 2}, ${baseColor.b / 2})`);
+
+        ctx.fillStyle = gradient;
+
+        ctx.lineWidth = radius / 4;
+        const highlightIntensity = Math.sin(time * 3) * 0.3 + 0.7;
+
+        ctx.strokeStyle = `rgb(${180 * highlightIntensity}, ${30 * highlightIntensity}, ${40 * highlightIntensity})`;
+
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.lineWidth = radius / 8;
+        ctx.strokeStyle = `rgb(255, ${100 + Math.sin(time * 5) * 40}, ${100 + Math.sin(time * 3) * 20})`;
+        ctx.moveTo(radius * 0.7, -radius * 0.1);
+        ctx.lineTo(-radius * 0.3, -radius * 0.6);
+        ctx.stroke();
+    },
     "stick": containerToDraw => {
         loadPathFromSVG({
             containerToDraw,
@@ -860,6 +906,69 @@ export const petalAssets: AssetsBunch = {
             radius * 0.15, 0, P2
         );
         ctx.fill();
+    },
+    "myt_dice": containerToDraw => {
+        const { ctx, radius } = containerToDraw;
+        const time = Date.now() / 1000;
+
+        ctx.save();
+        ctx.beginPath();
+
+        ctx.beginPath();
+        const corners = 6;
+        const diceRadius = radius * 0.8;
+
+        for (let i = 0; i < corners; i++) {
+            const angle = (i / corners) * Math.PI * 2;
+            const x = Math.cos(angle) * diceRadius;
+            const y = Math.sin(angle) * diceRadius;
+
+            if (i === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        }
+        ctx.closePath();
+
+        const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
+        const pulseValue = (Math.sin(time * 3) + 1) / 2;
+
+        gradient.addColorStop(0, "rgba(100, 0, 0, 1)");
+        gradient.addColorStop(0.5, "rgba(80, 0, 50, 1)");
+        gradient.addColorStop(1, "rgba(50, 0, 50, 1)");
+
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        ctx.lineWidth = radius * 0.1;
+        ctx.strokeStyle = `rgba(${255 * pulseValue}, 0, 0, 1)`;
+        ctx.stroke();
+
+        ctx.fillStyle = `rgba(255, ${50 + pulseValue * 205}, ${pulseValue * 255}, 0.8)`;
+
+        const dotsToShow = Math.floor((time % 6) + 1);
+
+        const dotPositions = [
+            [0, 0],
+            [-diceRadius * 0.5, -diceRadius * 0.5],
+            [diceRadius * 0.5, diceRadius * 0.5],
+            [-diceRadius * 0.5, diceRadius * 0.5],
+            [diceRadius * 0.5, -diceRadius * 0.5],
+            [0, -diceRadius * 0.6],
+            [0, diceRadius * 0.6]
+        ];
+
+        for (let i = 0; i < dotsToShow; i++) {
+            if (i >= dotPositions.length) break;
+
+            const [x, y] = dotPositions[i];
+            ctx.beginPath();
+            ctx.arc(x, y, radius * 0.12, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        ctx.restore();
     },
     "dandelion": containerToDraw => {
         const { ctx, radius } = containerToDraw;

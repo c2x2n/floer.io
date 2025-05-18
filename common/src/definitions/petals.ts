@@ -134,6 +134,12 @@ export type AttributeParameters = {
         readonly bounces: number
     }
     readonly damage_reduction_percent?: number
+    readonly true_damage?: number
+    readonly random?: Array<{
+        readonly attribute: keyof AttributeParameters
+        readonly weight: number
+        readonly value: any
+    }>
 };
 
 export function getDisplayedPieces(petal: PetalDefinition): number {
@@ -1082,7 +1088,7 @@ export const Petals = new Definitions<PetalDefinition>([
     },
     {
         idString: "pinger",
-        displayName: "Stinger",
+        displayName: "Apex",
         description: "It really hurts, but it's very fragile",
         damage: 75,
         health: 10,
@@ -1098,8 +1104,14 @@ export const Petals = new Definitions<PetalDefinition>([
         isDuplicate: true,
         isShowedInOne: true,
         pieceAmount: 5,
-        rarity: RarityName.mythic,
-        usingAssets: "stinger"
+        attributes: {
+            true_damage: 1.0,
+            health_percent_damage: {
+                percent: 0.25,
+                maxDamage: 100
+            }
+        },
+        rarity: RarityName.mythic
     },
     {
         idString: "blood_sepinger",
@@ -1519,6 +1531,79 @@ export const Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.epic
+    },
+    {
+        idString: "myt_dice",
+        displayName: "Omen",
+        description: "check your destiny.",
+        damage: 24,
+        health: 64,
+        extendable: true,
+        images: {
+            slotDisplaySize: 55,
+            selfGameRotation: 18
+        },
+        reloadTime: 3,
+        usable: false,
+        hitboxRadius: 0.5,
+        isDuplicate: false,
+        pieceAmount: 1,
+        attributes: {
+            random: [
+                {
+                    attribute: "poison",
+                    weight: 1,
+                    value: {
+                        damagePerSecond: 12,
+                        duration: 10
+                    }
+                },
+                {
+                    attribute: "paralyze",
+                    weight: 1,
+                    value: {
+                        duration: 10,
+                        speedReduction: 0.5,
+                        revolutionReduction: 0
+                    }
+                },
+                {
+                    attribute: "paralyze",
+                    weight: 1,
+                    value: {
+                        duration: 10,
+                        speedReduction: 0,
+                        revolutionReduction: 0.5
+                    }
+                },
+                {
+                    attribute: "healing_debuff",
+                    weight: 1,
+                    value: {
+                        healing: 0,
+                        duration: 10
+                    }
+                },
+                {
+                    attribute: "lightning",
+                    weight: 1,
+                    value: {
+                        range: 30,
+                        bounces: 5,
+                        attenuation: 1.25
+                    }
+                },
+                {
+                    attribute: "health_percent_damage",
+                    weight: 0.1,
+                    value: {
+                        percent: 2,
+                        maxDamage: 500
+                    }
+                }
+            ]
+        },
+        rarity: RarityName.mythic
     },
     {
         idString: "chip",
@@ -1986,7 +2071,7 @@ export const Petals = new Definitions<PetalDefinition>([
         attributes: {
             area_poison: {
                 radius: 15,
-                damagePerSecond: 10
+                damagePerSecond: 20
             }
         },
         modifiersToPlayer: {

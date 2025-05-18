@@ -1518,7 +1518,7 @@ export const mobAssets: AssetsBunch = {
         const mouthY = radius * 0.32;
 
         ctx.beginPath();
-        ctx.lineWidth = 6;
+        ctx.lineWidth = radius * 0.05;
         ctx.strokeStyle = "#111111";
         ctx.moveTo(-mouthX, mouthY);
         ctx.bezierCurveTo(0, mouthY - radius * 0.15, 0, mouthY - radius * 0.15, mouthX, mouthY);
@@ -1545,8 +1545,13 @@ export const mobAssets: AssetsBunch = {
             eyeWidth, eyeHeight
         );
         ctx.fill();
+        const eyeRotation = containerToDraw.rotation;
+        const eyeTransing = containerToDraw.transing;
 
-        const radians = Geometry.degreesToRadians(containerToDraw.transing);
+        const direction = eyeTransing + (eyeRotation * 30);
+        const radians = Geometry.degreesToRadians(direction);
+
+        const maxEyeMovement = 0.7;
 
         const eyeInsideWidth = eyeWidth * 0.6;
         const eyeInsideHeight = eyeHeight * 0.4;
@@ -1556,8 +1561,16 @@ export const mobAssets: AssetsBunch = {
             + (eyeInsideHeight * Math.cos(radians)) ** 2
         );
 
-        const eyeOffsetX = eyeInsideWidth * eyeInsideHeight * Math.cos(radians) / ellRadius;
-        const eyeOffsetY = eyeInsideWidth * eyeInsideHeight * Math.sin(radians) / ellRadius;
+        let eyeOffsetX = eyeInsideWidth * eyeInsideHeight * Math.cos(radians) / ellRadius;
+        let eyeOffsetY = eyeInsideWidth * eyeInsideHeight * Math.sin(radians) / ellRadius;
+
+        const offsetLength = Math.sqrt(eyeOffsetX * eyeOffsetX + eyeOffsetY * eyeOffsetY);
+
+        if (offsetLength > eyeWidth * maxEyeMovement) {
+            const scale = eyeWidth * maxEyeMovement / offsetLength;
+            eyeOffsetX *= scale;
+            eyeOffsetY *= scale;
+        }
 
         const eyeballWidth = eyeWidth * 0.8;
         const eyeballHeight = eyeHeight * 0.7;
@@ -1605,8 +1618,5 @@ export const mobAssets: AssetsBunch = {
         ctx.restore();
 
         ctx.restore();
-    },
-    default: containerToDraw => {
-        mobAssets.rock(containerToDraw);
     }
 };
