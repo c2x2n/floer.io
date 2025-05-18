@@ -1,20 +1,22 @@
-import { ServerEntity } from "./serverEntity";
-import { type EntitiesNetData } from "../../../common/src/net/packets/updatePacket";
-import { CircleHitbox } from "../../../common/src/physics/hitbox";
-import { EntityType } from "../../../common/src/constants";
-import { PetalDefinition } from "../../../common/src/definitions/petals";
+import { ServerEntity } from "../entity";
+import { type EntitiesNetData } from "../../../../common/src/net/packets/updatePacket";
+import { CircleHitbox } from "../../../../common/src/physics/hitbox";
+import { EntityType } from "../../../../common/src/constants";
+import { PetalDefinition } from "../../../../common/src/definitions/petals";
 import { ServerPlayer } from "./serverPlayer";
-import { CollisionResponse } from "../../../common/src/physics/collision";
-import { AttributeEvents, PetalUsingAnimations } from "../utils/attributeRealizes";
-import { collideableEntity, damageableEntity, damageSource } from "../typings";
-import { PetalBunch } from "../inventory/petalBunch";
-import { ServerFriendlyMob, ServerMob } from "./serverMob";
-import { UVector2D } from "../../../common/src/physics/uvector";
+import { AttributeEvents, PetalUsingAnimations } from "../../utils/attributeRealizes";
+import { PetalBunch } from "../../inventory/petalBunch";
+import { ServerMob } from "./serverMob";
+import { UVector2D } from "../../../../common/src/physics/uvector";
+import ServerLivelyEntity from "../lively";
+import { Damage, DamageType } from "../typings/damage";
 
-export class ServerPetal extends ServerEntity<EntityType.Petal> {
+export class ServerPetal extends ServerLivelyEntity<EntityType.Petal> {
     type: EntityType.Petal = EntityType.Petal;
 
     owner: ServerPlayer;
+
+    readonly name: string = "Petal";
 
     hitbox: CircleHitbox;
     definition: PetalDefinition;
@@ -29,7 +31,6 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
 
     set hidden(value: boolean) {
         this._hidden = value;
-
         this.setDirty();
     }
 
@@ -43,7 +44,7 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
         if (isReloading || this.definition.equipment) {
             this.reloadTime = 0;
         } else {
-            this.health = this.definition.health;
+            if (this.definition.health) this.health = this.definition.health;
             this.isLoadingFirstTime = false;
             this.useReload = 0;
         }
@@ -52,16 +53,18 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
 
     isUsing?: PetalUsingAnimations;
     reloadTime = 0;
+    get fullReloadTime(): number {
+        if (this.definition.equipment) return 0;
+        return this.definition.reloadTime ? this.definition.reloadTime + (this.isLoadingFirstTime ? 2.5 : 0) : 0;
+    }
+
     useReload = 0;
     petalBunch: PetalBunch;
 
     isLoadingFirstTime = true;
 
-    readonly damage?: number;
-    health?: number;
-
     knockback = 0.00002;
-    weight = 0.0002;
+    weight = 0.2;
 
     spawned?: ServerMob;
 
@@ -70,12 +73,8 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
         return false;
     }
 
-    canReceiveDamageFrom(source: damageableEntity): boolean {
-        if (!this.health) return false;
-        return this.owner.canReceiveDamageFrom(source);
-    }
-
     canCollideWith(entity: ServerEntity): boolean {
+        if (entity instanceof ServerLivelyEntity) return entity.team != this.team;
         return !this.definition.equipment && super.canCollideWith(entity);
     }
 
@@ -85,17 +84,23 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
 
     constructor(petalBunch: PetalBunch, definition: PetalDefinition) {
         const player = petalBunch.player;
-        super(player.game, player.position);
+        super(player.game, player.position, EntityType.Petal);
         this.petalBunch = petalBunch;
 
-        this.position = player.position;
+        this.position = player.position.clone();
         this.definition = definition;
         this.owner = player;
 
+        this.setParent(player);
+
         this.hitbox = new CircleHitbox(definition.hitboxRadius);
-        if (!(definition.equipment)) {
+        if (!definition.equipment) {
             this.damage = definition.damage;
-            this.health = definition.health;
+            if (definition.health) {
+                this.maxHealth = definition.health;
+            } else {
+                this.invincible = true;
+            }
         }
     }
 
@@ -105,6 +110,8 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
     }
 
     tick(): void {
+        super.tick();
+
         if (this.owner.overleveled || this.owner.spectatorMode) {
             this.isReloading = true;
             this.isLoadingFirstTime = true;
@@ -116,15 +123,15 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
             if (this.isReloading) {
                 if (
                     !this.definition.reloadTime
-                    || this.reloadTime >= this.definition.reloadTime
+                    || this.reloadTime >= this.fullReloadTime
                 ) {
                     this.isReloading = false;
                 }
                 this.reloadTime += this.game.dt;
-                this.position = this.owner.position;
+                this.position = this.owner.position.clone();
             } else if (this.isUsing) {
                 if (this.isUsing === PetalUsingAnimations.ABSORB) {
-                    this.position = this.owner.position;
+                    this.position = this.owner.position.clone();
                 } else if (this.isUsing === PetalUsingAnimations.HATCH) {
                     const isSandstorm = this.definition.attributes?.spawner?.idString === "sandstorm";
 
@@ -150,7 +157,7 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
         } else {
             this.isLoadingFirstTime = false;
             this.isReloading = false;
-            this.position = this.owner.position;
+            this.position = this.owner.position.clone();
         }
     }
 
@@ -184,19 +191,20 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
         }, animation === PetalUsingAnimations.NORMAL ? 0 : 100);
     }
 
-    dealDamageTo(to: damageableEntity): void {
-        if (this.definition.doesNotDamage?.includes(to.type)) {
-            return;
-        }
-        if (this.owner.spectatorMode) {
-            return;
-        }
+    public override dealCollisionDamageTo(to: ServerLivelyEntity) {
+        if (this.definition.doesNotDamage?.includes(to.type) || this.owner.spectatorMode) return;
+
         if (this.damage && to.canReceiveDamageFrom(this)) {
             const owner = this.owner;
             const originalIsPetalAttack = owner.isPetalAttack;
             owner.isPetalAttack = true;
 
-            to.receiveDamage(this.damage, owner);
+            to.receiveDamage({
+                amount: this.damage,
+                source: this.getTopParent(),
+                to,
+                type: DamageType.COLLISION
+            });
 
             owner.sendEvent(
                 AttributeEvents.PETAL_DEAL_DAMAGE,
@@ -208,25 +216,17 @@ export class ServerPetal extends ServerEntity<EntityType.Petal> {
         }
     }
 
-    receiveDamage(amount: number, source: damageSource) {
-        if (!this.health) return;
-        if (!this.isActive()) return;
-
-        this.health -= amount;
-
+    protected override onReceiveDamage(damage: Damage) {
+        const { amount } = damage;
         if (amount > 0) this.gotDamage = true;
 
-        if (this.health <= 0) {
-            this.isReloading = true;
-        }
+        if (this.health <= 0) this.isReloading = true;
     }
-
-    collideWith(collision: CollisionResponse, entity: collideableEntity): void {}
 
     get data(): Required<EntitiesNetData[EntityType.Petal]> {
         const data = {
             position: UVector2D.mul(UVector2D.sub(this.position, this.owner.position), 100),
-            isReloading: this.isReloading || this.hidden,
+            isReloading: this.isReloading,
             gotDamage: this.gotDamage,
             full: {
                 definition: this.definition,

@@ -1,6 +1,6 @@
 import { type WebSocket } from "ws";
-import { ServerPlayer } from "./entities/serverPlayer";
-import { ServerEntity } from "./entities/serverEntity";
+import { ServerPlayer } from "./entity/entities/serverPlayer";
+import { ServerEntity } from "./entity/entity";
 import { Grid } from "./map/grid";
 import { EntityPool } from "../../common/src/misc/entityPool";
 import { EntityType, GameConstants } from "../../common/src/constants";
@@ -8,11 +8,9 @@ import NanoTimer from "nanotimer";
 import { Config, type ServerConfig } from "./config";
 import { IDAllocator } from "./idAllocator";
 import { UVector2D } from "../../common/src/physics/uvector";
-import { ServerMob } from "./entities/serverMob";
+import { ServerMob } from "./entity/entities/serverMob";
 import { MobDefinition, Mobs } from "../../common/src/definitions/mobs";
-import { CollisionResponse } from "../../common/src/physics/collision";
 import { Random } from "../../common/src/maths/random";
-import { collideableEntity, isCollideableEntity, isDamageableEntity } from "./typings";
 import { PacketStream } from "../../common/src/net/net";
 import { JoinPacket } from "../../common/src/net/packets/joinPacket";
 import { PetalDefinition } from "../../common/src/definitions/petals";
@@ -20,15 +18,16 @@ import { P2 } from "../../common/src/maths/constants";
 import { Rarity, RarityName } from "../../common/src/definitions/rarities";
 import { ChatData } from "../../common/src/net/packets/updatePacket";
 import { MobSpawner, SpecialSpawn, ZoneName } from "../../common/src/definitions/zones";
-import jwt from "jsonwebtoken";
 import { getLevelInformation } from "../../common/src/definitions/levels";
 import { Zone, ZonesManager } from "./map/zones";
-import { ServerWall } from "./entities/serverWall";
+import { ServerWall } from "./entity/entities/serverWall";
 import { spawnSegmentMobs } from "./misc/spawning";
 import { Walls } from "../../common/src/definitions/walls";
 import { GameData } from "./gameContainer";
 import VectorAbstract from "../../common/src/physics/vectorAbstract";
 import { Geometry } from "../../common/src/maths/geometry";
+import TeamGenerator from "./entity/teamGenerator";
+import ServerLivelyEntity from "./entity/lively";
 
 type SpecialSpawningTimer = { timer: number, toNextTimer: number, spawned?: ServerMob };
 
@@ -52,6 +51,7 @@ export class ServerGame {
     mapDirty = false;
 
     idAllocator = new IDAllocator(16);
+    teamGenerator = new TeamGenerator();
 
     zoneManager: ZonesManager = new ZonesManager(this);
 
@@ -144,8 +144,10 @@ export class ServerGame {
             }
 
             if (spawnZone) {
-                newPlayer.position = spawnZone.randomSafePosition(GameConstants.player.radius);
+                newPlayer.position.set(spawnZone.randomSafePosition(GameConstants.player.radius));
             }
+
+            newPlayer.applyPhysics();
 
             return newPlayer.processMessage(packet);
         } else if (oldPlayer) {
@@ -168,44 +170,16 @@ export class ServerGame {
         this.dt = (Date.now() - this.now) / 1000;
         this.now = Date.now();
 
-        const activeEntities = new Set<ServerEntity>();
+        const saved = new Set<ServerEntity>(this.grid.entities.values());
 
-        // update entities
-        for (const entity of this.grid.entities.values()) {
-            if (entity.isActive()) activeEntities.add(entity);
+        for (const entity of saved) {
+            entity.cachedCollisions.clear();
+            entity.getCollisions();
         }
 
-        for (const entity of activeEntities) {
-            const collidedEntities
-                = this.grid.intersectsHitbox(entity.hitbox);
-
-            for (const collidedEntity of collidedEntities) {
-                if (collidedEntity === entity) continue;
-                if (!activeEntities.has(collidedEntity)) continue;
-
-                const collision
-                    = entity.hitbox.getIntersection(collidedEntity.hitbox);
-
-                if (collision) {
-                    if (isDamageableEntity(entity)
-                        && !entity.damagedEntityThisTick.includes(collidedEntity)
-                        && isDamageableEntity(collidedEntity)) {
-                        collidedEntity.damagedEntityThisTick.push(entity);
-                        entity.dealDamageTo(collidedEntity);
-                        // collidedEntity.receiveKnockback(entity);
-                        collidedEntity.dealDamageTo(entity);
-                        // entity.receiveKnockback(entity);
-                    }
-                    // if (isCollideableEntity(entity) && isCollideableEntity(collidedEntity)) {
-                    //     entity.collideWith(collision, collidedEntity);
-                    //     collidedEntity.collideWith(collision, entity);
-                    // }
-                }
-            }
-        }
-
-        for (const entity of this.grid.entities.values()) {
+        for (const entity of saved) {
             entity.tick();
+            entity.applyPhysics(); // important
         }
 
         // Cache entity serializations
@@ -345,6 +319,14 @@ export class ServerGame {
         }
 
         return false;
+    }
+
+    giveTeam(id: number) {
+        const entities = Array.from(this.grid.entities.values())
+            .filter(e => (e instanceof ServerLivelyEntity)) as ServerLivelyEntity[];
+        if (entities.find(e => e.team === id)) return;
+
+        this.teamGenerator.give(id);
     }
 
     rarityPetalCount(rarity: RarityName): number {

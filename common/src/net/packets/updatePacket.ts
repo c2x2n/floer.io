@@ -51,7 +51,6 @@ export interface EntitiesNetData {
     [EntityType.Projectile]: {
         position: VectorAbstract
         direction: VectorAbstract
-        rotation?: number
 
         full?: {
             definition: ProjectileDefinition
@@ -193,13 +192,6 @@ export const EntitySerializations: { [K in EntityType]: EntitySerialization<K> }
         serializePartial(stream, data): void {
             stream.writePosition(data.position);
             stream.writeUnit(data.direction, 8);
-            if ("rotation" in data && data.rotation !== undefined) {
-                stream.writeBoolean(true);
-                const normalizedRotation = ((data.rotation % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-                stream.writeFloat(normalizedRotation, 0, P2, 8);
-            } else {
-                stream.writeBoolean(false);
-            }
         },
         serializeFull(stream, data): void {
             Projectiles.writeToStream(stream, data.definition);
@@ -208,14 +200,9 @@ export const EntitySerializations: { [K in EntityType]: EntitySerialization<K> }
         deserializePartial(stream) {
             const position = stream.readPosition();
             const direction = stream.readUnit(8);
-
-            const hasRotation = stream.readBoolean();
-            const rotation = hasRotation ? stream.readFloat(0, P2, 8) : undefined;
-
             return {
                 position,
-                direction,
-                rotation
+                direction
             };
         },
         deserializeFull(stream) {

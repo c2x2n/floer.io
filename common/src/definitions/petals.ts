@@ -12,7 +12,8 @@ export type PetalDefinition = ObjectDefinition & {
     readonly description?: string
     readonly rarity: RarityName
     readonly attributes?: AttributeParameters
-    readonly modifiers?: Partial<PlayerModifiers>
+    readonly modifiersToPlayer?: Partial<PlayerModifiers>
+    readonly modifiersToSelf?: Partial<PlayerModifiers>
     readonly undroppable?: boolean
     readonly unstackable?: boolean
     readonly hitboxRadius: number
@@ -127,7 +128,6 @@ export type AttributeParameters = {
         readonly healPercent: number
         readonly maximumHeal?: number // meaningless, because now it uses petal.damage to calculate not damage dealt
     }
-    readonly armor?: number
     readonly lightning?: {
         readonly attenuation: number
         readonly range: number
@@ -157,7 +157,7 @@ export const Petals = new Definitions<PetalDefinition>([
         pieceAmount: 1,
         rarity: RarityName.common,
         usingAssets: "light",
-        modifiers: {
+        modifiersToPlayer: {
             speed: 1.006
         }
     },
@@ -176,7 +176,7 @@ export const Petals = new Definitions<PetalDefinition>([
         isShowedInOne: false,
         rarity: RarityName.unusual,
         usingAssets: "light",
-        modifiers: {
+        modifiersToPlayer: {
             speed: 1.005
         }
     },
@@ -195,7 +195,7 @@ export const Petals = new Definitions<PetalDefinition>([
         isShowedInOne: false,
         rarity: RarityName.mythic,
         usingAssets: "light",
-        modifiers: {
+        modifiersToPlayer: {
             speed: 1.01
         }
     },
@@ -262,7 +262,7 @@ export const Petals = new Definitions<PetalDefinition>([
         isShowedInOne: false,
         rarity: RarityName.epic,
         usingAssets: "light",
-        modifiers: {
+        modifiersToPlayer: {
             speed: 1.004
         }
     }, {
@@ -273,7 +273,7 @@ export const Petals = new Definitions<PetalDefinition>([
         health: 5,
         extendable: true,
         reloadTime: 0.5,
-        modifiers: {
+        modifiersToPlayer: {
             revolutionSpeed: 1.0
         },
         usable: false,
@@ -297,7 +297,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 60,
             selfGameRotation: 360
         },
-        modifiers: {
+        modifiersToPlayer: {
             revolutionSpeed: 1.25
         },
         usable: false,
@@ -316,7 +316,7 @@ export const Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 18
         },
         reloadTime: 0.5,
-        modifiers: {
+        modifiersToPlayer: {
             revolutionSpeed: 1.0
         },
         usable: false,
@@ -341,7 +341,7 @@ export const Petals = new Definitions<PetalDefinition>([
             centerXOffset: 1,
             selfGameRotation: 18
         },
-        modifiers: {
+        modifiersToPlayer: {
             healPerSecond: 2
         },
         reloadTime: 1,
@@ -363,7 +363,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotRotation: -0.1,
             selfGameRotation: 18
         },
-        modifiers: {
+        modifiersToPlayer: {
             healPerSecond: 1
         },
         reloadTime: 1,
@@ -627,7 +627,7 @@ export const Petals = new Definitions<PetalDefinition>([
         attributes: {
             boost: 10
         },
-        modifiers: {
+        modifiersToPlayer: {
             maxHealth: 66666,
             healPerSecond: 66666
         },
@@ -957,7 +957,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 68,
             selfGameRotation: 18
         },
-        modifiers: {
+        modifiersToPlayer: {
             maxHealth: 30
         },
         reloadTime: 1,
@@ -988,7 +988,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 duration: 4.5
             }
         },
-        modifiers: {
+        modifiersToPlayer: {
             maxHealth: 30
         },
         reloadTime: 1,
@@ -1009,7 +1009,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 52,
             selfGameRotation: 18
         },
-        modifiers: {
+        modifiersToPlayer: {
             maxHealth: 27
         },
         reloadTime: 1,
@@ -1176,7 +1176,7 @@ export const Petals = new Definitions<PetalDefinition>([
         images: {
             slotDisplaySize: 35
         },
-        modifiers: {
+        modifiersToPlayer: {
             speed: 1.128
         },
         reloadTime: 2,
@@ -1588,7 +1588,7 @@ export const Petals = new Definitions<PetalDefinition>([
             }
         },
         hitboxRadius: 0.7,
-        modifiers: {
+        modifiersToPlayer: {
             zoom: 30
         },
         rarity: RarityName.legendary
@@ -1601,7 +1601,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 60
         },
         hitboxRadius: 0.9,
-        modifiers: {
+        modifiersToPlayer: {
             zoom: 45
         },
         rarity: RarityName.mythic,
@@ -1616,7 +1616,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 60
         },
         hitboxRadius: 0.9,
-        modifiers: {
+        modifiersToPlayer: {
             zoom: 120
         },
         undroppable: true,
@@ -1643,7 +1643,7 @@ export const Petals = new Definitions<PetalDefinition>([
             }
         },
         hitboxRadius: 0.6,
-        modifiers: {
+        modifiersToPlayer: {
             controlRotation: true
         },
         rarity: RarityName.unique
@@ -1669,7 +1669,7 @@ export const Petals = new Definitions<PetalDefinition>([
         },
         hitboxRadius: 0.6,
         unstackable: true,
-        modifiers: {
+        modifiersToPlayer: {
             extraDistance: 1
         },
         rarity: RarityName.legendary,
@@ -1696,7 +1696,7 @@ export const Petals = new Definitions<PetalDefinition>([
             }
         },
         hitboxRadius: 0.6,
-        modifiers: {
+        modifiersToPlayer: {
             extraDistance: 10
         },
         rarity: RarityName.super,
@@ -1717,7 +1717,7 @@ export const Petals = new Definitions<PetalDefinition>([
 
             //       selfGameRotation: 0.02
         },
-        modifiers: {
+        modifiersToPlayer: {
             revive: {
                 healthPercent: 30,
                 shieldPercent: 50,
@@ -1747,7 +1747,7 @@ export const Petals = new Definitions<PetalDefinition>([
 
             //       selfGameRotation: 0.02
         },
-        modifiers: {
+        modifiersToPlayer: {
             revive: {
                 healthPercent: 100,
                 shieldPercent: 70,
@@ -1789,10 +1789,6 @@ export const Petals = new Definitions<PetalDefinition>([
                     sandstormLike: true
                 },
                 speed: 7,
-                images: {
-                    width: 100,
-                    height: 100
-                },
                 lootTable: {},
                 rarity: RarityName.rare,
                 exp: 0,
@@ -1825,7 +1821,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 health: 5,
                 hitboxRadius: 0.3,
                 despawnTime: 5,
-                velocityAtFirst: 20
+                velocityAtFirst: 8
             }
         },
         reloadTime: 1,
@@ -1852,7 +1848,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 health: 10,
                 hitboxRadius: 0.3,
                 despawnTime: 5,
-                velocityAtFirst: 20
+                velocityAtFirst: 8
             }
         },
         reloadTime: 0.3,
@@ -1941,7 +1937,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 60,
             selfGameRotation: 0.01
         },
-        modifiers: {
+        modifiersToPlayer: {
             // damageAvoidanceChance: 0.12
             damageAvoidanceByDamage: true
         },
@@ -1965,7 +1961,7 @@ export const Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 240,
             fontSizeMultiplier: 0.9
         },
-        modifiers: {
+        modifiersToPlayer: {
             yinYangAmount: 1
         },
         reloadTime: 1,
@@ -1993,7 +1989,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 damagePerSecond: 10
             }
         },
-        modifiers: {
+        modifiersToPlayer: {
             selfPoison: 20
         },
         reloadTime: 2.5,
@@ -2149,7 +2145,7 @@ export const Petals = new Definitions<PetalDefinition>([
             facingOut: true
 
         },
-        modifiers: {
+        modifiersToPlayer: {
             conditionalHeal: {
                 healthPercent: 0.75,
                 healAmount: 9.5
@@ -2197,7 +2193,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 65,
             selfGameRotation: 0.15
         },
-        attributes: {
+        modifiersToSelf: {
             armor: 8
         },
         reloadTime: 1.25,
@@ -2278,7 +2274,7 @@ export const Petals = new Definitions<PetalDefinition>([
         },
         hitboxRadius: 0.6,
         unstackable: true,
-        modifiers: {
+        modifiersToPlayer: {
             bodyDamage: 2
         },
         rarity: RarityName.epic
@@ -2302,7 +2298,7 @@ export const Petals = new Definitions<PetalDefinition>([
         },
         hitboxRadius: 0.6,
         unstackable: true,
-        modifiers: {
+        modifiersToPlayer: {
             knockbackReduction: 0.5
         },
         rarity: RarityName.epic
@@ -2326,7 +2322,7 @@ export const Petals = new Definitions<PetalDefinition>([
         },
         hitboxRadius: 0.6,
         unstackable: true,
-        modifiers: {
+        modifiersToPlayer: {
             bodyDamageReduction: 0.5
         },
         rarity: RarityName.epic
@@ -2343,7 +2339,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 68,
             selfGameRotation: 18
         },
-        modifiers: {
+        modifiersToPlayer: {
             maxHealth: 50
         },
         attributes: {

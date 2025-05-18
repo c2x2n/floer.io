@@ -3,7 +3,7 @@
  */
 export class IDAllocator {
     readonly maxId: number;
-    private _currentId = 1;
+    // private _currentId = 1;
     /**
      * A list of free ID's to be used once the main ID's run out
      */
@@ -11,6 +11,10 @@ export class IDAllocator {
 
     constructor(bits: number) {
         this.maxId = 2 ** bits;
+
+        for (let i = 1; i < this.maxId; i++) {
+            this._freeList.push(i);
+        }
     }
 
     /**
@@ -19,17 +23,23 @@ export class IDAllocator {
      * @throws Error If the there's no ID's left
      */
     getNextId(): number {
-        let id: number | undefined = this._currentId;
-        if (id > this.maxId) {
-            id = this._freeList.shift();
-            if (id) {
-                return id;
-            } else {
-                throw new Error("Ran out of ID's");
-            }
+        const id = this._freeList.shift();
+        if (id) {
+            return id;
+        } else {
+            throw new Error("Ran out of ID's");
         }
-        this._currentId++;
-        return id;
+        // let id: number | undefined = this._currentId;
+        // if (id > this.maxId) {
+        //     id = this._freeList.shift();
+        //     if (id) {
+        //         return id;
+        //     } else {
+        //         throw new Error("Ran out of ID's");
+        //     }
+        // }
+        // this._currentId++;
+        // return id;
     }
 
     /**
@@ -40,6 +50,6 @@ export class IDAllocator {
         if (id <= 0 || id > this.maxId) {
             throw new Error(`ID out of range: ${id}, range: [1, ${this.maxId}]`);
         }
-        this._freeList.push(id);
+        if (!this._freeList.includes(id)) this._freeList.push(id);
     }
 }

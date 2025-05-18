@@ -1,17 +1,15 @@
-import { ServerPetal } from "../entities/serverPetal";
+import { ServerPetal } from "../entity/entities/serverPetal";
 import { P2 } from "../../../common/src/maths/constants";
 import { UVector2D } from "../../../common/src/physics/uvector";
 import { AttributeNames, AttributeParameters } from "../../../common/src/definitions/petals";
 import { EventInitializer } from "./petalEvents";
 import { EntityType } from "../../../common/src/constants";
-import { ServerPlayer } from "../entities/serverPlayer";
-import { ServerFriendlyMob, ServerMob } from "../entities/serverMob";
-import { ServerProjectile } from "../entities/serverProjectile";
-import { isDamageableEntity } from "../typings";
-import { CircleHitbox } from "../../../common/src/physics/hitbox";
-import { ServerEntity } from "../entities/serverEntity";
+import { ServerPlayer } from "../entity/entities/serverPlayer";
+import { ServerFriendlyMob, ServerMob } from "../entity/entities/serverMob";
+import { ServerProjectile } from "../entity/entities/serverProjectile";
 import { Geometry } from "../../../common/src/maths/geometry";
-import { Effect } from "../effect/effect";
+import { Effect } from "../entity/effect/effect";
+import { DamageType } from "../entity/typings/damage";
 
 export enum AttributeEvents {
     HEALING = "HEALING",
@@ -71,40 +69,40 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                     if (data) {
                         const direction
                             = Geometry.directionBetweenPoints(petal.owner.position, petal.position);
-                        petal.owner.addVelocity(
+                        petal.owner.addAcceleration(
                             UVector2D.mul(direction, data * 10)
                         );
                     }
                 }
                 , PetalUsingAnimations.NORMAL);
 
-            on<AttributeEvents.PETAL_DEAL_DAMAGE>(
-                AttributeEvents.PETAL_DEAL_DAMAGE,
-                entity => {
-                    if (entity && data && data < 0 && isDamageableEntity(entity)) {
-                        // 击退效果，负值表示击退
-                        const entityToPlayerDirection
-                            = Geometry.directionBetweenPoints(entity.position, petal.owner.position);
-
-                        // 计算击退力度倍率
-                        let knockbackMultiplier = 1.0;
-
-                        // 对玩家固定为1倍
-                        if (entity.type === EntityType.Player) {
-                            knockbackMultiplier = 1.0;
-                        } else {
-                            const entityRadius = entity.hitbox.radius;
-                            const baseRadius = 1;
-
-                            // 计算倍率: 基础半径/实体半径 (半径越大，倍率越小)
-                            knockbackMultiplier = Math.min(1.0, baseRadius / entityRadius);
-                        }
-                        entity.addVelocity(
-                            UVector2D.mul(entityToPlayerDirection, Math.abs(data) * 10 * knockbackMultiplier)
-                        );
-                    }
-                }
-            );
+            // on<AttributeEvents.PETAL_DEAL_DAMAGE>(
+            //     AttributeEvents.PETAL_DEAL_DAMAGE,
+            //     entity => {
+            //         if (entity && data && data < 0 && isDamageableEntity(entity)) {
+            //             // 击退效果，负值表示击退
+            //             const entityToPlayerDirection
+            //                 = Geometry.directionBetweenPoints(entity.position, petal.owner.position);
+            //
+            //             // 计算击退力度倍率
+            //             let knockbackMultiplier = 1.0;
+            //
+            //             // 对玩家固定为1倍
+            //             if (entity.type === EntityType.Player) {
+            //                 knockbackMultiplier = 1.0;
+            //             } else {
+            //                 const entityRadius = entity.hitbox.radius;
+            //                 const baseRadius = 1;
+            //
+            //                 // 计算倍率: 基础半径/实体半径 (半径越大，倍率越小)
+            //                 knockbackMultiplier = Math.min(1.0, baseRadius / entityRadius);
+            //             }
+            //             entity.addVelocity(
+            //                 UVector2D.mul(entityToPlayerDirection, Math.abs(data) * 10 * knockbackMultiplier)
+            //             );
+            //         }
+            //     }
+            // );
         }
     },
 
@@ -169,7 +167,12 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                             entity instanceof ServerPlayer
                             || (entity instanceof ServerMob && entity.canReceiveDamageFrom(petal.owner))
                         ) {
-                            entity.receiveDamage(data * damage, petal.owner, true);
+                            entity.receiveDamage({
+                                source: petal.getTopParent(),
+                                amount: damage,
+                                type: DamageType.DAMAGE_REFLECTION,
+                                to: entity
+                            });
                         }
                     }
                 }
@@ -186,8 +189,6 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                 const position = petal.position;
                 const projectile = new ServerProjectile(
                     petal.owner, position, direction, data, petal);
-                projectile.addVelocity(UVector2D.mul(direction, data.velocityAtFirst ?? data.speed * 6));
-                if (data.definition.onGround) { projectile.addVelocity(UVector2D.mul(direction, 80 * data.hitboxRadius / 5)); }
             }, PetalUsingAnimations.NORMAL);
         }
     },
@@ -199,9 +200,8 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                 const direction
                     = Geometry.directionBetweenPoints(petal.position, petal.petalBunch.centerPosition);
                 const position = petal.position;
-                const projectile = new ServerProjectile(
+                new ServerProjectile(
                     petal.owner, position, direction, data, petal);
-                projectile.addVelocity(UVector2D.mul(direction, data.velocityAtFirst ?? data.speed * 6));
             }, PetalUsingAnimations.NORMAL);
         }
     },
@@ -224,9 +224,8 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
 
                     const direction
                         = Geometry.directionBetweenPoints(position, petal.petalBunch.centerPosition);
-                    const projectile = new ServerProjectile(
+                    new ServerProjectile(
                         petal.owner, position, direction, para, petal);
-                    projectile.addVelocity(UVector2D.mul(direction, para.velocityAtFirst ?? para.speed * 6));
 
                     radianNow += radianStep;
                 }
@@ -236,15 +235,14 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
 
     place_projectile: {
         callback: (on, petal, data) => {
+            if (!data) return;
             on(AttributeEvents.ATTACK, () => {
                 if (!data) return;
                 const direction
                     = Geometry.directionBetweenPoints(petal.position, petal.owner.position);
                 const position = petal.position;
-                const projectile = new ServerProjectile(
+                new ServerProjectile(
                     petal.owner, position, direction, data, petal);
-                projectile.addVelocity(UVector2D.mul(direction, data.velocityAtFirst ?? data.speed * 6));
-                if (data.definition.onGround) { projectile.addVelocity(UVector2D.mul(direction, 80 * data.hitboxRadius / 5)); }
             }, PetalUsingAnimations.NORMAL);
 
             on(AttributeEvents.DEFEND, () => {
@@ -253,7 +251,7 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                     = Geometry.directionBetweenPoints(petal.position, petal.owner.position);
                 const position = petal.position;
                 new ServerProjectile(
-                    petal.owner, position, direction, data, petal);
+                    petal.owner, position, direction, data, petal).acceleration.clear();
             }, PetalUsingAnimations.NORMAL);
         }
     },
@@ -286,46 +284,46 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
 
     critical_hit: {
         callback: (on, petal, data) => {
-            on<AttributeEvents.PETAL_DEAL_DAMAGE>(
-                AttributeEvents.PETAL_DEAL_DAMAGE,
-                entity => {
-                    if (!entity || !data) return;
-                    if (Math.random() < data.chance && isDamageableEntity(entity) && petal.damage) {
-                        entity.receiveDamage(petal.damage * (data.multiplier - 1), petal.owner);
-                    }
-                }
-            );
+            // on<AttributeEvents.PETAL_DEAL_DAMAGE>(
+            //     AttributeEvents.PETAL_DEAL_DAMAGE,
+            //     entity => {
+            //         if (!entity || !data) return;
+            //         if (Math.random() < data.chance && isDamageableEntity(entity) && petal.damage) {
+            //             entity.receiveDamage(petal.damage * (data.multiplier - 1), petal.owner);
+            //         }
+            //     }
+            // );
         }
     },
 
     health_percent_damage: {
         callback: (on, petal, data) => {
-            on<AttributeEvents.PETAL_DEAL_DAMAGE>(
-                AttributeEvents.PETAL_DEAL_DAMAGE,
-                entity => {
-                    if (!entity || !data) return;
-                    if (isDamageableEntity(entity) && entity.health) {
-                        const additionalDamage = entity.health * data.percent;
-                        const limitedDamage = data.maxDamage !== undefined
-                            ? Math.min(additionalDamage, data.maxDamage)
-                            : additionalDamage;
-                        entity.receiveDamage(limitedDamage, petal.owner);
-                    }
-                }
-            );
+            // on<AttributeEvents.PETAL_DEAL_DAMAGE>(
+            //     AttributeEvents.PETAL_DEAL_DAMAGE,
+            //     entity => {
+            //         if (!entity || !data) return;
+            //         if (isDamageableEntity(entity) && entity.health) {
+            //             const additionalDamage = entity.health * data.percent;
+            //             const limitedDamage = data.maxDamage !== undefined
+            //                 ? Math.min(additionalDamage, data.maxDamage)
+            //                 : additionalDamage;
+            //             entity.receiveDamage(limitedDamage, petal.owner);
+            //         }
+            //     }
+            // );
         }
     },
 
     damage_avoidance: {
         callback: (on, petal, data) => {
-            const originalReceiveDamage = petal.receiveDamage;
-
-            petal.receiveDamage = function(amount: number, source: any) {
-                if (data && Math.random() < data.chance) {
-                    return;
-                }
-                originalReceiveDamage.call(this, amount, source);
-            };
+            // const originalReceiveDamage = petal.receiveDamage;
+            //
+            // petal.receiveDamage = function(amount: number, source: any) {
+            //     if (data && Math.random() < data.chance) {
+            //         return;
+            //     }
+            //     originalReceiveDamage.call(this, amount, source);
+            // };
         }
     },
 
@@ -407,50 +405,40 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
 
     area_poison: {
         callback: (on, petal, data) => {
-            if (!data) return;
-            const originalTick = petal.tick;
-            let timeSinceLastTick = 0;
-            const tickInterval = data.tickInterval || 1;
-
-            petal.tick = function() {
-                originalTick.call(this);
-
-                if (this.isReloading || this.destroyed) return;
-
-                timeSinceLastTick += this.game.dt;
-
-                if (timeSinceLastTick >= tickInterval) {
-                    timeSinceLastTick = 0;
-
-                    const circleHitbox = new CircleHitbox(data.radius);
-                    circleHitbox.position = this.position;
-
-                    const nearbyEntities = this.game.grid.intersectsHitbox(circleHitbox);
-
-                    for (const entity of nearbyEntities) {
-                        if (entity === this || entity === this.owner) continue;
-                        if (entity.type === EntityType.Petal || entity.type === EntityType.Projectile) continue;
-                        if (isDamageableEntity(entity) && entity.canReceiveDamageFrom(this.owner)) {
-                            entity.receiveDamage(data.damagePerSecond * tickInterval, this.owner);
-                        }
-                    }
-                }
-            };
+            // if (!data) return;
+            // const originalTick = petal.tick;
+            // let timeSinceLastTick = 0;
+            // const tickInterval = data.tickInterval || 1;
+            //
+            // petal.tick = function() {
+            //     originalTick.call(this);
+            //
+            //     if (this.isReloading || this.destroyed) return;
+            //
+            //     timeSinceLastTick += this.game.dt;
+            //
+            //     if (timeSinceLastTick >= tickInterval) {
+            //         timeSinceLastTick = 0;
+            //
+            //         const circleHitbox = new CircleHitbox(data.radius);
+            //         circleHitbox.position = this.position;
+            //
+            //         const nearbyEntities = this.game.grid.intersectsHitbox(circleHitbox);
+            //
+            //         for (const entity of nearbyEntities) {
+            //             if (entity === this || entity === this.owner) continue;
+            //             if (entity.type === EntityType.Petal || entity.type === EntityType.Projectile) continue;
+            //             if (isDamageableEntity(entity) && entity.canReceiveDamageFrom(this.owner)) {
+            //                 entity.receiveDamage(data.damagePerSecond * tickInterval, this.owner);
+            //             }
+            //         }
+            //     }
+            // };
         }
     },
     self_damage: {
         callback: (on, petal, data) => {
-            on<AttributeEvents.PETAL_DEAL_DAMAGE>(
-                AttributeEvents.PETAL_DEAL_DAMAGE,
-                entity => {
-                    if (!entity || !data) return;
-                    const owner = petal.owner;
-                    const selfDamage = data;
-                    if (selfDamage && owner) {
-                        owner.receiveDamage(Number(selfDamage), owner);
-                    }
-                }
-            );
+
         }
     },
     damage_heal: {
@@ -470,108 +458,96 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
             );
         }
     },
-    armor: {
-        callback: (on, petal, data) => {
-            const originalReceiveDamage = petal.receiveDamage;
-
-            petal.receiveDamage = function(amount: number, source: any) {
-                if (data) {
-                    amount = Math.max(0, amount - data);
-                }
-                originalReceiveDamage.call(this, amount, source);
-            };
-        }
-    },
     lightning: {
         callback: (on, petal, data) => {
-            if (!data) return;
-
-            on<AttributeEvents.PETAL_DEAL_DAMAGE>(
-                AttributeEvents.PETAL_DEAL_DAMAGE,
-                entity => {
-                    if (!entity || !data) return;
-
-                    const hitEntities = new Set([entity]);
-                    let currentTarget = entity;
-                    let remainingBounces = data.bounces;
-                    let currentDamage = petal.damage || 0;
-
-                    while (remainingBounces > 0 && currentDamage > 1) {
-                        currentDamage *= data.attenuation;
-
-                        const rangeHitbox = new CircleHitbox(data.range, currentTarget.position);
-
-                        const nearbyEntities = petal.game.grid.intersectsHitbox(rangeHitbox);
-                        const validTargets = Array.from(nearbyEntities).filter((e: ServerEntity) =>
-                            !hitEntities.has(e)
-                            && e.type !== EntityType.Petal
-                            && e.type !== EntityType.Projectile
-                            && e !== petal.owner
-                            && isDamageableEntity(e)
-                            && e.canReceiveDamageFrom(petal.owner)
-                        );
-
-                        if (validTargets.length === 0) break;
-
-                        let nextTarget = validTargets[0];
-                        let minDistance = UVector2D.distanceBetween(currentTarget.position, nextTarget.position);
-
-                        for (let i = 1; i < validTargets.length; i++) {
-                            const distance = UVector2D.distanceBetween(currentTarget.position, validTargets[i].position);
-                            if (distance < minDistance) {
-                                minDistance = distance;
-                                nextTarget = validTargets[i];
-                            }
-                        }
-
-                        if (minDistance > data.range) break;
-
-                        if (isDamageableEntity(nextTarget)) {
-                            nextTarget.receiveDamage(currentDamage, petal.owner);
-
-                            hitEntities.add(nextTarget);
-
-                            currentTarget = nextTarget;
-                            remainingBounces--;
-
-                            // 闪电特效谁帮我写一下
-                            petal.owner.sendEvent(
-                                "lightning_effect" as any,
-                                {
-                                    sourceId: currentTarget.id,
-                                    targetId: nextTarget.id,
-                                    duration: 0.3
-                                }
-                            );
-                        }
-                    }
-                }
-            );
+            // if (!data) return;
+            //
+            // on<AttributeEvents.PETAL_DEAL_DAMAGE>(
+            //     AttributeEvents.PETAL_DEAL_DAMAGE,
+            //     entity => {
+            //         if (!entity || !data) return;
+            //
+            //         const hitEntities = new Set([entity]);
+            //         let currentTarget = entity;
+            //         let remainingBounces = data.bounces;
+            //         let currentDamage = petal.damage || 0;
+            //
+            //         while (remainingBounces > 0 && currentDamage > 1) {
+            //             currentDamage *= data.attenuation;
+            //
+            //             const rangeHitbox = new CircleHitbox(data.range, currentTarget.position);
+            //
+            //             const nearbyEntities = petal.game.grid.intersectsHitbox(rangeHitbox);
+            //             const validTargets = Array.from(nearbyEntities).filter((e: ServerEntity) =>
+            //                 !hitEntities.has(e)
+            //                 && e.type !== EntityType.Petal
+            //                 && e.type !== EntityType.Projectile
+            //                 && e !== petal.owner
+            //                 && isDamageableEntity(e)
+            //                 && e.canReceiveDamageFrom(petal.owner)
+            //             );
+            //
+            //             if (validTargets.length === 0) break;
+            //
+            //             let nextTarget = validTargets[0];
+            //             let minDistance = UVector2D.distanceBetween(currentTarget.position, nextTarget.position);
+            //
+            //             for (let i = 1; i < validTargets.length; i++) {
+            //                 const distance = UVector2D.distanceBetween(currentTarget.position, validTargets[i].position);
+            //                 if (distance < minDistance) {
+            //                     minDistance = distance;
+            //                     nextTarget = validTargets[i];
+            //                 }
+            //             }
+            //
+            //             if (minDistance > data.range) break;
+            //
+            //             if (isDamageableEntity(nextTarget)) {
+            //                 nextTarget.receiveDamage(currentDamage, petal.owner);
+            //
+            //                 hitEntities.add(nextTarget);
+            //
+            //                 currentTarget = nextTarget;
+            //                 remainingBounces--;
+            //
+            //                 // 闪电特效谁帮我写一下
+            //                 petal.owner.sendEvent(
+            //                     "lightning_effect" as any,
+            //                     {
+            //                         sourceId: currentTarget.id,
+            //                         targetId: nextTarget.id,
+            //                         duration: 0.3
+            //                     }
+            //                 );
+            //             }
+            //         }
+            //     }
+            // );
         }
     },
     damage_reduction_percent: {
         callback: (on, petal, data) => {
-            const originalReceiveDamage = petal.receiveDamage;
-
-            petal.receiveDamage = function(amount: number, source: any) {
-                let shouldReduceDamage = false;
-
-                if (data && source) {
-                    if (source.type === EntityType.Petal || source.type === EntityType.Projectile) {
-                        shouldReduceDamage = true;
-                    } else if (source.type === EntityType.Player && source.isPetalAttack) {
-                        shouldReduceDamage = true;
-                    }
-
-                    if (shouldReduceDamage) {
-                        const reduction = data / 100;
-                        const originalAmount = amount;
-                        amount = amount * (1 - reduction);
-                    }
-                }
-
-                originalReceiveDamage.call(this, amount, source);
-            };
+            // const originalReceiveDamage = petal.receiveDamage;
+            //
+            // petal.receiveDamage = function(amount: number, source: any) {
+            //     let shouldReduceDamage = false;
+            //
+            //     if (data && source) {
+            //         if (source.type === EntityType.Petal || source.type === EntityType.Projectile) {
+            //             shouldReduceDamage = true;
+            //         } else if (source.type === EntityType.Player && source.isPetalAttack) {
+            //             shouldReduceDamage = true;
+            //         }
+            //
+            //         if (shouldReduceDamage) {
+            //             const reduction = data / 100;
+            //             const originalAmount = amount;
+            //             amount = amount * (1 - reduction);
+            //         }
+            //     }
+            //
+            //     originalReceiveDamage.call(this, amount, source);
+            // };
         }
     }
 } as const;

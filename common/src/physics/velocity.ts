@@ -2,21 +2,21 @@ import VectorAbstract from "./vectorAbstract";
 import Vector from "./vector";
 
 export default class Velocity extends Vector implements VectorAbstract {
-    private lastPosition: Vector = new Vector();
+    /* private lastPosition: Vector = new Vector();
     private position: Vector = new Vector();
-    isInited = false;
+    private isInited = false; */
 
-    constructor(x = 0, y = 0) {
+    public constructor(x = 0, y = 0) {
         super(x, y);
     }
 
-    updateVelocity(): this {
+    /* private updateVelocity(): this {
         this.x = this.position.x - this.lastPosition.x;
         this.y = this.position.y - this.lastPosition.y;
         return this;
     }
 
-    setPosition(newPosition: VectorAbstract): void {
+    public setPosition(newPosition: VectorAbstract): void {
         this.lastPosition = this.position.clone();
         this.position.set(newPosition);
 
@@ -26,5 +26,5 @@ export default class Velocity extends Vector implements VectorAbstract {
         }
 
         this.updateVelocity();
-    }
+    } */
 }

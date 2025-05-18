@@ -124,7 +124,6 @@ export class ClientPlayer extends ClientEntity {
     eyeBallPosition: VectorAbstract = UVector2D.new(0, 0);
 
     drawFlower() {
-        console.log(this.position)
         const mouthX = 6.2;
         const mouthY = 9;
 

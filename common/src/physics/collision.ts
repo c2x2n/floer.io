@@ -3,7 +3,8 @@ import VectorAbstract from "./vectorAbstract";
 import { Geometry } from "../maths/geometry";
 import { Numeric } from "../maths/numeric";
 
-export type CollisionResponse = { dir: VectorAbstract, pen: number } | null;
+export type CollisionT = { dir: VectorAbstract, pen: number };
+export type CollisionResponse = CollisionT | null;
 export type LineIntersection = { point: VectorAbstract, normal: VectorAbstract } | null;
 
 export const Collision = {

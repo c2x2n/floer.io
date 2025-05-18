@@ -1,42 +1,40 @@
 import { type WebSocket } from "ws";
-import { ServerEntity } from "./serverEntity";
-import { UVector2D } from "../../../common/src/physics/uvector";
-import { GameBitStream, type Packet, PacketStream } from "../../../common/src/net/net";
+import { ServerEntity } from "../entity";
+import { UVector2D } from "../../../../common/src/physics/uvector";
+import { GameBitStream, type Packet, PacketStream } from "../../../../common/src/net/net";
 import { createHash } from "crypto";
-import { type ServerGame } from "../game";
+import { type ServerGame } from "../../game";
 import {
     ChatData,
     type EntitiesNetData,
     PetalData,
     PetalState,
     UpdatePacket
-} from "../../../common/src/net/packets/updatePacket";
-import { CircleHitbox, RectHitbox } from "../../../common/src/physics/hitbox";
-import { Random } from "../../../common/src/maths/random";
-import { InputAction, InputPacket } from "../../../common/src/net/packets/inputPacket";
-import { JoinPacket } from "../../../common/src/net/packets/joinPacket";
-import { ActionType, EntityType, GameConstants, PlayerState } from "../../../common/src/constants";
-import { GameOverPacket } from "../../../common/src/net/packets/gameOverPacket";
-import { Inventory } from "../inventory/inventory";
+} from "../../../../common/src/net/packets/updatePacket";
+import { CircleHitbox, RectHitbox } from "../../../../common/src/physics/hitbox";
+import { Random } from "../../../../common/src/maths/random";
+import { InputAction, InputPacket } from "../../../../common/src/net/packets/inputPacket";
+import { JoinPacket } from "../../../../common/src/net/packets/joinPacket";
+import { ActionType, EntityType, GameConstants, PlayerState } from "../../../../common/src/constants";
+import { GameOverPacket } from "../../../../common/src/net/packets/gameOverPacket";
+import { Inventory } from "../../inventory/inventory";
 import { ServerPetal } from "./serverPetal";
-import { PetalDefinition, SavedPetalDefinitionData } from "../../../common/src/definitions/petals";
-import { AttributeEvents } from "../utils/attributeRealizes";
-import { PlayerModifiers } from "../../../common/src/typings";
-import { EventFunctionArguments } from "../utils/petalEvents";
-import { getLevelExpCost, getLevelInformation } from "../../../common/src/definitions/levels";
-import { damageableEntity, damageSource } from "../typings";
-import { LoggedInPacket } from "../../../common/src/net/packets/loggedInPacket";
-import { ServerFriendlyMob } from "./serverMob";
-import { ChatChannel, ChatPacket } from "../../../common/src/net/packets/chatPacket";
-import { PoisonEffect } from "../effect/poisonEffect";
-import { MobDefinition } from "../../../common/src/definitions/mobs";
-import { spawnLoot } from "../misc/spawning";
-import { applyCommand, CommandResolving } from "../misc/command";
-import VectorAbstract from "../../../common/src/physics/vectorAbstract";
-import { Geometry } from "../../../common/src/maths/geometry";
-import { Numeric } from "../../../common/src/maths/numeric";
+import { PetalDefinition, SavedPetalDefinitionData } from "../../../../common/src/definitions/petals";
+import { AttributeEvents } from "../../utils/attributeRealizes";
+import { PlayerModifiers } from "../../../../common/src/typings";
+import { EventFunctionArguments } from "../../utils/petalEvents";
+import { getLevelExpCost, getLevelInformation } from "../../../../common/src/definitions/levels";
+import { LoggedInPacket } from "../../../../common/src/net/packets/loggedInPacket";
+import { ChatChannel, ChatPacket } from "../../../../common/src/net/packets/chatPacket";
+import { MobDefinition } from "../../../../common/src/definitions/mobs";
+import { spawnLoot } from "../../misc/spawning";
+import { applyCommand, CommandResolving } from "../../misc/command";
+import VectorAbstract from "../../../../common/src/physics/vectorAbstract";
+import { Geometry } from "../../../../common/src/maths/geometry";
+import { Numeric } from "../../../../common/src/maths/numeric";
+import ServerLivelyEntity from "../lively";
+import { Damage, DamageType } from "../typings/damage";
 
-// 闪避
 enum curveType {
     LINEAR,
     SINE,
@@ -62,7 +60,7 @@ function curve(x: number, curve: curveType) {
     return Math.max(0, Math.min(1, res));
 }
 
-export class ServerPlayer extends ServerEntity<EntityType.Player> {
+export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
     type: EntityType.Player = EntityType.Player;
     socket: WebSocket;
 
@@ -89,25 +87,19 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     joined = false;
 
     damage: number = GameConstants.player.defaultBodyDamage;
-
-    private _health = GameConstants.player.defaultModifiers().maxHealth;
-
     actions: InputAction[] = [];
 
     get health(): number {
-        return this._health;
+        return super.health;
     }
 
-    set health(health: number) {
-        if (health === this._health) return;
-        this._health = Numeric.clamp(health, 0, this.modifiers.maxHealth);
+    override set health(health: number) {
+        super.health = health;
         this.setFullDirty();
     }
 
-    private _maxHealth = GameConstants.player.defaultModifiers().maxHealth;
-
     get maxHealth(): number {
-        return this._maxHealth;
+        return super.maxHealth;
     }
 
     set maxHealth(maxHealth: number) {
@@ -175,20 +167,14 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
     }
 
     modifiers: PlayerModifiers = GameConstants.player.defaultModifiers();
-    otherModifiers: Array<Partial<PlayerModifiers>> = [];
+    otherModifiersOnTick: Array<Partial<PlayerModifiers>> = [];
 
     persistentSpeedModifier = 1;
 
     persistentZoomModifier = 1;
-
-    godMode = false;
-
     spectatorMode = false;
-
     invisible = false;
-
     frozen = false;
-
     exp = 0;
     level = 1;
     levelInformation = getLevelInformation(0);
@@ -198,8 +184,6 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
     chatMessagesToSend: ChatData[] = [];
     collected: MobDefinition[] = [];
-
-    killedBy?: damageSource;
 
     isAdmin = false;
 
@@ -213,23 +197,6 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         return super.canCollideWith(entity);
     }
 
-    canReceiveDamageFrom(source: damageableEntity): boolean {
-        if (this.spectatorMode) return false;
-
-        switch (source.type) {
-            case EntityType.Player:
-                return source != this;
-            case EntityType.Mob:
-                if (source instanceof ServerFriendlyMob) return source.owner !== this;
-                return true;
-            case EntityType.Petal:
-                return source.owner != this;
-            case EntityType.Projectile:
-                if (source.source instanceof ServerFriendlyMob) return source.source.owner != this;
-                return source.source != this;
-        }
-    }
-
     constructor(game: ServerGame, socket: WebSocket) {
         const position = Random.vector(
             0,
@@ -237,22 +204,21 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             0,
             game.height
         );
-        super(game, position);
-        this.position = position;
+        super(game, position, EntityType.Player);
         this.socket = socket;
-
         this.inventory = new Inventory(this);
-
         this.updateModifiers();
+        this.maxHealth = GameConstants.player.defaultModifiers().maxHealth;
+        this.health = this.maxHealth;
     }
 
     tick(): void {
         super.tick();
 
-        this.addAcceleration(UVector2D.mul(
-            this.direction.direction,
-            Numeric.remap(this.distance, 0, 150, 0, GameConstants.player.maxSpeed) * this.modifiers.speed * 0.03
-        ));
+        this.maintainAcceleration(
+            Geometry.directionToRadians(this.direction.direction),
+            Numeric.remap(this.distance, 0, 150, 0, GameConstants.player.maxSpeed) * this.modifiers.speed
+        );
 
         // 观察者模式下只处理移动，不处理花瓣和其他功能
         if (this.spectatorMode) return;
@@ -285,7 +251,12 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         }
 
         if (this.modifiers.selfPoison > 0) {
-            this.receiveDamage(this.modifiers.selfPoison * this.game.dt, this, true);
+            this.receiveDamage({
+                source: this,
+                type: DamageType.DAMAGE_REFLECTION,
+                amount: this.modifiers.selfPoison * this.game.dt,
+                to: this
+            });
         }
 
         // 护盾每秒自动消失5%
@@ -293,8 +264,6 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             const shieldDecay = this._shield * 0.05 * this.game.dt;
             this.shield = this._shield - shieldDecay;
         }
-
-        this.updateModifiers();
 
         if (this.level >= (this.game.zoneManager.inWhichZone(this.position)?.data.highestLevel ?? 999)) {
             this.dirty.overleveled = true;
@@ -337,56 +306,20 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         this.level = this.levelInformation.level;
     }
 
-    dealDamageTo(to: damageableEntity): void {
-        // 观察者模式下不造成伤害
-        if (this.spectatorMode) return;
-
-        if (to.canReceiveDamageFrom(this)) {
-            const damage = this.damage * this.modifiers.bodyDamage;
-            to.receiveDamage(damage, this);
-            this.sendEvent(AttributeEvents.FLOWER_DEAL_DAMAGE, to);
-        }
-    }
-
-    receiveDamage(amount: number, source: damageSource, disableEvent?: boolean) {
-        if (!this.isActive()) return;
-
-        // 无敌模式下不接受任何伤害
-        if (this.godMode) return;
+    public override receiveDamage(damage: Damage) {
+        let { amount } = damage;
+        const { type, source } = damage;
 
         if ((this.modifiers.damageAvoidanceChance > 0 && Math.random() < this.modifiers.damageAvoidanceChance)
             || (this.modifiers.damageAvoidanceByDamage && Math.random() < curve(amount / 100, curveType.CBRT))) {
             return;
         }
 
-        // 检查是否为毒素伤害
-        const isPoisonDamage
-            // 玩家自身处于中毒状态
-            = this.state.poison
-            // 来源是PoisonEffect实例
-            || (source && source instanceof PoisonEffect)
-            // 来源是中毒的玩家
-            || (source && source instanceof ServerPlayer && source.state.poison)
-            // 自毒伤害(uranium辐射)
-            || (disableEvent && this.modifiers.selfPoison > 0);
-
-        // 检查是否为碰撞伤害（来自玩家或怪物，但不是花瓣和投射物）
-        const isCollisionDamage = source
-            && (source instanceof ServerPlayer
-            || (source instanceof ServerEntity && source.type === EntityType.Mob))
-            && !isPoisonDamage;
-
-        // 如果是碰撞伤害，应用伤害减免
-        if (isCollisionDamage && this.modifiers.bodyDamageReduction > 0) {
+        if (type === DamageType.COLLISION && this.modifiers.bodyDamageReduction > 0) {
             amount *= (1 - this.modifiers.bodyDamageReduction);
         }
 
-        // 如果是毒素伤害，直接扣减血量，绕过护盾
-        if (isPoisonDamage) {
-            this.health -= amount;
-        } else {
-            // 不是毒素伤害，正常的护盾逻辑
-            // 优先消耗护盾
+        if (type === DamageType.POISON) {
             if (this._shield > 0) {
                 if (this._shield >= amount) {
                     this.shield = this._shield - amount;
@@ -396,13 +329,9 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                     this.shield = 0;
                 }
             }
-
-            if (amount > 0) {
-                this.health -= amount;
-            }
         }
 
-        if (!disableEvent) {
+        if (type != DamageType.DAMAGE_REFLECTION) {
             this.sendEvent(
                 AttributeEvents.FLOWER_GET_DAMAGE, {
                     entity: source,
@@ -413,41 +342,36 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
         if (amount > 0) this.gotDamage = true;
 
-        if (this.health <= 0) {
-            if (this.modifiers.revive) {
-                const revHealthP = this.modifiers.revive.healthPercent || 100;
-                const shieldP = this.modifiers.revive.shieldPercent || 0;
-                this.health = this.maxHealth * revHealthP / 100;
-                this.shield = this.maxHealth * shieldP / 100;
-                if (this.modifiers.revive.destroyAfterUse) {
-                    for (let i = 0; i < this.inventory.inventory.length; i++) {
-                        const petalData = this.inventory.inventory[i];
-                        if (petalData?.modifiers?.revive?.destroyAfterUse) {
-                            this.inventory.delete(i);
-                            this.dirty.inventory = true;
-                            break;
-                        }
+        damage.amount = amount;
+        super.receiveDamage(damage);
+
+        /* if (this.modifiers.revive) {
+            const revHealthP = this.modifiers.revive.healthPercent || 100;
+            const shieldP = this.modifiers.revive.shieldPercent || 0;
+            this.health = this.maxHealth * revHealthP / 100;
+            this.shield = this.maxHealth * shieldP / 100;
+            if (this.modifiers.revive.destroyAfterUse) {
+                for (let i = 0; i < this.inventory.inventory.length; i++) {
+                    const petalData = this.inventory.inventory[i];
+                    if (petalData?.modifiers?.revive?.destroyAfterUse) {
+                        this.inventory.delete(i);
+                        this.dirty.inventory = true;
+                        break;
                     }
                 }
-                return; // I REFUSE TO DIE
             }
-            if (source instanceof ServerPlayer) {
-                source.kills++;
-            }
-
-            this.killedBy = source;
-
-            this.destroy();
-
-            if (source instanceof ServerPlayer) {
-                source.addExp(this.exp / 2);
-            }
+            return; // I REFUSE TO DIE
         }
-    }
+        if (source instanceof ServerPlayer) {
+            source.kills++;
+            this.killedBy = source;
+        }
 
-    heal(amount: number) {
-        amount *= this.modifiers.healing;
-        this.health += amount;
+        this.destroy();
+
+        if (source instanceof ServerPlayer) {
+            source.addExp(this.exp / 2);
+        } */
     }
 
     sendPackets() {
@@ -461,7 +385,10 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
 
         const radius = this.zoom + 10;
         const rect = RectHitbox.fromCircle(radius, this.position);
-        const newVisibleEntities = this.game.grid.intersectsHitbox(rect);
+        const array = this.game.grid.intersectsHitbox(rect);
+        const newVisibleEntities = new Set<ServerEntity>(Array.from(array).filter(e => {
+            return !e.invisible;
+        }));
 
         for (const entity of this.visibleEntities) {
             if (!newVisibleEntities.has(entity)) {
@@ -529,21 +456,21 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                     for (const im of e.petals) {
                         if (!im.isReloading) {
                             reloading = false;
-                            if (e.definition.health && typeof im.health === "number") {
+                            if (e.definition.health) {
                                 maxHealth += e.definition.health;
                                 health += im.health;
                             }
-                        } else if (e.definition.reloadTime) {
-                            reloadingTime = e.definition.reloadTime - im.reloadTime;
-                            if (e.definition.health && typeof im.health === "number") {
-                                maxHealth += e.definition.health;
+                        } else if (im.fullReloadTime) {
+                            reloadingTime = im.fullReloadTime - im.reloadTime;
+                            if (e.definition.health) {
+                                maxHealth += im.maxHealth;
                             }
                         }
                     }
 
                     data.state = reloading ? PetalState.Reloading : PetalState.Normal;
                     if (data.state === PetalState.Reloading && e.definition.reloadTime) {
-                        data.percent = reloadingTime / e.definition.reloadTime;
+                        data.percent = reloadingTime / e.petals[0].fullReloadTime;
                     } else {
                         data.percent = health / maxHealth;
                     }
@@ -551,13 +478,13 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
                     const im = e.petals[0];
                     if (im.isReloading) {
                         data.state = PetalState.Reloading;
-                        if (e.definition.reloadTime) {
-                            data.percent = (e.definition.reloadTime - im.reloadTime) / e.definition.reloadTime;
+                        if (im.fullReloadTime) {
+                            data.percent = (im.fullReloadTime - im.reloadTime) / im.fullReloadTime;
                         }
                     } else {
                         data.state = PetalState.Normal;
-                        if (e.definition.health && typeof im.health === "number") {
-                            data.percent = im.health / e.definition.health;
+                        if (im.maxHealth) {
+                            data.percent = im.health / im.maxHealth;
                         }
                     }
                 }
@@ -717,7 +644,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         this.inventory.eventManager.sendEventByPetal<T>(petal, event, data);
     }
 
-    get playerState(): PlayerState {
+    public get playerState(): PlayerState {
         if (this.state.poison) return PlayerState.Poisoned;
         if (this.modifiers.healing < 1) return PlayerState.Danded;
         if (this.isAttacking) return PlayerState.Attacking;
@@ -748,7 +675,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         return data;
     }
 
-    calcModifiers(now: PlayerModifiers, extra: Partial<PlayerModifiers>): PlayerModifiers {
+    protected override calcModifiers(now: PlayerModifiers, extra: Partial<PlayerModifiers>): PlayerModifiers {
         now.healing *= extra.healing ?? 1;
         now.maxHealth += extra.maxHealth ?? 0;
         now.healPerSecond += extra.healPerSecond ?? 0;
@@ -781,7 +708,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         let avoidanceFailureChance = 1;
 
         for (const petal of this.petalEntities) {
-            const modifier = petal.definition.modifiers;
+            const modifier = petal.definition.modifiersToPlayer;
             // has modifier AND (EITHER not first time reloading OR petal effects work on first reload)
             // petal.def.effectivefirstreload being undefined does not affect the result
             if (modifier && (!petal.isLoadingFirstTime || (petal.isLoadingFirstTime && petal.definition.effectiveFirstReload))) {
@@ -813,7 +740,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             }
         });
 
-        this.otherModifiers.forEach(effect => {
+        this.otherModifiersOnTick.forEach(effect => {
             if (effect.damageAvoidanceChance) {
                 avoidanceFailureChance *= (1 - effect.damageAvoidanceChance);
                 const modifierWithoutAvoidance = { ...effect };
@@ -824,7 +751,7 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
             }
         });
 
-        this.otherModifiers = [];
+        this.otherModifiersOnTick = [];
 
         if (this.persistentSpeedModifier !== 1) {
             modifiersNow = this.calcModifiers(modifiersNow, {
@@ -876,9 +803,6 @@ export class ServerPlayer extends ServerEntity<EntityType.Player> {
         this.addPacketToSend(gameOverPacket);
 
         super.destroy();
-        for (const i of this.petalEntities) {
-            i.destroy();
-        }
         spawnLoot(
             this.game,
             this.inventory.drop(3),

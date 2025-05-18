@@ -114,15 +114,15 @@ export class ClientPetal extends ClientEntity {
             // this.velocity = newVelocity;
             // this.toCenterPosition = position;
             //
-            // if (owner) {
-            //     this.ownerPosition = Vec2.targetEasing(
-            //         this.ownerPosition,
-            //         owner.position,
-            //         6
-            //     )
-            // }
-            //
-            // this.position = Vec2.add(this.toCenterPosition, this.ownerPosition)
+            if (owner) {
+                this.ownerPosition = UVector2D.targetEasing(
+                    this.ownerPosition,
+                    owner.position,
+                    6
+                );
+            }
+
+            this.position = UVector2D.add(this.toCenterPosition, this.ownerPosition);
 
             this.updateContainerPosition(4.5);
         }
@@ -170,10 +170,9 @@ export class ClientPetal extends ClientEntity {
     toCenterPosition: VectorAbstract = UVector2D.new(0, 0);
 
     updateFromData(data: EntitiesNetData[EntityType.Petal], isNew: boolean): void {
-        this.position = data.position;
+        this.toCenterPosition = UVector2D.div(data.position, 100);
 
         if (data.full && isNew) {
-            this.toCenterPosition = data.position;
             this.definition = data.full.definition;
             this.hitboxRadius = this.definition.hitboxRadius;
             this.container.radius = Camera.unitToScreen(this.hitboxRadius);
@@ -184,20 +183,20 @@ export class ClientPetal extends ClientEntity {
             const owner = this.game.entityPool.get(this.ownerId);
             if (owner) this.ownerPosition = owner.position;
         }
-        const length
-            = UVector2D.distanceBetween(this.toCenterPosition, data.position);
-        const vector = UVector2D.mul(Geometry.directionBetweenPoints(
-            data.position, this.toCenterPosition
-        ), length * 1.1);
-
-        const downer = Numeric.clamp(length, 0, 0.64);
-
-        if (length > 0.1) {
-            // this.velocity.push({
-            //     vector: Vec2.mul(vector, 1 / this.game.dt * downer),
-            //     downing: downer
-            // })
-        }
+        // const length
+        //     = UVector2D.distanceBetween(this.toCenterPosition, data.position);
+        // const vector = UVector2D.mul(Geometry.directionBetweenPoints(
+        //     data.position, this.toCenterPosition
+        // ), length * 1.1);
+        //
+        // const downer = Numeric.clamp(length, 0, 0.64);
+        //
+        // if (length > 0.1) {
+        //     // this.velocity.push({
+        //     //     vector: Vec2.mul(vector, 1 / this.game.dt * downer),
+        //     //     downing: downer
+        //     // })
+        // }
 
         if (data.gotDamage) this.getDamageAnimation(true);
 

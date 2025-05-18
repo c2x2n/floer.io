@@ -3,7 +3,7 @@ import { Rarity, RarityName } from "../../../common/src/definitions/rarities";
 import { spawnLoot } from "./spawning";
 import { Mobs } from "../../../common/src/definitions/mobs";
 import { EntityType } from "../../../common/src/constants";
-import { ServerPlayer } from "../entities/serverPlayer";
+import { ServerPlayer } from "../entity/entities/serverPlayer";
 import {
     CommandDefinition,
     CommandDefinitions,
@@ -12,6 +12,7 @@ import {
 } from "../../../common/src/definitions/commands";
 import { ChatData } from "../../../common/src/net/packets/updatePacket";
 import { StTyped } from "../../../common/src/typings";
+import { DamageType } from "../entity/typings/damage";
 
 export type DirectlyChatData = ChatData & ({
     global: false
@@ -163,7 +164,12 @@ const Commands = {
         const [who] = parameters;
         resolve.$p(who, player => {
             player.receiveDamage(
-                player.maxHealth ** 2 + player.shield * 2, resolve.player); // Deal damage from the admin
+                {
+                    amount: player.maxHealth ** 2 + player.shield * 2,
+                    to: player,
+                    source: player,
+                    type: DamageType.POISON
+                }); // Deal damage from the admin
 
             if (player.isActive()) {
                 // This check is needed in case the player had a revive mechanic that worked
@@ -256,8 +262,8 @@ const Commands = {
     god: (resolve, parameters) => {
         const [who] = parameters;
         resolve.$p(who, player => {
-            player.godMode = !player.godMode;
-            resolve.resolve(`${player.name} ${player.godMode ? "enabled" : "disabled"} god mode.`);
+            player.invincible = !player.invincible;
+            resolve.resolve(`${player.name} ${player.invincible ? "enabled" : "disabled"} god mode.`);
         });
     },
     invisible: (resolve, parameters) => {

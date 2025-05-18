@@ -1,10 +1,10 @@
 import { getDisplayedPieces, SavedPetalDefinitionData } from "../../../common/src/definitions/petals";
-import { ServerPetal } from "../entities/serverPetal";
+import { ServerPetal } from "../entity/entities/serverPetal";
 import { P2 } from "../../../common/src/maths/constants";
 import { UVector2D } from "../../../common/src/physics/uvector";
 import { Inventory } from "./inventory";
 import { GameConstants } from "../../../common/src/constants";
-import { ServerPlayer } from "../entities/serverPlayer";
+import { ServerPlayer } from "../entity/entities/serverPlayer";
 import { PetalUsingAnimations } from "../utils/attributeRealizes";
 import VectorAbstract from "../../../common/src/physics/vectorAbstract";
 import { Geometry } from "../../../common/src/maths/geometry";

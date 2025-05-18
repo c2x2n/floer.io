@@ -29,14 +29,16 @@ export const GameConstants = Object.freeze({
     defaultModifiers: (): Modifiers => ({
         healPerSecond: 0,
         speed: 1,
-        selfPoison: 0
+        selfPoison: 0,
+        healing: 1,
+        armor: 0
     }),
     maxPosition: 4096,
     player: {
         maxChatLength: 80,
         radius: 1.2,
         defaultBodyDamage: 25,
-        maxSpeed: 3.5,
+        maxSpeed: 0.5,
         defaultName: "Player",
         maxNameLength: 20,
         defaultSlot: 10,
@@ -68,7 +70,8 @@ export const GameConstants = Object.freeze({
             extraSlot: 0,
             bodyDamage: 1,
             knockbackReduction: 0,
-            bodyDamageReduction: 0
+            bodyDamageReduction: 0,
+            armor: 0
         })
     },
     petal: {

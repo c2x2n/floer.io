@@ -1,13 +1,13 @@
 import { EntityType } from "../../../common/src/constants";
 import { type Hitbox, RectHitbox } from "../../../common/src/physics/hitbox";
 import { UVector2D } from "../../../common/src/physics/uvector";
-import { type ServerEntity } from "../entities/serverEntity";
-import { type ServerPlayer } from "../entities/serverPlayer";
-import { ServerPetal } from "../entities/serverPetal";
-import { ServerMob } from "../entities/serverMob";
-import { ServerLoot } from "../entities/serverLoot";
-import { ServerProjectile } from "../entities/serverProjectile";
-import { ServerWall } from "../entities/serverWall";
+import { type ServerEntity } from "../entity/entity";
+import { type ServerPlayer } from "../entity/entities/serverPlayer";
+import { ServerPetal } from "../entity/entities/serverPetal";
+import { ServerMob } from "../entity/entities/serverMob";
+import { ServerLoot } from "../entity/entities/serverLoot";
+import { ServerProjectile } from "../entity/entities/serverProjectile";
+import { ServerWall } from "../entity/entities/serverWall";
 import VectorAbstract from "../../../common/src/physics/vectorAbstract";
 import { Numeric } from "../../../common/src/maths/numeric";
 

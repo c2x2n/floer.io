@@ -1,4 +1,4 @@
-import { ServerPlayer } from "../entities/serverPlayer";
+import { ServerPlayer } from "../entity/entities/serverPlayer";
 import { PetalBunch } from "./petalBunch";
 import { ServerGame } from "../game";
 import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../../../common/src/definitions/petals";

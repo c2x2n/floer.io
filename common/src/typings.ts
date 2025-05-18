@@ -27,6 +27,8 @@ export interface Modifiers {
     healPerSecond: number
     speed: number
     selfPoison: number
+    healing: number
+    armor: number
 }
 
 export type StTypeMapping = {

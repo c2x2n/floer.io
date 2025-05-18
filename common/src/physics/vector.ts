@@ -70,12 +70,12 @@ export default class Vector implements VectorAbstract {
 
     set angle(value: number) {
         const magnitude = this.magnitude;
-        this.mulByVector(Geometry.radiansToDirection(value)).mul(magnitude);
+        this.set(UVector2D.fromPolar(value, magnitude));
     }
 
     set magnitude(value: number) {
         const angle = this.angle;
-        this.mulByVector(Geometry.radiansToDirection(angle)).mul(value);
+        this.set(UVector2D.fromPolar(angle, value));
     }
 
     get magnitude(): number {
@@ -83,10 +83,9 @@ export default class Vector implements VectorAbstract {
     }
 
     static fromPolar(theta: number, magnitude: number): Vector {
-        const newVector = new Vector(1, 1);
+        const newVector = new Vector();
 
-        newVector.angle = theta;
-        newVector.magnitude = magnitude;
+        newVector.set(UVector2D.fromPolar(theta, magnitude));
 
         return newVector;
     }

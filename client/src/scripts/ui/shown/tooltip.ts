@@ -252,13 +252,6 @@ const attributesShowingConfigs: { [K in AttributeNames]: AttributeShowingFunctio
                 color: "#32CD32"
             }];
         },
-        armor: data => {
-            return [{
-                displayName: "Armor",
-                value: data.toString(),
-                color: "#989898"
-            }];
-        },
         self_damage: data => {
             return [{
                 displayName: "Self Damage",
@@ -408,11 +401,11 @@ export function createPetalTooltip(definition: PetalDefinition): JQuery {
         }
     }
 
-    if (definition.modifiers) {
-        for (const modifiersDefinitionKey in definition.modifiers) {
+    if (definition.modifiersToPlayer) {
+        for (const modifiersDefinitionKey in definition.modifiersToPlayer) {
             const showing
                 = petalDefinitionShowingConfigs[modifiersDefinitionKey];
-            const original = (definition.modifiers[modifiersDefinitionKey as keyof PlayerModifiers]);
+            const original = (definition.modifiersToPlayer[modifiersDefinitionKey as keyof PlayerModifiers]);
             if (!showing) continue;
 
             // 特殊处理conditionalHeal

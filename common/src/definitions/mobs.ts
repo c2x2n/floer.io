@@ -8,8 +8,7 @@ export enum MobCategory {
     Fixed,
     Unactive,
     Enemy,
-    Passive,
-    Friendly
+    Passive
 }
 
 export type MobDefinition = ObjectDefinition & {
@@ -21,11 +20,7 @@ export type MobDefinition = ObjectDefinition & {
     readonly rarity: RarityName
     readonly exp: number
     readonly images?: {
-        width?: number
-        height?: number
         mouth?: boolean
-        mouthXPosition?: number
-        mouthYPosition?: number
         legs?: boolean
         rotation?: number
         slotDisplaySize?: number
@@ -36,24 +31,21 @@ export type MobDefinition = ObjectDefinition & {
         readonly reachingAway?: boolean
         readonly sandstormLike?: boolean
     }
-    readonly skills?: {
-        readonly healUnder?: number
-    }
     readonly modifiers?: Partial<Modifiers>
     readonly hideInformation?: boolean
     readonly despawnTime?: number
     readonly noSpawnMessage?: boolean
     readonly hideInGallery?: boolean
+    readonly pop?: Record<string, number[]>
 } & MobSegmentType & MobCategoryType & MobShootType;
 
 export type MobCategoryType = {
     readonly category: MobCategory.Fixed
-    readonly pop?: Record<string, number[]>
     readonly onGround?: boolean
 } | (({
     readonly category: MobCategory.Unactive
 } | {
-    readonly category: MobCategory.Enemy | MobCategory.Passive | MobCategory.Friendly
+    readonly category: MobCategory.Enemy | MobCategory.Passive
     readonly aggroRadius: number
 }) & {
     readonly speed: number
@@ -87,7 +79,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 10,
         category: MobCategory.Unactive,
         hitboxRadius: 1.5,
-        speed: 3,
+        speed: 0.5,
         lootTable: {
             rose: 0.11,
             fast: 0.5,
@@ -105,7 +97,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 2000,
         category: MobCategory.Unactive,
         hitboxRadius: 6.2,
-        speed: 3,
+        speed: 0.5,
         usingAssets: "ladybug",
         lootTable: {
             rose: 1,
@@ -149,7 +141,7 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Passive,
         aggroRadius: 1000,
         hitboxRadius: 50,
-        speed: 3,
+        speed: 0.5,
         usingAssets: "ladybug",
         lootTable: {
             rose: 1,
@@ -171,7 +163,7 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Passive,
         aggroRadius: 10,
         hitboxRadius: 2,
-        speed: 3,
+        speed: 0.5,
         lootTable: {
             rose: 1,
             twin: 0.39,
@@ -192,7 +184,7 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Passive,
         aggroRadius: 10,
         hitboxRadius: 1.8,
-        speed: 3,
+        speed: 0.5,
         lootTable: {
             tri_rose: 0.36,
             epic_rose: 0.002,
@@ -212,7 +204,7 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Unactive,
         description: "It stings. Don't touch it.",
         hitboxRadius: 1,
-        speed: 3,
+        speed: 0.5,
         lootTable: {
             fast: 0.12,
             stinger: 0.1,
@@ -283,7 +275,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 10,
         health: 50,
         category: MobCategory.Unactive,
-        speed: 0.2,
+        speed: 0.05,
         hitboxRadius: 1.5,
         images: {
             slotDisplaySize: 70
@@ -296,7 +288,7 @@ export const Mobs = new Definitions<MobDefinition>([
         exp: 2500
     }, {
         idString: "boulder",
-        displayName: "Boulder",
+        displayName: "Rock",
         damage: 20,
         health: 160,
         category: MobCategory.Fixed,
@@ -318,7 +310,7 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Enemy,
         aggroRadius: 20,
         hitboxRadius: 2,
-        speed: 3,
+        speed: 0.5,
         images: {
             mouth: true,
             slotDisplaySize: 90,
@@ -342,7 +334,7 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Passive,
         aggroRadius: 20,
         hitboxRadius: 5,
-        speed: 3.8,
+        speed: 1,
         images: {
             mouth: true,
             slotDisplaySize: 90,
@@ -383,7 +375,7 @@ export const Mobs = new Definitions<MobDefinition>([
         shootSpeed: 1.5,
         aggroRadius: 30,
         hitboxRadius: 2,
-        speed: 4,
+        speed: 1.3,
         lootTable: {
             dandelion: 0.14,
             bubble: 0.02,
@@ -417,7 +409,7 @@ export const Mobs = new Definitions<MobDefinition>([
         shootSpeed: 1.25,
         aggroRadius: 30,
         hitboxRadius: 5,
-        speed: 4,
+        speed: 1.3,
         lootTable: {
             dandelion: 1,
             bubble: 0.2,
@@ -446,8 +438,6 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         shootable: true,
         images: {
-            width: 254.552,
-            //    height: 163.995
             legs: true
         },
         shoot: {
@@ -461,7 +451,7 @@ export const Mobs = new Definitions<MobDefinition>([
         shootSpeed: 1.5,
         aggroRadius: 30,
         hitboxRadius: 2,
-        speed: 3,
+        speed: 0.5,
         lootTable: {
             peas: 0.1,
             poison_peas: 0.01,
@@ -491,7 +481,7 @@ export const Mobs = new Definitions<MobDefinition>([
         shootSpeed: 1.3,
         aggroRadius: 30,
         hitboxRadius: 4,
-        speed: 3.5,
+        speed: 0.9,
         lootTable: {
             peas: 1,
             poison_peas: 1,
@@ -512,7 +502,7 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Enemy,
         aggroRadius: 20,
         hitboxRadius: 1,
-        speed: 4,
+        speed: 1,
         images: {
             legs: true,
             slotDisplaySize: 50
@@ -536,7 +526,7 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Passive,
         aggroRadius: 20,
         hitboxRadius: 3,
-        speed: 5,
+        speed: 1.2,
         images: {
             legs: true,
             slotDisplaySize: 50
@@ -564,7 +554,7 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Enemy,
         aggroRadius: 20,
         hitboxRadius: 0.8,
-        speed: 3,
+        speed: 0.5,
         images: {
             mouth: true,
             slotDisplaySize: 50
@@ -587,7 +577,7 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Passive,
         aggroRadius: 10,
         hitboxRadius: 0.8,
-        speed: 3,
+        speed: 0.5,
         images: {
             mouth: true,
             slotDisplaySize: 50
@@ -615,7 +605,7 @@ export const Mobs = new Definitions<MobDefinition>([
             mouth: true,
             slotDisplaySize: 80
         },
-        speed: 3,
+        speed: 0.5,
         lootTable: {
             sand: 0.8,
             fast: 1,
@@ -656,7 +646,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 10,
         category: MobCategory.Unactive,
         hitboxRadius: 0.8,
-        speed: 3,
+        speed: 0.5,
         images: {
             mouth: true,
             slotDisplaySize: 50
@@ -677,7 +667,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 10,
         health: 50,
         category: MobCategory.Unactive,
-        speed: 1,
+        speed: 0.1,
         hitboxRadius: 1.5,
         images: {
             slotDisplaySize: 80
@@ -701,7 +691,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 10,
         health: 50,
         category: MobCategory.Unactive,
-        speed: 1,
+        speed: 0.1,
         hitboxRadius: 1.5,
         hideInformation: true,
         images: {
@@ -724,7 +714,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 10,
         health: 50,
         category: MobCategory.Unactive,
-        speed: 5,
+        speed: 1.1,
         hitboxRadius: 1.5,
         images: {
             slotDisplaySize: 80
@@ -747,7 +737,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 10,
         health: 50,
         category: MobCategory.Unactive,
-        speed: 5,
+        speed: 1.1,
         hitboxRadius: 1.5,
         hideInformation: true,
         images: {
@@ -770,7 +760,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 50,
         category: MobCategory.Enemy,
         aggroRadius: 25,
-        speed: 3,
+        speed: 0.5,
         hitboxRadius: 1.5,
         images: {
             slotDisplaySize: 80
@@ -794,7 +784,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 50,
         category: MobCategory.Enemy,
         aggroRadius: 25,
-        speed: 3,
+        speed: 0.5,
         hitboxRadius: 1.5,
         hideInformation: true,
         images: {
@@ -817,7 +807,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 1500,
         category: MobCategory.Enemy,
         aggroRadius: 25,
-        speed: 3.5,
+        speed: 1,
         hitboxRadius: 2.2,
         images: {
             slotDisplaySize: 80
@@ -843,7 +833,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 500,
         category: MobCategory.Enemy,
         aggroRadius: 25,
-        speed: 3.5,
+        speed: 1,
         hitboxRadius: 2.2,
         hideInformation: true,
         images: {
@@ -884,7 +874,7 @@ export const Mobs = new Definitions<MobDefinition>([
         shootSpeed: 1,
         aggroRadius: 30,
         hitboxRadius: 4 * 2 / 0.7,
-        speed: 4,
+        speed: 1.2,
         lootTable: {
             peas: 0.24,
             poison_peas: 0.04,
@@ -909,10 +899,6 @@ export const Mobs = new Definitions<MobDefinition>([
             reachingAway: true
         },
         shootable: true,
-        images: {
-            width: 254.552
-            //  height: 163.995
-        },
         shoot: {
             hitboxRadius: 5.6,
             damage: 60,
@@ -924,9 +910,8 @@ export const Mobs = new Definitions<MobDefinition>([
         shootSpeed: 0.5,
         aggroRadius: 90,
         hitboxRadius: 21,
-        speed: 4,
-        lootTable: {
-        },
+        speed: 1.2,
+        lootTable: {},
         rarity: RarityName.ethereal,
         exp: 96000,
         usingAssets: "mantis"
@@ -952,7 +937,7 @@ export const Mobs = new Definitions<MobDefinition>([
         shootSpeed: 0.9,
         aggroRadius: 60,
         hitboxRadius: 5 / 0.6,
-        speed: 4,
+        speed: 1.2,
         lootTable: {
             dandelion: 1,
             bubble: 0.8,
@@ -983,7 +968,7 @@ export const Mobs = new Definitions<MobDefinition>([
             centerXOffset: 5,
             centerYOffset: 5
         },
-        speed: 3.35,
+        speed: 0.9,
         lootTable: {
             iris: 1,
             salt: 0.24,
@@ -1005,10 +990,7 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Passive,
         aggroRadius: 180,
         hitboxRadius: 21,
-        images: {
-            width: 235.000
-        },
-        speed: 7,
+        speed: 3,
         lootTable: {
         },
         rarity: RarityName.phantasmagoric,
@@ -1022,7 +1004,7 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Passive,
         aggroRadius: 20,
         hitboxRadius: 6,
-        speed: 3,
+        speed: 0.5,
         lootTable: {
             rose: 1,
             twin: 1,
@@ -1048,7 +1030,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 725000,
         category: MobCategory.Passive,
         hitboxRadius: 7,
-        speed: 4,
+        speed: 0.5,
         lootTable: {
             fast: 1
         },
@@ -1065,7 +1047,7 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Passive,
         aggroRadius: 20,
         hitboxRadius: 8,
-        speed: 3,
+        speed: 0.5,
         usingAssets: "dark_ladybug",
         lootTable: {
             tri_rose: 0.7,
@@ -1104,8 +1086,8 @@ export const Mobs = new Definitions<MobDefinition>([
                 speed: 0.6
             }
         },
-        shootSpeed: 0.7,
-        speed: 5,
+        shootSpeed: 0.5,
+        speed: 1.3,
         lootTable: {
             iris: 0.22,
             stinger: 0.36,
@@ -1146,8 +1128,8 @@ export const Mobs = new Definitions<MobDefinition>([
                 speed: 0.6
             }
         },
-        shootSpeed: 0.7,
-        speed: 4.5,
+        shootSpeed: 0.5,
+        speed: 1.5,
         lootTable: {
             iris: 0.15,
             stinger: 0.12,
@@ -1175,7 +1157,7 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Enemy,
         aggroRadius: 20,
         hitboxRadius: 5,
-        speed: 3.25,
+        speed: 0.8,
         images: {
             mouth: true,
             slotDisplaySize: 50
@@ -1205,7 +1187,7 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Passive,
         hitboxRadius: 5,
         aggroRadius: 20,
-        speed: 3,
+        speed: 0.8,
         images: {
             mouth: true,
             slotDisplaySize: 50
@@ -1232,7 +1214,7 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Enemy,
         hitboxRadius: 10,
         aggroRadius: 45,
-        speed: 3,
+        speed: 0.8,
         images: {
             mouth: true,
             slotDisplaySize: 80
@@ -1254,7 +1236,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 1000,
         category: MobCategory.Unactive,
         hitboxRadius: 5,
-        speed: 3,
+        speed: 0.5,
         images: {
             mouth: true,
             slotDisplaySize: 50
@@ -1334,7 +1316,7 @@ export const Mobs = new Definitions<MobDefinition>([
         aggroRadius: 10,
         category: MobCategory.Passive,
         hitboxRadius: 8,
-        speed: 5,
+        speed: 1.4,
         lootTable: {
             stinger: 0.9,
             bubble: 0.48,
@@ -1356,7 +1338,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 22500,
         category: MobCategory.Enemy,
         aggroRadius: 50,
-        speed: 3,
+        speed: 0.5,
         hitboxRadius: 3,
         shootable: true,
         shoot: {
@@ -1411,7 +1393,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 22500,
         category: MobCategory.Enemy,
         aggroRadius: 50,
-        speed: 3,
+        speed: 0.5,
         hitboxRadius: 3,
         hideInformation: true,
         shootable: true,
@@ -1480,11 +1462,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 140,
         category: MobCategory.Unactive,
         hitboxRadius: 5,
-        speed: 15,
-        images: {
-            width: 150,
-            height: 150
-        },
+        speed: 2,
         movement: {
             sandstormLike: true
         },
@@ -1507,12 +1485,9 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Enemy,
         aggroRadius: 15,
         hitboxRadius: 5,
-        speed: 5,
+        speed: 0.9,
         images: {
             rotation: 1
-        },
-        skills: {
-            healUnder: 0.5
         },
         modifiers: {
             healPerSecond: 10
@@ -1526,41 +1501,15 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         rarity: RarityName.rare,
         exp: 15
-    }, {
-        idString: "myt_starfish",
-        displayName: "Starfish",
-        damage: 150,
-        health: 7400,
-        category: MobCategory.Enemy,
-        aggroRadius: 55,
-        hitboxRadius: 13,
-        speed: 5,
-        images: {
-            rotation: 1
-        },
-        skills: {},
-        modifiers: {
-            healPerSecond: 100
-        },
-        lootTable: {
-            sand: 1,
-            fast: 1,
-            triangle: 1,
-            powder: 0.5,
-            starfish: 1
-        },
-        rarity: RarityName.mythic,
-        exp: 500,
-        usingAssets: "starfish"
-    }, {
+    },{
         idString: "digger",
         displayName: "Digger",
         damage: 40,
         health: 1800,
-        category: MobCategory.Friendly,
+        category: MobCategory.Enemy,
         aggroRadius: 25,
         hitboxRadius: 7.5,
-        speed: 3.2,
+        speed: 0.5,
         description: "Wrong game, bud.",
         images: {
             slotDisplaySize: 85

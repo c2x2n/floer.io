@@ -1,7 +1,7 @@
-import { EntityType } from "../../../common/src/constants";
-import { isDamageableEntity } from "../typings";
+import { EntityType } from "../../../../common/src/constants";
 import { Effect } from "./effect";
 import { PoisonEffectData } from "./typings";
+import { DamageType } from "../typings/damage";
 
 export class PoisonEffect extends Effect {
     damagePerSecond: number;
@@ -13,10 +13,13 @@ export class PoisonEffect extends Effect {
             duration: data.duration,
             callback: (dt, effected) => {
                 if (!data) return;
-                if (isDamageableEntity(effected)) {
-                    if (!effected.canReceiveDamageFrom(this.source)) return;
-                    effected.receiveDamage(dt * data.damagePerSecond, this.source);
-                }
+                if (!effected.canReceiveDamageFrom(this.source)) return;
+                effected.receiveDamage({
+                    amount: dt * data.damagePerSecond,
+                    source: this.source,
+                    type: DamageType.POISON,
+                    to: effected
+                });
             },
             workingType: [EntityType.Mob, EntityType.Player]
         });

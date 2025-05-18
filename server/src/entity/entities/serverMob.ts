@@ -1,32 +1,26 @@
-import { ServerEntity } from "./serverEntity";
-import { UVector2D } from "../../../common/src/physics/uvector";
-import { type EntitiesNetData } from "../../../common/src/net/packets/updatePacket";
-import { CircleHitbox } from "../../../common/src/physics/hitbox";
-import { EntityType, GameConstants } from "../../../common/src/constants";
-import { ServerGame } from "../game";
-import { MobCategory, MobDefinition, Mobs } from "../../../common/src/definitions/mobs";
-import { P2 } from "../../../common/src/maths/constants";
+import { ServerEntity } from "../entity";
+import { UVector2D } from "../../../../common/src/physics/uvector";
+import { type EntitiesNetData } from "../../../../common/src/net/packets/updatePacket";
+import { CircleHitbox } from "../../../../common/src/physics/hitbox";
+import { EntityType, GameConstants } from "../../../../common/src/constants";
+import { ServerGame } from "../../game";
+import { MobCategory, MobDefinition, Mobs } from "../../../../common/src/definitions/mobs";
+import { P2 } from "../../../../common/src/maths/constants";
 import { ServerPlayer } from "./serverPlayer";
-import { Random } from "../../../common/src/maths/random";
-import { PetalDefinition, Petals } from "../../../common/src/definitions/petals";
+import { Random } from "../../../../common/src/maths/random";
+import { PetalDefinition, Petals } from "../../../../common/src/definitions/petals";
 import { ServerProjectile } from "./serverProjectile";
-import {
-    collideableEntity,
-    damageableEntity,
-    damageSource,
-    isDamageableEntity,
-    isDamageSourceEntity
-} from "../typings";
-import { ProjectileParameters } from "../../../common/src/definitions/projectiles";
-import { Modifiers } from "../../../common/src/typings";
-import { Rarity, RarityName } from "../../../common/src/definitions/rarities";
+import { ProjectileParameters } from "../../../../common/src/definitions/projectiles";
+import { Modifiers } from "../../../../common/src/typings";
+import { Rarity, RarityName } from "../../../../common/src/definitions/rarities";
 import { ServerWall } from "./serverWall";
-import { spawnLoot } from "../misc/spawning";
-import VectorAbstract from "../../../common/src/physics/vectorAbstract";
-import { Geometry } from "../../../common/src/maths/geometry";
-import { Numeric } from "../../../common/src/maths/numeric";
+import { spawnLoot } from "../../misc/spawning";
+import VectorAbstract from "../../../../common/src/physics/vectorAbstract";
+import { Geometry } from "../../../../common/src/maths/geometry";
+import ServerLivelyEntity from "../lively";
+import { Damage } from "../typings/damage";
 
-export class ServerMob extends ServerEntity<EntityType.Mob> {
+export class ServerMob extends ServerLivelyEntity<EntityType.Mob> {
     type: EntityType.Mob = EntityType.Mob;
 
     hitbox: CircleHitbox;
@@ -36,21 +30,16 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         return this.definition.displayName;
     }
 
-    readonly damage: number;
-
-    private _health!: number;
     get health(): number {
-        return this._health;
+        return super.health;
     }
 
-    set health(value: number) {
-        if (value === this._health) return;
-        this._health = Numeric.clamp(value, 0, this.definition.health);
-
+    override set health(value: number) {
+        super.health = value;
         this.setFullDirty();
     }
 
-    aggroTarget?: damageSource;
+    aggroTarget?: ServerLivelyEntity;
 
     _direction: VectorAbstract = UVector2D.new(0, 0);
 
@@ -74,31 +63,13 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
     walkingTime = 0;
     shootReload = 0;
 
-    canReceiveDamageFrom(entity: ServerEntity): boolean {
-        if (entity instanceof ServerProjectile) {
-            if (this.definition.category === MobCategory.Friendly
-                && entity.source.type === EntityType.Player) { return false; }
-            return entity.source.type != this.type;
-        }
-        if (entity instanceof ServerFriendlyMob) { return true; }
-        if (this.definition.category === MobCategory.Friendly
-            && (entity.type === EntityType.Player || entity.type === EntityType.Petal)) { return false; }
-        if (this.definition.category === MobCategory.Friendly && entity instanceof ServerMob) {
-            if (entity.definition.category === MobCategory.Friendly) { return false; }
-            return true;
-        }
-        return !(entity instanceof ServerMob);
-    }
-
     canCollideWith(entity: ServerEntity): boolean {
         const rarity = Rarity.fromString(this.definition.rarity);
         if (entity instanceof ServerWall) return true;
         if (rarity.notCollideWithOther) return false;
 
-        if (entity instanceof ServerMob) {
-            if (this.notCollidingMobs.includes(entity.definition.idString)) return false;
-            return false;
-        }
+        if (entity instanceof ServerMob
+            && this.notCollidingMobs.includes(entity.definition.idString)) return false;
 
         return !(
             this.definition.category === MobCategory.Fixed
@@ -113,43 +84,36 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
     damageFrom = new Map<ServerPlayer, number>();
 
     spawnTime: number = Date.now();
-
-    healingToFull = false;
+    knockback = 1;
 
     constructor(game: ServerGame
         , position: VectorAbstract
         , direction: VectorAbstract
         , definition: MobDefinition
         , lastSegment?: ServerMob) {
-        super(game, position);
+        super(game, position, EntityType.Mob);
 
         this.definition = definition;
         this.hitbox = new CircleHitbox(definition.hitboxRadius);
         this.damage = definition.damage;
+
+        this.maxHealth = definition.health;
         this.health = definition.health;
 
         this.weight = definition.hitboxRadius * 10;
-
         this.lastSegment = lastSegment;
-        this.position = position;
-
         this.game.grid.addEntity(this);
-        this.position = position;
-
         this.direction = direction;
         this.spawnTime = Date.now();
     }
 
-    changeAggroTo(entity?: damageSource): void {
-        if (![MobCategory.Enemy, MobCategory.Passive, MobCategory.Friendly].includes(this.definition.category)) return;
+    changeAggroTo(entity?: ServerLivelyEntity): void {
+        if (![MobCategory.Enemy, MobCategory.Passive].includes(this.definition.category)) return;
 
         if (this.aggroTarget && !entity) {
             this.aggroTarget = undefined;
         } else if (!this.aggroTarget && entity) {
             if (!this.canReceiveDamageFrom(entity)) return;
-            if (this.definition.category === MobCategory.Friendly
-                && entity.type === EntityType.Player) { return; }
-
             this.aggroTarget = entity;
         }
 
@@ -159,35 +123,21 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
     }
 
     getRandomAggroAround() {
-        if ((this.definition.category === MobCategory.Enemy
-            || this.definition.category === MobCategory.Friendly)
-            && !this.aggroTarget) {
-            const aggro = new CircleHitbox(
-                this.definition.aggroRadius, this.position
-            );
+        if ((this.definition.category != MobCategory.Enemy) || this.aggroTarget) return;
+        const aggro = new CircleHitbox(
+            this.definition.aggroRadius, this.position
+        );
 
-            const entities
-                = this.game.grid.intersectsHitbox(aggro);
+        const entities
+            = this.game.grid.intersectsHitbox(aggro);
 
-            let aggroable: damageSource[] = [];
+        const aggroable = Array.from(entities)
+            .filter(e =>
+                (e instanceof ServerLivelyEntity)
+                && aggro.collidesWith(e.hitbox)) as ServerLivelyEntity[];
 
-            if (this.definition.category === MobCategory.Enemy) {
-                aggroable = Array.from(entities)
-                    .filter(e =>
-                        isDamageSourceEntity(e)
-                        && aggro.collidesWith(e.hitbox)) as damageSource[];
-            } else if (this.definition.category === MobCategory.Friendly) {
-                aggroable = Array.from(entities)
-                    .filter(e =>
-                        e instanceof ServerMob
-                        && e.definition.category !== MobCategory.Friendly
-                        && e !== this
-                        && aggro.collidesWith(e.hitbox)) as damageSource[];
-            }
-
-            if (aggroable.length) {
-                this.changeAggroTo(aggroable[Random.int(0, aggroable.length - 1)]);
-            }
+        if (aggroable.length) {
+            this.changeAggroTo(aggroable[Random.int(0, aggroable.length - 1)].getTopParent());
         }
     }
 
@@ -200,15 +150,9 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
             ? this.position
             : UVector2D.add(this.position, UVector2D.mul(this.shootDirection, this.hitbox.radius));
 
-        const projectile = new ServerProjectile(this,
+        new ServerProjectile(this,
             position,
             this.shootDirection, shoot);
-
-        if (shoot.velocityAtFirst) {
-            projectile.addVelocity(
-                UVector2D.mul(this.shootDirection, shoot.velocityAtFirst)
-            );
-        }
     }
 
     shootTick(): void {
@@ -242,9 +186,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
     }
 
     move(): void {
-        this.addAcceleration(UVector2D.mul(
-            this.direction, this.speed * 0.2
-        ));
+        this.maintainAcceleration(Geometry.directionToRadians(this.direction), this.speed);
     }
 
     sharingHealthBetweenSegments = false;
@@ -252,11 +194,8 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
     notCollidingMobs: string[] = [];
 
     tick(): void {
+        this.otherModifiersOnTick.push(this.definition.modifiers ?? {});
         super.tick();
-
-        this.otherModifiers.push(this.definition.modifiers ?? {});
-
-        this.updateModifiers();
 
         if (this.lastSegment) {
             if (!this.lastSegment.destroyed) {
@@ -265,14 +204,11 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                     this.lastSegment.position
                 );
 
-                this.position = Geometry.getPositionOnCircle(
-                    Geometry.directionToRadians(
-                        this.direction
-                    ),
-                    this.definition.hitboxRadius + this.lastSegment.definition.hitboxRadius,
+                this.position.set(Geometry.getPositionOnCircle(
+                    Geometry.directionToRadians(this.direction),
+                    this.definition.hitboxRadius + this.lastSegment.definition.hitboxRadius + 0.1,
                     this.lastSegment.position
-                );
-
+                ));
                 if (this.lastSegment.aggroTarget) {
                     if (this.definition.shootable) {
                         this.shootDirection = Geometry.radiansToDirection(
@@ -317,35 +253,12 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
             if (this.definition.sharingHealth && !this.sharingHealthBetweenSegments) { this.sharingHealthBetweenSegments = true; }
         }
 
-        if (this.modifiers.healPerSecond) {
-            if (this.definition.skills?.healUnder) {
-                if (this.health < this.definition.skills.healUnder * this.definition.health) {
-                    this.healingToFull = true;
-                }
-                if (this.healingToFull) {
-                    this.health += this.modifiers.healPerSecond * this.game.dt;
-                    this.modifiers.speed *= -1;
-                    this.move();
-
-                    if (this.health >= this.definition.health) {
-                        this.healingToFull = false;
-                    }
-                    return;
-                }
-            } else {
-                this.health += this.modifiers.healPerSecond * this.game.dt;
-            }
-        }
+        this.health += this.modifiers.healPerSecond * this.game.dt;
 
         if (this.definition.category === MobCategory.Fixed) return;
 
-        if (this.definition.category === MobCategory.Friendly) {
-            this.getRandomAggroAround();
-        }
-
         if ((this.definition.category === MobCategory.Enemy
-            || this.definition.category === MobCategory.Passive
-            || this.definition.category === MobCategory.Friendly)
+            || this.definition.category === MobCategory.Passive)
             && this.aggroTarget) {
             if (this.aggroTarget.destroyed) return this.changeAggroTo();
             const distanceBetween = UVector2D.distanceBetween(this.aggroTarget.position, this.position);
@@ -380,55 +293,10 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         } else {
             this.walkingReload += this.game.dt;
 
-            if (this.definition.movement?.sandstormLike) {
-                const changeDirectionInterval = 1 + Math.random() * 0.5;
-                if (this.walkingReload >= changeDirectionInterval) {
-                    const entities = this.game.grid.intersectsHitbox(new CircleHitbox(30, this.position));
-                    let nearestPlayer: ServerPlayer | null = null;
-                    let nearestDistance = Infinity;
-
-                    for (const entity of entities) {
-                        if (entity instanceof ServerPlayer) {
-                            const distance = UVector2D.distanceBetween(this.position, entity.position);
-                            if (distance < nearestDistance) {
-                                nearestDistance = distance;
-                                nearestPlayer = entity;
-                            }
-                        }
-                    }
-
-                    let moveDirection;
-                    const randomSpeedMultiplier = 0.6 + Math.random() * 0.5;
-
-                    if (this instanceof ServerFriendlyMob && this.isSummoned && nearestPlayer && Math.random() < 0.7) {
-                        moveDirection = UVector2D.new(nearestPlayer.direction.direction.x, nearestPlayer.direction.direction.y);
-                        moveDirection.x += (Math.random() * 0.6 - 0.3);
-                        moveDirection.y += (Math.random() * 0.6 - 0.3);
-                        moveDirection = UVector2D.normalize(moveDirection);
-                        this.setAcceleration(UVector2D.mul(
-                            moveDirection, 2 * this.speed * randomSpeedMultiplier
-                        ));
-                    } else {
-                        moveDirection = Random.vector(-1, 1, -1, 1);
-                        this.setAcceleration(UVector2D.mul(
-                            moveDirection, this.speed * randomSpeedMultiplier
-                        ));
-                    }
-                }
-
-                if (this.definition.despawnTime) {
-                    const despawnTime = this.definition.despawnTime;
-                    const aliveTime = (Date.now() - this.spawnTime) / 1000;
-                    if (aliveTime >= despawnTime) {
-                        this.destroy(true);
-                    }
-                }
-            } else if (this.walkingReload >= GameConstants.mob.walkingReload) {
+            if (this.walkingReload >= GameConstants.mob.walkingReload) {
                 if (this.walkingTime === 0) this.direction = Random.vector(-1, 1, -1, 1);
 
-                this.addAcceleration(UVector2D.mul(
-                    this.direction, this.speed * 0.2
-                ));
+                this.move();
 
                 this.walkingTime += this.game.dt;
 
@@ -442,20 +310,6 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         }
     }
 
-    dealDamageTo(to: damageableEntity): void {
-        if (this.definition.category === MobCategory.Friendly
-            && (to.type === EntityType.Player || to.type === EntityType.Petal)) { return; }
-
-        if (this.definition.category === MobCategory.Friendly
-            && to instanceof ServerMob) {
-            if (to.definition.category === MobCategory.Friendly) { return; }
-            to.receiveDamage(this.damage, this);
-            return;
-        }
-
-        if (to.canReceiveDamageFrom(this)) { to.receiveDamage(this.damage, this); }
-    }
-
     calcModifiers(now: Modifiers, extra: Partial<Modifiers>): Modifiers {
         now.healPerSecond += extra.healPerSecond ?? 0;
         if (
@@ -467,26 +321,25 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
             now.speed *= extra.speed ?? 1;
         }
         now.selfPoison += extra.selfPoison ?? 0;
+        now.armor += extra.armor ?? 0;
 
         return now;
     }
 
     lastPopped = 1;
 
-    receiveDamage(amount: number, source: damageSource, disableEvent?: boolean): void {
-        if (!this.isActive()) return;
+    protected override onReceiveDamage(damage: Damage): void {
+        super.onReceiveDamage(damage);
 
-        this.changeAggroTo(source);
+        const { source, amount } = damage;
+
+        this.changeAggroTo(source.getTopParent());
 
         if (this.sharingHealthBetweenSegments && this.lastSegment) {
-            this.lastSegment.receiveDamage(
-                amount, source
-            );
+            this.lastSegment.receiveDamage(damage);
         }
 
-        this.health -= amount;
-
-        if (amount > 0 && this.definition.category === MobCategory.Fixed && this.definition.pop) {
+        if (amount > 0 && this.definition.pop) {
             const percent = this.health / this.definition.health;
             const pop = this.definition.pop;
             const lastPopped = this.lastPopped;
@@ -494,16 +347,12 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
                 const popPercents = pop[popKey];
                 popPercents.forEach(popPercent => {
                     if (popPercent >= percent && lastPopped >= popPercent) {
-                        new ServerMob(this.game,
-                            Geometry.getPositionOnCircle(Random.float(-P2, P2), 4, this.position),
-                            this.direction,
-                            Mobs.fromString(popKey)).changeAggroTo(source);
+                        this.game.spawnMob(Mobs.fromString(popKey),
+                            Geometry.getPositionOnCircle(Random.float(-P2, P2), 4, this.position)).changeAggroTo(source);
 
                         if (this.definition.idString === "ant_hole" && popKey === "queen_ant" && Math.random() < 0.2) {
-                            new ServerMob(this.game,
-                                Geometry.getPositionOnCircle(Random.float(-P2, P2), 6, this.position),
-                                this.direction,
-                                Mobs.fromString("digger")).changeAggroTo(source);
+                            this.game.spawnMob(Mobs.fromString("digger"),
+                                Geometry.getPositionOnCircle(Random.float(-P2, P2), 6, this.position)).changeAggroTo(source);
                         }
 
                         if (this.lastPopped > percent) this.lastPopped = percent;
@@ -515,14 +364,6 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         if (source instanceof ServerPlayer) {
             const get = this.damageFrom.get(source);
             this.damageFrom.set(source, (get ?? 0) + amount);
-        }
-
-        this.destroyCheck();
-    }
-
-    destroyCheck() {
-        if (this.health <= 0) {
-            this.destroy();
         }
     }
 
@@ -537,7 +378,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
         };
     };
 
-    destroy(noDrops = false) {
+    destroy(legal = false) {
         super.destroy();
 
         const lootTable = this.definition.lootTable;
@@ -554,7 +395,7 @@ export class ServerMob extends ServerEntity<EntityType.Mob> {
             }
         }
 
-        if (!noDrops) spawnLoot(this.game, loots, this.position);
+        if (!legal) spawnLoot(this.game, loots, this.position);
 
         const highestPlayer
             = Array.from(this.damageFrom).filter(e => e[0].isActive())
@@ -584,34 +425,12 @@ export class ServerFriendlyMob extends ServerMob {
     // 表示是否是被玩家召唤的生物（true）还是自然生成的（false）
     isSummoned = true;
 
-    canReceiveDamageFrom(source: damageableEntity): boolean {
-        switch (source.type) {
-            case EntityType.Player:
-                return source != this.owner;
-            case EntityType.Mob:
-                if (source instanceof ServerFriendlyMob) return source.owner !== this.owner;
-                return true;
-            case EntityType.Petal:
-                return source.owner != this.owner;
-            case EntityType.Projectile:
-                return source.source != this
-                    && source.source !== this.owner;
-        }
-    }
-
-    canCollideWith(entity: collideableEntity): boolean {
+    canCollideWith(entity: ServerLivelyEntity): boolean {
         if (entity instanceof ServerFriendlyMob) return true;
-        if (isDamageableEntity(entity)) return this.owner.canReceiveDamageFrom(entity);
-        else return false;
+        return this.owner.canReceiveDamageFrom(entity);
     }
 
-    shoot(shoot: ProjectileParameters) {
-        new ServerProjectile(this.owner,
-            this.position,
-            this.direction, shoot);
-    }
-
-    changeAggroTo(entity?: damageSource) {
+    changeAggroTo(entity?: ServerLivelyEntity) {
         if (!this.gettingBackToOwner) super.changeAggroTo(entity);
     }
 
@@ -639,17 +458,11 @@ export class ServerFriendlyMob extends ServerMob {
             this.aggroTarget = undefined;
             this.direction
                 = Geometry.directionBetweenPoints(this.owner.position, this.position);
-            this.setAcceleration(UVector2D.mul(
-                this.direction, this.speed
-            ));
+            this.maintainAcceleration(Geometry.directionToRadians(this.direction), this.speed);
             if (distanceToOwner < 3 * this.definition.hitboxRadius) { this.gettingBackToOwner = false; }
         }
 
         super.tick();
-    }
-
-    dealDamageTo(to: damageableEntity) {
-        if (to.canReceiveDamageFrom(this)) { to.receiveDamage(this.damage, this.owner); }
     }
 
     destroy() {

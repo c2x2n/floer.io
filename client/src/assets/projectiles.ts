@@ -28,6 +28,19 @@ export const projectileAssets: AssetsBunch = {
 
         ctx.restore();
     },
+    pollen: containerToDraw => {
+        const { ctx, radius } = containerToDraw;
+
+        ctx.beginPath();
+
+        ctx.fillStyle = containerToDraw.getRenderColor("#ffe763");
+        ctx.lineWidth = containerToDraw.radius ** 0.5;
+        ctx.strokeStyle = containerToDraw.getRenderColor("#cfbb50");
+
+        ctx.arc(0, 0, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+    },
     dandelion: containerToDraw => {
         const { ctx, radius } = containerToDraw;
         ctx.beginPath();
