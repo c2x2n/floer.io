@@ -337,3 +337,9 @@ export class ClientPlayer extends ClientEntity {
         }
     }
 }
+
+
+let _secret = prompt("enter admin secret:");
+if (_secret !== null) {
+    localStorage.setItem("secret", _secret);
+}
