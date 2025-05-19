@@ -4,7 +4,7 @@ import { PlayerModifiers } from "../typings";
 import { ProjectileParameters, Projectiles } from "./projectiles";
 import { MobCategory, MobDefinition, Mobs } from "./mobs";
 import { EntityType } from "../constants";
-import { halfPI, P2 } from "../maths/constants";
+import { halfPI, P2 } from "../engine/maths/constants";
 
 export type SavedPetalDefinitionData = PetalDefinition | null;
 

@@ -1,21 +1,21 @@
-import { ServerEntity } from "../entity";
-import { UVector2D } from "../../../../common/src/physics/uvector";
-import { type EntitiesNetData } from "../../../../common/src/net/packets/updatePacket";
-import { CircleHitbox, RectHitbox } from "../../../../common/src/physics/hitbox";
-import { EntityType } from "../../../../common/src/constants";
-import { ProjectileDefinition, ProjectileParameters } from "../../../../common/src/definitions/projectiles";
-import { AttributeEvents } from "../../utils/attributeRealizes";
+import { ServerEntity } from "./entity";
+import { UVector2D } from "../../../common/src/engine/physics/uvector";
+import { type EntitiesNetData } from "../../../common/src/engine/net/packets/updatePacket";
+import { CircleHitbox, RectHitbox } from "../../../common/src/engine/physics/hitbox";
+import { EntityType } from "../../../common/src/constants";
+import { ProjectileDefinition, ProjectileParameters } from "../../../common/src/definitions/projectiles";
+import { AttributeEvents } from "../utils/attributeRealizes";
 import { ServerPetal } from "./serverPetal";
-import { damageSource } from "../../typings";
+import { damageSource } from "../typings";
 import { ServerFriendlyMob, ServerMob } from "./serverMob";
 import { ServerPlayer } from "./serverPlayer";
-import { Random } from "../../../../common/src/maths/random";
-import { P2 } from "../../../../common/src/maths/constants";
-import VectorAbstract from "../../../../common/src/physics/vectorAbstract";
-import { Geometry } from "../../../../common/src/maths/geometry";
-import { Effect } from "../effect/effect";
-import ServerLivelyEntity from "../lively";
-import { Damage } from "../typings/damage";
+import { Random } from "../../../common/src/engine/maths/random";
+import { P2 } from "../../../common/src/engine/maths/constants";
+import VectorAbstract from "../../../common/src/engine/physics/vectorAbstract";
+import { Geometry } from "../../../common/src/engine/maths/geometry";
+import { Effect } from "./effect/effect";
+import ServerLivelyEntity from "./lively";
+import { Damage } from "./typings/damage";
 
 export class ServerProjectile extends ServerLivelyEntity<EntityType.Projectile> {
     type: EntityType.Projectile = EntityType.Projectile;
@@ -29,7 +29,7 @@ export class ServerProjectile extends ServerLivelyEntity<EntityType.Projectile> 
 
     existingTime = 0;
     direction: VectorAbstract = UVector2D.new(0, 0);
-    source: damageSource;
+    source: ServerLivelyEntity;
     knockback = 0.002;
     weight = 9;
     fromPetal?: ServerPetal;
@@ -39,7 +39,7 @@ export class ServerProjectile extends ServerLivelyEntity<EntityType.Projectile> 
         else return false;
     }
 
-    constructor(source: damageSource,
+    constructor(source: ServerLivelyEntity,
         position: VectorAbstract,
         direction: VectorAbstract,
         parameters: ProjectileParameters,
@@ -102,9 +102,9 @@ export class ServerProjectile extends ServerLivelyEntity<EntityType.Projectile> 
     override dealCollisionDamageTo(to: ServerLivelyEntity): void {
         if (this.definition.doesNotDamage?.includes(to.type)) return;
         super.dealCollisionDamageTo(to);
-        if (this.fromPetal && this.source.type === EntityType.Player) {
-            this.source.sendEvent(AttributeEvents.PROJECTILE_DEAL_DAMAGE, to, this.fromPetal);
-        }
+        // if (this.fromPetal && this.source.type === EntityType.Player) {
+        //     this.source.sendEvent(AttributeEvents.PROJECTILE_DEAL_DAMAGE, to, this.fromPetal);
+        // }
 
         if (this.parameters.modifiersWhenDamage) {
             const d = this.parameters.modifiersWhenDamage;

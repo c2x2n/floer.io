@@ -1,17 +1,17 @@
 import { type GameEntity } from "../../../common/src/misc/entityPool";
 import { EntityType } from "../../../common/src/constants";
-import { GameBitStream } from "../../../common/src/net/net";
-import { type EntitiesNetData, EntitySerializations } from "../../../common/src/net/packets/updatePacket";
-import { CircleHitbox, type Hitbox, RectHitbox } from "../../../common/src/physics/hitbox";
+import { GameBitStream } from "../../../common/src/engine/net/net";
+import { type EntitiesNetData, EntitySerializations } from "../../../common/src/engine/net/packets/updatePacket";
+import { CircleHitbox, type Hitbox, RectHitbox } from "../../../common/src/engine/physics/hitbox";
 import { type ServerGame } from "../game";
-import { CollisionT } from "../../../common/src/physics/collision";
+import { CollisionT } from "../../../common/src/engine/physics/collision";
 import { CollisionInformation } from "../typings";
-import Vector from "../../../common/src/physics/vector";
-import VectorAbstract from "../../../common/src/physics/vectorAbstract";
-import Velocity from "../../../common/src/physics/velocity";
+import Vector from "../../../common/src/engine/physics/vector";
+import VectorAbstract from "../../../common/src/engine/physics/vectorAbstract";
+import Velocity from "../../../common/src/engine/physics/velocity";
 import { EffectManager } from "./effect/effectManager";
-import { Geometry } from "../../../common/src/maths/geometry";
-import { UVector2D } from "../../../common/src/physics/uvector";
+import { Geometry } from "../../../common/src/engine/maths/geometry";
+import { UVector2D } from "../../../common/src/engine/physics/uvector";
 
 export abstract class ServerEntity<T extends EntityType = EntityType> implements GameEntity {
     public readonly abstract type: T;

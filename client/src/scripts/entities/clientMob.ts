@@ -1,15 +1,15 @@
 import { ClientEntity } from "./clientEntity";
 import { EntityType } from "../../../../common/src/constants";
 import { Game } from "../game";
-import { EntitiesNetData } from "../../../../common/src/net/packets/updatePacket";
+import { EntitiesNetData } from "../../../../common/src/engine/net/packets/updatePacket";
 import { Camera } from "../render/camera";
 import { MobDefinition } from "../../../../common/src/definitions/mobs";
-import { UVector2D } from "../../../../common/src/physics/uvector";
+import { UVector2D } from "../../../../common/src/engine/physics/uvector";
 import { Rarity } from "../../../../common/src/definitions/rarities";
 import { Tween, Easing } from "@tweenjs/tween.js";
 import { getAssets, getGameAssetsName } from "../../assets/assets";
-import { Geometry } from "../../../../common/src/maths/geometry";
-import { Numeric } from "../../../../common/src/maths/numeric";
+import { Geometry } from "../../../../common/src/engine/maths/geometry";
+import { Numeric } from "../../../../common/src/engine/maths/numeric";
 
 export class ClientMob extends ClientEntity {
     type = EntityType.Mob;

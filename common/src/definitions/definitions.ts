@@ -1,4 +1,4 @@
-import { GameBitStream } from "../net/net";
+import { GameBitStream } from "../engine/net/net";
 
 export type ObjectDefinition = {
     readonly idString: string

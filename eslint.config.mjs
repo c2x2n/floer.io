@@ -57,6 +57,7 @@ export default tseslint.config(
             ["@typescript-eslint/no-this-alias"]: "off",
             ["@typescript-eslint/prefer-literal-enum-member"]: "off",
             ["@typescript-eslint/prefer-nullish-coalescing"]: "off",
+            ["@typescript-eslint"]
             ["@typescript-eslint/restrict-template-expressions"]: ["error", {
                 allowAny: true,
                 allowBoolean: true,

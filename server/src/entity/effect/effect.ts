@@ -2,7 +2,7 @@ import { ServerEntity } from "../entity";
 import { damageSource } from "../../typings";
 import { EntityType } from "../../../../common/src/constants";
 import { PlayerModifiers } from "../../../../common/src/typings";
-import { EffectData } from "./typings";
+import { EffectData } from "../typings/effect";
 import ServerLivelyEntity from "../lively";
 
 export class Effect {
@@ -11,7 +11,7 @@ export class Effect {
     hasStarted = false;
 
     readonly effectedTarget: ServerLivelyEntity;
-    readonly source: damageSource;
+    readonly source: ServerLivelyEntity;
     readonly workingType?: EntityType[];
     readonly duration: number;
     readonly callback?: EffectData["callback"];

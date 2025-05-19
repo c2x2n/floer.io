@@ -1,15 +1,15 @@
-import { EntityType } from "../../../common/src/constants";
-import { type Hitbox, RectHitbox } from "../../../common/src/physics/hitbox";
-import { UVector2D } from "../../../common/src/physics/uvector";
-import { type ServerEntity } from "../entity/entity";
-import { type ServerPlayer } from "../entity/entities/serverPlayer";
-import { ServerPetal } from "../entity/entities/serverPetal";
-import { ServerMob } from "../entity/entities/serverMob";
-import { ServerLoot } from "../entity/entities/serverLoot";
-import { ServerProjectile } from "../entity/entities/serverProjectile";
-import { ServerWall } from "../entity/entities/serverWall";
-import VectorAbstract from "../../../common/src/physics/vectorAbstract";
-import { Numeric } from "../../../common/src/maths/numeric";
+import { EntityType } from "../../../../common/src/constants";
+import { type Hitbox, RectHitbox } from "../../../../common/src/engine/physics/hitbox";
+import { UVector2D } from "../../../../common/src/engine/physics/uvector";
+import { type ServerEntity } from "../../entity/entity";
+import { type ServerPlayer } from "../../entity/serverPlayer";
+import { ServerPetal } from "../../entity/serverPetal";
+import { ServerMob } from "../../entity/serverMob";
+import { ServerLoot } from "../../entity/serverLoot";
+import { ServerProjectile } from "../../entity/serverProjectile";
+import { ServerWall } from "../../entity/serverWall";
+import VectorAbstract from "../../../../common/src/engine/physics/vectorAbstract";
+import { Numeric } from "../../../../common/src/engine/maths/numeric";
 
 /**
  * A Grid to filter collision detection of game entities

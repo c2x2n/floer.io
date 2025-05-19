@@ -1,8 +1,8 @@
-import { UVector2D } from "../../../../common/src/physics/uvector";
+import { UVector2D } from "../../../../common/src/engine/physics/uvector";
 import { type Game } from "../game";
 import { Tween } from "@tweenjs/tween.js";
-import VectorAbstract from "../../../../common/src/physics/vectorAbstract";
-import { Numeric } from "../../../../common/src/maths/numeric";
+import VectorAbstract from "../../../../common/src/engine/physics/vectorAbstract";
+import { Numeric } from "../../../../common/src/engine/maths/numeric";
 
 export class Camera {
     readonly game: Game;

@@ -1,15 +1,15 @@
-import { ServerEntity } from "../entity";
-import { type EntitiesNetData } from "../../../../common/src/net/packets/updatePacket";
-import { CircleHitbox } from "../../../../common/src/physics/hitbox";
-import { EntityType } from "../../../../common/src/constants";
-import { PetalDefinition } from "../../../../common/src/definitions/petals";
+import { ServerEntity } from "./entity";
+import { type EntitiesNetData } from "../../../common/src/engine/net/packets/updatePacket";
+import { CircleHitbox } from "../../../common/src/engine/physics/hitbox";
+import { EntityType } from "../../../common/src/constants";
+import { PetalDefinition } from "../../../common/src/definitions/petals";
 import { ServerPlayer } from "./serverPlayer";
-import { AttributeEvents, PetalUsingAnimations } from "../../utils/attributeRealizes";
-import { PetalBunch } from "../../inventory/petalBunch";
+import { AttributeEvents, PetalUsingAnimations } from "../utils/attributeRealizes";
+import { PetalBunch } from "../systems/inventory/petalBunch";
 import { ServerMob } from "./serverMob";
-import { UVector2D } from "../../../../common/src/physics/uvector";
-import ServerLivelyEntity from "../lively";
-import { Damage, DamageType } from "../typings/damage";
+import { UVector2D } from "../../../common/src/engine/physics/uvector";
+import ServerLivelyEntity from "./lively";
+import { Damage, DamageType } from "./typings/damage";
 
 export class ServerPetal extends ServerLivelyEntity<EntityType.Petal> {
     type: EntityType.Petal = EntityType.Petal;

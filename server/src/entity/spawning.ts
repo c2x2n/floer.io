@@ -1,14 +1,14 @@
 import { ServerGame } from "../game";
 import { PetalDefinition } from "../../../common/src/definitions/petals";
 import { Rarity } from "../../../common/src/definitions/rarities";
-import { P2 } from "../../../common/src/maths/constants";
-import { ServerLoot } from "../entity/entities/serverLoot";
+import { P2 } from "../../../common/src/engine/maths/constants";
+import { ServerLoot } from "./serverLoot";
 import { GameConstants } from "../../../common/src/constants";
 import { MobDefinition, Mobs } from "../../../common/src/definitions/mobs";
-import { ServerMob } from "../entity/entities/serverMob";
-import { Random } from "../../../common/src/maths/random";
-import VectorAbstract from "../../../common/src/physics/vectorAbstract";
-import { Geometry } from "../../../common/src/maths/geometry";
+import { ServerMob } from "./serverMob";
+import { Random } from "../../../common/src/engine/maths/random";
+import VectorAbstract from "../../../common/src/engine/physics/vectorAbstract";
+import { Geometry } from "../../../common/src/engine/maths/geometry";
 
 export function spawnLoot(game: ServerGame, loots: PetalDefinition[], position: VectorAbstract, bypassLimitations = false): void {
     const spawnedLoots = loots.concat([]);

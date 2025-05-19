@@ -1,7 +1,7 @@
 import { Game } from "../../game";
-import { RectHitbox } from "../../../../../common/src/physics/hitbox";
-import { UVector2D } from "../../../../../common/src/physics/uvector";
-import { Numeric } from "../../../../../common/src/maths/numeric";
+import { RectHitbox } from "../../../../../common/src/engine/physics/hitbox";
+import { UVector2D } from "../../../../../common/src/engine/physics/uvector";
+import { Numeric } from "../../../../../common/src/engine/maths/numeric";
 
 export class Leaderboard {
     width = 200;

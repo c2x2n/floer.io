@@ -1,10 +1,10 @@
 import { AssetsBunch } from "./assets";
 import { Dot, RenderContainer } from "../scripts/render/misc";
-import { Random } from "../../../common/src/maths/random";
-import { halfPI, P2, PI } from "../../../common/src/maths/constants";
+import { Random } from "../../../common/src/engine/maths/random";
+import { halfPI, P2, PI } from "../../../common/src/engine/maths/constants";
 import { loadPathFromSVG } from "./pathLoader";
-import { Geometry } from "../../../common/src/maths/geometry";
-import { Numeric } from "../../../common/src/maths/numeric";
+import { Geometry } from "../../../common/src/engine/maths/geometry";
+import { Numeric } from "../../../common/src/engine/maths/numeric";
 
 const ladybugHeadPathS = "m 34.922494,3.9576593 c 7.88843,0 14.283271,6.3814447 14.283271,14.2533487 0,7.871924 -6.394841,14.253408 -14.283271,14.253408 -7.888435,0 -14.283276,-6.381484 -14.283276,-14.253408 0,-7.871904 6.394841,-14.2533487 14.283276,-14.2533487 z";
 const ladybugBodyPathS = "m 26.689942,3.1151231 c 1.025874,0 3.620854,0.4174594 3.620854,0.4174594 0,0 1.799643,8.3626085 5.45483,12.4634625 3.085786,3.462078 13.213924,6.256938 13.213924,6.256938 0,0 1.116466,3.261075 1.116466,4.219162 0,12.899759 -10.479254,23.357139 -23.406074,23.357139 -12.926821,0 -23.4060862,-10.45738 -23.4060862,-23.357139 0,-12.899758 10.4792652,-23.357129 23.4060862,-23.357129 z";

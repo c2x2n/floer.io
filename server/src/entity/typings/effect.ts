@@ -6,7 +6,7 @@ import ServerLivelyEntity from "../lively";
 
 export interface EffectData {
     readonly effectedTarget: ServerLivelyEntity
-    readonly source: damageSource
+    readonly source: ServerLivelyEntity
     readonly workingType?: EntityType[]
     readonly duration: number
     readonly callback?: (dt: number, effected: ServerLivelyEntity) => void
@@ -15,7 +15,7 @@ export interface EffectData {
 
 export interface PoisonEffectData {
     readonly effectedTarget: ServerLivelyEntity
-    readonly source: damageSource
+    readonly source: ServerLivelyEntity
     readonly duration: number
     readonly damagePerSecond: number
 }

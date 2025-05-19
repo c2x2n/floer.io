@@ -1,16 +1,16 @@
 import { PetalDefinition, Petals } from "../../../common/src/definitions/petals";
 import { Rarity, RarityName } from "../../../common/src/definitions/rarities";
-import { spawnLoot } from "./spawning";
+import { spawnLoot } from "../entity/spawning";
 import { Mobs } from "../../../common/src/definitions/mobs";
 import { EntityType } from "../../../common/src/constants";
-import { ServerPlayer } from "../entity/entities/serverPlayer";
+import { ServerPlayer } from "../entity/serverPlayer";
 import {
     CommandDefinition,
     CommandDefinitions,
     CommandName,
     CommandParameterType
 } from "../../../common/src/definitions/commands";
-import { ChatData } from "../../../common/src/net/packets/updatePacket";
+import { ChatData } from "../../../common/src/engine/net/packets/updatePacket";
 import { StTyped } from "../../../common/src/typings";
 import { DamageType } from "../entity/typings/damage";
 

@@ -1,18 +1,18 @@
 import { ClientEntity } from "./clientEntity";
 import { EntityType } from "../../../../common/src/constants";
 import { Game } from "../game";
-import { EntitiesNetData } from "../../../../common/src/net/packets/updatePacket";
+import { EntitiesNetData } from "../../../../common/src/engine/net/packets/updatePacket";
 import { Camera } from "../render/camera";
 import { Tween } from "@tweenjs/tween.js";
 import { PetalDefinition } from "../../../../common/src/definitions/petals";
 import { Rarity } from "../../../../common/src/definitions/rarities";
-import { UVector2D } from "../../../../common/src/physics/uvector";
+import { UVector2D } from "../../../../common/src/engine/physics/uvector";
 import { getAssets } from "../../assets/assets";
-import Velocity from "../../../../common/src/physics/velocity";
-import VectorAbstract from "../../../../common/src/physics/vectorAbstract";
-import { Geometry } from "../../../../common/src/maths/geometry";
-import { Numeric } from "../../../../common/src/maths/numeric";
-import { EasingFunctions } from "../../../../common/src/maths/easing";
+import Velocity from "../../../../common/src/engine/physics/velocity";
+import VectorAbstract from "../../../../common/src/engine/physics/vectorAbstract";
+import { Geometry } from "../../../../common/src/engine/maths/geometry";
+import { Numeric } from "../../../../common/src/engine/maths/numeric";
+import { EasingFunctions } from "../../../../common/src/engine/maths/easing";
 
 export class ClientPetal extends ClientEntity {
     type = EntityType.Petal;

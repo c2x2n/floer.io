@@ -1,14 +1,14 @@
 import { ClientEntity } from "./clientEntity";
 import { EntityType } from "../../../../common/src/constants";
 import { Game } from "../game";
-import { EntitiesNetData } from "../../../../common/src/net/packets/updatePacket";
+import { EntitiesNetData } from "../../../../common/src/engine/net/packets/updatePacket";
 import { Camera } from "../render/camera";
 import { PetalDefinition } from "../../../../common/src/definitions/petals";
 import { Rarity } from "../../../../common/src/definitions/rarities";
 import { Tween } from "@tweenjs/tween.js";
 import { ICON_drawPetal } from "../ui/shown/icons";
-import { Random } from "../../../../common/src/maths/random";
-import { halfPI, P2 } from "../../../../common/src/maths/constants";
+import { Random } from "../../../../common/src/engine/maths/random";
+import { halfPI, P2 } from "../../../../common/src/engine/maths/constants";
 
 export class ClientLoot extends ClientEntity {
     type = EntityType.Loot;

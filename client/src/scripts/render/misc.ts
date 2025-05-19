@@ -1,6 +1,6 @@
-import { UVector2D } from "../../../../common/src/physics/uvector";
-import VectorAbstract from "../../../../common/src/physics/vectorAbstract";
-import { Numeric } from "../../../../common/src/maths/numeric";
+import { UVector2D } from "../../../../common/src/engine/physics/uvector";
+import VectorAbstract from "../../../../common/src/engine/physics/vectorAbstract";
+import { Numeric } from "../../../../common/src/engine/maths/numeric";
 
 export type ColorLike = Color | string | number;
 export type RenderFunc = (dt: number) => void;

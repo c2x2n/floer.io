@@ -1,8 +1,8 @@
 import { Game } from "../../game";
-import { P2 } from "../../../../../common/src/maths/constants";
+import { P2 } from "../../../../../common/src/engine/maths/constants";
 import { ZoneName, Zones } from "../../../../../common/src/definitions/zones";
 import { Walls } from "../../../../../common/src/definitions/walls";
-import { Numeric } from "../../../../../common/src/maths/numeric";
+import { Numeric } from "../../../../../common/src/engine/maths/numeric";
 
 const widthDiv = 10;
 const heightDiv = 8;

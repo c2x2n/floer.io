@@ -1,15 +1,15 @@
 import $ from "jquery";
 import { ClientApplication } from "./main";
-import { GameOverPacket } from "../../common/src/net/packets/gameOverPacket";
+import { GameOverPacket } from "../../common/src/engine/net/packets/gameOverPacket";
 import { Game } from "./scripts/game";
 import { SettingsData } from "./settings";
-import { ChatData } from "../../common/src/net/packets/updatePacket";
-import { ChatChannel } from "../../common/src/net/packets/chatPacket";
+import { ChatData } from "../../common/src/engine/net/packets/updatePacket";
+import { ChatChannel } from "../../common/src/engine/net/packets/chatPacket";
 import { ActionType, EntityType, GameConstants } from "../../common/src/constants";
-import { Random } from "../../common/src/maths/random";
+import { Random } from "../../common/src/engine/maths/random";
 import { Gallery } from "./scripts/gallery";
 import { Config } from "./config";
-import { Numeric } from "../../common/src/maths/numeric";
+import { Numeric } from "../../common/src/engine/maths/numeric";
 
 const version = "0.3.0";
 

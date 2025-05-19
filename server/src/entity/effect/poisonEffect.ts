@@ -1,6 +1,6 @@
 import { EntityType } from "../../../../common/src/constants";
 import { Effect } from "./effect";
-import { PoisonEffectData } from "./typings";
+import { PoisonEffectData } from "../typings/effect";
 import { DamageType } from "../typings/damage";
 
 export class PoisonEffect extends Effect {

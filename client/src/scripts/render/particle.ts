@@ -1,11 +1,11 @@
-import { P2 } from "../../../../common/src/maths/constants";
-import { Random } from "../../../../common/src/maths/random";
-import { UVector2D } from "../../../../common/src/physics/uvector";
+import { P2 } from "../../../../common/src/engine/maths/constants";
+import { Random } from "../../../../common/src/engine/maths/random";
+import { UVector2D } from "../../../../common/src/engine/physics/uvector";
 import { type Game } from "../game";
 import { RenderContainer } from "./misc";
-import VectorAbstract from "../../../../common/src/physics/vectorAbstract";
-import { Numeric } from "../../../../common/src/maths/numeric";
-import { EasingFunctions } from "../../../../common/src/maths/easing";
+import VectorAbstract from "../../../../common/src/engine/physics/vectorAbstract";
+import { Numeric } from "../../../../common/src/engine/maths/numeric";
+import { EasingFunctions } from "../../../../common/src/engine/maths/easing";
 
 export class ParticleManager {
     particles: Particle[] = [];

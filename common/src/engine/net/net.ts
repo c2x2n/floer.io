@@ -1,5 +1,5 @@
 import { BitStream } from "bit-buffer";
-import { GameConstants } from "../constants";
+import { GameConstants } from "../../constants";
 import { JoinPacket } from "./packets/joinPacket";
 import { InputPacket } from "./packets/inputPacket";
 import { UpdatePacket } from "./packets/updatePacket";

@@ -1,5 +1,5 @@
 import { AttributeEvents, AttributeRealize, PetalAttributeRealizes, PetalUsingAnimations } from "./attributeRealizes";
-import { ServerPetal } from "../entity/entities/serverPetal";
+import { ServerPetal } from "../entity/serverPetal";
 import { ServerEntity } from "../entity/entity";
 import { AttributeNames } from "../../../common/src/definitions/petals";
 import ServerLivelyEntity from "../entity/lively";

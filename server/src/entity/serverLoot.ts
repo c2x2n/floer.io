@@ -1,14 +1,14 @@
-import { ServerEntity } from "../entity";
-import { type EntitiesNetData } from "../../../../common/src/net/packets/updatePacket";
-import { CircleHitbox } from "../../../../common/src/physics/hitbox";
-import { EntityType, GameConstants } from "../../../../common/src/constants";
-import { PetalDefinition } from "../../../../common/src/definitions/petals";
-import { ServerGame } from "../../game";
-import { Rarity } from "../../../../common/src/definitions/rarities";
-import { CollisionT } from "../../../../common/src/physics/collision";
-import VectorAbstract from "../../../../common/src/physics/vectorAbstract";
+import { ServerEntity } from "./entity";
+import { type EntitiesNetData } from "../../../common/src/engine/net/packets/updatePacket";
+import { CircleHitbox } from "../../../common/src/engine/physics/hitbox";
+import { EntityType, GameConstants } from "../../../common/src/constants";
+import { PetalDefinition } from "../../../common/src/definitions/petals";
+import { ServerGame } from "../game";
+import { Rarity } from "../../../common/src/definitions/rarities";
+import { CollisionT } from "../../../common/src/engine/physics/collision";
+import VectorAbstract from "../../../common/src/engine/physics/vectorAbstract";
 import { ServerPlayer } from "./serverPlayer";
-import ServerLivelyEntity from "../lively";
+import ServerLivelyEntity from "./lively";
 
 export class ServerLoot extends ServerEntity<EntityType.Loot> {
     type: EntityType.Loot = EntityType.Loot;

@@ -1,14 +1,14 @@
 import $ from "jquery";
-import { UVector2D } from "../../../../../common/src/physics/uvector";
+import { UVector2D } from "../../../../../common/src/engine/physics/uvector";
 import { PetalDefinition, Petals } from "../../../../../common/src/definitions/petals";
 import { RenderContainer } from "../../render/misc";
 import { Camera } from "../../render/camera";
-import { P2, PI } from "../../../../../common/src/maths/constants";
+import { P2, PI } from "../../../../../common/src/engine/maths/constants";
 import { MobDefinition, Mobs } from "../../../../../common/src/definitions/mobs";
 import { getAssets, getGameAssetsName } from "../../../assets/assets";
 import { petalAssets } from "../../../assets/petals";
 import { mobAssets } from "../../../assets/mobs";
-import { Geometry } from "../../../../../common/src/maths/geometry";
+import { Geometry } from "../../../../../common/src/engine/maths/geometry";
 
 const defaultCenter = UVector2D.new(0, -4);
 const defaultRadius = 8;

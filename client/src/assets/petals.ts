@@ -1,5 +1,5 @@
 import { AssetsBunch } from "./assets";
-import { P2 } from "../../../common/src/maths/constants";
+import { P2 } from "../../../common/src/engine/maths/constants";
 import { loadPathFromSVG } from "./pathLoader";
 import { strokeColor } from "../../../common/src/misc/colors";
 

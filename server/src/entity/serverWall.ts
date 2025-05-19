@@ -1,9 +1,9 @@
-import { ServerEntity } from "../entity";
-import { type EntitiesNetData } from "../../../../common/src/net/packets/updatePacket";
-import { RectHitbox } from "../../../../common/src/physics/hitbox";
-import { EntityType } from "../../../../common/src/constants";
-import { ServerGame } from "../../game";
-import VectorAbstract from "../../../../common/src/physics/vectorAbstract";
+import { ServerEntity } from "./entity";
+import { type EntitiesNetData } from "../../../common/src/engine/net/packets/updatePacket";
+import { RectHitbox } from "../../../common/src/engine/physics/hitbox";
+import { EntityType } from "../../../common/src/constants";
+import { ServerGame } from "../game";
+import VectorAbstract from "../../../common/src/engine/physics/vectorAbstract";
 
 export class ServerWall extends ServerEntity<EntityType.Wall> {
     type: EntityType.Wall = EntityType.Wall;

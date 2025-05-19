@@ -1,39 +1,39 @@
 import { type WebSocket } from "ws";
-import { ServerEntity } from "../entity";
-import { UVector2D } from "../../../../common/src/physics/uvector";
-import { GameBitStream, type Packet, PacketStream } from "../../../../common/src/net/net";
+import { ServerEntity } from "./entity";
+import { UVector2D } from "../../../common/src/engine/physics/uvector";
+import { GameBitStream, type Packet, PacketStream } from "../../../common/src/engine/net/net";
 import { createHash } from "crypto";
-import { type ServerGame } from "../../game";
+import { type ServerGame } from "../game";
 import {
     ChatData,
     type EntitiesNetData,
     PetalData,
     PetalState,
     UpdatePacket
-} from "../../../../common/src/net/packets/updatePacket";
-import { CircleHitbox, RectHitbox } from "../../../../common/src/physics/hitbox";
-import { Random } from "../../../../common/src/maths/random";
-import { InputAction, InputPacket } from "../../../../common/src/net/packets/inputPacket";
-import { JoinPacket } from "../../../../common/src/net/packets/joinPacket";
-import { ActionType, EntityType, GameConstants, PlayerState } from "../../../../common/src/constants";
-import { GameOverPacket } from "../../../../common/src/net/packets/gameOverPacket";
-import { Inventory } from "../../inventory/inventory";
+} from "../../../common/src/engine/net/packets/updatePacket";
+import { CircleHitbox, RectHitbox } from "../../../common/src/engine/physics/hitbox";
+import { Random } from "../../../common/src/engine/maths/random";
+import { InputAction, InputPacket } from "../../../common/src/engine/net/packets/inputPacket";
+import { JoinPacket } from "../../../common/src/engine/net/packets/joinPacket";
+import { ActionType, EntityType, GameConstants, PlayerState } from "../../../common/src/constants";
+import { GameOverPacket } from "../../../common/src/engine/net/packets/gameOverPacket";
+import { Inventory } from "../systems/inventory/inventory";
 import { ServerPetal } from "./serverPetal";
-import { PetalDefinition, SavedPetalDefinitionData } from "../../../../common/src/definitions/petals";
-import { AttributeEvents } from "../../utils/attributeRealizes";
-import { PlayerModifiers } from "../../../../common/src/typings";
-import { EventFunctionArguments } from "../../utils/petalEvents";
-import { getLevelExpCost, getLevelInformation } from "../../../../common/src/definitions/levels";
-import { LoggedInPacket } from "../../../../common/src/net/packets/loggedInPacket";
-import { ChatChannel, ChatPacket } from "../../../../common/src/net/packets/chatPacket";
-import { MobDefinition } from "../../../../common/src/definitions/mobs";
-import { spawnLoot } from "../../misc/spawning";
-import { applyCommand, CommandResolving } from "../../misc/command";
-import VectorAbstract from "../../../../common/src/physics/vectorAbstract";
-import { Geometry } from "../../../../common/src/maths/geometry";
-import { Numeric } from "../../../../common/src/maths/numeric";
-import ServerLivelyEntity from "../lively";
-import { Damage, DamageType } from "../typings/damage";
+import { PetalDefinition, SavedPetalDefinitionData } from "../../../common/src/definitions/petals";
+import { AttributeEvents } from "../utils/attributeRealizes";
+import { PlayerModifiers } from "../../../common/src/typings";
+import { EventFunctionArguments } from "../utils/petalEvents";
+import { getLevelExpCost, getLevelInformation } from "../../../common/src/definitions/levels";
+import { LoggedInPacket } from "../../../common/src/engine/net/packets/loggedInPacket";
+import { ChatChannel, ChatPacket } from "../../../common/src/engine/net/packets/chatPacket";
+import { MobDefinition } from "../../../common/src/definitions/mobs";
+import { spawnLoot } from "./spawning";
+import { applyCommand, CommandResolving } from "../systems/command";
+import VectorAbstract from "../../../common/src/engine/physics/vectorAbstract";
+import { Geometry } from "../../../common/src/engine/maths/geometry";
+import { Numeric } from "../../../common/src/engine/maths/numeric";
+import ServerLivelyEntity from "./lively";
+import { Damage, DamageType } from "./typings/damage";
 
 enum curveType {
     LINEAR,

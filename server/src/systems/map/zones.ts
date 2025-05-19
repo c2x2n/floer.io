@@ -1,10 +1,10 @@
-import { ZoneDefinition, ZoneName, Zones } from "../../../common/src/definitions/zones";
-import { UVector2D } from "../../../common/src/physics/uvector";
-import { Random } from "../../../common/src/maths/random";
-import { ServerGame } from "../game";
-import { CircleHitbox, RectHitbox } from "../../../common/src/physics/hitbox";
-import { EntityType } from "../../../common/src/constants";
-import VectorAbstract from "../../../common/src/physics/vectorAbstract";
+import { ZoneDefinition, ZoneName, Zones } from "../../../../common/src/definitions/zones";
+import { UVector2D } from "../../../../common/src/engine/physics/uvector";
+import { Random } from "../../../../common/src/engine/maths/random";
+import { ServerGame } from "../../game";
+import { CircleHitbox, RectHitbox } from "../../../../common/src/engine/physics/hitbox";
+import { EntityType } from "../../../../common/src/constants";
+import VectorAbstract from "../../../../common/src/engine/physics/vectorAbstract";
 
 export class ZonesManager {
     zones = new Map<ZoneName, Zone>();

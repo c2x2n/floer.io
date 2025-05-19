@@ -1,13 +1,13 @@
-import { ServerPetal } from "../entity/entities/serverPetal";
-import { P2 } from "../../../common/src/maths/constants";
-import { UVector2D } from "../../../common/src/physics/uvector";
+import { ServerPetal } from "../entity/serverPetal";
+import { P2 } from "../../../common/src/engine/maths/constants";
+import { UVector2D } from "../../../common/src/engine/physics/uvector";
 import { AttributeNames, AttributeParameters } from "../../../common/src/definitions/petals";
 import { EventInitializer } from "./petalEvents";
 import { EntityType } from "../../../common/src/constants";
-import { ServerPlayer } from "../entity/entities/serverPlayer";
-import { ServerFriendlyMob, ServerMob } from "../entity/entities/serverMob";
-import { ServerProjectile } from "../entity/entities/serverProjectile";
-import { Geometry } from "../../../common/src/maths/geometry";
+import { ServerPlayer } from "../entity/serverPlayer";
+import { ServerFriendlyMob, ServerMob } from "../entity/serverMob";
+import { ServerProjectile } from "../entity/serverProjectile";
+import { Geometry } from "../../../common/src/engine/maths/geometry";
 import { Effect } from "../entity/effect/effect";
 import { DamageType } from "../entity/typings/damage";
 

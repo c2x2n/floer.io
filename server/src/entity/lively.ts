@@ -1,13 +1,12 @@
 import { ServerEntity } from "./entity";
-import { UVector2D } from "../../../common/src/physics/uvector";
-import { Geometry } from "../../../common/src/maths/geometry";
+import { UVector2D } from "../../../common/src/engine/physics/uvector";
+import { Geometry } from "../../../common/src/engine/maths/geometry";
 import { PoisonEffect } from "./effect/poisonEffect";
 import { Modifiers } from "../../../common/src/typings";
 import { EntityType, GameConstants } from "../../../common/src/constants";
-import { damageSource } from "../typings";
-import { Numeric } from "../../../common/src/maths/numeric";
+import { Numeric } from "../../../common/src/engine/maths/numeric";
 import { ServerGame } from "../game";
-import VectorAbstract from "../../../common/src/physics/vectorAbstract";
+import VectorAbstract from "../../../common/src/engine/physics/vectorAbstract";
 import { Damage, DamageType } from "./typings/damage";
 
 export default abstract class ServerLivelyEntity<T extends EntityType = EntityType> extends ServerEntity<T> {
@@ -116,7 +115,7 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
         );
     }
 
-    public receivePoison(source: damageSource,
+    public receivePoison(source: ServerLivelyEntity,
         damagePerSecond: number,
         duration: number): void {
         if (this.state.poison) {

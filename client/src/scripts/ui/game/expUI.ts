@@ -1,6 +1,6 @@
 import { Game } from "../../game";
 import { getLevelInformation } from "../../../../../common/src/definitions/levels";
-import { Numeric } from "../../../../../common/src/maths/numeric";
+import { Numeric } from "../../../../../common/src/engine/maths/numeric";
 
 export class ExpUI {
     positionX = 0;

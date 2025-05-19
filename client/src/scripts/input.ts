@@ -1,8 +1,8 @@
-import { UVector2D } from "../../../common/src/physics/uvector";
+import { UVector2D } from "../../../common/src/engine/physics/uvector";
 import { type Game } from "./game";
-import { halfPI, PI } from "../../../common/src/maths/constants";
-import { DirectionIn, InputAction } from "../../../common/src/net/packets/inputPacket";
-import { Geometry } from "../../../common/src/maths/geometry";
+import { halfPI, PI } from "../../../common/src/engine/maths/constants";
+import { DirectionIn, InputAction } from "../../../common/src/engine/net/packets/inputPacket";
+import { Geometry } from "../../../common/src/engine/maths/geometry";
 
 export class Input {
     readonly game: Game;

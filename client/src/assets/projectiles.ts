@@ -1,6 +1,6 @@
 import { AssetsBunch } from "./assets";
-import { P2 } from "../../../common/src/maths/constants";
-import { Numeric } from "../../../common/src/maths/numeric";
+import { P2 } from "../../../common/src/engine/maths/constants";
+import { Numeric } from "../../../common/src/engine/maths/numeric";
 
 const web = new Image();
 web.src = "img/game/web.svg";
