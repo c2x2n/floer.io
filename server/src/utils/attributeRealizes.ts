@@ -549,5 +549,6 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
             //     originalReceiveDamage.call(this, amount, source);
             // };
         }
-    }
+    }, true_damage: { callback: (on, petal, data) => {} }
+    , random: { callback: (on, petal, data) => {} }
 } as const;
