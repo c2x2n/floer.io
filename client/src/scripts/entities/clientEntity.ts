@@ -2,13 +2,13 @@ import { type GameEntity } from "../../../../common/src/misc/entityPool";
 import { EntityType } from "../../../../common/src/constants";
 import { UVector2D } from "../../../../common/src/engine/physics/uvector";
 import { Game } from "../game";
-import { EntitiesNetData } from "../../../../common/src/engine/net/packets/updatePacket";
 import { Tween } from "@tweenjs/tween.js";
 import { P2 } from "../../../../common/src/engine/maths/constants";
 import { Camera } from "../render/camera";
 import { RenderContainer } from "../render/misc";
 import VectorAbstract from "../../../../common/src/engine/physics/vectorAbstract";
 import { Numeric } from "../../../../common/src/engine/maths/numeric";
+import { EntitiesNetData } from "../../../../common/src/engine/net/entitySerializations";
 
 export abstract class ClientEntity<T extends EntityType = EntityType> implements GameEntity {
     readonly game: Game;

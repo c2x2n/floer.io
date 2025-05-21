@@ -1,8 +1,8 @@
 import { ClientEntity } from "./clientEntity";
 import { EntityType } from "../../../../common/src/constants";
 import { Camera } from "../render/camera";
-import { EntitiesNetData } from "../../../../common/src/engine/net/packets/updatePacket";
 import VectorAbstract from "../../../../common/src/engine/physics/vectorAbstract";
+import { EntitiesNetData } from "../../../../common/src/engine/net/entitySerializations";
 
 export class ClientWall extends ClientEntity {
     type = EntityType.Wall;

@@ -41,11 +41,11 @@ export class Definitions<Def extends ObjectDefinition = ObjectDefinition> {
         return this.idStringToNumberMap.get(idString)!;
     }
 
-    // reify<U extends Def = Def>(type: string | Def): U {
-    //     return typeof type === "string"
-    //         ? this.fromString<U>(type)
-    //         : type as U;
-    // }
+    reify<U extends Def = Def>(type: string | Def): U {
+        return typeof type === "string"
+            ? this.fromString<U>(type)
+            : type as U;
+    }
 
     getIdString(def: string | Def) {
         const idString = typeof def === "string" ? def : def.idString;

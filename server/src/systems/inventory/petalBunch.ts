@@ -5,10 +5,11 @@ import { UVector2D } from "../../../../common/src/engine/physics/uvector";
 import { Inventory } from "./inventory";
 import { GameConstants } from "../../../../common/src/constants";
 import { ServerPlayer } from "../../entity/serverPlayer";
-import { PetalUsingAnimations } from "../../utils/attributeRealizes";
+import { PetalUsingAnimations } from "../petal/attributeRealizes";
 import VectorAbstract from "../../../../common/src/engine/physics/vectorAbstract";
 import { Geometry } from "../../../../common/src/engine/maths/geometry";
 import { Numeric } from "../../../../common/src/engine/maths/numeric";
+import spawnPetal from "../../entity/spawning/petal";
 
 export class PetalBunch {
     position: VectorAbstract;
@@ -46,7 +47,7 @@ export class PetalBunch {
             this.totalDisplayedPieces = getDisplayedPieces(definition);
 
             for (let i = 0; i < this.totalPieces; i++) {
-                const petal = new ServerPetal(this, definition);
+                const petal = spawnPetal(this, definition);
                 this.petals.push(petal);
                 if (player.joined && player.isActive()) petal.join();
 

@@ -1,22 +1,26 @@
-import { ServerEntity } from "./entity";
+import { ServerEntity } from "./serverEntity";
 import { UVector2D } from "../../../common/src/engine/physics/uvector";
 import { Geometry } from "../../../common/src/engine/maths/geometry";
-import { PoisonEffect } from "./effect/poisonEffect";
-import { Modifiers } from "../../../common/src/typings";
+import { PoisonEffect } from "../systems/effect/poison";
+import { Modifiers } from "../../../common/src/typings/modifier";
 import { EntityType, GameConstants } from "../../../common/src/constants";
 import { Numeric } from "../../../common/src/engine/maths/numeric";
 import { ServerGame } from "../game";
 import VectorAbstract from "../../../common/src/engine/physics/vectorAbstract";
-import { Damage, DamageType } from "./typings/damage";
+import { Damage, DamageType } from "../typings/damage";
+import { EffectsOnHitDataType, PoisonDataType } from "../../../common/src/typings/effect";
+import { Effect } from "../systems/effect/effect";
 
 export default abstract class ServerLivelyEntity<T extends EntityType = EntityType> extends ServerEntity<T> {
     public absorbKnockback = 1;
     public knockback = 2;
 
+    // The differences between the parent and the summonr is:
+    // When parent were destroyed, their children will be destroyed too. used in petals.
+    // When summonr were destroyed, their children will not be destroyed. used in mobs.
     public parent: ServerLivelyEntity | undefined;
     public children: ServerLivelyEntity[] = [];
-
-    public followDestroy = false;
+    public summonr: ServerLivelyEntity | undefined;
 
     private _team: number;
     public get team(): number {
@@ -32,6 +36,9 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
 
     public invincible = false;
 
+    protected bodyPoison?: PoisonDataType;
+    protected effectsOnHit?: EffectsOnHitDataType;
+    protected constantModifier?: Partial<Modifiers>;
     public modifiers: Modifiers = GameConstants.defaultModifiers();
     public otherModifiersOnTick: Array<Partial<Modifiers>> = [];
 
@@ -67,40 +74,40 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
         return !this.invincible && !!entity.damage && !(this === entity) && this.team != entity.team;
     }
 
-    public constructor(game: ServerGame, position: VectorAbstract, type: T) {
+    protected constructor(game: ServerGame, position: VectorAbstract, type: T) {
         super(game, position);
 
         this._team = game.teamGenerator.create(type);
     }
 
-    public dealedDamage = new Set<ServerLivelyEntity>();
+    public dealtDamageTick = new Set<ServerLivelyEntity>();
 
     public tick() {
         super.tick();
 
-        this.dealedDamage.clear();
+        this.dealtDamageTick.clear();
 
         const collisions = this.getCollisions();
         for (const collision of collisions) {
             if (!((collision.entity) instanceof ServerLivelyEntity)) continue;
-            if (collision.entity.dealedDamage.has(this) || this.dealedDamage.has(collision.entity)) continue;
+            if (collision.entity.dealtDamageTick.has(this) || this.dealtDamageTick.has(collision.entity)) continue;
 
             if (collision.entity.canReceiveDamageFrom(this)) {
                 this.dealCollisionDamageTo(collision.entity);
                 collision.entity.receiveKnockback(this);
 
-                this.dealedDamage.add(collision.entity);
+                this.dealtDamageTick.add(collision.entity);
             }
 
             if (this.canReceiveDamageFrom(collision.entity)) {
                 collision.entity.dealCollisionDamageTo(this);
                 this.receiveKnockback(collision.entity);
 
-                collision.entity.dealedDamage.add(this);
+                collision.entity.dealtDamageTick.add(this);
             }
         }
 
-        this.updateModifiers();
+        this.modifiers = this.updateModifiers();
     }
 
     public receiveKnockback(entity: ServerLivelyEntity): void {
@@ -136,30 +143,46 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
     protected calcModifiers(now: Modifiers, extra: Partial<Modifiers>): Modifiers {
         now.healPerSecond += extra.healPerSecond ?? 0;
         now.speed *= extra.speed ?? 1;
+        now.damageReceiveChance *= extra.damageReceiveChance ?? 1;
+        if (extra.damageReflection && extra.damageReflection > now.damageReflection) {
+            now.damageReflection = extra.damageReflection;
+        }
         now.healing *= extra.healing ?? 1;
-        now.selfPoison += extra.selfPoison ?? 0;
+        now.armor += extra.armor ?? 0;
+
+        if (extra.bodyPoison && extra.bodyPoison.duration > 0) {
+            if (
+                extra.bodyPoison.duration * extra.bodyPoison.damagePerSecond
+                > now.bodyPoison.duration * now.bodyPoison.damagePerSecond
+            ) {
+                now.bodyPoison = extra.bodyPoison;
+            }
+        }
 
         return now;
     }
 
-    public updateModifiers(): void {
+    public updateModifiers(): Modifiers {
         let modifiersNow = GameConstants.defaultModifiers();
+        this.calcModifiers(modifiersNow, this.constantModifier ?? {});
         this.effects.effects.forEach(effect => {
-            if (effect.modifier) {
-                modifiersNow = this.calcModifiers(modifiersNow, effect.modifier);
-            }
+            if (effect.modifier) modifiersNow = this.calcModifiers(modifiersNow, effect.modifier);
         });
         this.otherModifiersOnTick.forEach(effect => {
             modifiersNow = this.calcModifiers(modifiersNow, effect);
         });
-        this.otherModifiersOnTick = []; // clear all
-        this.modifiers = modifiersNow;
+        modifiersNow = this.calcModifiers(modifiersNow, {
+            bodyPoison: this.bodyPoison
+        });
+        this.otherModifiersOnTick = []; // clear all old
+        return modifiersNow;
     }
 
     public receiveDamage(damage: Damage) {
-        const { amount } = damage;
+        let { amount } = damage;
+        if (damage.type === DamageType.COLLISION) amount -= this.modifiers.armor;
         if (amount <= 0) return;
-        this.health -= amount - this.modifiers.armor;
+        this.health -= amount;
 
         this.onReceiveDamage(damage);
     }
@@ -168,17 +191,31 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
         return this.parent ? this.parent.getTopParent() : this;
     }
 
-    public setParent(parent: ServerLivelyEntity, followDestroy = false): void {
+    public setParent(parent: ServerLivelyEntity): void {
         if (this.parent) this.parent.children.splice(this.parent.children.indexOf(this), 1);
         this.parent = parent;
         parent.children.push(this);
         this.team = parent.team;
     }
 
+    public setSummonr(summonr: ServerLivelyEntity): void {
+        this.summonr = summonr;
+        this.team = summonr.team;
+    }
+
     protected onReceiveDamage(damage: Damage) {
         if (this.health <= 0) {
             this.killedBy = damage.source;
             this.destroy();
+        }
+
+        if (this.modifiers.damageReflection > 0 && damage.amount > 0) {
+            damage.source.receiveDamage({
+                source: this.getTopParent(),
+                amount: damage.amount * this.modifiers.damageReflection,
+                type: DamageType.DAMAGE_REFLECTION,
+                to: damage.source
+            });
         }
     }
 
@@ -191,6 +228,21 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
             to: entity,
             type: DamageType.COLLISION
         });
+
+        if (this.bodyPoison && this.bodyPoison.duration > 0) { // poison
+            entity.receivePoison(this,
+                this.bodyPoison.damagePerSecond,
+                this.bodyPoison.duration
+            );
+        }
+        if (this.effectsOnHit) { // poison
+            new Effect({
+                effectedTarget: entity,
+                duration: this.effectsOnHit.duration,
+                source: this.getTopParent(),
+                modifier: this.effectsOnHit.modifier
+            }).start();
+        }
     }
 
     heal(amount: number) {
@@ -200,15 +252,20 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
 
     public override destroy(illegal = false) {
         super.destroy(illegal);
+
+        // Kill memory leaks here
+
         if (this.parent) {
             this.parent.children.splice(this.parent.children.indexOf(this), 1);
             this.parent = undefined;
         }
 
+        if (this.summonr) this.summonr = undefined;
+
         const children = this.children.concat([]);
         for (const child of children) {
             child.parent = undefined;
-            if (child.followDestroy) child.destroy(illegal);
+            child.destroy(illegal);
         }
     }
 }

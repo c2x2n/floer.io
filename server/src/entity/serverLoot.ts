@@ -1,5 +1,4 @@
-import { ServerEntity } from "./entity";
-import { type EntitiesNetData } from "../../../common/src/engine/net/packets/updatePacket";
+import { ServerEntity } from "./serverEntity";
 import { CircleHitbox } from "../../../common/src/engine/physics/hitbox";
 import { EntityType, GameConstants } from "../../../common/src/constants";
 import { PetalDefinition } from "../../../common/src/definitions/petals";
@@ -8,7 +7,8 @@ import { Rarity } from "../../../common/src/definitions/rarities";
 import { CollisionT } from "../../../common/src/engine/physics/collision";
 import VectorAbstract from "../../../common/src/engine/physics/vectorAbstract";
 import { ServerPlayer } from "./serverPlayer";
-import ServerLivelyEntity from "./lively";
+import ServerLivelyEntity from "./livelyEntity";
+import { EntitiesNetData } from "../../../common/src/engine/net/entitySerializations";
 
 export class ServerLoot extends ServerEntity<EntityType.Loot> {
     type: EntityType.Loot = EntityType.Loot;

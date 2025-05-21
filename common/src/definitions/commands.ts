@@ -1,8 +1,4 @@
-import {
-    StType,
-    StTyped,
-    StTypeToRealType
-} from "../typings";
+import { StType, StTyped, StTypeToRealType } from "../typings/stType";
 
 export type CommandDefinition = {
     readonly description: string

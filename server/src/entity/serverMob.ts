@@ -1,6 +1,5 @@
-import { ServerEntity } from "./entity";
+import { ServerEntity } from "./serverEntity";
 import { UVector2D } from "../../../common/src/engine/physics/uvector";
-import { type EntitiesNetData } from "../../../common/src/engine/net/packets/updatePacket";
 import { CircleHitbox } from "../../../common/src/engine/physics/hitbox";
 import { EntityType, GameConstants } from "../../../common/src/constants";
 import { ServerGame } from "../game";
@@ -11,14 +10,15 @@ import { Random } from "../../../common/src/engine/maths/random";
 import { PetalDefinition, Petals } from "../../../common/src/definitions/petals";
 import { ServerProjectile } from "./serverProjectile";
 import { ProjectileParameters } from "../../../common/src/definitions/projectiles";
-import { Modifiers } from "../../../common/src/typings";
+import { Modifiers } from "../../../common/src/typings/modifier";
 import { Rarity, RarityName } from "../../../common/src/definitions/rarities";
 import { ServerWall } from "./serverWall";
-import { spawnLoot } from "./spawning";
 import VectorAbstract from "../../../common/src/engine/physics/vectorAbstract";
 import { Geometry } from "../../../common/src/engine/maths/geometry";
-import ServerLivelyEntity from "./lively";
-import { Damage } from "./typings/damage";
+import ServerLivelyEntity from "./livelyEntity";
+import { Damage } from "../typings/damage";
+import { EntitiesNetData } from "../../../common/src/engine/net/entitySerializations";
+import { spawnLoot } from "./spawning/loot";
 
 export class ServerMob extends ServerLivelyEntity<EntityType.Mob> {
     type: EntityType.Mob = EntityType.Mob;
@@ -96,6 +96,8 @@ export class ServerMob extends ServerLivelyEntity<EntityType.Mob> {
         this.definition = definition;
         this.hitbox = new CircleHitbox(definition.hitboxRadius);
         this.damage = definition.damage;
+        this.constantModifier = definition.modifiers;
+        this.bodyPoison = definition.poison;
 
         this.maxHealth = definition.health;
         this.health = definition.health;
@@ -194,7 +196,6 @@ export class ServerMob extends ServerLivelyEntity<EntityType.Mob> {
     notCollidingMobs: string[] = [];
 
     tick(): void {
-        this.otherModifiersOnTick.push(this.definition.modifiers ?? {});
         super.tick();
 
         if (this.lastSegment) {
@@ -311,19 +312,18 @@ export class ServerMob extends ServerLivelyEntity<EntityType.Mob> {
     }
 
     calcModifiers(now: Modifiers, extra: Partial<Modifiers>): Modifiers {
-        now.healPerSecond += extra.healPerSecond ?? 0;
+        const result = super.calcModifiers(now, extra);
+
         if (
             this.definition.rarity === RarityName.mythic
             && typeof extra.speed === "number" && extra.speed < 1
         ) {
-            now.speed *= (1 - (1 - extra.speed) / 3);
+            result.speed *= (1 - (1 - extra.speed) / 3);
         } else {
-            now.speed *= extra.speed ?? 1;
+            result.speed *= extra.speed ?? 1;
         }
-        now.selfPoison += extra.selfPoison ?? 0;
-        now.armor += extra.armor ?? 0;
 
-        return now;
+        return result;
     }
 
     lastPopped = 1;
@@ -378,30 +378,30 @@ export class ServerMob extends ServerLivelyEntity<EntityType.Mob> {
         };
     };
 
-    destroy(legal = false) {
+    destroy(illegal = false) {
         super.destroy();
 
-        const lootTable = this.definition.lootTable;
-
-        const loots: PetalDefinition[] = [];
-
-        const randomMax = 10000000000;
-
-        for (const lootsKey in lootTable) {
-            if (!Petals.hasString(lootsKey)) continue;
-            const random = Random.int(0, randomMax);
-            if (random <= lootTable[lootsKey] * randomMax) {
-                loots.push(Petals.fromString(lootsKey));
+        if (!illegal) { // Drops
+            const lootTable = this.definition.lootTable;
+            const loots: PetalDefinition[] = [];
+            const randomMax = 10000000000;
+            for (const lootsKey in lootTable) {
+                if (!Petals.hasString(lootsKey)) continue;
+                const random = Random.int(0, randomMax);
+                if (random <= lootTable[lootsKey] * randomMax) {
+                    loots.push(Petals.fromString(lootsKey));
+                }
             }
+            spawnLoot(this.game, loots, this.position);
         }
-
-        if (!legal) spawnLoot(this.game, loots, this.position);
 
         const highestPlayer
             = Array.from(this.damageFrom).filter(e => e[0].isActive())
                 .sort((a, b) => b[1] - a[1])[0];
 
         if (!(highestPlayer?.length && highestPlayer[0].isActive())) return;
+
+        // Players
 
         const rarity = Rarity.fromString(this.definition.rarity);
         if (rarity.globalMessage && !this.definition.hideInformation) {
@@ -421,6 +421,7 @@ export class ServerMob extends ServerLivelyEntity<EntityType.Mob> {
     }
 }
 
+// Will be replaced soon. RIP.
 export class ServerFriendlyMob extends ServerMob {
     // 表示是否是被玩家召唤的生物（true）还是自然生成的（false）
     isSummoned = true;

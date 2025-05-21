@@ -1,4 +1,4 @@
-import { Modifiers, PlayerModifiers } from "./typings";
+import { Modifiers, PlayerModifiers } from "./typings/modifier";
 
 export enum EntityType {
     Player,
@@ -29,9 +29,14 @@ export const GameConstants = Object.freeze({
     defaultModifiers: (): Modifiers => ({
         healPerSecond: 0,
         speed: 1,
-        selfPoison: 0,
         healing: 1,
-        armor: 0
+        damageReceiveChance: 1,
+        damageReflection: 0,
+        armor: 0,
+        bodyPoison: {
+            damagePerSecond: 0,
+            duration: 0
+        }
     }),
     maxPosition: 4096,
     player: {
@@ -54,24 +59,19 @@ export const GameConstants = Object.freeze({
         defaultPetalDefendingDistance: 1.9,
         overleveledTime: 30,
         defaultModifiers: (): PlayerModifiers => ({
-            healing: 1,
+            ...GameConstants.defaultModifiers(), // load from defaults
             maxHealth: 100,
-            healPerSecond: 0.1,
-            speed: 1,
             revolutionSpeed: 2.4,
             zoom: 45,
             extraDistance: 0,
-            damageAvoidanceChance: 0,
             damageAvoidanceByDamage: false,
-            selfPoison: 0,
             yinYangAmount: 0,
             conditionalHeal: undefined,
             controlRotation: false,
             extraSlot: 0,
             bodyDamage: 1,
             knockbackReduction: 0,
-            bodyDamageReduction: 0,
-            armor: 0
+            bodyDamageReduction: 0
         })
     },
     petal: {

@@ -1,4 +1,4 @@
-import ServerLivelyEntity from "../lively";
+import ServerLivelyEntity from "../entity/livelyEntity";
 
 export interface Damage {
     amount: number
@@ -10,5 +10,6 @@ export interface Damage {
 export enum DamageType {
     COLLISION,
     POISON,
-    DAMAGE_REFLECTION
+    DAMAGE_REFLECTION,
+    PHYSICAL
 }

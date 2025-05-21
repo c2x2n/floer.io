@@ -1,10 +1,11 @@
 import { Definitions, ObjectDefinition } from "./definitions";
 import { RarityName } from "./rarities";
-import { PlayerModifiers } from "../typings";
+import { Modifiers, PlayerModifiers } from "../typings/modifier";
 import { ProjectileParameters, Projectiles } from "./projectiles";
 import { MobCategory, MobDefinition, Mobs } from "./mobs";
 import { EntityType } from "../constants";
 import { halfPI, P2 } from "../engine/maths/constants";
+import { EffectsOnHitDataType, PoisonDataType } from "../typings/effect";
 
 export type SavedPetalDefinitionData = PetalDefinition | null;
 
@@ -12,14 +13,17 @@ export type PetalDefinition = ObjectDefinition & {
     readonly description?: string
     readonly rarity: RarityName
     readonly attributes?: AttributeParameters
-    readonly modifiersToPlayer?: Partial<PlayerModifiers>
-    readonly modifiersToSelf?: Partial<PlayerModifiers>
+    readonly behavior?: PetalBehaviorDataType
+    readonly wearerAttributes?: Partial<PlayerModifiers>
+    readonly petalModifiers?: Partial<Modifiers>
     readonly undroppable?: boolean
     readonly unstackable?: boolean
     readonly hitboxRadius: number
     readonly effectiveFirstReload?: boolean
     readonly noAnnouncement?: boolean
     readonly doesNotDamage?: EntityType[]
+    readonly effectsOnHit?: EffectsOnHitDataType
+    readonly poison?: PoisonDataType
     readonly images?: {
         readonly slotDisplaySize?: number
         readonly slotRotation?: number
@@ -76,24 +80,21 @@ type PetalUsageType = {
     readonly useTime: number
 };
 
+export type PetalBehaviors = {
+    readonly self_damage: number
+};
+
+export type PetalBehaviorDataType = {
+    readonly [K in keyof PetalBehaviors]: {
+        name: K
+        data: PetalBehaviors[K]
+    }
+}[keyof PetalBehaviors];
+
 export type AttributeParameters = {
     readonly absorbing_heal?: number
     readonly absorbing_shield?: number
     readonly boost?: number
-    readonly poison?: {
-        readonly damagePerSecond: number
-        readonly duration: number
-    }
-    readonly healing_debuff?: {
-        readonly healing: number
-        readonly duration: number
-    }
-    readonly body_poison?: {
-        readonly damagePerSecond: number
-        readonly duration: number
-    }
-    readonly damage_reflection?: number
-    readonly self_damage?: number
     readonly shoot?: ProjectileParameters
     readonly around_circle_shoot?: ProjectileParameters
     readonly peas_shoot?: {
@@ -113,11 +114,6 @@ export type AttributeParameters = {
     }
     readonly damage_avoidance?: {
         readonly chance: number
-    }
-    readonly paralyze?: {
-        readonly duration: number
-        readonly speedReduction: number
-        readonly revolutionReduction?: number
     }
     readonly area_poison?: {
         readonly radius: number
@@ -163,7 +159,7 @@ export const Petals = new Definitions<PetalDefinition>([
         pieceAmount: 1,
         rarity: RarityName.common,
         usingAssets: "light",
-        modifiersToPlayer: {
+        wearerAttributes: {
             speed: 1.006
         }
     },
@@ -182,7 +178,7 @@ export const Petals = new Definitions<PetalDefinition>([
         isShowedInOne: false,
         rarity: RarityName.unusual,
         usingAssets: "light",
-        modifiersToPlayer: {
+        wearerAttributes: {
             speed: 1.005
         }
     },
@@ -201,7 +197,7 @@ export const Petals = new Definitions<PetalDefinition>([
         isShowedInOne: false,
         rarity: RarityName.mythic,
         usingAssets: "light",
-        modifiersToPlayer: {
+        wearerAttributes: {
             speed: 1.01
         }
     },
@@ -268,7 +264,7 @@ export const Petals = new Definitions<PetalDefinition>([
         isShowedInOne: false,
         rarity: RarityName.epic,
         usingAssets: "light",
-        modifiersToPlayer: {
+        wearerAttributes: {
             speed: 1.004
         }
     }, {
@@ -279,7 +275,7 @@ export const Petals = new Definitions<PetalDefinition>([
         health: 5,
         extendable: true,
         reloadTime: 0.5,
-        modifiersToPlayer: {
+        wearerAttributes: {
             revolutionSpeed: 1.0
         },
         usable: false,
@@ -303,7 +299,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 60,
             selfGameRotation: 360
         },
-        modifiersToPlayer: {
+        wearerAttributes: {
             revolutionSpeed: 1.25
         },
         usable: false,
@@ -322,7 +318,7 @@ export const Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 18
         },
         reloadTime: 0.5,
-        modifiersToPlayer: {
+        wearerAttributes: {
             revolutionSpeed: 1.0
         },
         usable: false,
@@ -347,7 +343,7 @@ export const Petals = new Definitions<PetalDefinition>([
             centerXOffset: 1,
             selfGameRotation: 18
         },
-        modifiersToPlayer: {
+        wearerAttributes: {
             healPerSecond: 2
         },
         reloadTime: 1,
@@ -369,7 +365,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotRotation: -0.1,
             selfGameRotation: 18
         },
-        modifiersToPlayer: {
+        wearerAttributes: {
             healPerSecond: 1
         },
         reloadTime: 1,
@@ -407,8 +403,9 @@ export const Petals = new Definitions<PetalDefinition>([
         health: 8,
         extendable: true,
         reloadTime: 4,
-        attributes: {
-            self_damage: 9
+        behavior: {
+            name: "self_damage",
+            data: 10
         },
         images: {
             selfGameRotation: 18,
@@ -621,9 +618,11 @@ export const Petals = new Definitions<PetalDefinition>([
         pieceAmount: 1,
         rarity: RarityName.rare
     },
+
+    // Dev bubble
     {
         idString: "dev_bub",
-        displayName: "UNBubble",
+        displayName: "Dubble",
         description: "Powers are for the DEV",
         damage: 0,
         health: 1,
@@ -633,7 +632,7 @@ export const Petals = new Definitions<PetalDefinition>([
         attributes: {
             boost: 10
         },
-        modifiersToPlayer: {
+        wearerAttributes: {
             maxHealth: 66666,
             healPerSecond: 66666
         },
@@ -698,11 +697,13 @@ export const Petals = new Definitions<PetalDefinition>([
             fontSizeMultiplier: 0.8
         },
         usable: true,
-        attributes: {
-            healing_debuff: {
-                healing: 0,
-                duration: 10
+        effectsOnHit: {
+            modifier: {
+                healing: 0
             },
+            duration: 10
+        },
+        attributes: {
             shoot: {
                 hitboxRadius: 0.6,
                 damage: 5,
@@ -710,7 +711,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 despawnTime: 3,
                 speed: 8,
                 definition: Projectiles.fromString("dandelion"),
-                modifiersWhenDamage: {
+                effectsOnHit: {
                     modifier: {
                         healing: 0
                     },
@@ -724,86 +725,6 @@ export const Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.rare
-    },
-    {
-        idString: "super_dandelion",
-        displayName: "Dandelion",
-        description: "It's interesting properties prevent healing effects on affected units",
-        damage: 5,
-        health: 15,
-        extendable: true,
-        images: {
-            selfGameRotation: 0.02,
-            slotDisplaySize: 60,
-            slotRotation: 0.8,
-            facingOut: true,
-            fontSizeMultiplier: 0.8
-        },
-        usable: true,
-        attributes: {
-            healing_debuff: {
-                healing: 0,
-                duration: 1
-            },
-            shoot: {
-                hitboxRadius: 1,
-                despawnTime: 3,
-                speed: 8,
-                definition: Projectiles.fromString("dandelion"),
-                modifiersWhenDamage: {
-                    modifier: {
-                        healing: 0
-                    },
-                    duration: 1
-                }
-            }
-        },
-        useTime: 0.2,
-        reloadTime: 0.5,
-        hitboxRadius: 1,
-        isDuplicate: true,
-        isShowedInOne: false,
-        pieceAmount: 50,
-        usingAssets: "dandelion",
-        rarity: RarityName.super
-    },
-    {
-        idString: "op_missile",
-        displayName: "Missile",
-        description: "It's interesting properties prevent healing effects on affected units",
-        damage: 5,
-        health: 15,
-        extendable: true,
-        images: {
-            selfGameRotation: 0.02,
-            slotDisplaySize: 60,
-            slotRotation: 0.8,
-            facingOut: true,
-            fontSizeMultiplier: 0.8
-        },
-        usable: true,
-        attributes: {
-            shoot: {
-                hitboxRadius: 1,
-                despawnTime: 3,
-                speed: 8,
-                definition: Projectiles.fromString("missile"),
-                modifiersWhenDamage: {
-                    modifier: {
-                        speed: 0
-                    },
-                    duration: 1
-                }
-            }
-        },
-        useTime: 0.2,
-        reloadTime: 0.5,
-        hitboxRadius: 1,
-        isDuplicate: true,
-        isShowedInOne: false,
-        pieceAmount: 50,
-        usingAssets: "missile",
-        rarity: RarityName.super
     },
     {
         idString: "missile",
@@ -895,13 +816,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 health: 20,
                 despawnTime: 10,
                 speed: 5,
-                definition: Projectiles.fromString("myt_big_missile"),
-                tracking: {
-                    enabled: true,
-                    turnSpeed: 4,
-                    detectionRange: 30,
-                    preferClosest: true
-                }
+                definition: Projectiles.fromString("myt_big_missile")
             }
         },
         useTime: 0.1,
@@ -918,39 +833,15 @@ export const Petals = new Definitions<PetalDefinition>([
         health: 5,
         extendable: true,
         usable: false,
-        attributes: {
-            poison: {
-                damagePerSecond: 10,
-                duration: 6.5
-            }
+        poison: {
+            damagePerSecond: 10,
+            duration: 6.5
         },
         reloadTime: 6,
         hitboxRadius: 0.3,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.unusual
-    },
-    {
-        idString: "siris",
-        displayName: "Iris",
-        description: "very poisonous and takes a little while to do 3.6m damage",
-        damage: 3,
-        health: 729,
-        extendable: true,
-        usable: false,
-        attributes: {
-            poison: {
-                damagePerSecond: 3645,
-                duration: 1000
-            }
-        },
-        reloadTime: 0.5,
-        hitboxRadius: 0.35,
-        isDuplicate: false,
-        pieceAmount: 1,
-        rarity: RarityName.arcane,
-        undroppable: true,
-        usingAssets: "iris"
     }, {
         idString: "cactus",
         displayName: "Cactus",
@@ -963,7 +854,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 68,
             selfGameRotation: 18
         },
-        modifiersToPlayer: {
+        wearerAttributes: {
             maxHealth: 30
         },
         reloadTime: 1,
@@ -984,18 +875,16 @@ export const Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 18
         },
         usable: false,
-        attributes: {
-            poison: {
-                damagePerSecond: 10,
-                duration: 0.6
-            },
-            body_poison: {
+        poison: {
+            damagePerSecond: 10,
+            duration: 0.6
+        },
+        wearerAttributes: {
+            maxHealth: 30,
+            bodyPoison: {
                 damagePerSecond: 9,
                 duration: 4.5
             }
-        },
-        modifiersToPlayer: {
-            maxHealth: 30
         },
         reloadTime: 1,
         hitboxRadius: 0.7,
@@ -1015,7 +904,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 52,
             selfGameRotation: 18
         },
-        modifiersToPlayer: {
+        wearerAttributes: {
             maxHealth: 27
         },
         reloadTime: 1,
@@ -1039,8 +928,8 @@ export const Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 15
         },
         usable: false,
-        attributes: {
-            damage_reflection: 0.20
+        wearerAttributes: {
+            damageReflection: 0.20
         },
         reloadTime: 2.5,
         hitboxRadius: 0.6,
@@ -1075,8 +964,9 @@ export const Petals = new Definitions<PetalDefinition>([
         health: 8,
         extendable: true,
         reloadTime: 4,
-        attributes: {
-            self_damage: 4
+        behavior: {
+            name: "self_damage",
+            data: 4
         },
         usable: false,
         hitboxRadius: 0.3,
@@ -1112,30 +1002,6 @@ export const Petals = new Definitions<PetalDefinition>([
             }
         },
         rarity: RarityName.mythic
-    },
-    {
-        idString: "blood_sepinger",
-        displayName: "Stinger",
-        description: "i think it hurts a lot",
-        damage: 25,
-        health: 8,
-        extendable: true,
-        attributes: {
-            self_damage: 1
-        },
-        images: {
-            slotRotation: 3.14,
-            slotRevolution: 6.28 / 7
-        },
-        reloadTime: 0.5,
-        usable: false,
-        hitboxRadius: 0.3,
-        isDuplicate: true,
-        isShowedInOne: true,
-        pieceAmount: 7,
-        rarity: RarityName.super,
-        undroppable: true,
-        usingAssets: "blood_stinger"
     },
     {
         idString: "rice",
@@ -1188,7 +1054,7 @@ export const Petals = new Definitions<PetalDefinition>([
         images: {
             slotDisplaySize: 35
         },
-        modifiersToPlayer: {
+        wearerAttributes: {
             speed: 1.128
         },
         reloadTime: 2,
@@ -1217,7 +1083,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 speed: 0,
                 hitboxRadius: 3,
                 despawnTime: 5,
-                modifiersWhenOn: {
+                effectWhenOn: {
                     speed: 0.4
                 }
             }
@@ -1247,7 +1113,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 speed: 0,
                 hitboxRadius: 5,
                 despawnTime: 5,
-                modifiersWhenOn: {
+                effectWhenOn: {
                     speed: 0.5
                 }
             }
@@ -1279,7 +1145,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 speed: 0,
                 hitboxRadius: 10,
                 despawnTime: 5,
-                modifiersWhenOn: {
+                effectWhenOn: {
                     speed: 0.5
                 }
             }
@@ -1340,6 +1206,10 @@ export const Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 18,
             slotRotation: 0.2
         },
+        poison: {
+            damagePerSecond: 10,
+            duration: 1
+        },
         attributes: {
             peas_shoot: {
                 amount: 4,
@@ -1355,10 +1225,6 @@ export const Petals = new Definitions<PetalDefinition>([
                         duration: 1
                     }
                 }
-            },
-            poison: {
-                damagePerSecond: 10,
-                duration: 1
             }
         },
         reloadTime: 1.2,
@@ -1382,6 +1248,10 @@ export const Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 18,
             slotRotation: 0.2
         },
+        poison: {
+            damagePerSecond: 10,
+            duration: 2
+        },
         attributes: {
             peas_shoot: {
                 amount: 4,
@@ -1397,10 +1267,6 @@ export const Petals = new Definitions<PetalDefinition>([
                         duration: 1
                     }
                 }
-            },
-            poison: {
-                damagePerSecond: 10,
-                duration: 2
             }
         },
         reloadTime: 1.2,
@@ -1423,6 +1289,10 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 40,
             selfGameRotation: 18
         },
+        poison: {
+            damagePerSecond: 15,
+            duration: 2
+        },
         attributes: {
             around_circle_shoot: {
                 definition: Projectiles.fromString("poison_peas"),
@@ -1435,10 +1305,6 @@ export const Petals = new Definitions<PetalDefinition>([
                     damagePerSecond: 15,
                     duration: 2
                 }
-            },
-            poison: {
-                damagePerSecond: 15,
-                duration: 2
             }
         },
         reloadTime: 0.3,
@@ -1447,46 +1313,6 @@ export const Petals = new Definitions<PetalDefinition>([
         pieceAmount: 5,
         isShowedInOne: true,
         rarity: RarityName.mythic,
-        usingAssets: "poison_peas"
-    },
-    {
-        idString: "speas",
-        displayName: "Grapes",
-        description: "pea machine gun AAAAAA",
-        damage: 2,
-        health: 12,
-        extendable: false,
-        usable: true,
-        useTime: 0.03,
-        images: {
-            slotDisplaySize: 45
-        },
-        attributes: {
-            around_circle_shoot: {
-                definition: Projectiles.fromString("speas"),
-                speed: 7.5,
-                damage: 0.1,
-                health: 26,
-                hitboxRadius: 0.46,
-                despawnTime: 4.5,
-                poison: {
-                    damagePerSecond: 240,
-                    duration: 120
-                }
-            },
-            poison: {
-                damagePerSecond: 240,
-                duration: 120
-            }
-        },
-        reloadTime: 0.12,
-        hitboxRadius: 0.5,
-        isDuplicate: true,
-        pieceAmount: 7,
-        isShowedInOne: true,
-        rarity: RarityName.phantasmagoric,
-        undroppable: true,
-        doesNotDamage: [EntityType.Player],
         usingAssets: "poison_peas"
     },
     {
@@ -1549,59 +1375,59 @@ export const Petals = new Definitions<PetalDefinition>([
         isDuplicate: false,
         pieceAmount: 1,
         attributes: {
-            random: [
-                {
-                    attribute: "poison",
-                    weight: 1,
-                    value: {
-                        damagePerSecond: 12,
-                        duration: 10
-                    }
-                },
-                {
-                    attribute: "paralyze",
-                    weight: 1,
-                    value: {
-                        duration: 10,
-                        speedReduction: 0.5,
-                        revolutionReduction: 0
-                    }
-                },
-                {
-                    attribute: "paralyze",
-                    weight: 1,
-                    value: {
-                        duration: 10,
-                        speedReduction: 0,
-                        revolutionReduction: 0.5
-                    }
-                },
-                {
-                    attribute: "healing_debuff",
-                    weight: 1,
-                    value: {
-                        healing: 0,
-                        duration: 10
-                    }
-                },
-                {
-                    attribute: "lightning",
-                    weight: 1,
-                    value: {
-                        range: 30,
-                        bounces: 5,
-                        attenuation: 1.25
-                    }
-                },
-                {
-                    attribute: "health_percent_damage",
-                    weight: 0.1,
-                    value: {
-                        percent: 2,
-                        maxDamage: 500
-                    }
-                }
-            ]
+            // random: [
+            //     {
+            //         attribute: "poison",
+            //         weight: 1,
+            //         value: {
+            //             damagePerSecond: 12,
+            //             duration: 10
+            //         }
+            //     },
+            //     {
+            //         attribute: "paralyze",
+            //         weight: 1,
+            //         value: {
+            //             duration: 10,
+            //             speedReduction: 0.5,
+            //             revolutionReduction: 0
+            //         }
+            //     },
+            //     {
+            //         attribute: "paralyze",
+            //         weight: 1,
+            //         value: {
+            //             duration: 10,
+            //             speedReduction: 0,
+            //             revolutionReduction: 0.5
+            //         }
+            //     },
+            //     {
+            //         attribute: "healing_debuff",
+            //         weight: 1,
+            //         value: {
+            //             healing: 0,
+            //             duration: 10
+            //         }
+            //     },
+            //     {
+            //         attribute: "lightning",
+            //         weight: 1,
+            //         value: {
+            //             range: 30,
+            //             bounces: 5,
+            //             attenuation: 1.25
+            //         }
+            //     },
+            //     {
+            //         attribute: "health_percent_damage",
+            //         weight: 0.1,
+            //         value: {
+            //             percent: 2,
+            //             maxDamage: 500
+            //         }
+            //     }
+            // ]
         },
         rarity: RarityName.mythic
     },
@@ -1634,22 +1460,21 @@ export const Petals = new Definitions<PetalDefinition>([
         description: "A deadly pincer that poisons and paralyzes enemies",
         damage: 5,
         health: 5,
-        extendable:
-        true,
+        extendable: true,
         usable: false,
         images: {
             slotDisplaySize: 46,
             selfGameRotation: 0.01
         },
-        attributes: {
-            poison: {
-                damagePerSecond: 10,
-                duration: 1
+        poison: {
+            damagePerSecond: 10,
+            duration: 1
+        },
+        effectsOnHit: {
+            modifier: {
+                speed: 0
             },
-            paralyze: {
-                duration: 0.8,
-                speedReduction: 1.0
-            }
+            duration: 0.8
         },
         reloadTime: 1.25,
         hitboxRadius: 0.45,
@@ -1673,7 +1498,7 @@ export const Petals = new Definitions<PetalDefinition>([
             }
         },
         hitboxRadius: 0.7,
-        modifiersToPlayer: {
+        wearerAttributes: {
             zoom: 30
         },
         rarity: RarityName.legendary
@@ -1686,7 +1511,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 60
         },
         hitboxRadius: 0.9,
-        modifiersToPlayer: {
+        wearerAttributes: {
             zoom: 45
         },
         rarity: RarityName.mythic,
@@ -1701,7 +1526,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 60
         },
         hitboxRadius: 0.9,
-        modifiersToPlayer: {
+        wearerAttributes: {
             zoom: 120
         },
         undroppable: true,
@@ -1728,7 +1553,7 @@ export const Petals = new Definitions<PetalDefinition>([
             }
         },
         hitboxRadius: 0.6,
-        modifiersToPlayer: {
+        wearerAttributes: {
             controlRotation: true
         },
         rarity: RarityName.unique
@@ -1754,7 +1579,7 @@ export const Petals = new Definitions<PetalDefinition>([
         },
         hitboxRadius: 0.6,
         unstackable: true,
-        modifiersToPlayer: {
+        wearerAttributes: {
             extraDistance: 1
         },
         rarity: RarityName.legendary,
@@ -1781,7 +1606,7 @@ export const Petals = new Definitions<PetalDefinition>([
             }
         },
         hitboxRadius: 0.6,
-        modifiersToPlayer: {
+        wearerAttributes: {
             extraDistance: 10
         },
         rarity: RarityName.super,
@@ -1802,7 +1627,7 @@ export const Petals = new Definitions<PetalDefinition>([
 
             //       selfGameRotation: 0.02
         },
-        modifiersToPlayer: {
+        wearerAttributes: {
             revive: {
                 healthPercent: 30,
                 shieldPercent: 50,
@@ -1832,7 +1657,7 @@ export const Petals = new Definitions<PetalDefinition>([
 
             //       selfGameRotation: 0.02
         },
-        modifiersToPlayer: {
+        wearerAttributes: {
             revive: {
                 healthPercent: 100,
                 shieldPercent: 70,
@@ -1906,7 +1731,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 health: 5,
                 hitboxRadius: 0.3,
                 despawnTime: 5,
-                velocityAtFirst: 8
+                accelerationF: 8
             }
         },
         reloadTime: 1,
@@ -1933,7 +1758,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 health: 10,
                 hitboxRadius: 0.3,
                 despawnTime: 5,
-                velocityAtFirst: 8
+                accelerationF: 8
             }
         },
         reloadTime: 0.3,
@@ -2022,8 +1847,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 60,
             selfGameRotation: 0.01
         },
-        modifiersToPlayer: {
-            // damageAvoidanceChance: 0.12
+        wearerAttributes: {
             damageAvoidanceByDamage: true
         },
         // unstackable: true,
@@ -2046,7 +1870,7 @@ export const Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 240,
             fontSizeMultiplier: 0.9
         },
-        modifiersToPlayer: {
+        wearerAttributes: {
             yinYangAmount: 1
         },
         reloadTime: 1,
@@ -2074,9 +1898,6 @@ export const Petals = new Definitions<PetalDefinition>([
                 damagePerSecond: 20
             }
         },
-        modifiersToPlayer: {
-            selfPoison: 20
-        },
         reloadTime: 2.5,
         hitboxRadius: 0.5,
         isDuplicate: false,
@@ -2096,12 +1917,12 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 65,
             selfGameRotation: 18
         },
-        attributes: {
-            paralyze: {
-                duration: 8,
-                speedReduction: 0.05,
-                revolutionReduction: 0.15
-            }
+        effectsOnHit: {
+            modifier: {
+                speed: 0.05,
+                revolutionSpeed: 0.15
+            },
+            duration: 8
         },
         reloadTime: 1.7,
         hitboxRadius: 0.6,
@@ -2230,7 +2051,7 @@ export const Petals = new Definitions<PetalDefinition>([
             facingOut: true
 
         },
-        modifiersToPlayer: {
+        wearerAttributes: {
             conditionalHeal: {
                 healthPercent: 0.75,
                 healAmount: 9.5
@@ -2278,7 +2099,7 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 65,
             selfGameRotation: 0.15
         },
-        modifiersToSelf: {
+        petalModifiers: {
             armor: 8
         },
         reloadTime: 1.25,
@@ -2359,7 +2180,7 @@ export const Petals = new Definitions<PetalDefinition>([
         },
         hitboxRadius: 0.6,
         unstackable: true,
-        modifiersToPlayer: {
+        wearerAttributes: {
             bodyDamage: 2
         },
         rarity: RarityName.epic
@@ -2383,7 +2204,7 @@ export const Petals = new Definitions<PetalDefinition>([
         },
         hitboxRadius: 0.6,
         unstackable: true,
-        modifiersToPlayer: {
+        wearerAttributes: {
             knockbackReduction: 0.5
         },
         rarity: RarityName.epic
@@ -2407,7 +2228,7 @@ export const Petals = new Definitions<PetalDefinition>([
         },
         hitboxRadius: 0.6,
         unstackable: true,
-        modifiersToPlayer: {
+        wearerAttributes: {
             bodyDamageReduction: 0.5
         },
         rarity: RarityName.epic
@@ -2424,18 +2245,16 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 68,
             selfGameRotation: 18
         },
-        modifiersToPlayer: {
-            maxHealth: 50
-        },
-        attributes: {
-            poison: {
-                damagePerSecond: 10,
-                duration: 0.6
-            },
-            body_poison: {
+        wearerAttributes: {
+            maxHealth: 50,
+            bodyPoison: {
                 damagePerSecond: 15,
                 duration: 5
             }
+        },
+        poison: {
+            damagePerSecond: 10,
+            duration: 0.6
         },
         reloadTime: 1,
         hitboxRadius: 0.7,

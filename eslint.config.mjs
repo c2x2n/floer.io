@@ -28,8 +28,6 @@ export default tseslint.config(
             ["@stylistic"]: stylistic
         },
         rules: {
-            "dot-notation": "off",
-            "@typescript-eslint/dot-notation": ["error", { allowKeywords: true }],
 
             // ESLint
             "curly": ["warn", "multi-line"],
@@ -41,7 +39,7 @@ export default tseslint.config(
             ["@stylistic/arrow-parens"]: ["warn", "as-needed"],
             ["@stylistic/brace-style"]: ["warn", "1tbs", { allowSingleLine: true }],
             ["@stylistic/indent"]: ["warn", 4, { SwitchCase: 1 }],
-            ["@stylistic/linebreak-style"]: ["warn", "unix"],
+            ["@stylistic/linebreak-style"]: ["off"],
             ["@stylistic/max-statements-per-line"]: "off",
             ["@stylistic/member-delimiter-style"]: ["warn", { singleline: { delimiter: "comma" }, multiline: { delimiter: "none" } }],
             ["@stylistic/quotes"]: ["warn", "double", { avoidEscape: true }],
@@ -49,6 +47,7 @@ export default tseslint.config(
             ["@stylistic/type-generic-spacing"]: "off",
 
             // @typescript-eslint
+            ["@typescript-eslint/dot-notation"]: ["error", { allowKeywords: true }],
             ["@typescript-eslint/array-type"]: ["warn", { default: "array-simple" }],
             ["@typescript-eslint/ban-ts-comment"]: "off",
             ["@typescript-eslint/consistent-type-definitions"]: "off",
@@ -57,7 +56,6 @@ export default tseslint.config(
             ["@typescript-eslint/no-this-alias"]: "off",
             ["@typescript-eslint/prefer-literal-enum-member"]: "off",
             ["@typescript-eslint/prefer-nullish-coalescing"]: "off",
-            ["@typescript-eslint"]
             ["@typescript-eslint/restrict-template-expressions"]: ["error", {
                 allowAny: true,
                 allowBoolean: true,

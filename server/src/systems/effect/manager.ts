@@ -1,5 +1,5 @@
 import { Effect } from "./effect";
-import { ServerEntity } from "../entity";
+import { ServerEntity } from "../../entity/serverEntity";
 
 export class EffectManager {
     effects = new Set<Effect>();

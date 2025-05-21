@@ -1,21 +1,16 @@
-import { ServerEntity } from "./entity";
 import { UVector2D } from "../../../common/src/engine/physics/uvector";
-import { type EntitiesNetData } from "../../../common/src/engine/net/packets/updatePacket";
-import { CircleHitbox, RectHitbox } from "../../../common/src/engine/physics/hitbox";
+import { CircleHitbox } from "../../../common/src/engine/physics/hitbox";
 import { EntityType } from "../../../common/src/constants";
 import { ProjectileDefinition, ProjectileParameters } from "../../../common/src/definitions/projectiles";
-import { AttributeEvents } from "../utils/attributeRealizes";
 import { ServerPetal } from "./serverPetal";
-import { damageSource } from "../typings";
-import { ServerFriendlyMob, ServerMob } from "./serverMob";
+import { ServerMob } from "./serverMob";
 import { ServerPlayer } from "./serverPlayer";
 import { Random } from "../../../common/src/engine/maths/random";
 import { P2 } from "../../../common/src/engine/maths/constants";
 import VectorAbstract from "../../../common/src/engine/physics/vectorAbstract";
 import { Geometry } from "../../../common/src/engine/maths/geometry";
-import { Effect } from "./effect/effect";
-import ServerLivelyEntity from "./lively";
-import { Damage } from "./typings/damage";
+import ServerLivelyEntity from "./livelyEntity";
+import { EntitiesNetData } from "../../../common/src/engine/net/entitySerializations";
 
 export class ServerProjectile extends ServerLivelyEntity<EntityType.Projectile> {
     type: EntityType.Projectile = EntityType.Projectile;
@@ -45,34 +40,28 @@ export class ServerProjectile extends ServerLivelyEntity<EntityType.Projectile> 
         parameters: ProjectileParameters,
         fromPetal?: ServerPetal) {
         super(source.game, position, EntityType.Projectile);
-        this.setParent(source);
+        this.setSummonr(source);
         this.name = parameters.definition.displayName;
-
         this.parameters = parameters;
-
         this.hitbox = new CircleHitbox(parameters.hitboxRadius);
         this.direction = direction;
         this.source = source;
         this.definition = parameters.definition;
-
-        this.parameters = parameters;
-
+        this.bodyPoison = parameters.poison;
+        this.effectsOnHit = parameters.effectsOnHit;
         this.fromPetal = fromPetal;
-
         if (parameters.health) {
             this.maxHealth = parameters.health;
             this.health = parameters.health;
         } else {
             this.invincible = true;
         }
-
         this.damage = parameters.damage ?? 0;
         this.game.grid.addEntity(this);
-
         this.addAcceleration(
-            UVector2D.mul(this.direction, (parameters.velocityAtFirst ?? parameters.speed * 6) * 0.2)
+            UVector2D.mul(this.direction, (parameters.accelerationF ?? parameters.speed * 6) * 0.2)
         );
-        if (this.definition.onGround && parameters.velocityAtFirst) {
+        if (this.definition.onGround && parameters.accelerationF) {
             this.addAcceleration(UVector2D.mul(direction, 80 * parameters.hitboxRadius / 25));
         }
     }
@@ -82,53 +71,27 @@ export class ServerProjectile extends ServerLivelyEntity<EntityType.Projectile> 
 
         for (const collision of this.getCollisions()) {
             const to = collision.entity;
-            if (to instanceof ServerLivelyEntity && this.parameters.modifiersWhenOn && this.canEffect(to)) {
-                to.otherModifiersOnTick.push(this.parameters.modifiersWhenOn);
+            if (to instanceof ServerLivelyEntity
+                && this.parameters.effectWhenOn
+                && this.canEffect(to)) {
+                to.otherModifiersOnTick.push(this.parameters.effectWhenOn);
             }
         }
 
         this.existingTime += this.game.dt;
-        if (this.existingTime >= this.parameters.despawnTime) {
-            this.destroy();
-        }
-
+        if (this.existingTime >= this.parameters.despawnTime) this.destroy();
         this.maintainAcceleration(Geometry.directionToRadians(this.direction), this.parameters.speed);
-    }
-
-    protected onReceiveDamage(damage: Damage) {
-        super.onReceiveDamage(damage);
     }
 
     override dealCollisionDamageTo(to: ServerLivelyEntity): void {
         if (this.definition.doesNotDamage?.includes(to.type)) return;
         super.dealCollisionDamageTo(to);
-        // if (this.fromPetal && this.source.type === EntityType.Player) {
-        //     this.source.sendEvent(AttributeEvents.PROJECTILE_DEAL_DAMAGE, to, this.fromPetal);
-        // }
-
-        if (this.parameters.modifiersWhenDamage) {
-            const d = this.parameters.modifiersWhenDamage;
-            new Effect({
-                effectedTarget: to,
-                duration: d.duration,
-                source: this.source,
-                modifier: d.modifier
-            }).start();
-        }
-
-        if (this.parameters.poison) {
-            to.receivePoison(
-                this.source
-                , this.parameters.poison.damagePerSecond
-                , this.parameters.poison.duration
-            );
-        }
     }
 
     canEffect(to: ServerLivelyEntity): to is ServerPlayer | ServerMob {
         if (!(to instanceof ServerPlayer || to instanceof ServerMob)) return false;
 
-        if (this.parameters.modifiersWhenOn) {
+        if (this.parameters.effectWhenOn) {
             if (this.source.type === EntityType.Player) {
                 return !(to instanceof ServerMob
                     && to.definition.shootable

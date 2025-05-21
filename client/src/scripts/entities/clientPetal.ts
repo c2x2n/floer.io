@@ -1,7 +1,6 @@
 import { ClientEntity } from "./clientEntity";
 import { EntityType } from "../../../../common/src/constants";
 import { Game } from "../game";
-import { EntitiesNetData } from "../../../../common/src/engine/net/packets/updatePacket";
 import { Camera } from "../render/camera";
 import { Tween } from "@tweenjs/tween.js";
 import { PetalDefinition } from "../../../../common/src/definitions/petals";
@@ -13,6 +12,7 @@ import VectorAbstract from "../../../../common/src/engine/physics/vectorAbstract
 import { Geometry } from "../../../../common/src/engine/maths/geometry";
 import { Numeric } from "../../../../common/src/engine/maths/numeric";
 import { EasingFunctions } from "../../../../common/src/engine/maths/easing";
+import { EntitiesNetData } from "../../../../common/src/engine/net/entitySerializations";
 
 export class ClientPetal extends ClientEntity {
     type = EntityType.Petal;

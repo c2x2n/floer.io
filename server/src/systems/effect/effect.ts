@@ -1,9 +1,7 @@
-import { ServerEntity } from "../entity";
-import { damageSource } from "../../typings";
 import { EntityType } from "../../../../common/src/constants";
-import { PlayerModifiers } from "../../../../common/src/typings";
-import { EffectData } from "../typings/effect";
-import ServerLivelyEntity from "../lively";
+import { PlayerModifiers } from "../../../../common/src/typings/modifier";
+import { EffectData } from "../../typings/effect";
+import ServerLivelyEntity from "../../entity/livelyEntity";
 
 export class Effect {
     time = 0;

@@ -1,8 +1,6 @@
-import { ServerEntity } from "../entity";
-import { damageSource } from "../../typings";
-import { EntityType } from "../../../../common/src/constants";
-import { PlayerModifiers } from "../../../../common/src/typings";
-import ServerLivelyEntity from "../lively";
+import { EntityType } from "../../../common/src/constants";
+import { PlayerModifiers } from "../../../common/src/typings/modifier";
+import ServerLivelyEntity from "../entity/livelyEntity";
 
 export interface EffectData {
     readonly effectedTarget: ServerLivelyEntity

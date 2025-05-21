@@ -1,7 +1,7 @@
 import { EntityType } from "../../../../common/src/constants";
 import { type Hitbox, RectHitbox } from "../../../../common/src/engine/physics/hitbox";
 import { UVector2D } from "../../../../common/src/engine/physics/uvector";
-import { type ServerEntity } from "../../entity/entity";
+import { type ServerEntity } from "../../entity/serverEntity";
 import { type ServerPlayer } from "../../entity/serverPlayer";
 import { ServerPetal } from "../../entity/serverPetal";
 import { ServerMob } from "../../entity/serverMob";
@@ -109,7 +109,7 @@ export class Grid {
      * Get all entities near this Hitbox
      * This transforms the Hitbox into a rectangle
      * and gets all entities intersecting it after rounding it to grid cells
-     * @param Hitbox The Hitbox
+     * @param hitbox The Hitbox
      * @return A set with the entities near this Hitbox
      */
     intersectsHitbox(hitbox: Hitbox): Set<ServerEntity> {

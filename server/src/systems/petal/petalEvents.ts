@@ -1,19 +1,14 @@
 import { AttributeEvents, AttributeRealize, PetalAttributeRealizes, PetalUsingAnimations } from "./attributeRealizes";
-import { ServerPetal } from "../entity/serverPetal";
-import { ServerEntity } from "../entity/entity";
-import { AttributeNames } from "../../../common/src/definitions/petals";
-import ServerLivelyEntity from "../entity/lively";
+import { ServerPetal } from "../../entity/serverPetal";
+import { ServerEntity } from "../../entity/serverEntity";
+import { AttributeNames } from "../../../../common/src/definitions/petals";
+import ServerLivelyEntity from "../../entity/livelyEntity";
 
 export type EventFunctionArguments = {
     [K in AttributeEvents]?: unknown;
 } & {
     [AttributeEvents.PETAL_DEAL_DAMAGE]?: ServerLivelyEntity
     [AttributeEvents.FLOWER_DEAL_DAMAGE]?: ServerLivelyEntity
-    [AttributeEvents.FLOWER_GET_DAMAGE]?: {
-        entity: ServerEntity
-        damage: number
-    }
-    [AttributeEvents.PROJECTILE_DEAL_DAMAGE]?: ServerLivelyEntity
 };
 
 type EventFunction<T extends AttributeEvents = AttributeEvents> =

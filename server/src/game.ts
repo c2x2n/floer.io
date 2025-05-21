@@ -1,12 +1,12 @@
 import { type WebSocket } from "ws";
 import { ServerPlayer } from "./entity/serverPlayer";
-import { ServerEntity } from "./entity/entity";
+import { ServerEntity } from "./entity/serverEntity";
 import { Grid } from "./systems/map/grid";
 import { EntityPool } from "../../common/src/misc/entityPool";
 import { EntityType, GameConstants } from "../../common/src/constants";
 import NanoTimer from "nanotimer";
 import { Config, type ServerConfig } from "./config";
-import { IDAllocator } from "./idAllocator";
+import { IDAllocator } from "./systems/idAllocator";
 import { UVector2D } from "../../common/src/engine/physics/uvector";
 import { ServerMob } from "./entity/serverMob";
 import { MobDefinition, Mobs } from "../../common/src/definitions/mobs";
@@ -21,13 +21,13 @@ import { MobSpawner, SpecialSpawn, ZoneName } from "../../common/src/definitions
 import { getLevelInformation } from "../../common/src/definitions/levels";
 import { Zone, ZonesManager } from "./systems/map/zones";
 import { ServerWall } from "./entity/serverWall";
-import { spawnSegmentMobs } from "./entity/spawning";
+import { spawnMob, spawnSegmentMobs } from "./entity/spawning/mob";
 import { Walls } from "../../common/src/definitions/walls";
 import { GameData } from "./gameContainer";
 import VectorAbstract from "../../common/src/engine/physics/vectorAbstract";
 import { Geometry } from "../../common/src/engine/maths/geometry";
-import TeamGenerator from "./entity/teamGenerator";
-import ServerLivelyEntity from "./entity/lively";
+import TeamGenerator from "./systems/teamGenerator";
+import ServerLivelyEntity from "./entity/livelyEntity";
 
 type SpecialSpawningTimer = { timer: number, toNextTimer: number, spawned?: ServerMob };
 
@@ -261,25 +261,11 @@ export class ServerGame {
     }
 
     spawnMob(definition: MobDefinition, position: VectorAbstract): ServerMob {
-        // 1/1.5m chance to spawn as a square
-        if (Math.random() < (1 / 1500000)) {
-            definition = Mobs.fromString("square");
-        }
-
-        let mob: ServerMob;
-        if (definition.hasSegments) {
-            mob = spawnSegmentMobs(
-                this,
-                definition,
-                position
-            );
-        } else {
-            mob = new ServerMob(this,
-                position,
-                Geometry.radiansToDirection(Random.float(-P2, P2)),
-                definition
-            );
-        }
+        const mob = spawnMob(
+            this,
+            definition,
+            position
+        );
 
         const rarity = Rarity.fromString(definition.rarity);
         if (rarity.globalMessage && !definition.noSpawnMessage) {

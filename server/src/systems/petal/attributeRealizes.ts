@@ -1,15 +1,15 @@
-import { ServerPetal } from "../entity/serverPetal";
-import { P2 } from "../../../common/src/engine/maths/constants";
-import { UVector2D } from "../../../common/src/engine/physics/uvector";
-import { AttributeNames, AttributeParameters } from "../../../common/src/definitions/petals";
+import { ServerPetal } from "../../entity/serverPetal";
+import { P2 } from "../../../../common/src/engine/maths/constants";
+import { UVector2D } from "../../../../common/src/engine/physics/uvector";
+import { AttributeNames, AttributeParameters } from "../../../../common/src/definitions/petals";
 import { EventInitializer } from "./petalEvents";
-import { EntityType } from "../../../common/src/constants";
-import { ServerPlayer } from "../entity/serverPlayer";
-import { ServerFriendlyMob, ServerMob } from "../entity/serverMob";
-import { ServerProjectile } from "../entity/serverProjectile";
-import { Geometry } from "../../../common/src/engine/maths/geometry";
-import { Effect } from "../entity/effect/effect";
-import { DamageType } from "../entity/typings/damage";
+import { EntityType } from "../../../../common/src/constants";
+import { ServerPlayer } from "../../entity/serverPlayer";
+import { ServerFriendlyMob, ServerMob } from "../../entity/serverMob";
+import { ServerProjectile } from "../../entity/serverProjectile";
+import { Geometry } from "../../../../common/src/engine/maths/geometry";
+import { Effect } from "../effect/effect";
+import { DamageType } from "../../typings/damage";
 
 export enum AttributeEvents {
     HEALING = "HEALING",
@@ -17,8 +17,6 @@ export enum AttributeEvents {
     ATTACK = "ATTACK",
     PETAL_DEAL_DAMAGE = "PETAL_DEAL_DAMAGE",
     FLOWER_DEAL_DAMAGE = "FLOWER_DEAL_DAMAGE",
-    FLOWER_GET_DAMAGE = "FLOWER_GET_DAMAGE",
-    PROJECTILE_DEAL_DAMAGE = "PROJECTILE_DEAL_DAMAGE",
     USABLE = "USABLE"
 }
 
@@ -75,108 +73,6 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                     }
                 }
                 , PetalUsingAnimations.NORMAL);
-
-            // on<AttributeEvents.PETAL_DEAL_DAMAGE>(
-            //     AttributeEvents.PETAL_DEAL_DAMAGE,
-            //     entity => {
-            //         if (entity && data && data < 0 && isDamageableEntity(entity)) {
-            //             // 击退效果，负值表示击退
-            //             const entityToPlayerDirection
-            //                 = Geometry.directionBetweenPoints(entity.position, petal.owner.position);
-            //
-            //             // 计算击退力度倍率
-            //             let knockbackMultiplier = 1.0;
-            //
-            //             // 对玩家固定为1倍
-            //             if (entity.type === EntityType.Player) {
-            //                 knockbackMultiplier = 1.0;
-            //             } else {
-            //                 const entityRadius = entity.hitbox.radius;
-            //                 const baseRadius = 1;
-            //
-            //                 // 计算倍率: 基础半径/实体半径 (半径越大，倍率越小)
-            //                 knockbackMultiplier = Math.min(1.0, baseRadius / entityRadius);
-            //             }
-            //             entity.addVelocity(
-            //                 UVector2D.mul(entityToPlayerDirection, Math.abs(data) * 10 * knockbackMultiplier)
-            //             );
-            //         }
-            //     }
-            // );
-        }
-    },
-
-    poison: {
-        callback: (on, petal, data) => {
-            on<AttributeEvents.PETAL_DEAL_DAMAGE>(
-                AttributeEvents.PETAL_DEAL_DAMAGE,
-                entity => {
-                    if (entity && data) {
-                        entity.receivePoison(
-                            petal.owner, data.damagePerSecond, data.duration
-                        );
-                    }
-                }
-            );
-        }
-    },
-
-    healing_debuff: {
-        callback: (on, petal, data) => {
-            on<AttributeEvents.PETAL_DEAL_DAMAGE>(
-                AttributeEvents.PETAL_DEAL_DAMAGE,
-                entity => {
-                    if (!entity || !data) return;
-                    new Effect({
-                        effectedTarget: entity,
-                        source: petal.owner,
-                        modifier: {
-                            healing: data.healing
-                        },
-                        duration: data.duration,
-                        workingType: [EntityType.Player]
-                    }).start();
-                }
-            );
-        }
-    },
-
-    body_poison: {
-        callback: (on, petal, data) => {
-            on<AttributeEvents.FLOWER_DEAL_DAMAGE>(
-                AttributeEvents.FLOWER_DEAL_DAMAGE,
-                entity => {
-                    if (entity && data) {
-                        entity.receivePoison(
-                            petal.owner, data.damagePerSecond, data.duration
-                        );
-                    }
-                }
-            );
-        }
-    },
-
-    damage_reflection: {
-        unstackable: true,
-        callback: (on, petal, data) => {
-            on<AttributeEvents.FLOWER_GET_DAMAGE>(AttributeEvents.FLOWER_GET_DAMAGE,
-                arg => {
-                    if (arg && data) {
-                        const { entity, damage } = arg;
-                        if (
-                            entity instanceof ServerPlayer
-                            || (entity instanceof ServerMob && entity.canReceiveDamageFrom(petal.owner))
-                        ) {
-                            entity.receiveDamage({
-                                source: petal.getTopParent(),
-                                amount: damage,
-                                type: DamageType.DAMAGE_REFLECTION,
-                                to: entity
-                            });
-                        }
-                    }
-                }
-            );
         }
     },
 
@@ -187,7 +83,7 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                 const direction
                     = Geometry.directionBetweenPoints(petal.position, petal.owner.position);
                 const position = petal.position;
-                const projectile = new ServerProjectile(
+                new ServerProjectile(
                     petal.owner, position, direction, data, petal);
             }, PetalUsingAnimations.NORMAL);
         }
@@ -327,82 +223,6 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
         }
     },
 
-    paralyze: {
-        callback: (on, petal, data) => {
-            on<AttributeEvents.PETAL_DEAL_DAMAGE>(
-                AttributeEvents.PETAL_DEAL_DAMAGE,
-                entity => {
-                    if (!entity || !data) return;
-                    const existingEffects = Array.from(entity.effects.effects);
-                    const existingParalyze = existingEffects.find(e =>
-                        e.source === petal.owner
-                        && e.modifier?.speed !== undefined);
-
-                    let newSpeedMod = 1 - data.speedReduction;
-                    let revolutionReduction = data.revolutionReduction || 0;
-                    if (existingParalyze) {
-                        existingParalyze.destroy();
-                        if (existingParalyze.modifier?.speed !== undefined) {
-                            newSpeedMod *= existingParalyze.modifier.speed;
-                        }
-                        if (existingParalyze.modifier?.revolutionSpeed !== undefined) {
-                            const existingReductionPercent = Math.abs(existingParalyze.modifier.revolutionSpeed) / 2.4;
-                            let combinedReductionPercent = existingReductionPercent + revolutionReduction - (existingReductionPercent * revolutionReduction);
-                            combinedReductionPercent = Math.min(combinedReductionPercent, 0.99);
-                            revolutionReduction = combinedReductionPercent;
-                        }
-                    }
-                    new Effect({
-                        effectedTarget: entity,
-                        source: petal.owner,
-                        modifier: {
-                            speed: newSpeedMod,
-                            revolutionSpeed: -1 * revolutionReduction * 2.4
-                        },
-                        duration: data.duration,
-                        workingType: [EntityType.Player, EntityType.Mob]
-                    }).start();
-                }
-            );
-
-            on<AttributeEvents.PROJECTILE_DEAL_DAMAGE>(
-                AttributeEvents.PROJECTILE_DEAL_DAMAGE,
-                entity => {
-                    if (!entity || !data) return;
-                    const existingEffects = Array.from(entity.effects.effects);
-                    const existingParalyze = existingEffects.find(e =>
-                        e.source === petal.owner
-                        && e.modifier?.speed !== undefined);
-
-                    let newSpeedMod = 1 - data.speedReduction;
-                    let revolutionReduction = data.revolutionReduction || 0;
-                    if (existingParalyze) {
-                        existingParalyze.destroy();
-                        if (existingParalyze.modifier?.speed !== undefined) {
-                            newSpeedMod *= existingParalyze.modifier.speed;
-                        }
-                        if (existingParalyze.modifier?.revolutionSpeed !== undefined) {
-                            const existingReductionPercent = Math.abs(existingParalyze.modifier.revolutionSpeed) / 2.4;
-                            let combinedReductionPercent = existingReductionPercent + revolutionReduction - (existingReductionPercent * revolutionReduction);
-                            combinedReductionPercent = Math.min(combinedReductionPercent, 0.99);
-                            revolutionReduction = combinedReductionPercent;
-                        }
-                    }
-                    new Effect({
-                        effectedTarget: entity,
-                        source: petal.owner,
-                        modifier: {
-                            speed: newSpeedMod,
-                            revolutionSpeed: -1 * revolutionReduction * 2.4
-                        },
-                        duration: data.duration,
-                        workingType: [EntityType.Player, EntityType.Mob]
-                    }).start();
-                }
-            );
-        }
-    },
-
     area_poison: {
         callback: (on, petal, data) => {
             // if (!data) return;
@@ -434,11 +254,6 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
             //         }
             //     }
             // };
-        }
-    },
-    self_damage: {
-        callback: (on, petal, data) => {
-
         }
     },
     damage_heal: {

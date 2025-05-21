@@ -8,7 +8,7 @@ import { Inventory } from "./inventory";
 import { ClientApplication } from "../main";
 import { JoinPacket } from "../../../common/src/engine/net/packets/joinPacket";
 import { GameBitStream, Packet, PacketStream } from "../../../common/src/engine/net/net";
-import { EntitiesNetData, UpdatePacket } from "../../../common/src/engine/net/packets/updatePacket";
+import { UpdatePacket } from "../../../common/src/engine/net/packets/updatePacket";
 import { ClientPetal } from "./entities/clientPetal";
 import { Input } from "./input";
 import { InputPacket } from "../../../common/src/engine/net/packets/inputPacket";
@@ -29,6 +29,7 @@ import { ExpUI } from "./ui/game/expUI";
 import { ParticleManager } from "./render/particle";
 import { Bossbar } from "./ui/game/bossbar";
 import $ from "jquery";
+import { EntitiesNetData } from "../../../common/src/engine/net/entitySerializations";
 
 const typeToEntity = {
     [EntityType.Player]: ClientPlayer,

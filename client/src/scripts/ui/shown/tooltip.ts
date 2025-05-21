@@ -1,6 +1,6 @@
 import { Rarity } from "../../../../../common/src/definitions/rarities";
 import { AttributeNames, AttributeParameters, PetalDefinition, Petals } from "../../../../../common/src/definitions/petals";
-import { Modifiers, PlayerModifiers } from "../../../../../common/src/typings";
+import { Modifiers, PlayerModifiers } from "../../../../../common/src/typings/modifier";
 import { renderPetal } from "../../inventory";
 import $ from "jquery";
 import { MobDefinition, Mobs } from "../../../../../common/src/definitions/mobs";
@@ -155,38 +155,6 @@ const attributesShowingConfigs: { [K in AttributeNames]: AttributeShowingFunctio
                 }];
             }
         },
-        body_poison: data => {
-            return [{
-                displayName: "Body Poison",
-                value: `${data.damagePerSecond * data.duration} (${data.damagePerSecond}/s)`,
-                color: "#ce76db"
-            }];
-        },
-        damage_reflection: data => {
-            return [{
-                displayName: "Damage Reflection",
-                value: `${data * 100}%`,
-                color: "#989898"
-            }];
-        },
-        healing_debuff: data => {
-            return [{
-                displayName: "Healing Debuff",
-                value: `-${100 - data.healing * 100}% `,
-                color: "#989898"
-            }, {
-                displayName: "Duration",
-                value: `${data.duration}s`,
-                color: "#6161f0"
-            }];
-        },
-        poison: data => {
-            return [{
-                displayName: "Poison",
-                value: `${data.damagePerSecond * data.duration} (${data.damagePerSecond}/s)`,
-                color: "#ce76db"
-            }];
-        },
         shoot: () => [],
         peas_shoot: () => [],
         around_circle_shoot: () => [],
@@ -229,21 +197,6 @@ const attributesShowingConfigs: { [K in AttributeNames]: AttributeShowingFunctio
                 displayName: "Damage Avoidance",
                 value: `${data.chance * 100}%`,
                 color: "#3399ff"
-            }];
-        },
-        paralyze: data => {
-            return [{
-                displayName: "Paralyze",
-                value: `${data.duration}s`,
-                color: "#cc00cc"
-            }, {
-                displayName: "Speed Reduction",
-                value: `${data.speedReduction * 100}%`,
-                color: "#9966ff"
-            }, {
-                displayName: "Revolution Reduction",
-                value: `${data.revolutionReduction ? data.revolutionReduction * 100 : 0}%`,
-                color: "#9966ff"
             }];
         },
         area_poison: data => {
@@ -480,11 +433,11 @@ export function createPetalTooltip(definition: PetalDefinition): JQuery {
         }
     }
 
-    if (definition.modifiersToPlayer) {
-        for (const modifiersDefinitionKey in definition.modifiersToPlayer) {
+    if (definition.wearerAttributes) {
+        for (const modifiersDefinitionKey in definition.wearerAttributes) {
             const showing
                 = petalDefinitionShowingConfigs[modifiersDefinitionKey];
-            const original = (definition.modifiersToPlayer[modifiersDefinitionKey as keyof PlayerModifiers]);
+            const original = (definition.wearerAttributes[modifiersDefinitionKey as keyof PlayerModifiers]);
             if (!showing) continue;
 
             // 特殊处理conditionalHeal
@@ -693,6 +646,7 @@ export function createMobTooltip(gallery: Gallery, definition: MobDefinition): J
                 = mobDefinitionShowingConfigs[modifiersDefinitionKey];
             const original = (definition.modifiers[modifiersDefinitionKey as keyof Modifiers]);
             if (!showing) continue;
+            if (!(typeof original === "number")) continue;
 
             if (!original) {
                 addData(showing,

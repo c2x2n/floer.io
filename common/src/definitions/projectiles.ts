@@ -1,7 +1,8 @@
 import { Definitions, ObjectDefinition } from "./definitions";
-import { Modifiers, PlayerModifiers } from "../typings";
+import { Modifiers, PlayerModifiers } from "../typings/modifier";
 import { EntityType } from "../constants";
 import { MobDefinition } from "./mobs";
+import { EffectsOnHitDataType, PoisonDataType } from "../typings/effect";
 
 export type ProjectileDefinition = ObjectDefinition & {
     readonly onGround?: boolean
@@ -56,38 +57,25 @@ export const Projectiles = new Definitions<ProjectileDefinition>([
 ] as ProjectileDefinition[]);
 
 export interface ProjectileParameters {
-    definition: ProjectileDefinition
-    despawnTime: number
-    speed: number
-    damage?: number
-    health?: number
-    hitboxRadius: number
-    modifiersWhenOn?: Partial<PlayerModifiers>
-    modifiersWhenDamage?: {
-        modifier: Partial<PlayerModifiers>
-        duration: number
-    }
-    poison?: {
-        damagePerSecond: number
-        duration: number
-    }
-    velocityAtFirst?: number
-    spawner?: SpawnerType
-    customDefinition?: any
-    tracking?: {
-        enabled: boolean
-        turnSpeed: number
-        detectionRange: number
-        preferClosest?: boolean
-    }
+    readonly definition: ProjectileDefinition
+    readonly despawnTime: number
+    readonly speed: number
+    readonly hitboxRadius: number
+    readonly damage?: number
+    readonly health?: number
+    readonly effectWhenOn?: Partial<PlayerModifiers>
+    readonly effectsOnHit?: EffectsOnHitDataType
+    readonly poison?: PoisonDataType
+    readonly accelerationF?: number
+    readonly spawner?: SpawnerType
 }
 
-export type SpawnerType = {
-    amount: number
+export type SpawnerType = ({
     type: EntityType.Projectile
     spawn: ProjectileParameters
 } | {
-    amount: number
     type: EntityType.Mob
     spawn: MobDefinition
+}) & {
+    amount: number
 };

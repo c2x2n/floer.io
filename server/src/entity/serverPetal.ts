@@ -1,15 +1,15 @@
-import { ServerEntity } from "./entity";
-import { type EntitiesNetData } from "../../../common/src/engine/net/packets/updatePacket";
+import { ServerEntity } from "./serverEntity";
 import { CircleHitbox } from "../../../common/src/engine/physics/hitbox";
 import { EntityType } from "../../../common/src/constants";
 import { PetalDefinition } from "../../../common/src/definitions/petals";
 import { ServerPlayer } from "./serverPlayer";
-import { AttributeEvents, PetalUsingAnimations } from "../utils/attributeRealizes";
+import { AttributeEvents, PetalUsingAnimations } from "../systems/petal/attributeRealizes";
 import { PetalBunch } from "../systems/inventory/petalBunch";
 import { ServerMob } from "./serverMob";
 import { UVector2D } from "../../../common/src/engine/physics/uvector";
-import ServerLivelyEntity from "./lively";
-import { Damage, DamageType } from "./typings/damage";
+import ServerLivelyEntity from "./livelyEntity";
+import { Damage } from "../typings/damage";
+import { EntitiesNetData } from "../../../common/src/engine/net/entitySerializations";
 
 export class ServerPetal extends ServerLivelyEntity<EntityType.Petal> {
     type: EntityType.Petal = EntityType.Petal;
@@ -86,13 +86,12 @@ export class ServerPetal extends ServerLivelyEntity<EntityType.Petal> {
         const player = petalBunch.player;
         super(player.game, player.position, EntityType.Petal);
         this.petalBunch = petalBunch;
-
         this.position = player.position.clone();
         this.definition = definition;
+        this.constantModifier = definition.petalModifiers;
+        this.bodyPoison = definition.poison;
         this.owner = player;
-
         this.setParent(player);
-
         this.hitbox = new CircleHitbox(definition.hitboxRadius);
         if (!definition.equipment) {
             this.damage = definition.damage;
@@ -194,32 +193,17 @@ export class ServerPetal extends ServerLivelyEntity<EntityType.Petal> {
     public override dealCollisionDamageTo(to: ServerLivelyEntity) {
         if (this.definition.doesNotDamage?.includes(to.type) || this.owner.spectatorMode) return;
 
-        if (this.damage && to.canReceiveDamageFrom(this)) {
-            const owner = this.owner;
-            const originalIsPetalAttack = owner.isPetalAttack;
-            owner.isPetalAttack = true;
+        super.dealCollisionDamageTo(to);
 
-            to.receiveDamage({
-                amount: this.damage,
-                source: this.getTopParent(),
-                to,
-                type: DamageType.COLLISION
-            });
-
-            owner.sendEvent(
-                AttributeEvents.PETAL_DEAL_DAMAGE,
-                to,
-                this
-            );
-
-            owner.isPetalAttack = originalIsPetalAttack;
-        }
+        this.owner.sendEvent(
+            AttributeEvents.PETAL_DEAL_DAMAGE,
+            to,
+            this
+        );
     }
 
     protected override onReceiveDamage(damage: Damage) {
-        const { amount } = damage;
-        if (amount > 0) this.gotDamage = true;
-
+        if (damage.amount > 0) this.gotDamage = true;
         if (this.health <= 0) this.isReloading = true;
     }
 
@@ -239,6 +223,6 @@ export class ServerPetal extends ServerLivelyEntity<EntityType.Petal> {
 
     destroy() {
         super.destroy();
-        if (this.spawned) this.spawned.destroy();
+        this.spawned?.destroy();
     }
 }

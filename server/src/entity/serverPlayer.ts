@@ -1,12 +1,11 @@
 import { type WebSocket } from "ws";
-import { ServerEntity } from "./entity";
+import { ServerEntity } from "./serverEntity";
 import { UVector2D } from "../../../common/src/engine/physics/uvector";
 import { GameBitStream, type Packet, PacketStream } from "../../../common/src/engine/net/net";
 import { createHash } from "crypto";
 import { type ServerGame } from "../game";
 import {
     ChatData,
-    type EntitiesNetData,
     PetalData,
     PetalState,
     UpdatePacket
@@ -20,20 +19,21 @@ import { GameOverPacket } from "../../../common/src/engine/net/packets/gameOverP
 import { Inventory } from "../systems/inventory/inventory";
 import { ServerPetal } from "./serverPetal";
 import { PetalDefinition, SavedPetalDefinitionData } from "../../../common/src/definitions/petals";
-import { AttributeEvents } from "../utils/attributeRealizes";
-import { PlayerModifiers } from "../../../common/src/typings";
-import { EventFunctionArguments } from "../utils/petalEvents";
+import { AttributeEvents } from "../systems/petal/attributeRealizes";
+import { PlayerModifiers } from "../../../common/src/typings/modifier";
+import { EventFunctionArguments } from "../systems/petal/petalEvents";
 import { getLevelExpCost, getLevelInformation } from "../../../common/src/definitions/levels";
 import { LoggedInPacket } from "../../../common/src/engine/net/packets/loggedInPacket";
 import { ChatChannel, ChatPacket } from "../../../common/src/engine/net/packets/chatPacket";
 import { MobDefinition } from "../../../common/src/definitions/mobs";
-import { spawnLoot } from "./spawning";
 import { applyCommand, CommandResolving } from "../systems/command";
 import VectorAbstract from "../../../common/src/engine/physics/vectorAbstract";
 import { Geometry } from "../../../common/src/engine/maths/geometry";
 import { Numeric } from "../../../common/src/engine/maths/numeric";
-import ServerLivelyEntity from "./lively";
-import { Damage, DamageType } from "./typings/damage";
+import ServerLivelyEntity from "./livelyEntity";
+import { Damage, DamageType } from "../typings/damage";
+import { EntitiesNetData } from "../../../common/src/engine/net/entitySerializations";
+import { spawnLoot } from "./spawning/loot";
 
 enum curveType {
     LINEAR,
@@ -79,8 +79,6 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
     distance = 0;
     isAttacking = false;
     isDefending = false;
-
-    isPetalAttack = false;
 
     inventory: Inventory;
 
@@ -170,8 +168,8 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
     otherModifiersOnTick: Array<Partial<PlayerModifiers>> = [];
 
     persistentSpeedModifier = 1;
-
     persistentZoomModifier = 1;
+
     spectatorMode = false;
     invisible = false;
     frozen = false;
@@ -250,15 +248,6 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
             this.heal(this.modifiers.conditionalHeal.healAmount * this.game.dt);
         }
 
-        if (this.modifiers.selfPoison > 0) {
-            this.receiveDamage({
-                source: this,
-                type: DamageType.DAMAGE_REFLECTION,
-                amount: this.modifiers.selfPoison * this.game.dt,
-                to: this
-            });
-        }
-
         // 护盾每秒自动消失5%
         if (this._shield > 0) {
             const shieldDecay = this._shield * 0.05 * this.game.dt;
@@ -308,12 +297,9 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
 
     public override receiveDamage(damage: Damage) {
         let { amount } = damage;
-        const { type, source } = damage;
+        const { type } = damage;
 
-        if ((this.modifiers.damageAvoidanceChance > 0 && Math.random() < this.modifiers.damageAvoidanceChance)
-            || (this.modifiers.damageAvoidanceByDamage && Math.random() < curve(amount / 100, curveType.CBRT))) {
-            return;
-        }
+        if (this.modifiers.damageAvoidanceByDamage && Math.random() < curve(amount / 100, curveType.CBRT)) return;
 
         if (type === DamageType.COLLISION && this.modifiers.bodyDamageReduction > 0) {
             amount *= (1 - this.modifiers.bodyDamageReduction);
@@ -329,15 +315,6 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
                     this.shield = 0;
                 }
             }
-        }
-
-        if (type != DamageType.DAMAGE_REFLECTION) {
-            this.sendEvent(
-                AttributeEvents.FLOWER_GET_DAMAGE, {
-                    entity: source,
-                    damage: amount
-                }
-            );
         }
 
         if (amount > 0) this.gotDamage = true;
@@ -385,10 +362,7 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
 
         const radius = this.zoom + 10;
         const rect = RectHitbox.fromCircle(radius, this.position);
-        const array = this.game.grid.intersectsHitbox(rect);
-        const newVisibleEntities = new Set<ServerEntity>(Array.from(array).filter(e => {
-            return !e.invisible;
-        }));
+        const newVisibleEntities = this.game.grid.intersectsHitbox(rect);
 
         for (const entity of this.visibleEntities) {
             if (!newVisibleEntities.has(entity)) {
@@ -676,15 +650,12 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
     }
 
     protected override calcModifiers(now: PlayerModifiers, extra: Partial<PlayerModifiers>): PlayerModifiers {
-        now.healing *= extra.healing ?? 1;
+        now = { ...now, ...super.calcModifiers(now, extra) }; // use parent's calcModifiers first
+
         now.maxHealth += extra.maxHealth ?? 0;
-        now.healPerSecond += extra.healPerSecond ?? 0;
-        now.speed *= extra.speed ?? 1;
         now.revolutionSpeed += extra.revolutionSpeed ?? 0;
         now.zoom += extra.zoom ?? 0;
-        now.damageAvoidanceChance += extra.damageAvoidanceChance ?? 0;
         now.damageAvoidanceByDamage = extra.damageAvoidanceByDamage ?? now.damageAvoidanceByDamage;
-        now.selfPoison += extra.selfPoison ?? 0;
         now.yinYangAmount += extra.yinYangAmount ?? 0;
         now.extraDistance += extra.extraDistance ?? 0;
         now.controlRotation = extra.controlRotation ?? now.controlRotation;
@@ -708,85 +679,34 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
         return now;
     }
 
-    updateModifiers(): void {
-        let modifiersNow = GameConstants.player.defaultModifiers();
-
+    public override updateModifiers(): PlayerModifiers {
+        let modifiersNow: PlayerModifiers = GameConstants.player.defaultModifiers();
         const effectedPetals: PetalDefinition[] = [];
 
-        // 闪避
-        let avoidanceFailureChance = 1;
-
         for (const petal of this.petalEntities) {
-            const modifier = petal.definition.modifiersToPlayer;
+            const modifier = petal.definition.wearerAttributes;
             // has modifier AND (EITHER not first time reloading OR petal effects work on first reload)
             // petal.def.effectivefirstreload being undefined does not affect the result
-            if (modifier && (!petal.isLoadingFirstTime || (petal.isLoadingFirstTime && petal.definition.effectiveFirstReload))) {
+            if (modifier && (!petal.isLoadingFirstTime || petal.definition.effectiveFirstReload)) {
                 if (petal.definition.unstackable && effectedPetals.includes(petal.definition)) continue;
-                if (modifier.damageAvoidanceChance) {
-                    avoidanceFailureChance *= (1 - modifier.damageAvoidanceChance);
-                    const modifierWithoutAvoidance = { ...modifier };
-                    delete modifierWithoutAvoidance.damageAvoidanceChance;
-
-                    modifiersNow = this.calcModifiers(modifiersNow, modifierWithoutAvoidance);
-                } else {
-                    modifiersNow = this.calcModifiers(modifiersNow, modifier);
-                }
-
+                modifiersNow = this.calcModifiers(modifiersNow, modifier);
                 effectedPetals.push(petal.definition);
             }
         }
 
-        this.effects.effects.forEach(effect => {
-            if (effect.modifier) {
-                if (effect.modifier.damageAvoidanceChance) {
-                    avoidanceFailureChance *= (1 - effect.modifier.damageAvoidanceChance);
-                    const modifierWithoutAvoidance = { ...effect.modifier };
-                    delete modifierWithoutAvoidance.damageAvoidanceChance;
-                    modifiersNow = this.calcModifiers(modifiersNow, modifierWithoutAvoidance);
-                } else {
-                    modifiersNow = this.calcModifiers(modifiersNow, effect.modifier);
-                }
-            }
-        });
-
-        this.otherModifiersOnTick.forEach(effect => {
-            if (effect.damageAvoidanceChance) {
-                avoidanceFailureChance *= (1 - effect.damageAvoidanceChance);
-                const modifierWithoutAvoidance = { ...effect };
-                delete modifierWithoutAvoidance.damageAvoidanceChance;
-                modifiersNow = this.calcModifiers(modifiersNow, modifierWithoutAvoidance);
-            } else {
-                modifiersNow = this.calcModifiers(modifiersNow, effect);
-            }
-        });
-
-        this.otherModifiersOnTick = [];
-
-        if (this.persistentSpeedModifier !== 1) {
-            modifiersNow = this.calcModifiers(modifiersNow, {
-                speed: this.persistentSpeedModifier
-            });
-        }
-        if (this.persistentZoomModifier !== 1) {
-            modifiersNow = this.calcModifiers(modifiersNow, {
-                zoom: this.persistentZoomModifier
-            });
-        }
-
-        modifiersNow.damageAvoidanceChance = 1 - avoidanceFailureChance;
-
         modifiersNow = this.calcModifiers(modifiersNow, {
-            maxHealth: this.levelInformation.extraMaxHealth
+            maxHealth: this.levelInformation.extraMaxHealth,
+            zoom: this.persistentZoomModifier,
+            speed: this.persistentSpeedModifier
         });
 
-        this.modifiers = modifiersNow;
-
-        this.maxHealth = this.modifiers.maxHealth;
-        this.zoom = this.modifiers.zoom;
-
+        this.maxHealth = modifiersNow.maxHealth;
+        this.zoom = modifiersNow.zoom;
         this.inventory.changeSlotAmountTo(
             GameConstants.player.defaultSlot + this.levelInformation.extraSlot
         );
+
+        return modifiersNow;
     }
 
     destroy() {

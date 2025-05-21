@@ -1,12 +1,12 @@
 import { ClientEntity } from "./clientEntity";
 import { EntityType } from "../../../../common/src/constants";
-import { EntitiesNetData } from "../../../../common/src/engine/net/packets/updatePacket";
 import { ProjectileDefinition } from "../../../../common/src/definitions/projectiles";
 import { Camera } from "../render/camera";
 import { Tween } from "@tweenjs/tween.js";
 import { P2 } from "../../../../common/src/engine/maths/constants";
 import { getAssets } from "../../assets/assets";
 import { Geometry } from "../../../../common/src/engine/maths/geometry";
+import { EntitiesNetData } from "../../../../common/src/engine/net/entitySerializations";
 
 export class ClientProjectile extends ClientEntity {
     type = EntityType.Projectile;

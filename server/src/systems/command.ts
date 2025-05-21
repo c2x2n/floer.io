@@ -1,6 +1,5 @@
 import { PetalDefinition, Petals } from "../../../common/src/definitions/petals";
 import { Rarity, RarityName } from "../../../common/src/definitions/rarities";
-import { spawnLoot } from "../entity/spawning";
 import { Mobs } from "../../../common/src/definitions/mobs";
 import { EntityType } from "../../../common/src/constants";
 import { ServerPlayer } from "../entity/serverPlayer";
@@ -11,8 +10,9 @@ import {
     CommandParameterType
 } from "../../../common/src/definitions/commands";
 import { ChatData } from "../../../common/src/engine/net/packets/updatePacket";
-import { StTyped } from "../../../common/src/typings";
-import { DamageType } from "../entity/typings/damage";
+import { DamageType } from "../typings/damage";
+import { StTyped } from "../../../common/src/typings/stType";
+import { spawnLoot } from "../entity/spawning/loot";
 
 export type DirectlyChatData = ChatData & ({
     global: false
@@ -147,13 +147,13 @@ const Commands = {
                 }
 
                 // Remove super petals from non-dev players
-                if (def.rarity === RarityName["super"] && !player.isAdmin) {
+                if (def.rarity === RarityName.super && !player.isAdmin) {
                     toRemove.push(i);
                 }
             }
 
             toRemove.sort((a, b) => b - a).forEach(index => {
-                player.inventory["delete"](index);
+                player.inventory.delete(index);
                 petalCount++;
             });
         }
@@ -419,7 +419,7 @@ export function applyCommand(
         const parameter = commandData.parameters[i];
         if (inputParameters.length <= i) {
             if (parameter.optional) {
-                commandParameters[i] = parameter["default"];
+                commandParameters[i] = parameter.default;
             } else {
                 resolve.reject(`Missing parameter of index ${i}.`);
             }

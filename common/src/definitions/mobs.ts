@@ -1,8 +1,9 @@
 import { Definitions, ObjectDefinition } from "./definitions";
 import { Projectiles, ProjectileParameters } from "./projectiles";
 import { RarityName } from "./rarities";
-import { Modifiers } from "../typings";
+import { Modifiers } from "../typings/modifier";
 import { EntityType } from "../constants";
+import { PoisonDataType } from "../typings/effect";
 
 export enum MobCategory {
     Fixed,
@@ -32,6 +33,7 @@ export type MobDefinition = ObjectDefinition & {
         readonly sandstormLike?: boolean
     }
     readonly modifiers?: Partial<Modifiers>
+    readonly poison?: PoisonDataType
     readonly hideInformation?: boolean
     readonly despawnTime?: number
     readonly noSpawnMessage?: boolean
@@ -1082,7 +1084,7 @@ export const Mobs = new Definitions<MobDefinition>([
             despawnTime: 5,
             speed: 0,
             definition: Projectiles.fromString("web"),
-            modifiersWhenOn: {
+            effectWhenOn: {
                 speed: 0.6
             }
         },
@@ -1124,7 +1126,7 @@ export const Mobs = new Definitions<MobDefinition>([
             despawnTime: 7,
             speed: 0,
             definition: Projectiles.fromString("web"),
-            modifiersWhenOn: {
+            effectWhenOn: {
                 speed: 0.6
             }
         },
@@ -1348,7 +1350,7 @@ export const Mobs = new Definitions<MobDefinition>([
             despawnTime: 2,
             hitboxRadius: 1,
             speed: 0.5,
-            velocityAtFirst: 150,
+            accelerationF: 150,
             spawner: {
                 amount: 4,
                 type: EntityType.Projectile,
@@ -1404,7 +1406,7 @@ export const Mobs = new Definitions<MobDefinition>([
             despawnTime: 2,
             hitboxRadius: 1,
             speed: 0.5,
-            velocityAtFirst: 150,
+            accelerationF: 150,
             spawner: {
                 amount: 4,
                 type: EntityType.Projectile,
@@ -1501,7 +1503,7 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         rarity: RarityName.rare,
         exp: 15
-    },{
+    }, {
         idString: "digger",
         displayName: "Digger",
         damage: 40,
