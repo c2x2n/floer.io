@@ -178,192 +178,121 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
         }
     },
 
-    critical_hit: {
-        callback: (on, petal, data) => {
-            // on<AttributeEvents.PETAL_DEAL_DAMAGE>(
-            //     AttributeEvents.PETAL_DEAL_DAMAGE,
-            //     entity => {
-            //         if (!entity || !data) return;
-            //         if (Math.random() < data.chance && isDamageableEntity(entity) && petal.damage) {
-            //             entity.receiveDamage(petal.damage * (data.multiplier - 1), petal.owner);
-            //         }
-            //     }
-            // );
-        }
-    },
-
-    health_percent_damage: {
-        callback: (on, petal, data) => {
-            // on<AttributeEvents.PETAL_DEAL_DAMAGE>(
-            //     AttributeEvents.PETAL_DEAL_DAMAGE,
-            //     entity => {
-            //         if (!entity || !data) return;
-            //         if (isDamageableEntity(entity) && entity.health) {
-            //             const additionalDamage = entity.health * data.percent;
-            //             const limitedDamage = data.maxDamage !== undefined
-            //                 ? Math.min(additionalDamage, data.maxDamage)
-            //                 : additionalDamage;
-            //             entity.receiveDamage(limitedDamage, petal.owner);
-            //         }
-            //     }
-            // );
-        }
-    },
-
-    damage_avoidance: {
-        callback: (on, petal, data) => {
-            // const originalReceiveDamage = petal.receiveDamage;
-            //
-            // petal.receiveDamage = function(amount: number, source: any) {
-            //     if (data && Math.random() < data.chance) {
-            //         return;
-            //     }
-            //     originalReceiveDamage.call(this, amount, source);
-            // };
-        }
-    },
-
-    area_poison: {
-        callback: (on, petal, data) => {
-            // if (!data) return;
-            // const originalTick = petal.tick;
-            // let timeSinceLastTick = 0;
-            // const tickInterval = data.tickInterval || 1;
-            //
-            // petal.tick = function() {
-            //     originalTick.call(this);
-            //
-            //     if (this.isReloading || this.destroyed) return;
-            //
-            //     timeSinceLastTick += this.game.dt;
-            //
-            //     if (timeSinceLastTick >= tickInterval) {
-            //         timeSinceLastTick = 0;
-            //
-            //         const circleHitbox = new CircleHitbox(data.radius);
-            //         circleHitbox.position = this.position;
-            //
-            //         const nearbyEntities = this.game.grid.intersectsHitbox(circleHitbox);
-            //
-            //         for (const entity of nearbyEntities) {
-            //             if (entity === this || entity === this.owner) continue;
-            //             if (entity.type === EntityType.Petal || entity.type === EntityType.Projectile) continue;
-            //             if (isDamageableEntity(entity) && entity.canReceiveDamageFrom(this.owner)) {
-            //                 entity.receiveDamage(data.damagePerSecond * tickInterval, this.owner);
-            //             }
-            //         }
-            //     }
-            // };
-        }
-    },
-    damage_heal: {
-        callback: (on, petal, data) => {
-            on<AttributeEvents.PETAL_DEAL_DAMAGE>(
-                AttributeEvents.PETAL_DEAL_DAMAGE,
-                entity => {
-                    if (!entity || !data) return;
-                    const owner = petal.owner;
-                    const selfHealPercent = data.healPercent / 100;
-                    let selfHeal = (petal.damage ?? 15) * selfHealPercent;
-                    if (selfHeal && owner) {
-                        if (data.maximumHeal) selfHeal = Math.min(selfHeal, data.maximumHeal);
-                        owner.heal(Number(selfHeal));
-                    }
-                }
-            );
-        }
-    },
-    lightning: {
-        callback: (on, petal, data) => {
-            // if (!data) return;
-            //
-            // on<AttributeEvents.PETAL_DEAL_DAMAGE>(
-            //     AttributeEvents.PETAL_DEAL_DAMAGE,
-            //     entity => {
-            //         if (!entity || !data) return;
-            //
-            //         const hitEntities = new Set([entity]);
-            //         let currentTarget = entity;
-            //         let remainingBounces = data.bounces;
-            //         let currentDamage = petal.damage || 0;
-            //
-            //         while (remainingBounces > 0 && currentDamage > 1) {
-            //             currentDamage *= data.attenuation;
-            //
-            //             const rangeHitbox = new CircleHitbox(data.range, currentTarget.position);
-            //
-            //             const nearbyEntities = petal.game.grid.intersectsHitbox(rangeHitbox);
-            //             const validTargets = Array.from(nearbyEntities).filter((e: ServerEntity) =>
-            //                 !hitEntities.has(e)
-            //                 && e.type !== EntityType.Petal
-            //                 && e.type !== EntityType.Projectile
-            //                 && e !== petal.owner
-            //                 && isDamageableEntity(e)
-            //                 && e.canReceiveDamageFrom(petal.owner)
-            //             );
-            //
-            //             if (validTargets.length === 0) break;
-            //
-            //             let nextTarget = validTargets[0];
-            //             let minDistance = UVector2D.distanceBetween(currentTarget.position, nextTarget.position);
-            //
-            //             for (let i = 1; i < validTargets.length; i++) {
-            //                 const distance = UVector2D.distanceBetween(currentTarget.position, validTargets[i].position);
-            //                 if (distance < minDistance) {
-            //                     minDistance = distance;
-            //                     nextTarget = validTargets[i];
-            //                 }
-            //             }
-            //
-            //             if (minDistance > data.range) break;
-            //
-            //             if (isDamageableEntity(nextTarget)) {
-            //                 nextTarget.receiveDamage(currentDamage, petal.owner);
-            //
-            //                 hitEntities.add(nextTarget);
-            //
-            //                 currentTarget = nextTarget;
-            //                 remainingBounces--;
-            //
-            //                 // 闪电特效谁帮我写一下
-            //                 petal.owner.sendEvent(
-            //                     "lightning_effect" as any,
-            //                     {
-            //                         sourceId: currentTarget.id,
-            //                         targetId: nextTarget.id,
-            //                         duration: 0.3
-            //                     }
-            //                 );
-            //             }
-            //         }
-            //     }
-            // );
-        }
-    },
-    damage_reduction_percent: {
-        callback: (on, petal, data) => {
-            // const originalReceiveDamage = petal.receiveDamage;
-            //
-            // petal.receiveDamage = function(amount: number, source: any) {
-            //     let shouldReduceDamage = false;
-            //
-            //     if (data && source) {
-            //         if (source.type === EntityType.Petal || source.type === EntityType.Projectile) {
-            //             shouldReduceDamage = true;
-            //         } else if (source.type === EntityType.Player && source.isPetalAttack) {
-            //             shouldReduceDamage = true;
-            //         }
-            //
-            //         if (shouldReduceDamage) {
-            //             const reduction = data / 100;
-            //             const originalAmount = amount;
-            //             amount = amount * (1 - reduction);
-            //         }
-            //     }
-            //
-            //     originalReceiveDamage.call(this, amount, source);
-            // };
-        }
-    }, true_damage: { callback: (on, petal, data) => {} }
-    , random: { callback: (on, petal, data) => {} }
+    // area_poison: {
+    //     callback: (on, petal, data) => {
+    //         // if (!data) return;
+    //         // const originalTick = petal.tick;
+    //         // let timeSinceLastTick = 0;
+    //         // const tickInterval = data.tickInterval || 1;
+    //         //
+    //         // petal.tick = function() {
+    //         //     originalTick.call(this);
+    //         //
+    //         //     if (this.isReloading || this.destroyed) return;
+    //         //
+    //         //     timeSinceLastTick += this.game.dt;
+    //         //
+    //         //     if (timeSinceLastTick >= tickInterval) {
+    //         //         timeSinceLastTick = 0;
+    //         //
+    //         //         const circleHitbox = new CircleHitbox(data.radius);
+    //         //         circleHitbox.position = this.position;
+    //         //
+    //         //         const nearbyEntities = this.game.grid.intersectsHitbox(circleHitbox);
+    //         //
+    //         //         for (const entity of nearbyEntities) {
+    //         //             if (entity === this || entity === this.owner) continue;
+    //         //             if (entity.type === EntityType.Petal || entity.type === EntityType.Projectile) continue;
+    //         //             if (isDamageableEntity(entity) && entity.canReceiveDamageFrom(this.owner)) {
+    //         //                 entity.receiveDamage(data.damagePerSecond * tickInterval, this.owner);
+    //         //             }
+    //         //         }
+    //         //     }
+    //         // };
+    //     }
+    // },
+    // damage_heal: {
+    //     callback: (on, petal, data) => {
+    //         on<AttributeEvents.PETAL_DEAL_DAMAGE>(
+    //             AttributeEvents.PETAL_DEAL_DAMAGE,
+    //             entity => {
+    //                 if (!entity || !data) return;
+    //                 const owner = petal.owner;
+    //                 const selfHealPercent = data.healPercent / 100;
+    //                 let selfHeal = (petal.damage ?? 15) * selfHealPercent;
+    //                 if (selfHeal && owner) {
+    //                     if (data.maximumHeal) selfHeal = Math.min(selfHeal, data.maximumHeal);
+    //                     owner.heal(Number(selfHeal));
+    //                 }
+    //             }
+    //         );
+    //     }
+    // },
+    // lightning: {
+    //     callback: (on, petal, data) => {
+    //         // if (!data) return;
+    //         //
+    //         // on<AttributeEvents.PETAL_DEAL_DAMAGE>(
+    //         //     AttributeEvents.PETAL_DEAL_DAMAGE,
+    //         //     entity => {
+    //         //         if (!entity || !data) return;
+    //         //
+    //         //         const hitEntities = new Set([entity]);
+    //         //         let currentTarget = entity;
+    //         //         let remainingBounces = data.bounces;
+    //         //         let currentDamage = petal.damage || 0;
+    //         //
+    //         //         while (remainingBounces > 0 && currentDamage > 1) {
+    //         //             currentDamage *= data.attenuation;
+    //         //
+    //         //             const rangeHitbox = new CircleHitbox(data.range, currentTarget.position);
+    //         //
+    //         //             const nearbyEntities = petal.game.grid.intersectsHitbox(rangeHitbox);
+    //         //             const validTargets = Array.from(nearbyEntities).filter((e: ServerEntity) =>
+    //         //                 !hitEntities.has(e)
+    //         //                 && e.type !== EntityType.Petal
+    //         //                 && e.type !== EntityType.Projectile
+    //         //                 && e !== petal.owner
+    //         //                 && isDamageableEntity(e)
+    //         //                 && e.canReceiveDamageFrom(petal.owner)
+    //         //             );
+    //         //
+    //         //             if (validTargets.length === 0) break;
+    //         //
+    //         //             let nextTarget = validTargets[0];
+    //         //             let minDistance = UVector2D.distanceBetween(currentTarget.position, nextTarget.position);
+    //         //
+    //         //             for (let i = 1; i < validTargets.length; i++) {
+    //         //                 const distance = UVector2D.distanceBetween(currentTarget.position, validTargets[i].position);
+    //         //                 if (distance < minDistance) {
+    //         //                     minDistance = distance;
+    //         //                     nextTarget = validTargets[i];
+    //         //                 }
+    //         //             }
+    //         //
+    //         //             if (minDistance > data.range) break;
+    //         //
+    //         //             if (isDamageableEntity(nextTarget)) {
+    //         //                 nextTarget.receiveDamage(currentDamage, petal.owner);
+    //         //
+    //         //                 hitEntities.add(nextTarget);
+    //         //
+    //         //                 currentTarget = nextTarget;
+    //         //                 remainingBounces--;
+    //         //
+    //         //                 // 闪电特效谁帮我写一下
+    //         //                 petal.owner.sendEvent(
+    //         //                     "lightning_effect" as any,
+    //         //                     {
+    //         //                         sourceId: currentTarget.id,
+    //         //                         targetId: nextTarget.id,
+    //         //                         duration: 0.3
+    //         //                     }
+    //         //                 );
+    //         //             }
+    //         //         }
+    //         //     }
+    //         // );
+    //     }
+    // }
 } as const;

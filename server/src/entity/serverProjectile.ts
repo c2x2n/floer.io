@@ -83,9 +83,9 @@ export class ServerProjectile extends ServerLivelyEntity<EntityType.Projectile> 
         this.maintainAcceleration(Geometry.directionToRadians(this.direction), this.parameters.speed);
     }
 
-    override dealCollisionDamageTo(to: ServerLivelyEntity): void {
+    override collisionDamage(to: ServerLivelyEntity): void {
         if (this.definition.doesNotDamage?.includes(to.type)) return;
-        super.dealCollisionDamageTo(to);
+        super.collisionDamage(to);
     }
 
     canEffect(to: ServerLivelyEntity): to is ServerPlayer | ServerMob {

@@ -93,14 +93,14 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
             if (collision.entity.dealtDamageTick.has(this) || this.dealtDamageTick.has(collision.entity)) continue;
 
             if (collision.entity.canReceiveDamageFrom(this)) {
-                this.dealCollisionDamageTo(collision.entity);
+                this.collisionDamage(collision.entity);
                 collision.entity.receiveKnockback(this);
 
                 this.dealtDamageTick.add(collision.entity);
             }
 
             if (this.canReceiveDamageFrom(collision.entity)) {
-                collision.entity.dealCollisionDamageTo(this);
+                collision.entity.collisionDamage(this);
                 this.receiveKnockback(collision.entity);
 
                 collision.entity.dealtDamageTick.add(this);
@@ -219,7 +219,7 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
         }
     }
 
-    public dealCollisionDamageTo(entity: ServerLivelyEntity): void {
+    public dealCollisionDamage(entity: ServerLivelyEntity): void {
         if (!this.damage) return;
 
         entity.receiveDamage({
@@ -228,6 +228,10 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
             to: entity,
             type: DamageType.COLLISION
         });
+    }
+
+    public collisionDamage(entity: ServerLivelyEntity): void {
+        this.dealCollisionDamage(entity);
 
         if (this.bodyPoison && this.bodyPoison.duration > 0) { // poison
             entity.receivePoison(this,
@@ -235,7 +239,7 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
                 this.bodyPoison.duration
             );
         }
-        if (this.effectsOnHit) { // poison
+        if (this.effectsOnHit) { // effects
             new Effect({
                 effectedTarget: entity,
                 duration: this.effectsOnHit.duration,

@@ -10,6 +10,8 @@ export class ServerWall extends ServerEntity<EntityType.Wall> {
 
     hitbox: RectHitbox;
 
+    weight = 99999;
+
     canCollideWith(entity: ServerEntity): boolean {
         return true;
     }

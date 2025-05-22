@@ -14,6 +14,8 @@ import { Numeric } from "../../../../common/src/engine/maths/numeric";
 /**
  * A Grid to filter collision detection of game entities
  */
+
+// TODO: (c) Replace with QuadTree soon
 export class Grid {
     readonly width: number;
     readonly height: number;

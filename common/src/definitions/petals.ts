@@ -82,6 +82,37 @@ type PetalUsageType = {
 
 export type PetalBehaviors = {
     readonly self_damage: number
+    readonly critical_hit: {
+        readonly chance: number
+        readonly multiplier: number
+    }
+    readonly health_percent_damage: {
+        readonly percent: number
+        readonly maxDamage?: number
+        readonly trueDamage?: boolean
+    }
+    readonly damage_avoidance: number
+    readonly damage_reduction_percent: {
+        readonly percent: number
+        readonly from?: EntityType[]
+    }
+    readonly random: Array<{
+        readonly effect: EffectsOnHitDataType
+    }>
+    readonly area_poison: {
+        readonly radius: number
+        readonly damagePerSecond: number
+        readonly tickInterval?: number
+    }
+    readonly damage_heal: {
+        readonly healPercent: number
+        readonly maximumHeal?: number // meaningless, because now it uses petal.damage to calculate not damage dealt
+    }
+    readonly lightning: {
+        readonly attenuation: number
+        readonly range: number
+        readonly bounces: number
+    }
 };
 
 export type PetalBehaviorDataType = {
@@ -104,38 +135,6 @@ export type AttributeParameters = {
     }
     readonly place_projectile?: ProjectileParameters
     readonly spawner?: MobDefinition
-    readonly critical_hit?: {
-        readonly chance: number
-        readonly multiplier: number
-    }
-    readonly health_percent_damage?: {
-        readonly percent: number
-        readonly maxDamage?: number
-    }
-    readonly damage_avoidance?: {
-        readonly chance: number
-    }
-    readonly area_poison?: {
-        readonly radius: number
-        readonly damagePerSecond: number
-        readonly tickInterval?: number
-    }
-    readonly damage_heal?: {
-        readonly healPercent: number
-        readonly maximumHeal?: number // meaningless, because now it uses petal.damage to calculate not damage dealt
-    }
-    readonly lightning?: {
-        readonly attenuation: number
-        readonly range: number
-        readonly bounces: number
-    }
-    readonly damage_reduction_percent?: number
-    readonly true_damage?: number
-    readonly random?: Array<{
-        readonly attribute: keyof AttributeParameters
-        readonly weight: number
-        readonly value: any
-    }>
 };
 
 export function getDisplayedPieces(petal: PetalDefinition): number {
@@ -559,8 +558,9 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 32,
             selfGameRotation: 18
         },
-        attributes: {
-            health_percent_damage: {
+        behavior: {
+            name: "health_percent_damage",
+            data: {
                 percent: 0.3,
                 maxDamage: 150
             }
@@ -583,8 +583,9 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 30,
             selfGameRotation: 18
         },
-        attributes: {
-            health_percent_damage: {
+        behavior: {
+            name: "health_percent_damage",
+            data: {
                 percent: 0.5,
                 maxDamage: 1200
             }
@@ -630,7 +631,7 @@ export const Petals = new Definitions<PetalDefinition>([
         usable: true,
         useTime: 0,
         attributes: {
-            boost: 10
+            boost: 1
         },
         wearerAttributes: {
             maxHealth: 66666,
@@ -994,11 +995,12 @@ export const Petals = new Definitions<PetalDefinition>([
         isDuplicate: true,
         isShowedInOne: true,
         pieceAmount: 5,
-        attributes: {
-            true_damage: 1.0,
-            health_percent_damage: {
-                percent: 0.25,
-                maxDamage: 100
+        behavior: {
+            name: "health_percent_damage",
+            data: {
+                percent: 0.1,
+                maxDamage: 100,
+                trueDamage: true
             }
         },
         rarity: RarityName.mythic
@@ -1296,21 +1298,37 @@ export const Petals = new Definitions<PetalDefinition>([
         attributes: {
             around_circle_shoot: {
                 definition: Projectiles.fromString("poison_peas"),
-                speed: 6.25,
+                speed: 0.65,
                 damage: 15,
                 health: 10,
                 hitboxRadius: 0.46,
-                despawnTime: 4.5,
+                despawnTime: 1.5,
                 poison: {
                     damagePerSecond: 15,
                     duration: 2
+                },
+                spawner: {
+                    amount: 4,
+                    type: EntityType.Projectile,
+                    spawn: {
+                        definition: Projectiles.fromString("poison_peas"),
+                        speed: 1,
+                        damage: 5,
+                        health: 5,
+                        hitboxRadius: 0.3,
+                        despawnTime: 4.5,
+                        poison: {
+                            damagePerSecond: 15,
+                            duration: 2
+                        }
+                    }
                 }
             }
         },
         reloadTime: 0.3,
         hitboxRadius: 0.5,
         isDuplicate: true,
-        pieceAmount: 5,
+        pieceAmount: 4,
         isShowedInOne: true,
         rarity: RarityName.mythic,
         usingAssets: "poison_peas"
@@ -1346,8 +1364,9 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 65,
             selfGameRotation: 0.01
         },
-        attributes: {
-            critical_hit: {
+        behavior: {
+            name: "critical_hit",
+            data: {
                 chance: 0.15,
                 multiplier: 8
             }
@@ -1443,10 +1462,9 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 45,
             selfGameRotation: 18
         },
-        attributes: {
-            damage_avoidance: {
-                chance: 0.7
-            }
+        behavior: {
+            name: "damage_avoidance",
+            data: 0.7
         },
         reloadTime: 2.5,
         hitboxRadius: 0.65,
@@ -1892,8 +1910,9 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 40,
             selfGameRotation: 0.02
         },
-        attributes: {
-            area_poison: {
+        behavior: {
+            name: "area_poison",
+            data: {
                 radius: 15,
                 damagePerSecond: 20
             }
@@ -1964,8 +1983,12 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 60,
             selfGameRotation: 18
         },
-        attributes: {
-            damage_reduction_percent: 75
+        behavior: {
+            name: "damage_reduction_percent",
+            data: {
+                percent: 0.75,
+                from: [EntityType.Petal]
+            }
         },
         reloadTime: 10,
         hitboxRadius: 1.0,
@@ -2076,8 +2099,9 @@ export const Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 0.25
 
         },
-        attributes: {
-            damage_heal: {
+        behavior: {
+            name: "damage_heal",
+            data: {
                 healPercent: 28
             }
         },
@@ -2121,8 +2145,9 @@ export const Petals = new Definitions<PetalDefinition>([
             selfGameRotation: 0.15,
             fontSizeMultiplier: 0.9
         },
-        attributes: {
-            lightning: {
+        behavior: {
+            name: "lightning",
+            data: {
                 attenuation: 0.9,
                 range: 10,
                 bounces: 8
@@ -2146,8 +2171,9 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 45,
             selfGameRotation: 0.15
         },
-        attributes: {
-            lightning: {
+        behavior: {
+            name: "lightning",
+            data: {
                 attenuation: 1,
                 range: 100,
                 bounces: 100

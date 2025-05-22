@@ -190,10 +190,10 @@ export class ServerPetal extends ServerLivelyEntity<EntityType.Petal> {
         }, animation === PetalUsingAnimations.NORMAL ? 0 : 100);
     }
 
-    public override dealCollisionDamageTo(to: ServerLivelyEntity) {
+    public override collisionDamage(to: ServerLivelyEntity) {
         if (this.definition.doesNotDamage?.includes(to.type) || this.owner.spectatorMode) return;
 
-        super.dealCollisionDamageTo(to);
+        super.collisionDamage(to);
 
         this.owner.sendEvent(
             AttributeEvents.PETAL_DEAL_DAMAGE,
