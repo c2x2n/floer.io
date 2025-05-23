@@ -7,10 +7,6 @@ export type PlayerModifiers = Modifiers & {
     zoom: number
     damageAvoidanceByDamage: boolean
     yinYangAmount: number
-    conditionalHeal?: {
-        healthPercent: number
-        healAmount: number
-    }
     revive?: {
         healthPercent?: number
         shieldPercent?: number

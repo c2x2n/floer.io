@@ -244,10 +244,6 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
 
         this.heal(this.modifiers.healPerSecond * this.game.dt);
 
-        if (this.modifiers.conditionalHeal && this.health < this.modifiers.maxHealth * this.modifiers.conditionalHeal.healthPercent) {
-            this.heal(this.modifiers.conditionalHeal.healAmount * this.game.dt);
-        }
-
         // 护盾每秒自动消失5%
         if (this._shield > 0) {
             const shieldDecay = this._shield * 0.05 * this.game.dt;
@@ -320,6 +316,7 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
         if (amount > 0) this.gotDamage = true;
 
         damage.amount = amount;
+        console.log(amount);
         super.receiveDamage(damage);
     }
 
@@ -659,18 +656,6 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
         now.revive = extra.revive ?? now.revive;
         now.bodyDamage *= extra.bodyDamage ?? 1;
         now.knockbackReduction += extra.knockbackReduction ?? 0;
-        if (extra.conditionalHeal) {
-            if (!now.conditionalHeal) {
-                now.conditionalHeal = extra.conditionalHeal;
-            } else {
-                if (extra.conditionalHeal.healthPercent < now.conditionalHeal.healthPercent
-                    || (extra.conditionalHeal.healthPercent === now.conditionalHeal.healthPercent
-                    && extra.conditionalHeal.healAmount > now.conditionalHeal.healAmount)) {
-                    now.conditionalHeal.healthPercent = extra.conditionalHeal.healthPercent;
-                }
-                now.conditionalHeal.healAmount += extra.conditionalHeal.healAmount;
-            }
-        }
         now.extraSlot += extra.extraSlot ?? 0;
         now.bodyDamageReduction += extra.bodyDamageReduction ?? 0;
         return now;
@@ -678,7 +663,19 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
 
     public override updateModifiers(): PlayerModifiers {
         let modifiersNow: PlayerModifiers = GameConstants.player.defaultModifiers();
-        const effectedPetals: PetalDefinition[] = [];
+        const effectedPetals: PetalDefinition[] = []
+
+        this.calcModifiers(modifiersNow, this.constantModifier ?? {});
+        this.effects.effects.forEach(effect => {
+            if (effect.modifier) modifiersNow = this.calcModifiers(modifiersNow, effect.modifier);
+        });
+        this.otherModifiersOnTick.forEach(effect => {
+            modifiersNow = this.calcModifiers(modifiersNow, effect);
+        });
+        modifiersNow = this.calcModifiers(modifiersNow, {
+            bodyPoison: this.bodyPoison
+        });
+        this.otherModifiersOnTick = []; // clear all old
 
         for (const petal of this.petalEntities) {
             const modifier = petal.definition.wearerAttributes;

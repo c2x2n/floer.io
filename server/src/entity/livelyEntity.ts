@@ -82,6 +82,8 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
 
     public dealtDamageTick = new Set<ServerLivelyEntity>();
 
+    private bleeding = 0;
+
     public tick() {
         super.tick();
 
@@ -108,6 +110,7 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
         }
 
         this.modifiers = this.updateModifiers();
+
     }
 
     public receiveKnockback(entity: ServerLivelyEntity): void {

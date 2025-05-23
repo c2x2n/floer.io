@@ -89,6 +89,7 @@ export class ServerPetal extends ServerLivelyEntity<EntityType.Petal> {
         this.position = player.position.clone();
         this.definition = definition;
         this.constantModifier = definition.petalModifiers;
+        this.effectsOnHit = definition.effectsOnHit;
         this.bodyPoison = definition.poison;
         this.owner = player;
         this.setParent(player);

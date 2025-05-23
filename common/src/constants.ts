@@ -66,7 +66,6 @@ export const GameConstants = Object.freeze({
             extraDistance: 0,
             damageAvoidanceByDamage: false,
             yinYangAmount: 0,
-            conditionalHeal: undefined,
             controlRotation: false,
             extraSlot: 0,
             bodyDamage: 1,

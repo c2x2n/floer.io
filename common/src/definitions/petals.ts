@@ -113,6 +113,7 @@ export type PetalBehaviors = {
         readonly range: number
         readonly bounces: number
     }
+    readonly bleeding: unknown
 };
 
 export type PetalBehaviorDataType = {
@@ -395,16 +396,16 @@ export const Petals = new Definitions<PetalDefinition>([
         rarity: RarityName.unusual
     },
     {
-        idString: "blood_stinger",
+        idString: "blood_tringer",
         displayName: "Stinger",
-        description: "It hurts so much that it also damages you when broken. Very fragile.",
-        damage: 50,
+        description: "It hurts so much. Make your enemy bleeding.",
+        damage: 1,
         health: 8,
         extendable: true,
-        reloadTime: 4,
+        reloadTime: 0.1,
         behavior: {
-            name: "self_damage",
-            data: 10
+            name: "bleeding",
+            data: undefined
         },
         images: {
             selfGameRotation: 18,
@@ -412,9 +413,11 @@ export const Petals = new Definitions<PetalDefinition>([
         },
         usable: false,
         hitboxRadius: 0.3,
-        isDuplicate: false,
-        pieceAmount: 1,
-        rarity: RarityName.rare
+        isDuplicate: true,
+        pieceAmount: 3,
+        isShowedInOne: true,
+        rarity: RarityName.mythic,
+        usingAssets: "blood_stinger"
     },
     {
         idString: "dev_stinger",
@@ -958,7 +961,7 @@ export const Petals = new Definitions<PetalDefinition>([
         usingAssets: "stinger"
     },
     {
-        idString: "blood_tringer",
+        idString: "blood_stinger",
         displayName: "Stinger",
         description: "It hurts so much that it also damages you when broken. Very fragile",
         damage: 65,
@@ -2072,13 +2075,6 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 78,
             slotRotation: -(90 - 32.5) * (Math.PI / 180),
             facingOut: true
-
-        },
-        wearerAttributes: {
-            conditionalHeal: {
-                healthPercent: 0.75,
-                healAmount: 9.5
-            }
         },
         reloadTime: 2,
         hitboxRadius: 0.92,
