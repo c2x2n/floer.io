@@ -18,6 +18,7 @@ export type PlayerModifiers = Modifiers & {
     bodyDamage: number
     knockbackReduction: number
     bodyDamageReduction: number
+    petalHealthScale: number
 };
 
 export interface Modifiers {

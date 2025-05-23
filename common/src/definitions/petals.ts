@@ -11,6 +11,7 @@ export type SavedPetalDefinitionData = PetalDefinition | null;
 
 export type PetalDefinition = ObjectDefinition & {
     readonly description?: string
+    readonly fullName?: string
     readonly rarity: RarityName
     readonly attributes?: AttributeParameters
     readonly behavior?: PetalBehaviorDataType
@@ -399,10 +400,10 @@ export const Petals = new Definitions<PetalDefinition>([
         idString: "blood_tringer",
         displayName: "Stinger",
         description: "It hurts so much. Make your enemy bleeding.",
-        damage: 1,
+        damage: 35,
         health: 8,
         extendable: true,
-        reloadTime: 0.1,
+        reloadTime: 4,
         behavior: {
             name: "bleeding",
             data: undefined
@@ -961,26 +962,6 @@ export const Petals = new Definitions<PetalDefinition>([
         usingAssets: "stinger"
     },
     {
-        idString: "blood_stinger",
-        displayName: "Stinger",
-        description: "It hurts so much that it also damages you when broken. Very fragile",
-        damage: 65,
-        health: 8,
-        extendable: true,
-        reloadTime: 4,
-        behavior: {
-            name: "self_damage",
-            data: 4
-        },
-        usable: false,
-        hitboxRadius: 0.3,
-        isDuplicate: true,
-        isShowedInOne: true,
-        pieceAmount: 3,
-        rarity: RarityName.mythic,
-        usingAssets: "blood_stinger"
-    },
-    {
         idString: "pinger",
         displayName: "Apex",
         description: "It really hurts, but it's very fragile",
@@ -1383,7 +1364,7 @@ export const Petals = new Definitions<PetalDefinition>([
     {
         idString: "myt_dice",
         displayName: "Omen",
-        description: "check your destiny.",
+        description: "Check your destiny. It's not that easy.",
         damage: 24,
         health: 64,
         extendable: true,
@@ -1396,61 +1377,6 @@ export const Petals = new Definitions<PetalDefinition>([
         hitboxRadius: 0.5,
         isDuplicate: false,
         pieceAmount: 1,
-        attributes: {
-            // random: [
-            //     {
-            //         attribute: "poison",
-            //         weight: 1,
-            //         value: {
-            //             damagePerSecond: 12,
-            //             duration: 10
-            //         }
-            //     },
-            //     {
-            //         attribute: "paralyze",
-            //         weight: 1,
-            //         value: {
-            //             duration: 10,
-            //             speedReduction: 0.5,
-            //             revolutionReduction: 0
-            //         }
-            //     },
-            //     {
-            //         attribute: "paralyze",
-            //         weight: 1,
-            //         value: {
-            //             duration: 10,
-            //             speedReduction: 0,
-            //             revolutionReduction: 0.5
-            //         }
-            //     },
-            //     {
-            //         attribute: "healing_debuff",
-            //         weight: 1,
-            //         value: {
-            //             healing: 0,
-            //             duration: 10
-            //         }
-            //     },
-            //     {
-            //         attribute: "lightning",
-            //         weight: 1,
-            //         value: {
-            //             range: 30,
-            //             bounces: 5,
-            //             attenuation: 1.25
-            //         }
-            //     },
-            //     {
-            //         attribute: "health_percent_damage",
-            //         weight: 0.1,
-            //         value: {
-            //             percent: 2,
-            //             maxDamage: 500
-            //         }
-            //     }
-            // ]
-        },
         rarity: RarityName.mythic
     },
     {
@@ -2258,6 +2184,7 @@ export const Petals = new Definitions<PetalDefinition>([
     {
         idString: "myt_cactus",
         displayName: "Cactus",
+        fullName: "Overloaded Cactus",
         description: "Not very strong, but somehow increases your maximum health",
         damage: 5,
         health: 15,
@@ -2272,7 +2199,8 @@ export const Petals = new Definitions<PetalDefinition>([
             bodyPoison: {
                 damagePerSecond: 15,
                 duration: 5
-            }
+            },
+            petalHealthScale: 2
         },
         poison: {
             damagePerSecond: 10,
