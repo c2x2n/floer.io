@@ -88,6 +88,10 @@ export class ServerProjectile extends ServerLivelyEntity<EntityType.Projectile> 
         super.collisionDamage(to);
     }
 
+    override getTopParent(): ServerLivelyEntity {
+        return this.source;
+    }
+
     canEffect(to: ServerLivelyEntity): to is ServerPlayer | ServerMob {
         if (!(to instanceof ServerPlayer || to instanceof ServerMob)) return false;
 

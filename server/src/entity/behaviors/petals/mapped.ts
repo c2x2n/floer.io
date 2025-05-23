@@ -9,7 +9,7 @@ import RandomEffectPetal from "./randomEffect";
 import AreaPoisonPetal from "./areaPoison";
 import DamageHealPetal from "./damageHeal";
 import LightningPetal from "./lightning";
-import MakeBleedingPetal from "./makeBleeding";
+import MakeBleedingPetal from "./bleeding";
 
 export const behaviorMapped: { [K in keyof PetalBehaviors]: typeof BasicHasBehaviorPetal<K> } = {
     self_damage: SelfDamagePetal,
