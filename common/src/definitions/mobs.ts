@@ -447,8 +447,14 @@ export const Mobs = new Definitions<MobDefinition>([
             damage: 10,
             health: 10,
             despawnTime: 3,
-            speed: 7,
-            definition: Projectiles.fromString("peas")
+            speed: 1,
+            definition: Projectiles.fromString("peas"),
+            effectsOnHit: {
+                modifier: {
+                    armor: -3
+                },
+                duration: 5
+            }
         },
         shootSpeed: 1.5,
         aggroRadius: 30,
@@ -477,8 +483,14 @@ export const Mobs = new Definitions<MobDefinition>([
             damage: 15,
             health: 30,
             despawnTime: 3,
-            speed: 11.5,
-            definition: Projectiles.fromString("peas")
+            speed: 2,
+            definition: Projectiles.fromString("peas"),
+            effectsOnHit: {
+                modifier: {
+                    armor: -10
+                },
+                duration: 5
+            }
         },
         shootSpeed: 1.3,
         aggroRadius: 30,
