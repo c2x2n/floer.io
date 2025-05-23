@@ -321,34 +321,31 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
 
         damage.amount = amount;
         super.receiveDamage(damage);
+    }
 
-        /* if (this.modifiers.revive) {
-            const revHealthP = this.modifiers.revive.healthPercent || 100;
-            const shieldP = this.modifiers.revive.shieldPercent || 0;
-            this.health = this.maxHealth * revHealthP / 100;
-            this.shield = this.maxHealth * shieldP / 100;
-            if (this.modifiers.revive.destroyAfterUse) {
-                for (let i = 0; i < this.inventory.inventory.length; i++) {
-                    const petalData = this.inventory.inventory[i];
-                    if (petalData?.modifiers?.revive?.destroyAfterUse) {
-                        this.inventory.delete(i);
-                        this.dirty.inventory = true;
-                        break;
+    override onReceiveDamage(damage: Damage) {
+        // shit here
+        if (this.health <= 0) {
+            if (this.modifiers.revive) {
+                const revHealthP = this.modifiers.revive.healthPercent || 100;
+                const shieldP = this.modifiers.revive.shieldPercent || 0;
+                this.health = this.maxHealth * revHealthP / 100;
+                this.shield = this.maxHealth * shieldP / 100;
+                if (this.modifiers.revive.destroyAfterUse) {
+                    for (let i = 0; i < this.inventory.inventory.length; i++) {
+                        const petalData = this.inventory.inventory[i];
+                        if (petalData?.wearerAttributes?.revive?.destroyAfterUse) {
+                            this.inventory.delete(i);
+                            this.dirty.inventory = true;
+                            break;
+                        }
                     }
                 }
+                return; // I REFUSE TO DIE
             }
-            return; // I REFUSE TO DIE
-        }
-        if (source instanceof ServerPlayer) {
-            source.kills++;
-            this.killedBy = source;
         }
 
-        this.destroy();
-
-        if (source instanceof ServerPlayer) {
-            source.addExp(this.exp / 2);
-        } */
+        super.onReceiveDamage(damage);
     }
 
     sendPackets() {
@@ -727,6 +724,10 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
         if (this.killedBy) {
             gameOverPacket.murderer = this.killedBy.name;
             gameOverPacket.killerID = this.killedBy.id;
+            if (this.killedBy instanceof ServerPlayer) {
+                this.killedBy.kills++;
+                this.killedBy.addExp(this.exp / 2);
+            }
         }
 
         this.addPacketToSend(gameOverPacket);
