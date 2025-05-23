@@ -1690,8 +1690,9 @@ export const Petals = new Definitions<PetalDefinition>([
     },
     {
         idString: "myt_pollen",
+        fullName: "Allergen",
         displayName: "Pollen",
-        description: "Asthmatics beware.",
+        description: "Asthmatics beware. Maybe this time for true.",
         damage: 13,
         health: 10,
         extendable: false,
@@ -1705,7 +1706,13 @@ export const Petals = new Definitions<PetalDefinition>([
                 health: 10,
                 hitboxRadius: 0.3,
                 despawnTime: 5,
-                accelerationF: 8
+                accelerationF: 1,
+                effectsOnHit: {
+                    modifier: {
+                        armor: -2
+                    },
+                    duration: 5
+                }
             }
         },
         reloadTime: 0.3,
