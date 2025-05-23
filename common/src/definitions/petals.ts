@@ -1709,7 +1709,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 accelerationF: 1,
                 effectsOnHit: {
                     modifier: {
-                        armor: -1.5
+                        armor: -4
                     },
                     duration: 5
                 }
