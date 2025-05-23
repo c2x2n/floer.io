@@ -165,167 +165,7 @@ const attributesShowingConfigs: { [K in AttributeNames]: AttributeShowingFunctio
                 value: data.displayName,
                 color: "#6161f0"
             }];
-        },
-        critical_hit: data => {
-            return [{
-                displayName: "Critical Chance",
-                value: `${data.chance * 100}%`,
-                color: "#ff9900"
-            }, {
-                displayName: "Critical Multiplier",
-                value: `${data.multiplier}x`,
-                color: "#ff5500"
-            }];
-        },
-        health_percent_damage: data => {
-            return [{
-                displayName: "Current Health Damage",
-                value: `${data.percent * 100}%`,
-                color: "#ff3333"
-            },
-            ...(data.maxDamage !== undefined
-                ? [{
-                    displayName: "Max Damage",
-                    value: data.maxDamage.toString(),
-                    color: "#ff6666"
-                }]
-                : [])
-            ];
-        },
-        damage_avoidance: data => {
-            return [{
-                displayName: "Damage Avoidance",
-                value: `${data.chance * 100}%`,
-                color: "#3399ff"
-            }];
-        },
-        area_poison: data => {
-            return [{
-                displayName: "Radiation Radius",
-                value: `${data.radius}`,
-                color: "#7FFF00"
-            }, {
-                displayName: "Radiation Damage",
-                value: `${data.damagePerSecond}/s`,
-                color: "#32CD32"
-            }];
-        },
-        self_damage: data => {
-            return [{
-                displayName: "Self Damage",
-                value: `${data}`,
-                color: "#ff6666"
-            }];
-        },
-        damage_heal: data => {
-            return [{
-                displayName: "Damage Heal",
-                value: `${data.healPercent}%`,
-                color: "#58fd48"
-            }, ...(data.maximumHeal !== undefined
-                ? [{
-                    displayName: "Max Damage",
-                    value: data.maximumHeal.toString(),
-                    color: "#58fd48"
-                }]
-                : [])];
-        },
-        lightning: data => {
-            return [{
-                displayName: "Attenuation",
-                value: `${data.attenuation * 100}%`,
-                color: "#33ccff"
-            }, {
-                displayName: "Range",
-                value: `${data.range}`,
-                color: "#0099ff"
-            }, {
-                displayName: "Bounces",
-                value: `${data.bounces}`,
-                color: "#66ffff"
-            }];
-        },
-        damage_reduction_percent: data => {
-            return [{
-                displayName: "Petal Resistance",
-                value: `${data}%`,
-                color: "#3344ff"
-            }];
-        },
-        true_damage: data => {
-            return [{
-                displayName: "True Damage",
-                value: `${data * 100}%`,
-                color: "#fd6565"
-            }];
-        },
-        random: (function() {
-            let lastRandomTime = 0;
-            let lastRandomResults: Array<{
-                displayName: string
-                value: string
-                color: string
-            }> | null = null;
-
-            return (data: Array<{
-                attribute: string
-                weight: number
-                value: any
-            }>) => {
-                const currentTime = Date.now();
-
-                if (!lastRandomResults || currentTime - lastRandomTime > 1000) {
-                    const results = [{
-                        displayName: "Random Effect",
-                        value: "",
-                        color: "#9966cc"
-                    }];
-
-                    if (!data || data.length === 0) return results;
-
-                    const randomIndex = Math.floor(Math.random() * data.length);
-                    const randomAttr = data[randomIndex];
-
-                    const attrName = randomAttr.attribute;
-                    const totalWeight = data.reduce((sum, attr) => sum + attr.weight, 0);
-                    const weightPercent = Math.round((randomAttr.weight / totalWeight) * 100);
-
-                    const displayName = attrName.charAt(0).toUpperCase() + attrName.slice(1).replace(/_/g, " ");
-                    results.push({
-                        displayName: `-\u00A0\u00A0${displayName} (${weightPercent}%)`,
-                        value: "",
-                        color: "#7788dd"
-                    });
-                    const handler = attributesShowingConfigs[attrName as keyof typeof attributesShowingConfigs];
-                    if (handler) {
-                        const attrResults = handler(randomAttr.value);
-                        if (attrResults.length > 0) {
-                            for (let i = 0; i < attrResults.length; i++) {
-                                const paramResult = attrResults[i];
-                                results.push({
-                                    displayName: `\u00A0\u00A0\u00A0\u00A0\u00A0${paramResult.displayName}`,
-                                    value: paramResult.value,
-                                    color: paramResult.color
-                                });
-                            }
-                        }
-                    }
-
-                    if (data.length > 1) {
-                        results.push({
-                            displayName: `...still ${data.length - 1} more effects`,
-                            value: "",
-                            color: "#999999"
-                        });
-                    }
-
-                    lastRandomResults = results;
-                    lastRandomTime = currentTime;
-                }
-
-                return lastRandomResults;
-            };
-        })()
+        }
     };
 
 export function createPetalTooltip(definition: PetalDefinition): JQuery {
@@ -390,14 +230,14 @@ export function createPetalTooltip(definition: PetalDefinition): JQuery {
         addLine({
             startsWith: `${config.displayName
             }: `,
-            value: config.startsWith ?? value,
+            value: (config.startsWith ?? "") + value,
             endsWith: config.endsWith ?? "",
             color: config.color
         });
     }
 
     addLine({
-        value: definition.displayName,
+        value: definition.fullName ?? definition.displayName,
         fontSize: 25
     });
 
@@ -440,20 +280,6 @@ export function createPetalTooltip(definition: PetalDefinition): JQuery {
             const original = (definition.wearerAttributes[modifiersDefinitionKey as keyof PlayerModifiers]);
             if (!showing) continue;
 
-            // 特殊处理conditionalHeal
-            if (modifiersDefinitionKey === "conditionalHeal" && original) {
-                const conditionalHeal = original as { healthPercent: number, healAmount: number };
-                addData(showing, "");
-                addLine({
-                    startsWith: `HP < ${(conditionalHeal.healthPercent * 100).toFixed(0)}%: `,
-                    value: `+${conditionalHeal.healAmount.toFixed(1)}`,
-                    endsWith: "/s",
-                    color: "#58fd48",
-                    fontSize: 12
-                });
-                continue;
-            }
-
             if (!original || typeof original != "number") {
                 addData(showing,
                     ""
@@ -468,9 +294,6 @@ export function createPetalTooltip(definition: PetalDefinition): JQuery {
                         value = value - 100;
                     }
                     if (value > 0) startsWith = "+";
-                    endsWith = "%";
-                } else if (modifiersDefinitionKey === "damageAvoidanceChance") {
-                    value = original * 100;
                     endsWith = "%";
                 }
 
@@ -596,7 +419,7 @@ export function createMobTooltip(gallery: Gallery, definition: MobDefinition): J
         addLine({
             startsWith: `${config.displayName
             }: `,
-            value: config.startsWith ?? value,
+            value: (config.startsWith ?? "" ) + value,
             endsWith: config.endsWith ?? "",
             color: config.color
         });
@@ -662,9 +485,6 @@ export function createMobTooltip(gallery: Gallery, definition: MobDefinition): J
                         value = value - 100;
                     }
                     if (value > 0) startsWith = "+";
-                    endsWith = "%";
-                } else if (modifiersDefinitionKey === "damageAvoidanceChance") {
-                    value = original * 100;
                     endsWith = "%";
                 }
 
