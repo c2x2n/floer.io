@@ -27,7 +27,7 @@ export class GameBitStream extends BitStream {
             throw new Error(`Invalid bit count ${bitCount}`);
         }
         if (value > max || value < min) {
-            throw new Error(`Value out of range: ${value}, range: [${min}, ${max}]`);
+            console.log(`!!!!! WARNING: Value out of range: ${value}, range: [${min}, ${max}]`);
         }
         const range = (1 << bitCount) - 1;
         const clamped = Numeric.clamp(value, min, max);
