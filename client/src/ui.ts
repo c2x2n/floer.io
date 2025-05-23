@@ -247,18 +247,26 @@ export class UI {
     fetchServerInfo() {
         for (const server in Config.servers) {
             const data = Config.servers[server];
-            void fetch(`${data.fetchAddress}server_info`).then(r => r.json())
-                .then(data => {
-                    this.serverInfo[server] = {
-                        playerCount: data.playerCount ?? 0,
-                        build: data.build ?? "0"
-                    };
+            try {
+                void fetch(`${data.fetchAddress}server_info`).then(r => r.json())
+                    .then(data => {
+                        this.serverInfo[server] = {
+                            playerCount: data.playerCount ?? 0,
+                            build: data.build ?? "0"
+                        };
 
-                    if (server === this.app.settings.data.server) {
-                        this.updateServerInfo();
-                    }
-                    this.updateServerList();
-                });
+                        if (server === this.app.settings.data.server) {
+                            this.updateServerInfo();
+                        }
+                        this.updateServerList();
+                    });
+            } catch (Exception) {
+                console.error("Error fetching server info:", Exception, "Skipping.");
+                this.serverInfo[server] = {
+                    playerCount: 0,
+                    build: "0"
+                };
+            }
         }
     }
 
