@@ -424,15 +424,11 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
                     for (const im of e.petals) {
                         if (!im.isReloading) {
                             reloading = false;
-                            if (e.definition.health) {
-                                maxHealth += e.definition.health;
-                                health += im.health;
-                            }
+                            maxHealth += im.maxHealth;
+                            health += im.health;
                         } else if (im.fullReloadTime) {
                             reloadingTime = im.fullReloadTime - im.reloadTime;
-                            if (e.definition.health) {
-                                maxHealth += im.maxHealth;
-                            }
+                            maxHealth += im.maxHealth;
                         }
                     }
 
@@ -658,12 +654,13 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
         now.knockbackReduction += extra.knockbackReduction ?? 0;
         now.extraSlot += extra.extraSlot ?? 0;
         now.bodyDamageReduction += extra.bodyDamageReduction ?? 0;
+        now.petalHealthScale *= extra.petalHealthScale ?? 1;
         return now;
     }
 
     public override updateModifiers(): PlayerModifiers {
         let modifiersNow: PlayerModifiers = GameConstants.player.defaultModifiers();
-        const effectedPetals: PetalDefinition[] = []
+        const effectedPetals: PetalDefinition[] = [];
 
         this.calcModifiers(modifiersNow, this.constantModifier ?? {});
         this.effects.effects.forEach(effect => {

@@ -25,6 +25,14 @@ export class ServerPetal extends ServerLivelyEntity<EntityType.Petal> {
 
     _hidden = false;
 
+    get maxHealth(): number {
+        return this._maxHealth * this.owner.modifiers.petalHealthScale;
+    }
+
+    set maxHealth(value: number) {
+        super.maxHealth = value;
+    }
+
     get hidden(): boolean {
         return this._hidden;
     }
@@ -44,7 +52,7 @@ export class ServerPetal extends ServerLivelyEntity<EntityType.Petal> {
         if (isReloading || this.definition.equipment) {
             this.reloadTime = 0;
         } else {
-            if (this.definition.health) this.health = this.definition.health;
+            if (this.definition.health) this.health = this.maxHealth;
             this.isLoadingFirstTime = false;
             this.useReload = 0;
         }

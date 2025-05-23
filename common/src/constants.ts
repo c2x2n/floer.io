@@ -70,7 +70,8 @@ export const GameConstants = Object.freeze({
             extraSlot: 0,
             bodyDamage: 1,
             knockbackReduction: 0,
-            bodyDamageReduction: 0
+            bodyDamageReduction: 0,
+            petalHealthScale: 1
         })
     },
     petal: {
