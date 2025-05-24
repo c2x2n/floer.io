@@ -10,6 +10,7 @@ import VectorAbstract from "../../../../common/src/engine/physics/vectorAbstract
 import { Geometry } from "../../../../common/src/engine/maths/geometry";
 import { Numeric } from "../../../../common/src/engine/maths/numeric";
 import spawnPetal from "../../entity/spawning/petal";
+import { Counter } from "../../../../common/src/typings/counter";
 
 export class PetalBunch {
     position: VectorAbstract;
@@ -52,6 +53,13 @@ export class PetalBunch {
                 if (player.joined && player.isActive()) petal.join();
 
                 inventory.eventManager.loadPetal(petal);
+
+                if (definition.petalCounter) {
+                    for (const defKey in definition.petalCounter) {
+                        this.player.petalCounter[defKey as keyof Counter]
+                            += definition.petalCounter[defKey as keyof Counter]!;
+                    }
+                }
             }
         }
     }
@@ -163,6 +171,14 @@ export class PetalBunch {
         this.petals.forEach(petal => {
             petal.destroy();
             this.inventory.eventManager.removePetal(petal);
+            const { definition } = this;
+            if (!definition) return;
+            if (definition.petalCounter) {
+                for (const defKey in definition.petalCounter) {
+                    this.player.petalCounter[defKey as keyof Counter]
+                        -= definition.petalCounter[defKey as keyof Counter]!;
+                }
+            }
         });
     }
 }

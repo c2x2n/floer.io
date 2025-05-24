@@ -1,6 +1,5 @@
 import { type WebSocket } from "ws";
 import { ServerEntity } from "./serverEntity";
-import { UVector2D } from "../../../common/src/engine/physics/uvector";
 import { GameBitStream, type Packet, PacketStream } from "../../../common/src/engine/net/net";
 import { createHash } from "crypto";
 import { type ServerGame } from "../game";
@@ -37,6 +36,7 @@ import ServerLivelyEntity from "./livelyEntity";
 import { Damage, DamageType } from "../typings/damage";
 import { EntitiesNetData } from "../../../common/src/engine/net/entitySerializations";
 import { spawnLoot } from "./spawning/loot";
+import { Counter, DefaultCounter } from "../../../common/src/typings/counter";
 
 enum curveType {
     LINEAR,
@@ -186,6 +186,7 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
 
     chatMessagesToSend: ChatData[] = [];
     collected: MobDefinition[] = [];
+    petalCounter: Counter = DefaultCounter;
 
     isAdmin = false;
 
