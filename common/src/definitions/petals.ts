@@ -399,8 +399,9 @@ export const Petals = new Definitions<PetalDefinition>([
         rarity: RarityName.unusual
     },
     {
-        idString: "blood_tringer",
+        idString: "pinger",
         displayName: "Stinger",
+        fullName:"Blood Stinger",
         description: "It hurts so much. Make your enemy bleeding.",
         damage: 35,
         health: 8,
@@ -417,7 +418,7 @@ export const Petals = new Definitions<PetalDefinition>([
         usable: false,
         hitboxRadius: 0.3,
         isDuplicate: true,
-        pieceAmount: 3,
+        pieceAmount: 5,
         isShowedInOne: true,
         rarity: RarityName.mythic,
         usingAssets: "blood_stinger"
@@ -531,6 +532,7 @@ export const Petals = new Definitions<PetalDefinition>([
     }, {
         idString: "myt_tri_rose",
         displayName: "Rose",
+        fullName: "Miraculous Rose",
         description: "This is a miracle rose, only one in the world",
         damage: 5,
         health: 5,
