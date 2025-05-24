@@ -245,12 +245,12 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Fixed,
         hitboxRadius: 6,
         lootTable: {
-            sand: 0.8,
-            triangle: 0.05,
-            missile: 0.5,
-            big_missile: 0.01,
-            cactus: 0.5,
-            poison_cactus: 0.06,
+            sand: 0.9,
+            triangle: 0.07,
+            missile: 0.8,
+            big_missile: 0.1,
+            cactus: 0.9,
+            poison_cactus: 0.1,
             tri_cactus: 0.009
         },
         rarity: RarityName.legendary,
@@ -349,8 +349,7 @@ export const Mobs = new Definitions<MobDefinition>([
             triplet: 0.8,
             wing: 0.6,
             powder: 0.015,
-            leg_egg: 0.055,
-            tri_wing: 0.000001
+            leg_egg: 0.055
         },
         rarity: RarityName.legendary,
         exp: 500,
@@ -421,10 +420,7 @@ export const Mobs = new Definitions<MobDefinition>([
             leg_bubble: 0.0009,
             faster_wing: 0.025,
             wing: 0.5,
-            antennae: 0.035,
-            myt_big_missile: 0.00000033,
-            myt_antennae: 0.00000033,
-            myt_egg: 0.00000033
+            antennae: 0.035
         },
         rarity: RarityName.legendary,
         exp: 500,
@@ -501,9 +497,7 @@ export const Mobs = new Definitions<MobDefinition>([
             poison_peas: 1,
             leg_poison_peas: 0.02,
             leg_bubble: 0.00006,
-            wing: 1,
-            tri_triangle: 0.0000005,
-            pinger: 0.0000005
+            wing: 1
         },
         rarity: RarityName.legendary,
         exp: 500,
@@ -553,9 +547,7 @@ export const Mobs = new Definitions<MobDefinition>([
             pincer: 0.8,
             faster: 1,
             tri_web: 0.03,
-            faster_wing: 0.02,
-            myt_tri_web: 0.0000005,
-            tri_faster: 0.0000005
+            faster_wing: 0.02
         },
         rarity: RarityName.legendary,
         exp: 500,
@@ -831,8 +823,7 @@ export const Mobs = new Definitions<MobDefinition>([
             peas: 0.85,
             chip: 0.028,
             poison_peas: 0.5,
-            leg_poison_peas: 0.01,
-            myt_poison_peas: 0.000001
+            leg_poison_peas: 0.01
         },
         rarity: RarityName.legendary,
         exp: 100,
@@ -1373,7 +1364,7 @@ export const Mobs = new Definitions<MobDefinition>([
                     despawnTime: 3,
                     speed: 15,
                     poison: {
-                        duration: 1,
+                        duration: 2,
                         damagePerSecond: 10
                     },
                     hitboxRadius: 0.5
@@ -1389,8 +1380,8 @@ export const Mobs = new Definitions<MobDefinition>([
             peas: 0.2,
             chip: 0.8,
             poison_peas: 0.9,
-            leg_poison_peas: 0.04,
-            myt_poison_peas: 0.01
+            leg_poison_peas: 1,
+            myt_poison_peas: 1
         },
         rarity: RarityName.mythic,
         exp: 1000,
@@ -1445,8 +1436,7 @@ export const Mobs = new Definitions<MobDefinition>([
             peas: 0.028,
             chip: 0.028,
             poison_peas: 0.9,
-            leg_poison_peas: 0.04,
-            myt_poison_peas: 0.01
+            leg_poison_peas: 0.15
         },
         rarity: RarityName.mythic,
         exp: 1000,
