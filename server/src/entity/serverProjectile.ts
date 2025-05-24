@@ -11,6 +11,7 @@ import VectorAbstract from "../../../common/src/engine/physics/vectorAbstract";
 import { Geometry } from "../../../common/src/engine/maths/geometry";
 import ServerLivelyEntity from "./livelyEntity";
 import { EntitiesNetData } from "../../../common/src/engine/net/entitySerializations";
+import spawnProjectile from "./spawning/projectile";
 
 export class ServerProjectile extends ServerLivelyEntity<EntityType.Projectile> {
     type: EntityType.Projectile = EntityType.Projectile;
@@ -27,7 +28,6 @@ export class ServerProjectile extends ServerLivelyEntity<EntityType.Projectile> 
     source: ServerLivelyEntity;
     knockback = 0.002;
     weight = 9;
-    fromPetal?: ServerPetal;
     canCollideWith(source: ServerLivelyEntity): boolean {
         if (this.invincible) return false;
         if (source instanceof ServerLivelyEntity) return this.canReceiveDamageFrom(source);
@@ -37,8 +37,7 @@ export class ServerProjectile extends ServerLivelyEntity<EntityType.Projectile> 
     constructor(source: ServerLivelyEntity,
         position: VectorAbstract,
         direction: VectorAbstract,
-        parameters: ProjectileParameters,
-        fromPetal?: ServerPetal) {
+        parameters: ProjectileParameters) {
         super(source.game, position, EntityType.Projectile);
         this.setSummonr(source);
         this.name = parameters.definition.displayName;
@@ -49,7 +48,6 @@ export class ServerProjectile extends ServerLivelyEntity<EntityType.Projectile> 
         this.definition = parameters.definition;
         this.bodyPoison = parameters.poison;
         this.effectsOnHit = parameters.effectsOnHit;
-        this.fromPetal = fromPetal;
         if (parameters.health) {
             this.maxHealth = parameters.health;
             this.health = parameters.health;
@@ -128,7 +126,7 @@ export class ServerProjectile extends ServerLivelyEntity<EntityType.Projectile> 
             if (spawner.type === EntityType.Projectile) {
                 let radiansNow = Geometry.directionToRadians(this.direction);
                 for (let i = 0; i < spawner.amount; i++) {
-                    new ServerProjectile(
+                    spawnProjectile(
                         this.source,
                         this.position,
                         Geometry.radiansToDirection(radiansNow),
