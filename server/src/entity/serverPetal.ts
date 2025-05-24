@@ -161,6 +161,8 @@ export class ServerPetal extends ServerLivelyEntity<EntityType.Petal> {
                         this.owner.sendEvent(AttributeEvents.USABLE, undefined, this);
                     }
                 }
+
+                this.health += 0;
             }
         } else {
             this.isLoadingFirstTime = false;
