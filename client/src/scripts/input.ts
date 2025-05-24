@@ -92,7 +92,6 @@ export class Input {
     }
 
     get distance(): DistanceIn {
-        console.log(this.game.camera.scale);
         return {
             moveDistance: this.moveDistance,
             mouseDistance: this.mouseDistance / (this.game.camera.scale * Camera.scale)

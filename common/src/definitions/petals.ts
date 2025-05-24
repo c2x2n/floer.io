@@ -147,7 +147,7 @@ export function getDisplayedPieces(petal: PetalDefinition): number {
     return petal.pieceAmount;
 }
 
-export const Petals = new Definitions<PetalDefinition>([
+export const PetalDefinitions = [
     {
         idString: "fast",
         displayName: "Fast",
@@ -401,7 +401,7 @@ export const Petals = new Definitions<PetalDefinition>([
     {
         idString: "pinger",
         displayName: "Stinger",
-        fullName:"Blood Stinger",
+        fullName: "Blood Stinger",
         description: "It hurts so much. Make your enemy bleeding.",
         damage: 35,
         health: 8,
@@ -1632,25 +1632,6 @@ export const Petals = new Definitions<PetalDefinition>([
             slotDisplaySize: 50,
             centerYOffset: 0.05
         },
-        attributes: {
-            spawner: {
-                idString: "sandstorm",
-                displayName: "Sandstorm",
-                damage: 40,
-                health: 35,
-                category: MobCategory.Unactive,
-                hitboxRadius: 4,
-                movement: {
-                    sandstormLike: true
-                },
-                speed: 7,
-                lootTable: {},
-                rarity: RarityName.rare,
-                exp: 0,
-                usingAssets: "sandstorm",
-                despawnTime: 10
-            }
-        },
         reloadTime: 2,
         hitboxRadius: 0.55,
         isDuplicate: false,
@@ -2186,6 +2167,8 @@ export const Petals = new Definitions<PetalDefinition>([
         },
         rarity: RarityName.epic
     }
-] satisfies PetalDefinition[]);
+] as const satisfies Array<Readonly<PetalDefinition>>;
+
+export const Petals = new Definitions<PetalDefinition>(PetalDefinitions);
 
 export type AttributeNames = keyof AttributeParameters;

@@ -661,6 +661,8 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
         now.bodyDamageReduction += extra.bodyDamageReduction ?? 0;
         now.petalHealthScale *= extra.petalHealthScale ?? 1;
         now.leadMissiles = extra.leadMissiles || now.leadMissiles;
+        now.aggroRange *= extra.aggroRange ?? 1;
+        now.cursed = extra.cursed || now.cursed;
         return now;
     }
 

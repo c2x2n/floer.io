@@ -12,6 +12,7 @@ import spawnProjectile from "./spawning/projectile";
 import { ServerGame } from "../game";
 import { Numeric } from "../../../common/src/engine/maths/numeric";
 import Vector from "../../../common/src/engine/physics/vector";
+import { ServerPlayer } from "./serverPlayer";
 
 export default class MobAI {
     public isEinstein: boolean;
@@ -21,6 +22,9 @@ export default class MobAI {
     public state: AIState = AIState.Idle;
 
     public type: MobCategory;
+
+    public autoFind = false;
+    public canGetTarget = true;
 
     public aggroRadius = 0;
 
@@ -36,45 +40,64 @@ export default class MobAI {
         this.type = this.definition.category;
         this.shootable = !!this.definition.shootable;
         this.game = mob.game;
-        if (this.definition.category === MobCategory.Enemy) this.aggroRadius = this.definition.aggroRadius;
+        if (this.definition.category === MobCategory.Enemy) {
+            this.aggroRadius = this.definition.aggroRadius;
+            this.autoFind = true;
+        }
+        if ([MobCategory.Fixed, MobCategory.Unactive].includes(this.definition.category)) {
+            this.canGetTarget = false;
+        }
         if (this.definition.category === MobCategory.Fixed) this.state = AIState.Locked;
     }
 
     public changeAggroTo(target: ServerLivelyEntity) {
         if (this.targeted) return;
-        if (this.definition.category === MobCategory.Unactive
-            || this.definition.category === MobCategory.Fixed) return;
+        if (!this.canGetTarget) return;
         this.targeted = target;
     }
 
     public getTargetAround(): ServerLivelyEntity | null {
-        if (this.targeted || !this.aggroRadius) {
+        if (this.targeted) {
             return this.targeted?.isActive() ? this.targeted : this.targeted = null;
         }
+        if (!this.canGetTarget) return null;
+
+        const radius = this.aggroRadius ? this.aggroRadius : 30;
+
         const aggro = new CircleHitbox(
-            this.aggroRadius, this.mob.position
+            radius * 2, this.mob.position
         );
 
         const entities
             = this.mob.game.grid.intersectsHitbox(aggro);
 
         const aggroable = Array.from(entities)
-            .filter(e =>
-                (e instanceof ServerLivelyEntity)
-                && aggro.collidesWith(e.hitbox)) as ServerLivelyEntity[];
+            .filter(e => {
+                if (!aggro.collidesWith(e.hitbox)) return false; // Not in aggro radius
+                if (!(e instanceof ServerLivelyEntity)) return false; // Notable to aggro
+                if (!e.isActive()) return false; // Not active
+                if (e.team === this.mob.team) return false; // Not in the same team
+                if (e.parent) return false; // Must be not a child
+                if (!this.autoFind) { // Passive mobs.
+                    if (e instanceof ServerPlayer && e.modifiers.cursed) console.log("???"); // Only cursed players
+                }
+                return true;
+            }) as ServerLivelyEntity[];
 
         let closestEntity: ServerLivelyEntity | null = null;
         let closestDistance = Infinity;
 
         for (const entity of aggroable) {
-            if (!entity.isActive()) continue;
-            if (entity.team === this.mob.team) continue;
-            if (entity.parent) continue;
-
             const distance = UVector2D.distanceBetween(
                 aggro.position,
                 entity.position
             );
+
+            if (entity instanceof ServerPlayer) {
+                if (distance > radius * entity.modifiers.aggroRange) continue; // Cursed players
+            } else {
+                if (distance > radius) continue;
+            }
 
             if (distance >= closestDistance) continue;
 
@@ -94,37 +117,38 @@ export default class MobAI {
     protected shootSpeedForNow?: number;
     protected shootReload = 0;
 
-    shoot(shoot: ProjectileParameters): void {
+    einsteinAim(shoot: ProjectileParameters) {
         if (!this.targeted) return;
+        const differenceXY = this.mob.position.clone()
+            .sub(this.targeted.position);
+        let distance = UVector2D.distanceBetween(this.mob.position, this.targeted.position);
+        if (distance === 0) distance = 1;
 
-        if (this.isEinstein) {
-            const differenceXY = this.mob.position.clone()
-                .sub(this.targeted.position);
-            let distance = UVector2D.distanceBetween(this.mob.position, this.targeted.position);
-            if (distance === 0) distance = 1;
+        const unitDistancePerp = {
+            x: differenceXY.y / distance,
+            y: -differenceXY.x / distance
+        };
 
-            const unitDistancePerp = {
-                x: differenceXY.y / distance,
-                y: -differenceXY.x / distance
-            };
+        let entPerpComponent = unitDistancePerp.x * this.targeted.velocity.x
+            + unitDistancePerp.y * this.targeted.velocity.y;
 
-            let entPerpComponent = unitDistancePerp.x * this.targeted.velocity.x
-                + unitDistancePerp.y * this.targeted.velocity.y;
+        entPerpComponent = Numeric.clamp(entPerpComponent, shoot.speed * -0.9, shoot.speed * 0.9);
 
-            entPerpComponent = Numeric.clamp(entPerpComponent, shoot.speed * -0.9, shoot.speed * 0.9);
+        const directComponent = Math.sqrt(shoot.speed ** 2 - entPerpComponent ** 2);
+        const offset = (entPerpComponent / directComponent * distance) / 2;
+        const nP: VectorAbstract = {
+            x: this.targeted.position.x + offset * unitDistancePerp.x,
+            y: this.targeted.position.y + offset * unitDistancePerp.y
+        };
 
-            const directComponent = Math.sqrt(shoot.speed ** 2 - entPerpComponent ** 2);
-            const offset = (entPerpComponent / directComponent * distance) / 2;
-            const nP: VectorAbstract = {
-                x: this.targeted.position.x + offset * unitDistancePerp.x,
-                y: this.targeted.position.y + offset * unitDistancePerp.y
-            };
+        this.mob.direction = Geometry.directionBetweenPoints(
+            nP,
+            this.mob.position
+        );
+    }
 
-            this.mob.direction = Geometry.directionBetweenPoints(
-                nP,
-                this.mob.position
-            );
-        }
+    shoot(shoot: ProjectileParameters): void {
+        if (this.isEinstein) this.einsteinAim(shoot);
 
         const position = shoot.definition.onGround
             ? this.mob.position
@@ -167,7 +191,7 @@ export default class MobAI {
         if (!target) return;
         const position = this.mob.position;
         const distanceBetween = UVector2D.distanceBetween(target.position, position);
-        if (this.aggroRadius && distanceBetween > this.aggroRadius * 2.2) return this.wipe();
+        if (this.autoFind && distanceBetween > this.aggroRadius * 6) return this.wipe();
 
         const direction = Geometry.directionBetweenPoints(
             target.position, position
