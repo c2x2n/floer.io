@@ -595,6 +595,49 @@ export const petalAssets: AssetsBunch = {
 
         ctx.restore();
     },
+    "g_leaf": containerToDraw => {
+        const { ctx, radius } = containerToDraw;
+
+        ctx.save();
+
+        ctx.translate(radius * 0.1, radius * 0.1);
+        ctx.scale(1.2, 1.2);
+
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+
+        loadPathFromSVG({
+            containerToDraw,
+            pathS: "M 31.15503,151.08372 9.5234003,174.61933",
+            fill: "#ebeb34",
+            stroke: {
+                width: 20,
+                color: strokeColor("#ebeb34")
+            }
+        });
+
+        loadPathFromSVG({
+            containerToDraw,
+            pathS: "M 31.15503,151.08372 C -1.4140015,74.708284 63.473975,4.09096 160.93013,9.853512 171.87183,109.76537 106.9847,180.37826 31.15503,151.08372",
+            fill: "#ebeb34",
+            stroke: {
+                width: 20,
+                color: strokeColor("#ebeb34")
+            }
+        });
+
+        loadPathFromSVG({
+            containerToDraw,
+            pathS: "M 57.109529,122.83574 Q 89.269099,73.861071 128.48699,45.157742",
+            fill: strokeColor("#ebeb34"),
+            stroke: {
+                width: 20,
+                color: strokeColor("#ebeb34")
+            }
+        });
+
+        ctx.restore();
+    },
     "jelly": containerToDraw => {
         const { ctx, radius } = containerToDraw;
 
