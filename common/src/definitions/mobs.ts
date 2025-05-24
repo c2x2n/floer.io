@@ -106,7 +106,6 @@ export const Mobs = new Definitions<MobDefinition>([
             triplet: 0.25,
             epic_rose: 1,
             bubble: 1,
-            leg_bubble: 0.06,
             myt_tri_rose: 0.000001
         },
         rarity: RarityName.legendary,
@@ -127,7 +126,6 @@ export const Mobs = new Definitions<MobDefinition>([
             triplet: 0.25,
             epic_rose: 1,
             bubble: 1,
-            leg_bubble: 0.06,
             penta: 0.000006,
             myt_tri_rose: 0.000005
         },
@@ -149,7 +147,6 @@ export const Mobs = new Definitions<MobDefinition>([
             triplet: 0.25,
             epic_rose: 1,
             bubble: 1,
-            leg_bubble: 0.06,
             penta: 0.000006,
             myt_tri_rose: 0.000005
         },
@@ -169,7 +166,6 @@ export const Mobs = new Definitions<MobDefinition>([
             tri_rose: 0.34,
             bubble: 0.16,
             wing: 0.16,
-            leg_bubble: 0.00006,
             epic_rose: 0.005,
             triplet: 0.01
         },
@@ -409,7 +405,6 @@ export const Mobs = new Definitions<MobDefinition>([
             missile: 1,
             honey: 1,
             big_missile: 0.8,
-            leg_bubble: 0.0009,
             faster_wing: 0.025,
             wing: 0.5,
             antennae: 0.035
@@ -487,7 +482,6 @@ export const Mobs = new Definitions<MobDefinition>([
             peas: 1,
             poison_peas: 1,
             leg_poison_peas: 0.02,
-            leg_bubble: 0.00006,
             wing: 1
         },
         rarity: RarityName.legendary,
@@ -873,7 +867,6 @@ export const Mobs = new Definitions<MobDefinition>([
             peas: 0.24,
             poison_peas: 0.04,
             leg_poison_peas: 0.7,
-            leg_bubble: 0.0024,
             wing: 0.12,
             tri_triangle: 0.5,
             tri_wing: 0.004,
@@ -937,7 +930,6 @@ export const Mobs = new Definitions<MobDefinition>([
             missile: 0.9,
             big_missile: 0.75,
             myt_big_missile: 0.5,
-            leg_bubble: 0.06,
             wing: 0.3,
             tri_wing: 0.0002,
             myt_egg: 0.35,
@@ -1003,7 +995,6 @@ export const Mobs = new Definitions<MobDefinition>([
             bubble: 1,
             wing: 1,
             tri_wing: 0.6,
-            leg_bubble: 0.012,
             epic_rose: 0.9,
             triplet: 1,
             penta: 0.5,
@@ -1045,7 +1036,6 @@ export const Mobs = new Definitions<MobDefinition>([
             bubble: 0.16,
             wing: 0.16,
             yinyang: 0.4,
-            leg_bubble: 0.2,
             triplet: 0.8,
             penta: 0.002,
             myt_tri_rose: 0.45,
@@ -1307,7 +1297,6 @@ export const Mobs = new Definitions<MobDefinition>([
         lootTable: {
             stinger: 0.9,
             bubble: 0.48,
-            leg_bubble: 0.0048,
             wing: 0.24,
             pinger: 0.24,
             tri_triangle: 0.17,
