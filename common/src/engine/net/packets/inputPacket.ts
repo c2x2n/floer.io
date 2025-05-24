@@ -1,17 +1,11 @@
 import { type GameBitStream, type Packet } from "../net";
 import { P2 } from "../../maths/constants";
 import { ActionType } from "../../../constants";
-import VectorAbstract from "../../physics/vectorAbstract";
 
 export interface DirectionIn {
     moveDirection: number
     mouseDirection: number
 }
-
-export interface DirectionOut {
-    moveDirection: VectorAbstract
-    mouseDirection: VectorAbstract
-};
 
 export type InputAction = {
     type: ActionType

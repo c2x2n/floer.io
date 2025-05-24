@@ -12,7 +12,11 @@ import {
 } from "../../../common/src/engine/net/packets/updatePacket";
 import { CircleHitbox, RectHitbox } from "../../../common/src/engine/physics/hitbox";
 import { Random } from "../../../common/src/engine/maths/random";
-import { DirectionOut, InputAction, InputPacket } from "../../../common/src/engine/net/packets/inputPacket";
+import {
+    DirectionIn,
+    InputAction,
+    InputPacket
+} from "../../../common/src/engine/net/packets/inputPacket";
 import { JoinPacket } from "../../../common/src/engine/net/packets/joinPacket";
 import { ActionType, EntityType, GameConstants, PlayerState } from "../../../common/src/constants";
 import { GameOverPacket } from "../../../common/src/engine/net/packets/gameOverPacket";
@@ -27,7 +31,6 @@ import { LoggedInPacket } from "../../../common/src/engine/net/packets/loggedInP
 import { ChatChannel, ChatPacket } from "../../../common/src/engine/net/packets/chatPacket";
 import { MobDefinition } from "../../../common/src/definitions/mobs";
 import { applyCommand, CommandResolving } from "../systems/command";
-import VectorAbstract from "../../../common/src/engine/physics/vectorAbstract";
 import { Geometry } from "../../../common/src/engine/maths/geometry";
 import { Numeric } from "../../../common/src/engine/maths/numeric";
 import ServerLivelyEntity from "./livelyEntity";
@@ -68,9 +71,9 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
 
     name = "";
 
-    direction: DirectionOut = {
-        moveDirection: UVector2D.new(0, 0),
-        mouseDirection: UVector2D.new(0, 0)
+    direction: DirectionIn = {
+        moveDirection: 0,
+        mouseDirection: 0
     };
 
     distance = 0;
@@ -211,7 +214,7 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
         super.tick();
 
         this.maintainAcceleration(
-            Geometry.directionToRadians(this.direction.moveDirection),
+            this.direction.moveDirection,
             Numeric.remap(this.distance, 0, 150, 0, GameConstants.player.maxSpeed) * this.modifiers.speed
         );
 
@@ -570,8 +573,8 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
     processInput(packet: InputPacket): void {
         if (!this.isActive() || this.frozen) {
             this.direction = {
-                moveDirection: UVector2D.new(0, 0),
-                mouseDirection: UVector2D.new(0, 0)
+                moveDirection: 0,
+                mouseDirection: 0
             };
             this.distance = 0;
             this.isAttacking = false;
@@ -580,13 +583,10 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
         }
 
         // if the direction changed set to dirty
-        if (!UVector2D.equals(this.direction.moveDirection, Geometry.radiansToDirection(packet.direction.moveDirection))) {
+        if (this.direction.moveDirection != packet.direction.moveDirection) {
             this.setDirty();
         }
-        this.direction = {
-            moveDirection: Geometry.radiansToDirection(packet.direction.moveDirection),
-            mouseDirection: Geometry.radiansToDirection(packet.direction.mouseDirection)
-        };
+        this.direction = packet.direction;
         this.distance = packet.movementDistance;
         this.isAttacking = packet.isAttacking;
         this.isDefending = packet.isDefending;
@@ -619,7 +619,7 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
     get data(): Required<EntitiesNetData[EntityType.Player]> {
         const data = {
             position: this.position,
-            direction: this.direction.moveDirection,
+            direction: Geometry.radiansToDirection(this.direction.moveDirection),
             state: this.playerState,
             gotDamage: this.gotDamage,
             full: {
