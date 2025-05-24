@@ -576,7 +576,6 @@ export const Mobs = new Definitions<MobDefinition>([
             fast: 0.46,
             leaf: 0.28,
             twin: 0.15,
-            rice: 0.006,
             tri_leaf: 0.00008,
             corn: 0.0006
         },
@@ -645,7 +644,6 @@ export const Mobs = new Definitions<MobDefinition>([
             fast: 0.44,
             leaf: 0.26,
             twin: 0.18,
-            rice: 0.005,
             triplet: 0.0006
         },
         rarity: RarityName.unusual,
@@ -1175,7 +1173,6 @@ export const Mobs = new Definitions<MobDefinition>([
             fast: 0.92,
             leaf: 0.56,
             twin: 0.24,
-            rice: 0.01,
             tri_leaf: 0.04,
             triplet: 0.52,
             penta: 0.005,
@@ -1224,7 +1221,6 @@ export const Mobs = new Definitions<MobDefinition>([
             fast: 0.88,
             leaf: 0.52,
             twin: 0.24,
-            rice: 0.6,
             tri_leaf: 0.03,
             triplet: 0.12,
             penta: 0.005
@@ -1254,7 +1250,6 @@ export const Mobs = new Definitions<MobDefinition>([
             fast: 0.92,
             leaf: 0.56,
             twin: 0.24,
-            rice: 0.01,
             tri_leaf: 0.4,
             triplet: 0.0012,
             penta: 1,
@@ -1280,8 +1275,7 @@ export const Mobs = new Definitions<MobDefinition>([
             sand: 0.66,
             fast: 0.92,
             leaf: 0.56,
-            twin: 0.24,
-            rice: 0.01
+            twin: 0.24
         },
         rarity: RarityName.legendary,
         exp: 1,
