@@ -68,11 +68,8 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
 
     name = "";
 
-    direction: {
-        direction: VectorAbstract
-        mouseDirection: VectorAbstract
-    } = {
-            direction: UVector2D.new(0, 0),
+    direction:  = {
+            moveDirection: UVector2D.new(0, 0),
             mouseDirection: UVector2D.new(0, 0)
         };
 
@@ -214,7 +211,7 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
         super.tick();
 
         this.maintainAcceleration(
-            Geometry.directionToRadians(this.direction.direction),
+            Geometry.directionToRadians(this.direction.moveDirection),
             Numeric.remap(this.distance, 0, 150, 0, GameConstants.player.maxSpeed) * this.modifiers.speed
         );
 
@@ -573,7 +570,7 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
     processInput(packet: InputPacket): void {
         if (!this.isActive() || this.frozen) {
             this.direction = {
-                direction: UVector2D.new(0, 0),
+                moveDirection: UVector2D.new(0, 0),
                 mouseDirection: UVector2D.new(0, 0)
             };
             this.distance = 0;
@@ -583,11 +580,11 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
         }
 
         // if the direction changed set to dirty
-        if (!UVector2D.equals(this.direction.direction, Geometry.radiansToDirection(packet.direction.direction))) {
+        if (!UVector2D.equals(this.direction.moveDirection, Geometry.radiansToDirection(packet.direction.moveDirection))) {
             this.setDirty();
         }
         this.direction = {
-            direction: Geometry.radiansToDirection(packet.direction.direction),
+            moveDirection: Geometry.radiansToDirection(packet.direction.moveDirection),
             mouseDirection: Geometry.radiansToDirection(packet.direction.mouseDirection)
         };
         this.distance = packet.movementDistance;
@@ -622,7 +619,7 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
     get data(): Required<EntitiesNetData[EntityType.Player]> {
         const data = {
             position: this.position,
-            direction: this.direction.direction,
+            direction: this.direction.moveDirection,
             state: this.playerState,
             gotDamage: this.gotDamage,
             full: {

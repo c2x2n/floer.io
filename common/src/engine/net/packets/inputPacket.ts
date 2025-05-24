@@ -1,6 +1,17 @@
 import { type GameBitStream, type Packet } from "../net";
 import { P2 } from "../../maths/constants";
 import { ActionType } from "../../../constants";
+import VectorAbstract from "../../physics/vectorAbstract";
+
+export interface DirectionIn {
+    moveDirection: number
+    mouseDirection: number
+}
+
+export interface DirectionOut {
+    moveDirection: VectorAbstract
+    mouseDirection: VectorAbstract
+};
 
 export type InputAction = {
     type: ActionType
@@ -18,8 +29,8 @@ export type InputAction = {
 });
 
 export class InputPacket implements Packet {
-    direction = {
-        direction: 0,
+    direction: DirectionIn = {
+        moveDirection: 0,
         mouseDirection: 0
     };
 
@@ -31,7 +42,7 @@ export class InputPacket implements Packet {
     serialize(stream: GameBitStream): void {
         stream.writeBoolean(this.isAttacking);
         stream.writeBoolean(this.isDefending);
-        stream.writeFloat(this.direction.direction, -P2, P2, 8);
+        stream.writeFloat(this.direction.moveDirection, -P2, P2, 8);
         stream.writeFloat(this.direction.mouseDirection, -P2, P2, 8);
         stream.writeUint8(this.movementDistance);
 
@@ -56,7 +67,7 @@ export class InputPacket implements Packet {
     deserialize(stream: GameBitStream): void {
         this.isAttacking = stream.readBoolean();
         this.isDefending = stream.readBoolean();
-        this.direction.direction = stream.readFloat(-P2, P2, 8);
+        this.direction.moveDirection = stream.readFloat(-P2, P2, 8);
         this.direction.mouseDirection = stream.readFloat(-P2, P2, 8);
         this.movementDistance = stream.readUint8();
 
@@ -85,7 +96,3 @@ export class InputPacket implements Packet {
     }
 }
 
-export interface DirectionIn {
-    direction: number
-    mouseDirection: number
-}

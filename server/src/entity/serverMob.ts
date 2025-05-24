@@ -441,7 +441,7 @@ export class ServerFriendlyMob extends ServerMob {
         , isSummoned = true) {
         super(game
             , Random.pointInsideCircle(owner.position, 12)
-            , owner.direction.direction
+            , owner.direction.moveDirection
             , definition
         );
         this.isSummoned = isSummoned;

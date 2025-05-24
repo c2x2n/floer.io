@@ -32,14 +32,14 @@ export class Input {
     }
 
     oldDirection: DirectionIn = {
-        direction: 0,
+        moveDirection: 0,
         mouseDirection: 0
     };
 
     get direction(): DirectionIn {
-        const direction = this.moveDirection ?? this.oldDirection.direction;
+        const direction = this.moveDirection ?? this.oldDirection.moveDirection;
         const oldDirection = {
-            direction,
+            moveDirection: direction,
             mouseDirection: this.clientDirection
         };
         this.oldDirection = oldDirection;
