@@ -111,7 +111,6 @@ export default class MobAI {
 
     public wipe() {
         this.targeted = null;
-        this.state = AIState.Idle;
     }
 
     protected shootSpeedForNow?: number;
