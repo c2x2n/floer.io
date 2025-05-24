@@ -131,6 +131,8 @@ export class Minimap {
             -8
         );
 
+        ctx.fillStyle = "#000000";
+
         for (const data of Walls) {
             ctx.beginPath();
             ctx.rect(

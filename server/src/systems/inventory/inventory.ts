@@ -265,10 +265,7 @@ export class Inventory {
 
         if (this.player.modifiers.controlRotation) {
             // Use player's MOUSE direction to determine the angle
-            this.revolutionRadians = Math.atan2(
-                this.player.direction.mouseDirection.y,
-                this.player.direction.mouseDirection.x
-            );
+            this.revolutionRadians = this.player.direction.mouseDirection;
         } else {
             const yyEffects = this.getYinYangEffects(this.player.modifiers.yinYangAmount);
 
