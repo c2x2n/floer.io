@@ -12,7 +12,7 @@ import {
 } from "../../../common/src/engine/net/packets/updatePacket";
 import { CircleHitbox, RectHitbox } from "../../../common/src/engine/physics/hitbox";
 import { Random } from "../../../common/src/engine/maths/random";
-import { InputAction, InputPacket } from "../../../common/src/engine/net/packets/inputPacket";
+import { DirectionOut, InputAction, InputPacket } from "../../../common/src/engine/net/packets/inputPacket";
 import { JoinPacket } from "../../../common/src/engine/net/packets/joinPacket";
 import { ActionType, EntityType, GameConstants, PlayerState } from "../../../common/src/constants";
 import { GameOverPacket } from "../../../common/src/engine/net/packets/gameOverPacket";
@@ -68,10 +68,10 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
 
     name = "";
 
-    direction:  = {
-            moveDirection: UVector2D.new(0, 0),
-            mouseDirection: UVector2D.new(0, 0)
-        };
+    direction: DirectionOut = {
+        moveDirection: UVector2D.new(0, 0),
+        mouseDirection: UVector2D.new(0, 0)
+    };
 
     distance = 0;
     isAttacking = false;
