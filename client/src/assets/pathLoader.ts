@@ -9,6 +9,7 @@ export interface PathLoaderArguments {
         width: number
         color: string
     }
+    closed?: boolean
 }
 
 export function loadPathFromSVG(
@@ -18,6 +19,7 @@ export function loadPathFromSVG(
     let { radius } = containerToDraw;
     const { ctx } = containerToDraw;
     const path = new Path2D(pathS);
+    if (loader.closed) path.closePath();
     radius *= loader.scale ?? 1;
 
     if (loader.fill) ctx.fillStyle = containerToDraw.getRenderColor(loader.fill);
