@@ -1,7 +1,7 @@
 import { UVector2D } from "../../../common/src/engine/physics/uvector";
 import { type Game } from "./game";
 import { halfPI, PI } from "../../../common/src/engine/maths/constants";
-import { DirectionIn, InputAction } from "../../../common/src/engine/net/packets/inputPacket";
+import { DirectionIn, DistanceIn, InputAction } from "../../../common/src/engine/net/packets/inputPacket";
 import { Geometry } from "../../../common/src/engine/maths/geometry";
 
 export class Input {
@@ -12,7 +12,8 @@ export class Input {
     actionsToSend = new Set<InputAction>();
 
     clientDirection = 0;
-    mouseMovementDistance = 0;
+    mouseDistance = 0;
+
     isInputDown(input: string): boolean {
         return this._inputsDown[input] ?? false;
     }
@@ -24,7 +25,7 @@ export class Input {
     setVirtualMousePosition(x: number, y: number): void {
         this.clientDirection = Math.atan2(y - window.innerHeight / 2, x - window.innerWidth / 2);
 
-        this.mouseMovementDistance = UVector2D.length(
+        this.mouseDistance = UVector2D.length(
             UVector2D.new(
                 y - window.innerHeight / 2, x - window.innerWidth / 2
             )
@@ -82,11 +83,18 @@ export class Input {
             if (this.moveDirection != undefined) distance = maxDistance;
             else distance = 0;
         } else {
-            distance = this.mouseMovementDistance;
+            distance = this.mouseDistance;
         }
 
         if (distance > maxDistance) return maxDistance;
         return distance;
+    }
+
+    get distance(): DistanceIn {
+        return {
+            moveDistance: this.moveDistance,
+            mouseDistance: this.mouseDistance
+        };
     }
 
     clientPosition: {
@@ -121,7 +129,7 @@ export class Input {
 
             this.clientDirection = Math.atan2(e.clientY - window.innerHeight / 2, e.clientX - window.innerWidth / 2);
 
-            this.mouseMovementDistance = UVector2D.length(
+            this.mouseDistance = UVector2D.length(
                 UVector2D.new(
                     e.clientY - window.innerHeight / 2, e.clientX - window.innerWidth / 2
                 )

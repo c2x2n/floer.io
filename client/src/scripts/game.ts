@@ -478,7 +478,7 @@ export class Game {
         || this.input.isInputDown("ShiftRight");
 
         inputPacket.direction = this.input.direction;
-        inputPacket.movementDistance = this.input.moveDistance;
+        inputPacket.distance = this.input.distance;
 
         inputPacket.actions = Array.from(this.input.actionsToSend);
         this.input.actionsToSend.clear();

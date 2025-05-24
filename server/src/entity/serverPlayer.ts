@@ -13,7 +13,7 @@ import {
 import { CircleHitbox, RectHitbox } from "../../../common/src/engine/physics/hitbox";
 import { Random } from "../../../common/src/engine/maths/random";
 import {
-    DirectionIn,
+    DirectionIn, DistanceIn,
     InputAction,
     InputPacket
 } from "../../../common/src/engine/net/packets/inputPacket";
@@ -76,7 +76,11 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
         mouseDirection: 0
     };
 
-    distance = 0;
+    distance: DistanceIn = {
+        moveDistance: 0,
+        mouseDistance: 0
+    };
+
     isAttacking = false;
     isDefending = false;
 
@@ -215,7 +219,7 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
 
         this.maintainAcceleration(
             this.direction.moveDirection,
-            Numeric.remap(this.distance, 0, 150, 0, GameConstants.player.maxSpeed) * this.modifiers.speed
+            Numeric.remap(this.distance.moveDistance, 0, 150, 0, GameConstants.player.maxSpeed) * this.modifiers.speed
         );
 
         // 观察者模式下只处理移动，不处理花瓣和其他功能
@@ -576,7 +580,10 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
                 moveDirection: 0,
                 mouseDirection: 0
             };
-            this.distance = 0;
+            this.distance = {
+                mouseDistance: 0,
+                moveDistance: 0
+            };
             this.isAttacking = false;
             this.isDefending = false;
             return;
@@ -587,7 +594,7 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
             this.setDirty();
         }
         this.direction = packet.direction;
-        this.distance = packet.movementDistance;
+        this.distance = packet.distance;
         this.isAttacking = packet.isAttacking;
         this.isDefending = packet.isDefending;
 

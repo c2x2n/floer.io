@@ -7,6 +7,11 @@ export interface DirectionIn {
     mouseDirection: number
 }
 
+export interface DistanceIn {
+    moveDistance: number
+    mouseDistance: number
+}
+
 export type InputAction = {
     type: ActionType
 } & ({
@@ -28,7 +33,11 @@ export class InputPacket implements Packet {
         mouseDirection: 0
     };
 
-    movementDistance = 0;
+    distance: DistanceIn = {
+        moveDistance: 0,
+        mouseDistance: 0
+    };
+
     isAttacking = false;
     isDefending = false;
     actions: InputAction[] = [];
@@ -38,7 +47,8 @@ export class InputPacket implements Packet {
         stream.writeBoolean(this.isDefending);
         stream.writeFloat(this.direction.moveDirection, -P2, P2, 8);
         stream.writeFloat(this.direction.mouseDirection, -P2, P2, 8);
-        stream.writeUint8(this.movementDistance);
+        stream.writeUint8(this.distance.moveDistance);
+        stream.writeUint8(this.distance.mouseDistance);
 
         stream.writeArray(this.actions, 4, action => {
             stream.writeUint8(action.type);
@@ -63,7 +73,8 @@ export class InputPacket implements Packet {
         this.isDefending = stream.readBoolean();
         this.direction.moveDirection = stream.readFloat(-P2, P2, 8);
         this.direction.mouseDirection = stream.readFloat(-P2, P2, 8);
-        this.movementDistance = stream.readUint8();
+        this.distance.moveDistance = stream.readUint8();
+        this.distance.mouseDistance = stream.readUint8();
 
         stream.readArray(this.actions, 4, () => {
             const type = stream.readUint8();
