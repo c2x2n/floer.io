@@ -63,7 +63,9 @@ export class ServerPetal extends ServerLivelyEntity<EntityType.Petal> {
     reloadTime = 0;
     get fullReloadTime(): number {
         if (this.definition.equipment) return 0;
-        return this.definition.reloadTime ? this.definition.reloadTime + (this.isLoadingFirstTime ? 2.5 : 0) : 0;
+        return this.definition.reloadTime
+            ? this.definition.reloadTime * this.owner.modifiers.petalReloadTime + (this.isLoadingFirstTime ? 2.5 : 0)
+            : 0;
     }
 
     useReload = 0;

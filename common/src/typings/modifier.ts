@@ -22,6 +22,7 @@ export type PlayerModifiers = Modifiers & {
     leadMissiles: boolean
     aggroRange: number
     cursed: boolean
+    petalReloadTime: number
 };
 
 export interface Modifiers {
