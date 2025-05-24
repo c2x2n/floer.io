@@ -399,8 +399,9 @@ export const Petals = new Definitions<PetalDefinition>([
         rarity: RarityName.unusual
     },
     {
-        idString: "blood_tringer",
+        idString: "pinger",
         displayName: "Stinger",
+        fullName:"Blood Stinger",
         description: "It hurts so much. Make your enemy bleeding.",
         damage: 35,
         health: 8,
@@ -417,7 +418,7 @@ export const Petals = new Definitions<PetalDefinition>([
         usable: false,
         hitboxRadius: 0.3,
         isDuplicate: true,
-        pieceAmount: 3,
+        pieceAmount: 5,
         isShowedInOne: true,
         rarity: RarityName.mythic,
         usingAssets: "blood_stinger"
@@ -447,7 +448,7 @@ export const Petals = new Definitions<PetalDefinition>([
         idString: "sand",
         displayName: "Sand",
         description: "A bunch of sand particles.",
-        damage: 5,
+        damage: 6,
         health: 2,
         reloadTime: 1,
         images: {
@@ -531,6 +532,7 @@ export const Petals = new Definitions<PetalDefinition>([
     }, {
         idString: "myt_tri_rose",
         displayName: "Rose",
+        fullName: "Miraculous Rose",
         description: "This is a miracle rose, only one in the world",
         damage: 5,
         health: 5,
@@ -716,7 +718,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 damage: 5,
                 health: 20,
                 despawnTime: 3,
-                speed: 8,
+                speed: 1.1,
                 definition: Projectiles.fromString("dandelion"),
                 effectsOnHit: {
                     modifier: {
@@ -794,7 +796,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 damage: 25,
                 health: 75,
                 despawnTime: 3,
-                speed: 7.25,
+                speed: 1,
                 definition: Projectiles.fromString("missile")
             }
         },
@@ -807,10 +809,10 @@ export const Petals = new Definitions<PetalDefinition>([
         usingAssets: "missile"
     },
     {
-        idString: "myt_big_missile",
+        idString: "myt_missile",
         displayName: "Missile",
         description: "You can actually shoot this quickly bigger one",
-        damage: 100,
+        damage: 50,
         health: 25,
         extendable: true,
         images: {
@@ -826,9 +828,9 @@ export const Petals = new Definitions<PetalDefinition>([
             shoot: {
                 hitboxRadius: 0.6,
                 damage: 50,
-                health: 20,
+                health: 25,
                 despawnTime: 10,
-                speed: 5,
+                speed: 1.7,
                 definition: Projectiles.fromString("myt_big_missile")
             }
         },
@@ -930,6 +932,37 @@ export const Petals = new Definitions<PetalDefinition>([
         usingAssets: "cactus"
     },
     {
+        idString: "myt_cactus",
+        displayName: "Cactus",
+        fullName: "Overloaded Cactus",
+        description: "Not very strong, but somehow increases your maximum health",
+        damage: 5,
+        health: 15,
+        extendable: true,
+        usable: false,
+        images: {
+            slotDisplaySize: 68,
+            selfGameRotation: 18
+        },
+        wearerAttributes: {
+            maxHealth: 50,
+            bodyPoison: {
+                damagePerSecond: 15,
+                duration: 5
+            },
+            petalHealthScale: 2
+        },
+        poison: {
+            damagePerSecond: 10,
+            duration: 1
+        },
+        reloadTime: 1,
+        hitboxRadius: 0.7,
+        isDuplicate: false,
+        rarity: RarityName.mythic,
+        pieceAmount: 1
+    },
+    {
         idString: "salt",
         displayName: "Salt",
         description: "Reflects some of the damage you take back to the enemy that dealt it",
@@ -970,55 +1003,10 @@ export const Petals = new Definitions<PetalDefinition>([
         usingAssets: "stinger"
     },
     {
-        idString: "pinger",
-        displayName: "Apex",
-        description: "It really hurts, but it's very fragile",
-        damage: 75,
-        health: 10,
-        extendable: true,
-        images: {
-            slotRotation: 3.14,
-            slotRevolution: 6.28 / 5,
-            selfGameRotation: 18
-        },
-        reloadTime: 2.5,
-        usable: false,
-        hitboxRadius: 0.3,
-        isDuplicate: true,
-        isShowedInOne: true,
-        pieceAmount: 5,
-        behavior: {
-            name: "health_percent_damage",
-            data: {
-                percent: 0.1,
-                maxDamage: 100,
-                trueDamage: true
-            }
-        },
-        rarity: RarityName.mythic
-    },
-    {
-        idString: "rice",
-        displayName: "Rice",
-        description: "Spawns instantly, but not very strong",
-        damage: 6,
-        health: 5,
-        extendable: true,
-        reloadTime: 0.04,
-        images: {
-            slotDisplaySize: 57,
-            selfGameRotation: 18
-        },
-        usable: false,
-        hitboxRadius: 0.95,
-        isDuplicate: false,
-        pieceAmount: 1,
-        rarity: RarityName.epic
-    },
-    {
-        idString: "leg_bubble",
+        idString: "myt_bubble",
         displayName: "Bubble",
-        description: "Physics are for the weak",
+        fullName: "Magic Bubble",
+        description: "Physics are for the weak, but magics not",
         damage: 0,
         health: 1,
         extendable: false,
@@ -1296,7 +1284,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 hitboxRadius: 0.46,
                 despawnTime: 1.5,
                 poison: {
-                    damagePerSecond: 15,
+                    damagePerSecond: 12,
                     duration: 2
                 },
                 spawner: {
@@ -1307,11 +1295,11 @@ export const Petals = new Definitions<PetalDefinition>([
                         speed: 1,
                         damage: 5,
                         health: 5,
-                        hitboxRadius: 0.3,
+                        hitboxRadius: 0.35,
                         despawnTime: 4.5,
                         poison: {
-                            damagePerSecond: 15,
-                            duration: 2
+                            damagePerSecond: 10,
+                            duration: 1.5
                         }
                     }
                 }
@@ -1346,7 +1334,7 @@ export const Petals = new Definitions<PetalDefinition>([
     {
         idString: "dice",
         displayName: "Dice",
-        description: "Roll the dice! Has a 15% chance to deal 8x damage",
+        description: "Roll the dice! Has a 17% chance to deal 8x damage",
         damage: 9,
         health: 32,
         extendable: true,
@@ -1359,7 +1347,7 @@ export const Petals = new Definitions<PetalDefinition>([
         behavior: {
             name: "critical_hit",
             data: {
-                chance: 0.15,
+                chance: 0.17,
                 multiplier: 8
             }
         },
@@ -1700,7 +1688,7 @@ export const Petals = new Definitions<PetalDefinition>([
     },
     {
         idString: "myt_pollen",
-        fullName: "Allergen",
+        fullName: "Allergic Pollen",
         displayName: "Pollen",
         description: "Asthmatics beware. Maybe this time for true.",
         damage: 13,
@@ -2197,37 +2185,6 @@ export const Petals = new Definitions<PetalDefinition>([
             bodyDamageReduction: 0.5
         },
         rarity: RarityName.epic
-    },
-    {
-        idString: "myt_cactus",
-        displayName: "Cactus",
-        fullName: "Overloaded Cactus",
-        description: "Not very strong, but somehow increases your maximum health",
-        damage: 5,
-        health: 15,
-        extendable: true,
-        usable: false,
-        images: {
-            slotDisplaySize: 68,
-            selfGameRotation: 18
-        },
-        wearerAttributes: {
-            maxHealth: 50,
-            bodyPoison: {
-                damagePerSecond: 15,
-                duration: 5
-            },
-            petalHealthScale: 2
-        },
-        poison: {
-            damagePerSecond: 10,
-            duration: 0.6
-        },
-        reloadTime: 1,
-        hitboxRadius: 0.7,
-        isDuplicate: false,
-        rarity: RarityName.mythic,
-        pieceAmount: 1
     }
 ] satisfies PetalDefinition[]);
 
