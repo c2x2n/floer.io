@@ -209,7 +209,7 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
         super(game, position, EntityType.Player);
         this.socket = socket;
         this.inventory = new Inventory(this);
-        this.updateModifiers();
+        this.updateAndApplyModifiers();
         this.maxHealth = GameConstants.player.defaultModifiers().maxHealth;
         this.health = this.maxHealth;
     }
@@ -549,7 +549,7 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
             this.isAdmin = true;
         }
 
-        this.updateModifiers();
+        this.updateAndApplyModifiers();
 
         const loggedIn = new LoggedInPacket();
         loggedIn.inventory = this.inventory.inventory;
@@ -649,20 +649,21 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
         now.maxHealth += extra.maxHealth ?? 0;
         now.revolutionSpeed += extra.revolutionSpeed ?? 0;
         now.zoom += extra.zoom ?? 0;
-        now.damageAvoidanceByDamage = extra.damageAvoidanceByDamage ?? now.damageAvoidanceByDamage;
+        now.damageAvoidanceByDamage = extra.damageAvoidanceByDamage || now.damageAvoidanceByDamage;
         now.yinYangAmount += extra.yinYangAmount ?? 0;
         now.extraDistance += extra.extraDistance ?? 0;
-        now.controlRotation = extra.controlRotation ?? now.controlRotation;
+        now.controlRotation = extra.controlRotation || now.controlRotation;
         now.revive = extra.revive ?? now.revive;
         now.bodyDamage *= extra.bodyDamage ?? 1;
         now.knockbackReduction += extra.knockbackReduction ?? 0;
         now.extraSlot += extra.extraSlot ?? 0;
         now.bodyDamageReduction += extra.bodyDamageReduction ?? 0;
         now.petalHealthScale *= extra.petalHealthScale ?? 1;
+        now.leadMissiles = extra.leadMissiles || now.leadMissiles;
         return now;
     }
 
-    public override updateModifiers(): PlayerModifiers {
+    public override updateAndApplyModifiers(): void {
         let modifiersNow: PlayerModifiers = GameConstants.player.defaultModifiers();
         const effectedPetals: PetalDefinition[] = [];
 
@@ -701,7 +702,7 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
             GameConstants.player.defaultSlot + this.levelInformation.extraSlot
         );
 
-        return modifiersNow;
+        this.modifiers = modifiersNow;
     }
 
     destroy() {

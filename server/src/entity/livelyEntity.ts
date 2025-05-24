@@ -107,7 +107,7 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
             }
         }
 
-        this.modifiers = this.updateModifiers();
+        this.updateAndApplyModifiers();
     }
 
     public receiveKnockback(entity: ServerLivelyEntity): void {
@@ -162,7 +162,7 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
         return now;
     }
 
-    public updateModifiers(): Modifiers {
+    public updateAndApplyModifiers(): void {
         let modifiersNow = GameConstants.defaultModifiers();
         this.calcModifiers(modifiersNow, this.constantModifier ?? {});
         this.effects.effects.forEach(effect => {
@@ -175,7 +175,7 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
             bodyPoison: this.bodyPoison
         });
         this.otherModifiersOnTick = []; // clear all old
-        return modifiersNow;
+        this.modifiers = modifiersNow;
     }
 
     public receiveDamage(damage: Damage) {
