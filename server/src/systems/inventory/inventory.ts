@@ -169,7 +169,7 @@ export class Inventory {
         this.petalBunches[index].destroy();
         this.petalBunches[index] = new PetalBunch(this, petal);
         this.equipped_petals[index] = petal;
-        this.player.updateModifiers();
+        this.player.updateAndApplyModifiers();
     }
 
     pickUp(petal: PetalDefinition): boolean {

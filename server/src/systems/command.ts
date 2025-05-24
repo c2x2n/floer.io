@@ -244,7 +244,7 @@ const Commands = {
         }
         resolve.$p(who, player => {
             player.persistentSpeedModifier = multiplier;
-            player.updateModifiers();
+            player.updateAndApplyModifiers();
             resolve.resolve(`Set ${player.name}'s speed multiplier to ${multiplier}`);
         });
     },
@@ -255,7 +255,7 @@ const Commands = {
         }
         resolve.$p(who, player => {
             player.persistentZoomModifier = multiplier;
-            player.updateModifiers();
+            player.updateAndApplyModifiers();
             resolve.resolve(`Set ${player.name}'s zoom multiplier to ${multiplier}`);
         });
     },
