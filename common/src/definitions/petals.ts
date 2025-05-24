@@ -1003,55 +1003,10 @@ export const Petals = new Definitions<PetalDefinition>([
         usingAssets: "stinger"
     },
     {
-        idString: "pinger",
-        displayName: "Apex",
-        description: "It really hurts, but it's very fragile",
-        damage: 75,
-        health: 10,
-        extendable: true,
-        images: {
-            slotRotation: 3.14,
-            slotRevolution: 6.28 / 5,
-            selfGameRotation: 18
-        },
-        reloadTime: 2.5,
-        usable: false,
-        hitboxRadius: 0.3,
-        isDuplicate: true,
-        isShowedInOne: true,
-        pieceAmount: 5,
-        behavior: {
-            name: "health_percent_damage",
-            data: {
-                percent: 0.1,
-                maxDamage: 100,
-                trueDamage: true
-            }
-        },
-        rarity: RarityName.mythic
-    },
-    {
-        idString: "rice",
-        displayName: "Rice",
-        description: "Spawns instantly, but not very strong",
-        damage: 6,
-        health: 5,
-        extendable: true,
-        reloadTime: 0.04,
-        images: {
-            slotDisplaySize: 57,
-            selfGameRotation: 18
-        },
-        usable: false,
-        hitboxRadius: 0.95,
-        isDuplicate: false,
-        pieceAmount: 1,
-        rarity: RarityName.epic
-    },
-    {
-        idString: "leg_bubble",
+        idString: "myt_bubble",
         displayName: "Bubble",
-        description: "Physics are for the weak",
+        fullName: "Magic Bubble",
+        description: "Physics are for the weak, but magics not",
         damage: 0,
         health: 1,
         extendable: false,
@@ -1733,7 +1688,7 @@ export const Petals = new Definitions<PetalDefinition>([
     },
     {
         idString: "myt_pollen",
-        fullName: "Allergen",
+        fullName: "Allergic Pollen",
         displayName: "Pollen",
         description: "Asthmatics beware. Maybe this time for true.",
         damage: 13,
