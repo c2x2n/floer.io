@@ -448,7 +448,7 @@ export const Petals = new Definitions<PetalDefinition>([
         idString: "sand",
         displayName: "Sand",
         description: "A bunch of sand particles.",
-        damage: 5,
+        damage: 6,
         health: 2,
         reloadTime: 1,
         images: {
@@ -1379,7 +1379,7 @@ export const Petals = new Definitions<PetalDefinition>([
     {
         idString: "dice",
         displayName: "Dice",
-        description: "Roll the dice! Has a 15% chance to deal 8x damage",
+        description: "Roll the dice! Has a 17% chance to deal 8x damage",
         damage: 9,
         health: 32,
         extendable: true,
@@ -1392,7 +1392,7 @@ export const Petals = new Definitions<PetalDefinition>([
         behavior: {
             name: "critical_hit",
             data: {
-                chance: 0.15,
+                chance: 0.17,
                 multiplier: 8
             }
         },
