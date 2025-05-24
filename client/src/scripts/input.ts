@@ -3,6 +3,7 @@ import { type Game } from "./game";
 import { halfPI, PI } from "../../../common/src/engine/maths/constants";
 import { DirectionIn, DistanceIn, InputAction } from "../../../common/src/engine/net/packets/inputPacket";
 import { Geometry } from "../../../common/src/engine/maths/geometry";
+import { Camera } from "./render/camera";
 
 export class Input {
     readonly game: Game;
@@ -91,9 +92,10 @@ export class Input {
     }
 
     get distance(): DistanceIn {
+        console.log(this.game.camera.scale);
         return {
             moveDistance: this.moveDistance,
-            mouseDistance: this.mouseDistance
+            mouseDistance: this.mouseDistance / (this.game.camera.scale * Camera.scale)
         };
     }
 

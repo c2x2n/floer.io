@@ -19,6 +19,7 @@ import ServerLivelyEntity from "./livelyEntity";
 import { Damage } from "../typings/damage";
 import { EntitiesNetData } from "../../../common/src/engine/net/entitySerializations";
 import { spawnLoot } from "./spawning/loot";
+import spawnProjectile from "./spawning/projectile";
 
 export class ServerMob extends ServerLivelyEntity<EntityType.Mob> {
     type: EntityType.Mob = EntityType.Mob;
@@ -152,7 +153,7 @@ export class ServerMob extends ServerLivelyEntity<EntityType.Mob> {
             ? this.position
             : UVector2D.add(this.position, UVector2D.mul(this.shootDirection, this.hitbox.radius));
 
-        new ServerProjectile(this,
+        spawnProjectile(this,
             position,
             this.shootDirection, shoot);
     }

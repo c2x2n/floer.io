@@ -6,6 +6,7 @@ import { MobCategory, MobDefinition, Mobs } from "./mobs";
 import { EntityType } from "../constants";
 import { halfPI, P2 } from "../engine/maths/constants";
 import { EffectsOnHitDataType, PoisonDataType } from "../typings/effect";
+import { Counter } from "../typings/counter";
 
 export type SavedPetalDefinitionData = PetalDefinition | null;
 
@@ -17,6 +18,7 @@ export type PetalDefinition = ObjectDefinition & {
     readonly behavior?: PetalBehaviorDataType
     readonly wearerAttributes?: Partial<PlayerModifiers>
     readonly petalModifiers?: Partial<Modifiers>
+    readonly petalCounter?: Partial<Counter>
     readonly undroppable?: boolean
     readonly unstackable?: boolean
     readonly hitboxRadius: number
@@ -738,6 +740,9 @@ export const Petals = new Definitions<PetalDefinition>([
         damage: 30,
         health: 20,
         extendable: true,
+        petalCounter: {
+            missileCount: 1
+        },
         images: {
             selfGameRotation: 0.02,
             slotDisplaySize: 45,
@@ -753,7 +758,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 damage: 40,
                 health: 10,
                 despawnTime: 3,
-                speed: 7.5,
+                speed: 1,
                 definition: Projectiles.fromString("missile")
             }
         },
@@ -771,6 +776,9 @@ export const Petals = new Definitions<PetalDefinition>([
         damage: 25,
         health: 75,
         extendable: true,
+        petalCounter: {
+            missileCount: 1
+        },
         images: {
             selfGameRotation: 0.02,
             slotDisplaySize: 45,
@@ -1451,6 +1459,7 @@ export const Petals = new Definitions<PetalDefinition>([
         rarity: RarityName.legendary
     }, {
         idString: "myt_antennae",
+        fullName: "Mecha Antennae",
         displayName: "Antennae",
         description: "Allows your flower to sense foes farther farther away",
         equipment: true,
@@ -1459,7 +1468,8 @@ export const Petals = new Definitions<PetalDefinition>([
         },
         hitboxRadius: 0.9,
         wearerAttributes: {
-            zoom: 45
+            zoom: 45,
+            leadMissiles: true
         },
         rarity: RarityName.mythic,
         usingAssets: "antennae"

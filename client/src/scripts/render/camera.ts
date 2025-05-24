@@ -75,7 +75,7 @@ export class Camera {
 
         this.cameraPosition = UVector2D.add(
             UVector2D.mul(position, this.scale),
-            UVector2D["new"](-this.screenWidth / 2, -this.screenHeight / 2)
+            UVector2D.new(-this.screenWidth / 2, -this.screenHeight / 2)
         );
     }
 

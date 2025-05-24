@@ -157,7 +157,6 @@ export class ClientMob extends ClientEntity {
 
     lastMovementAnimation = 0;
     lastMovementAnimationTime = 0;
-    lastScale = 1;
 
     playMovementAnimation(size: number): void {
         if (!this.definition) return;

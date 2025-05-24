@@ -7,6 +7,7 @@ import { P2 } from "../../../../common/src/engine/maths/constants";
 import { getAssets } from "../../assets/assets";
 import { Geometry } from "../../../../common/src/engine/maths/geometry";
 import { EntitiesNetData } from "../../../../common/src/engine/net/entitySerializations";
+import { UVector2D } from "../../../../common/src/engine/physics/uvector";
 
 export class ClientProjectile extends ClientEntity {
     type = EntityType.Projectile;
@@ -26,6 +27,10 @@ export class ClientProjectile extends ClientEntity {
             const assets = getAssets("projectile", this.definition);
             if (assets) assets(this.container);
         }
+
+        this.container.rotation = Geometry.directionToRadians(UVector2D.targetEasing(
+            Geometry.radiansToDirection(this.container.rotation), this.direction, 6)
+        );
     }
 
     updateFromData(data: EntitiesNetData[EntityType.Projectile], isNew: boolean): void {

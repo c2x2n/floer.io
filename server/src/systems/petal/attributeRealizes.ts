@@ -10,6 +10,7 @@ import { ServerProjectile } from "../../entity/serverProjectile";
 import { Geometry } from "../../../../common/src/engine/maths/geometry";
 import { Effect } from "../effect/effect";
 import { DamageType } from "../../typings/damage";
+import spawnProjectile from "../../entity/spawning/projectile";
 
 export enum AttributeEvents {
     HEALING = "HEALING",
@@ -83,8 +84,8 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                 const direction
                     = Geometry.directionBetweenPoints(petal.position, petal.owner.position);
                 const position = petal.position;
-                new ServerProjectile(
-                    petal.owner, position, direction, data, petal);
+                spawnProjectile(
+                    petal.owner, position, direction, data);
             }, PetalUsingAnimations.NORMAL);
         }
     },
@@ -96,8 +97,8 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                 const direction
                     = Geometry.directionBetweenPoints(petal.position, petal.petalBunch.centerPosition);
                 const position = petal.position;
-                new ServerProjectile(
-                    petal.owner, position, direction, data, petal);
+                spawnProjectile(
+                    petal.owner, position, direction, data);
             }, PetalUsingAnimations.NORMAL);
         }
     },
@@ -120,8 +121,8 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
 
                     const direction
                         = Geometry.directionBetweenPoints(position, petal.petalBunch.centerPosition);
-                    new ServerProjectile(
-                        petal.owner, position, direction, para, petal);
+                    spawnProjectile(
+                        petal.owner, position, direction, para);
 
                     radianNow += radianStep;
                 }
@@ -137,8 +138,8 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                 const direction
                     = Geometry.directionBetweenPoints(petal.position, petal.owner.position);
                 const position = petal.position;
-                new ServerProjectile(
-                    petal.owner, position, direction, data, petal);
+                spawnProjectile(
+                    petal.owner, position, direction, data);
             }, PetalUsingAnimations.NORMAL);
 
             on(AttributeEvents.DEFEND, () => {
@@ -146,8 +147,8 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                 const direction
                     = Geometry.directionBetweenPoints(petal.position, petal.owner.position);
                 const position = petal.position;
-                new ServerProjectile(
-                    petal.owner, position, direction, data, petal).acceleration.clear();
+                spawnProjectile(
+                    petal.owner, position, direction, data).acceleration.clear();
             }, PetalUsingAnimations.NORMAL);
         }
     },
