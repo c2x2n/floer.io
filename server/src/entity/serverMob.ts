@@ -192,6 +192,8 @@ export class ServerMob extends ServerLivelyEntity<EntityType.Mob> {
     destroy(illegal = false) {
         super.destroy();
 
+        if (this.destroyed) return;
+
         if (!illegal) { // Drops
             const lootTable = this.definition.lootTable;
             const loots: PetalDefinition[] = [];
