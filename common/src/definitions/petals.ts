@@ -386,6 +386,29 @@ export const PetalDefinitions = [
         usingAssets: "leaf"
     },
     {
+        idString: "g_leaf",
+        fullName: "Golden Leaf",
+        displayName: "Leaf",
+        description: "Has magic and makes your petals reload faster",
+        damage: 9,
+        health: 10,
+        extendable: true,
+        images: {
+            slotDisplaySize: 60,
+            slotRotation: -0.1,
+            selfGameRotation: 18
+        },
+        wearerAttributes: {
+            petalReloadTime: 0.789
+        },
+        reloadTime: 1,
+        usable: false,
+        hitboxRadius: 0.55,
+        isDuplicate: false,
+        pieceAmount: 1,
+        rarity: RarityName.mythic
+    },
+    {
         idString: "stinger",
         displayName: "Stinger",
         description: "It really hurts, but it's very fragile",
