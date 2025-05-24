@@ -34,7 +34,7 @@ export default class Missile extends ServerProjectile {
     override dealCollisionDamage(to: ServerLivelyEntity) {
         if (this.source instanceof ServerPlayer && this.getLeading && this.parameters.damage) {
             this.damage = this.parameters.damage * (1 - (this.source.petalCounter.missileCount * 0.05));
-        }
+        } // Every missile equipped, damage was -5% of the original damage.
 
         super.dealCollisionDamage(to);
     }
