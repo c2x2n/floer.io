@@ -4,7 +4,7 @@ import { Modifiers, PlayerModifiers } from "../typings/modifier";
 import { ProjectileParameters, Projectiles } from "./projectiles";
 import { MobCategory, MobDefinition, Mobs } from "./mobs";
 import { EntityType } from "../constants";
-import { halfPI, P2 } from "../engine/maths/constants";
+import { halfPI, P2, PI } from "../engine/maths/constants";
 import { EffectsOnHitDataType, PoisonDataType } from "../typings/effect";
 import { Counter } from "../typings/counter";
 
@@ -227,9 +227,10 @@ export const PetalDefinitions = [
         rarity: RarityName.rare
     },
     {
-        idString: "tri_wing",
+        idString: "dark_wing",
+        fullName: "Dark Wing",
         displayName: "Wing",
-        description: "They come and go.",
+        description: "It hurts and curses.",
         damage: 25,
         health: 20,
         swinging: {
@@ -237,20 +238,24 @@ export const PetalDefinitions = [
             distance: 2.6
         },
         images: {
-            slotDisplaySize: 45,
-            selfGameRotation: 360,
-            slotRevolution: P2 / 3
+            slotDisplaySize: 70,
+            selfGameRotation: 360
+        },
+        effectsOnHit: {
+            modifier: {
+                cursed: true,
+                aggroRange: 2
+            },
+            duration: 6.66
         },
         extendable: true,
         moreExtendDistance: 2,
         reloadTime: 1.25,
         usable: false,
         hitboxRadius: 0.5,
-        isDuplicate: true,
-        pieceAmount: 3,
-        isShowedInOne: false,
-        rarity: RarityName.mythic,
-        usingAssets: "wing"
+        isDuplicate: false,
+        pieceAmount: 1,
+        rarity: RarityName.mythic
     },
     {
         idString: "triplet",
@@ -413,7 +418,9 @@ export const PetalDefinitions = [
         },
         images: {
             selfGameRotation: 18,
-            slotDisplaySize: 25
+            slotDisplaySize: 25,
+            slotRevolution: P2 / 5,
+            slotRotation: PI
         },
         usable: false,
         hitboxRadius: 0.3,
@@ -1427,7 +1434,7 @@ export const PetalDefinitions = [
     }, {
         idString: "antennae",
         displayName: "Antennae",
-        description: "Allows your flower to sense foes farther away",
+        description: "Allows your flower to sense foes farther away.",
         equipment: true,
         images: {
             slotDisplaySize: 60,
@@ -1449,7 +1456,7 @@ export const PetalDefinitions = [
         idString: "myt_antennae",
         fullName: "Mecha Antennae",
         displayName: "Antennae",
-        description: "Allows your flower to sense foes farther farther away",
+        description: "Allows your flower to sense foes farther farther away. Also turns you into an Overlord.",
         equipment: true,
         images: {
             slotDisplaySize: 60
