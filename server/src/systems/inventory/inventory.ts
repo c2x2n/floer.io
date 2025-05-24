@@ -263,22 +263,24 @@ export class Inventory {
 
         let finalRevSpeed = this.player.modifiers.revolutionSpeed;
 
-        if (this.player.modifiers.controlRotation) {
-            // Use player's MOUSE direction to determine the angle
-            this.revolutionRadians = this.player.direction.mouseDirection;
-        } else {
-            const yyEffects = this.getYinYangEffects(this.player.modifiers.yinYangAmount);
+        if (!this.player.modifiers.shocked) {
+            if (this.player.modifiers.controlRotation) {
+                // Use player's MOUSE direction to determine the angle
+                this.revolutionRadians = this.player.direction.mouseDirection;
+            } else {
+                const yyEffects = this.getYinYangEffects(this.player.modifiers.yinYangAmount);
 
-            if (yyEffects === "rev") {
-                finalRevSpeed = -finalRevSpeed;
-            } else if (yyEffects === "stop") {
-                finalRevSpeed = 0;
-            } else if (typeof yyEffects === "number") {
-                // this will be either 8 or 9 or 10
-                finalRevSpeed *= (yyEffects / 4) ** 2;
-            } // no else: default return def = normal rotation, no actions taken
+                if (yyEffects === "rev") {
+                    finalRevSpeed = -finalRevSpeed;
+                } else if (yyEffects === "stop") {
+                    finalRevSpeed = 0;
+                } else if (typeof yyEffects === "number") {
+                    // this will be either 8 or 9 or 10
+                    finalRevSpeed *= (yyEffects / 4) ** 2;
+                } // no else: default return def = normal rotation, no actions taken
 
-            this.revolutionRadians += finalRevSpeed * this.game.dt;
+                this.revolutionRadians += finalRevSpeed * this.game.dt;
+            }
         }
 
         let revolutionRadians = this.revolutionRadians;

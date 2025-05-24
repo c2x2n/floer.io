@@ -663,6 +663,8 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
         now.leadMissiles = extra.leadMissiles || now.leadMissiles;
         now.aggroRange *= extra.aggroRange ?? 1;
         now.cursed = extra.cursed || now.cursed;
+        now.petalReloadTime *= extra.petalReloadTime ?? 1;
+        now.shocked = extra.shocked || now.shocked;
         return now;
     }
 

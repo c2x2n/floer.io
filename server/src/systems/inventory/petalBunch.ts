@@ -113,11 +113,13 @@ export class PetalBunch {
             }
         }
 
-        this.range = Numeric.targetEasing(
-            this.range,
-            target,
-            2
-        );
+        if (!this.player.modifiers.shocked) {
+            this.range = Numeric.targetEasing(
+                this.range,
+                target,
+                2
+            );
+        }
 
         const radius = this.range;
 
