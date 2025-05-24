@@ -23,6 +23,7 @@ export type PlayerModifiers = Modifiers & {
     aggroRange: number
     cursed: boolean
     petalReloadTime: number
+    shocked: boolean
 };
 
 export interface Modifiers {
