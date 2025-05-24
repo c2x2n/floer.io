@@ -716,7 +716,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 damage: 5,
                 health: 20,
                 despawnTime: 3,
-                speed: 8,
+                speed: 1.1,
                 definition: Projectiles.fromString("dandelion"),
                 effectsOnHit: {
                     modifier: {
@@ -794,7 +794,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 damage: 25,
                 health: 75,
                 despawnTime: 3,
-                speed: 7.25,
+                speed: 1,
                 definition: Projectiles.fromString("missile")
             }
         },
@@ -807,10 +807,10 @@ export const Petals = new Definitions<PetalDefinition>([
         usingAssets: "missile"
     },
     {
-        idString: "myt_big_missile",
+        idString: "myt_missile",
         displayName: "Missile",
         description: "You can actually shoot this quickly bigger one",
-        damage: 100,
+        damage: 50,
         health: 25,
         extendable: true,
         images: {
@@ -826,9 +826,9 @@ export const Petals = new Definitions<PetalDefinition>([
             shoot: {
                 hitboxRadius: 0.6,
                 damage: 50,
-                health: 20,
+                health: 25,
                 despawnTime: 10,
-                speed: 5,
+                speed: 1.7,
                 definition: Projectiles.fromString("myt_big_missile")
             }
         },
@@ -928,6 +928,37 @@ export const Petals = new Definitions<PetalDefinition>([
         pieceAmount: 3,
         rarity: RarityName.legendary,
         usingAssets: "cactus"
+    },
+    {
+        idString: "myt_cactus",
+        displayName: "Cactus",
+        fullName: "Overloaded Cactus",
+        description: "Not very strong, but somehow increases your maximum health",
+        damage: 5,
+        health: 15,
+        extendable: true,
+        usable: false,
+        images: {
+            slotDisplaySize: 68,
+            selfGameRotation: 18
+        },
+        wearerAttributes: {
+            maxHealth: 50,
+            bodyPoison: {
+                damagePerSecond: 15,
+                duration: 5
+            },
+            petalHealthScale: 2
+        },
+        poison: {
+            damagePerSecond: 10,
+            duration: 1
+        },
+        reloadTime: 1,
+        hitboxRadius: 0.7,
+        isDuplicate: false,
+        rarity: RarityName.mythic,
+        pieceAmount: 1
     },
     {
         idString: "salt",
@@ -1296,7 +1327,7 @@ export const Petals = new Definitions<PetalDefinition>([
                 hitboxRadius: 0.46,
                 despawnTime: 1.5,
                 poison: {
-                    damagePerSecond: 15,
+                    damagePerSecond: 12,
                     duration: 2
                 },
                 spawner: {
@@ -1307,11 +1338,11 @@ export const Petals = new Definitions<PetalDefinition>([
                         speed: 1,
                         damage: 5,
                         health: 5,
-                        hitboxRadius: 0.3,
+                        hitboxRadius: 0.35,
                         despawnTime: 4.5,
                         poison: {
-                            damagePerSecond: 15,
-                            duration: 2
+                            damagePerSecond: 10,
+                            duration: 1.5
                         }
                     }
                 }
@@ -2197,37 +2228,6 @@ export const Petals = new Definitions<PetalDefinition>([
             bodyDamageReduction: 0.5
         },
         rarity: RarityName.epic
-    },
-    {
-        idString: "myt_cactus",
-        displayName: "Cactus",
-        fullName: "Overloaded Cactus",
-        description: "Not very strong, but somehow increases your maximum health",
-        damage: 5,
-        health: 15,
-        extendable: true,
-        usable: false,
-        images: {
-            slotDisplaySize: 68,
-            selfGameRotation: 18
-        },
-        wearerAttributes: {
-            maxHealth: 50,
-            bodyPoison: {
-                damagePerSecond: 15,
-                duration: 5
-            },
-            petalHealthScale: 2
-        },
-        poison: {
-            damagePerSecond: 10,
-            duration: 0.6
-        },
-        reloadTime: 1,
-        hitboxRadius: 0.7,
-        isDuplicate: false,
-        rarity: RarityName.mythic,
-        pieceAmount: 1
     }
 ] satisfies PetalDefinition[]);
 
