@@ -37,4 +37,4 @@ jobs:
       run: pnpm build   
 
     - name: Check Eslints
-      run: lint:ci
+      run: pnpm lint:ci
