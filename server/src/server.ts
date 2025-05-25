@@ -7,7 +7,7 @@ import { config } from "dotenv";
 import { GameContainer, games } from "./gameContainer";
 config();
 
-const BUILD_VERSION = "0.3.0";
+const BUILD_VERSION = "0.3.1 TEST";
 
 export interface ProcessMessage {
     req: IncomingMessage

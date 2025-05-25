@@ -191,10 +191,11 @@ export class ServerMob extends ServerLivelyEntity<EntityType.Mob> {
     };
 
     destroy(illegal = false) {
+        if (this.destroyed) return;
+
         super.destroy();
 
         if (this.summonr && this.summonr instanceof ServerPlayer) return;
-        if (this.destroyed) return;
 
         if (!illegal) { // Drops
             const lootTable = this.definition.lootTable;
