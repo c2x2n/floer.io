@@ -66,21 +66,17 @@ export default class MobAI {
 
         const radius = this.aggroRadius ? this.aggroRadius : 30;
 
-        const aggroTx = new CircleHitbox(
-            radius * 2, this.mob.position
-        );
-
         const aggro = new CircleHitbox(
             radius, this.mob.position
         );
 
         const entities
-            = this.mob.game.grid.intersectsHitbox(aggroTx);
+            = this.mob.game.grid.intersectsHitbox(aggro);
 
         const aggroable = Array.from(entities)
             .filter(e => {
-                if (isPlayer(e) && e.modifiers.cursed) return aggroTx.collidesWith(e.hitbox); // Cursed players
-                return isLively(e) && aggro.collidesWith(e.hitbox);
+                // if (isPlayer(e) && e.modifiers.cursed) return aggroTx.collidesWith(e.hitbox); // Cursed players
+                return isLively(e);
             }) as ServerLivelyEntity[];
 
         this.targeted = null;
@@ -226,7 +222,7 @@ export default class MobAI {
             return;
         }
 
-        const target = this.getTargetAround();
+        const target = this.targeted;
         if (target) {
             this.state = AIState.GetTarget;
             this.reachTarget();
@@ -245,6 +241,8 @@ export default class MobAI {
                     this.walkingReload = 0;
                     this.walkingTime = 0;
                 }
+
+                if (this.autoFind) this.getTargetAround();
             }
         }
 
