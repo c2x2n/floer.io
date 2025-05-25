@@ -137,6 +137,7 @@ export type AttributeParameters = {
     readonly absorbing_heal?: number
     readonly absorbing_shield?: number
     readonly boost?: number
+    readonly moveBoost?: number
     readonly shoot?: ProjectileParameters
     readonly around_circle_shoot?: ProjectileParameters
     readonly peas_shoot?: {
@@ -656,7 +657,7 @@ export const PetalDefinitions = [
             slotDisplaySize: 45
         },
         attributes: {
-            boost: 7.5
+            boost: 0.3
         },
         reloadTime: 3.5,
         hitboxRadius: 0.5,
@@ -1073,12 +1074,12 @@ export const PetalDefinitions = [
         health: 1,
         extendable: false,
         usable: true,
-        useTime: 0.1,
+        useTime: 0,
         images: {
             slotDisplaySize: 45
         },
         attributes: {
-            boost: 5
+            moveBoost: 0.2
         },
         reloadTime: 1.4,
         hitboxRadius: 0.5,

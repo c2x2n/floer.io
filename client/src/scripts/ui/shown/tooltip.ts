@@ -155,6 +155,21 @@ const attributesShowingConfigs: { [K in AttributeNames]: AttributeShowingFunctio
                 }];
             }
         },
+        moveBoost: data => {
+            if (data > 0) {
+                return [{
+                    displayName: "Move Dynamic",
+                    value: data.toString(),
+                    color: "#58fd48"
+                }];
+            } else {
+                return [{
+                    displayName: "Knockback",
+                    value: Math.abs(data).toString(),
+                    color: "#ff9966"
+                }];
+            }
+        },
         shoot: () => [],
         peas_shoot: () => [],
         around_circle_shoot: () => [],

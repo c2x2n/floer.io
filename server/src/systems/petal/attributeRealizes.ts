@@ -77,6 +77,22 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
         }
     },
 
+    moveBoost: {
+        callback: (on, petal, data) => {
+            on(AttributeEvents.DEFEND,
+                () => {
+                    if (data) {
+                        const direction
+                            = petal.owner.direction.moveDirection;
+                        petal.owner.addAcceleration(
+                            UVector2D.fromPolar(direction, data * 10)
+                        );
+                    }
+                }
+                , PetalUsingAnimations.NORMAL);
+        }
+    },
+
     shoot: {
         callback: (on, petal, data) => {
             on(AttributeEvents.ATTACK, () => {
