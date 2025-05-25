@@ -11,10 +11,6 @@
         "dev:server": "cd server && pnpm dev"
     },
     "keywords": [],
-    "author": {
-        "name": "Leia",
-        "email": "leia@tutamail.com"
-    },
     "license": "GPL-3.0",
     "devDependencies": {
         "@eslint/js": "^9.23.0",
@@ -23,5 +19,9 @@
         "eslint": "^9.23.0",
         "typescript": "^5.8.2",
         "typescript-eslint": "^7.18.0"
-    }
+    },
+    "dependencies": {
+        "pnpm": "^10.11.0"
+    },
+    "packageManager": "pnpm@10.11.0"
 }

@@ -79,7 +79,7 @@ export default class MobAI {
                 if (e.team === this.mob.team) return false; // Not in the same team
                 if (e.parent) return false; // Must be not a child
                 if (!this.autoFind) { // Passive mobs.
-                    if (e instanceof ServerPlayer && e.modifiers.cursed) console.log("???"); // Only cursed players
+                    return (e instanceof ServerPlayer && e.modifiers.cursed) // Only cursed players
                 }
                 return true;
             }) as ServerLivelyEntity[];

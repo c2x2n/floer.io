@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      pnpm:
+        specifier: ^10.11.0
+        version: 10.11.0
     devDependencies:
       '@eslint/js':
         specifier: ^9.23.0
@@ -1563,6 +1567,11 @@ packages:
 
   pixi.js@8.4.1:
     resolution: {integrity: sha512-3ZbEIkLYYi602UB5wuN7kPz3VsGHoJa6nxD8ustvMLRySxHAR9Z8tCAYY8ISgNplpPbaDw03B0yTD4/k9f6cAQ==}
+
+  pnpm@10.11.0:
+    resolution: {integrity: sha512-ZUBYP0HMX2KOs9l3Ps7oAvT575kjzEW2mJD7R5kdSwkpZGlOw6T3OKQgyRijMwYsi5JdMS9C5PDCY+tgNVH5dw==}
+    engines: {node: '>=18.12'}
+    hasBin: true
 
   postcss@8.4.47:
     resolution: {integrity: sha512-56rxCq7G/XfB4EkXq9Egn5GCqugWvDFjafDOThIdMBsI15iqPqR5r15TfSr1YPYeEI19YeaXMCbY6u88Y76GLQ==}
@@ -3538,6 +3547,8 @@ snapshots:
       eventemitter3: 5.0.1
       ismobilejs: 1.1.1
       parse-svg-path: 0.1.2
+
+  pnpm@10.11.0: {}
 
   postcss@8.4.47:
     dependencies:

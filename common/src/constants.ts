@@ -76,7 +76,7 @@ export const GameConstants = Object.freeze({
             aggroRange: 1,
             cursed: false,
             petalReloadTime: 1,
-            shocked: true
+            shocked: false
         })
     },
     petal: {
