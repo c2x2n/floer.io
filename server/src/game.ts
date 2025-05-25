@@ -170,7 +170,13 @@ export class ServerGame {
         this.dt = (Date.now() - this.now) / 1000;
         this.now = Date.now();
 
+        this.grid.reset();
+
         const saved = new Set<ServerEntity>(this.grid.entities.values());
+
+        for (const entity of saved) {
+            this.grid.updateEntity(entity);
+        }
 
         for (const entity of saved) {
             entity.cachedCollisions.clear();

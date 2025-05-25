@@ -141,7 +141,7 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
             if (this.destroyed) return;
 
             this.setDirty();
-            this.game.grid.updateEntity(this);
+            // this.game.grid.updateEntity(this);
         }
     }
 
@@ -193,7 +193,7 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
         const collidedEntities = this.game.grid.intersectsHitbox(this.hitbox);
 
         for (const collidedEntity of collidedEntities) {
-            if (collidedEntity === this || !collidedEntity.isActive()) continue;
+            if (collidedEntity.id === this.id || !collidedEntity.isActive()) continue;
 
             const collision = collidedEntity.hitbox.getIntersection(this.hitbox);
 
