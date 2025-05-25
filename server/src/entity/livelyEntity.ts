@@ -10,6 +10,7 @@ import VectorAbstract from "../../../common/src/engine/physics/vectorAbstract";
 import { Damage, DamageType } from "../typings/damage";
 import { EffectsOnHitDataType, PoisonDataType } from "../../../common/src/typings/effect";
 import { Effect } from "../systems/effect/effect";
+import { isLively } from "../typings/entity";
 
 export default abstract class ServerLivelyEntity<T extends EntityType = EntityType> extends ServerEntity<T> {
     public absorbKnockback = 1;
@@ -89,7 +90,7 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
 
         const collisions = this.getCollisions();
         for (const collision of collisions) {
-            if (!((collision.entity) instanceof ServerLivelyEntity)) continue;
+            if (!isLively((collision.entity))) continue;
             if (collision.entity.dealtDamageTick.has(this) || this.dealtDamageTick.has(collision.entity)) continue;
 
             if (collision.entity.canReceiveDamageFrom(this)) {

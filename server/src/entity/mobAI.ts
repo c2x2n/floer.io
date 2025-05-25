@@ -5,7 +5,7 @@ import { CircleHitbox } from "../../../common/src/engine/physics/hitbox";
 import { Random } from "../../../common/src/engine/maths/random";
 import { Geometry } from "../../../common/src/engine/maths/geometry";
 import { UVector2D } from "../../../common/src/engine/physics/uvector";
-import { GameConstants } from "../../../common/src/constants";
+import { EntityType, GameConstants } from "../../../common/src/constants";
 import VectorAbstract from "../../../common/src/engine/physics/vectorAbstract";
 import { ProjectileParameters } from "../../../common/src/definitions/projectiles";
 import spawnProjectile from "./spawning/projectile";
@@ -13,6 +13,7 @@ import { ServerGame } from "../game";
 import { Numeric } from "../../../common/src/engine/maths/numeric";
 import Vector from "../../../common/src/engine/physics/vector";
 import { ServerPlayer } from "./serverPlayer";
+import { isLively, isPlayer } from "../typings/entity";
 
 export default class MobAI {
     public isEinstein: boolean;
@@ -61,52 +62,35 @@ export default class MobAI {
             return this.targeted?.isActive() ? this.targeted : this.targeted = null;
         }
         if (!this.canGetTarget) return null;
+        if (!this.autoFind) return null;
 
         const radius = this.aggroRadius ? this.aggroRadius : 30;
 
-        const aggro = new CircleHitbox(
+        const aggroTx = new CircleHitbox(
             radius * 2, this.mob.position
         );
 
+        const aggro = new CircleHitbox(
+            radius, this.mob.position
+        );
+
         const entities
-            = this.mob.game.grid.intersectsHitbox(aggro);
+            = this.mob.game.grid.intersectsHitbox(aggroTx);
 
         const aggroable = Array.from(entities)
             .filter(e => {
-                if (!aggro.collidesWith(e.hitbox)) return false; // Not in aggro radius
-                if (!(e instanceof ServerLivelyEntity)) return false; // Notable to aggro
-                if (!e.isActive()) return false; // Not active
-                if (e.team === this.mob.team) return false; // Not in the same team
-                if (e.parent) return false; // Must be not a child
-                if (!this.autoFind) { // Passive mobs.
-                    return (e instanceof ServerPlayer && e.modifiers.cursed); // Only cursed players
-                }
-                return true;
+                if (isPlayer(e) && e.modifiers.cursed) return aggroTx.collidesWith(e.hitbox); // Cursed players
+                return isLively(e) && aggro.collidesWith(e.hitbox);
             }) as ServerLivelyEntity[];
 
-        let closestEntity: ServerLivelyEntity | null = null;
-        let closestDistance = Infinity;
-
-        for (const entity of aggroable) {
-            const distance = UVector2D.distanceBetween(
-                aggro.position,
-                entity.position
-            );
-
-            if (entity instanceof ServerPlayer) {
-                if (distance > radius * entity.modifiers.aggroRange) continue; // Cursed players
-            } else {
-                if (distance > radius) continue;
+        this.targeted = null;
+        if (aggroable.length) {
+            const chosen = Random.pickRandomInArray(aggroable).getTopParent();
+            if (this.mob.canReceiveDamageFrom(chosen)) {
+                this.targeted = chosen;
             }
-
-            if (distance >= closestDistance) continue;
-
-            closestDistance = distance;
-            closestEntity = entity;
         }
-
-        this.targeted = closestEntity;
-        return closestEntity;
+        return this.targeted;
     }
 
     public wipe() {

@@ -97,6 +97,19 @@ export class ClientPetal extends ClientEntity {
         if (this.reloadAnimation) {
             this.reloadAnimation.update();
         } else {
+            const c = this.c;
+
+            const length
+                = UVector2D.distanceBetween(this.toCenterPosition, c);
+            const vector = Vector.fromPolar(Geometry.angleBetweenPoints(
+                c, this.toCenterPosition
+            ), length * 1.1);
+            const downer = Numeric.clamp(length, 0, 0.17) * Random.float(0.6, 1.2);
+
+            if (length > 0.1) {
+                this.velocity.add(vector.mul(downer));
+            }
+
             this.toCenterPosition.add(this.velocity);
 
             this.velocity.add(this.velocity.clone().mul(-0.12));
@@ -154,9 +167,11 @@ export class ClientPetal extends ClientEntity {
 
     ownerPosition: Vector = new Vector();
     toCenterPosition: Vector = new Vector();
+    c: Vector = new Vector();
 
     updateFromData(data: EntitiesNetData[EntityType.Petal], isNew: boolean): void {
         const c = UVector2D.div(data.position, 100);
+        this.c.set(c);
 
         if (data.full && isNew) {
             this.definition = data.full.definition;
@@ -169,16 +184,6 @@ export class ClientPetal extends ClientEntity {
             const owner = this.game.entityPool.get(this.ownerId);
             if (owner) this.ownerPosition.set(owner.position);
             this.toCenterPosition.set(c);
-        }
-        const length
-            = UVector2D.distanceBetween(this.toCenterPosition, c);
-        const vector = Vector.fromPolar(Geometry.angleBetweenPoints(
-            c, this.toCenterPosition
-        ), length * 1.1);
-        const downer = Numeric.clamp(length, 0, 0.17) * Random.float(0.6, 1.2);
-
-        if (length > 0.1) {
-            this.velocity.add(vector.mul(downer));
         }
 
         if (data.gotDamage) this.getDamageAnimation(true);
