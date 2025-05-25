@@ -1,4 +1,4 @@
-import { Rarity } from "../../../../../common/src/definitions/rarities";
+import { Rarity, RarityName } from "../../../../../common/src/definitions/rarities";
 import { AttributeNames, AttributeParameters, PetalDefinition, Petals } from "../../../../../common/src/definitions/petals";
 import { Modifiers, PlayerModifiers } from "../../../../../common/src/typings/modifier";
 import { renderPetal } from "../../inventory";
@@ -543,7 +543,7 @@ export function createMobTooltip(gallery: Gallery, definition: MobDefinition): J
 
     const sortedLootTable = Object.keys(definition.lootTable).sort(
         (a, b) =>
-            Rarity.fromString(Petals.fromString(a).rarity).level - Rarity.fromString(Petals.fromString(b).rarity).level
+            Rarity.fromString(Petals.fromStringSafe(a)?.rarity ?? RarityName.common).level - Rarity.fromString(Petals.fromStringSafe(b)?.rarity ?? RarityName.common).level
     );
 
     for (const lootTableKey of sortedLootTable) {
