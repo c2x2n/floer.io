@@ -35,3 +35,6 @@ jobs:
     - name: Build Server
       working-directory: ./server
       run: pnpm build   
+
+    - name: Check Eslints
+      run: pnpm lint:ci
