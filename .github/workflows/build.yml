@@ -22,10 +22,6 @@ jobs:
 
     - name: Install pnpm
       uses: pnpm/action-setup@v4.1.0
-      with:
-          node-version: 20
-          cache: 'pnpm'
-          cache-dependency-path: '**/pnpm-lock.yaml'
 
     - name: Install Packages
       run: pnpm install --frozen-lockfile     
