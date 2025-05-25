@@ -407,7 +407,7 @@ export const PetalDefinitions = [
             selfGameRotation: 18
         },
         wearerAttributes: {
-            petalReloadTime: 0.789
+            petalReloadTime: 0.5
         },
         reloadTime: 1,
         usable: false,
@@ -712,7 +712,8 @@ export const PetalDefinitions = [
     },
     {
         idString: "card",
-        displayName: "Joker",
+        displayName: "Card",
+        FullName: "Joker Card",
         description: "A joker card.",
         damage: 10,
         health: 10,
@@ -874,6 +875,7 @@ export const PetalDefinitions = [
     {
         idString: "myt_missile",
         displayName: "Missile",
+        fullName:"Mecha Missile",
         description: "You can actually shoot this quickly bigger one",
         damage: 50,
         health: 25,
@@ -933,7 +935,7 @@ export const PetalDefinitions = [
             selfGameRotation: 18
         },
         wearerAttributes: {
-            maxHealth: 30
+            maxHealth: 35
         },
         reloadTime: 1,
         hitboxRadius: 0.7,
@@ -958,7 +960,7 @@ export const PetalDefinitions = [
             duration: 0.6
         },
         wearerAttributes: {
-            maxHealth: 30,
+            maxHealth: 35,
             bodyPoison: {
                 damagePerSecond: 9,
                 duration: 4.5
@@ -983,7 +985,7 @@ export const PetalDefinitions = [
             selfGameRotation: 18
         },
         wearerAttributes: {
-            maxHealth: 27
+            maxHealth: 30
         },
         reloadTime: 1,
         hitboxRadius: 0.7,
