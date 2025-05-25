@@ -34,7 +34,7 @@ export class RenderContainer {
 
     radius = 0;
 
-    position: VectorAbstract = UVector2D["new"](0, 0);
+    position: VectorAbstract = UVector2D.new(0, 0);
     tint: Color = {
         r: 255,
         g: 255,

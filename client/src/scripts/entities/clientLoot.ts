@@ -65,7 +65,7 @@ export class ClientLoot extends ClientEntity {
 
         if (data.full && isNew) {
             this.definition = data.full.definition;
-            const targetRotation = Random["float"](0.1, -0.1);
+            const targetRotation = Random.float(0.1, -0.1);
 
             this.container.zIndex = -888;
 

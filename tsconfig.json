@@ -4,5 +4,7 @@
     "./common/tsconfig.json",
     "./server/tsconfig.json"
   ],
-  "include": ["**/*.ts"]
+  "include": [
+      "package.json"
+  ]
 }

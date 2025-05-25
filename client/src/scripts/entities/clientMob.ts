@@ -20,10 +20,6 @@ export class ClientMob extends ClientEntity {
 
     lastGettingDamage = 0;
 
-    constructor(game: Game, id: number) {
-        super(game, id);
-    }
-
     selfRotation = 0;
 
     render(dt: number): void {
@@ -221,6 +217,6 @@ export class ClientMob extends ClientEntity {
             super.destroy.bind(this)
         );
 
-        this.game.bossbar.bossbarDatas["delete"](this.id);
+        this.game.bossbar.bossbarDatas.delete(this.id);
     }
 }

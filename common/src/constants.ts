@@ -61,8 +61,10 @@ export const GameConstants = Object.freeze({
         defaultModifiers: (): PlayerModifiers => ({
             ...GameConstants.defaultModifiers(), // load from defaults
             maxHealth: 100,
+            maxHealthScale: 1,
             revolutionSpeed: 2.4,
             zoom: 45,
+            zoomScale: 1,
             extraDistance: 0,
             damageAvoidanceByDamage: false,
             yinYangAmount: 0,

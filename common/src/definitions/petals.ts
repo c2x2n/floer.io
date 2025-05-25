@@ -2,7 +2,7 @@ import { Definitions, ObjectDefinition } from "./definitions";
 import { RarityName } from "./rarities";
 import { Modifiers, PlayerModifiers } from "../typings/modifier";
 import { ProjectileParameters, Projectiles } from "./projectiles";
-import { MobCategory, MobDefinition, Mobs } from "./mobs";
+import { MobDefinition, Mobs } from "./mobs";
 import { EntityType } from "../constants";
 import { halfPI, P2, PI } from "../engine/maths/constants";
 import { EffectsOnHitDataType, PoisonDataType } from "../typings/effect";
@@ -99,8 +99,15 @@ export type PetalBehaviors = {
         readonly percent: number
         readonly from?: EntityType[]
     }
+    readonly ban_petal: {
+        readonly num: number
+        readonly duration: number
+    }
     readonly random: Array<{
-        readonly effect: EffectsOnHitDataType
+        readonly effect?: EffectsOnHitDataType
+        readonly poison?: PoisonDataType
+        readonly damage?: number
+        readonly weight: number
     }>
     readonly area_poison: {
         readonly radius: number
@@ -701,6 +708,31 @@ export const PetalDefinitions = [
         pieceAmount: 1,
         undroppable: true,
         rarity: RarityName.common
+    },
+    {
+        idString: "card",
+        displayName: "Joker",
+        description: "A joker card.",
+        damage: 10,
+        health: 10,
+        extendable: true,
+        usable: false,
+        behavior: {
+            name: "ban_petal",
+            data: {
+                num: 5,
+                duration: 5
+            }
+        },
+        images: {
+            slotDisplaySize: 60,
+            slotRotation: 0.2
+        },
+        reloadTime: 2.5,
+        hitboxRadius: 0.55,
+        isDuplicate: false,
+        pieceAmount: 1,
+        rarity: RarityName.mythic
     },
     {
         idString: "square",
@@ -1391,12 +1423,74 @@ export const PetalDefinitions = [
         idString: "myt_dice",
         displayName: "Omen",
         description: "Check your destiny. It's not that easy.",
-        damage: 24,
-        health: 64,
+        damage: 14,
+        health: 10,
         extendable: true,
         images: {
             slotDisplaySize: 55,
             selfGameRotation: 18
+        },
+        behavior: {
+            name: "random",
+            data: [{
+                poison: {
+                    damagePerSecond: 7,
+                    duration: 5
+                },
+                effect: {
+                    modifier: {
+                        healing: 0
+                    },
+                    duration: 10
+                },
+                weight: 20
+            }, {
+                effect: {
+                    modifier: {
+                        petalReloadTime: 2
+                    },
+                    duration: 15
+                },
+                weight: 15
+            }, {
+                effect: {
+                    modifier: {
+                        yinYangAmount: 1,
+                        revolutionSpeed: 0.5,
+                        speed: -1
+                    },
+                    duration: 3
+                },
+                weight: 25
+            }, {
+                effect: {
+                    modifier: {
+                        zoomScale: 0.5
+                    },
+                    duration: 7.5
+                },
+                weight: 15
+            }, {
+                effect: {
+                    modifier: {
+                        maxHealth: 0.5
+                    },
+                    duration: 7.5
+                },
+                weight: 15
+            }, {
+                effect: {
+                    modifier: {
+                        shocked: true,
+                        armor: -20
+                    },
+                    duration: 7.5
+                },
+                weight: 5
+            }, {
+                damage: 65535,
+                weight: 5
+            }]
         },
         reloadTime: 3,
         usable: false,

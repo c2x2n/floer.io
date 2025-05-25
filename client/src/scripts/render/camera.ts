@@ -7,7 +7,7 @@ import { Numeric } from "../../../../common/src/engine/maths/numeric";
 export class Camera {
     readonly game: Game;
 
-    position = UVector2D["new"](0, 0);
+    position = UVector2D.new(0, 0);
 
     screenWidth = 1;
     screenHeight = 1;
@@ -66,7 +66,7 @@ export class Camera {
     XOffset = 0;
     YOffset = 0;
 
-    cameraPosition: VectorAbstract = UVector2D["new"](0, 0);
+    cameraPosition: VectorAbstract = UVector2D.new(0, 0);
 
     render(): void {
         this.resize();

@@ -13,6 +13,8 @@ import { Geometry } from "../../../../common/src/engine/maths/geometry";
 import { Numeric } from "../../../../common/src/engine/maths/numeric";
 import { EasingFunctions } from "../../../../common/src/engine/maths/easing";
 import { EntitiesNetData } from "../../../../common/src/engine/net/entitySerializations";
+import Vector from "../../../../common/src/engine/physics/vector";
+import { Random } from "../../../../common/src/engine/maths/random";
 
 export class ClientPetal extends ClientEntity {
     type = EntityType.Petal;
@@ -26,7 +28,7 @@ export class ClientPetal extends ClientEntity {
 
     visible = true;
 
-    velocity: Velocity[] = [];
+    velocity: Velocity = new Velocity();
 
     render(dt: number) {
         super.render(dt);
@@ -95,31 +97,15 @@ export class ClientPetal extends ClientEntity {
         if (this.reloadAnimation) {
             this.reloadAnimation.update();
         } else {
-            // const newVelocity = this.velocity.concat([]);
-            //
-            // let position = Vec2.clone(this.toCenterPosition);
-            //
-            // for (const aVelocity of newVelocity) {
-            //     const index = newVelocity.indexOf(aVelocity);
-            //
-            //     position = Vec2.add(position, Vec2.mul(aVelocity.vector, this.game.dt))
-            //
-            //     aVelocity.vector = Vec2.mul(aVelocity.vector, aVelocity.downing);
-            //
-            //     if (Vec2.length(aVelocity.vector) < 1) {
-            //         newVelocity.splice(index, 1);
-            //     }
-            // }
-            //
-            // this.velocity = newVelocity;
-            // this.toCenterPosition = position;
-            //
+            this.toCenterPosition.add(this.velocity);
+
+            this.velocity.add(this.velocity.clone().mul(-0.12));
             if (owner) {
-                this.ownerPosition = UVector2D.targetEasing(
+                this.ownerPosition.set(UVector2D.targetEasing(
                     this.ownerPosition,
                     owner.position,
-                    6
-                );
+                    2.5
+                ));
             }
 
             this.position = UVector2D.add(this.toCenterPosition, this.ownerPosition);
@@ -166,11 +152,11 @@ export class ClientPetal extends ClientEntity {
         }
     }
 
-    ownerPosition: VectorAbstract = UVector2D.new(0, 0);
-    toCenterPosition: VectorAbstract = UVector2D.new(0, 0);
+    ownerPosition: Vector = new Vector();
+    toCenterPosition: Vector = new Vector();
 
     updateFromData(data: EntitiesNetData[EntityType.Petal], isNew: boolean): void {
-        this.toCenterPosition = UVector2D.div(data.position, 100);
+        const c = UVector2D.div(data.position, 100);
 
         if (data.full && isNew) {
             this.definition = data.full.definition;
@@ -181,22 +167,19 @@ export class ClientPetal extends ClientEntity {
             this.container.zIndex = 2;
             this.ownerId = data.full.ownerId;
             const owner = this.game.entityPool.get(this.ownerId);
-            if (owner) this.ownerPosition = owner.position;
+            if (owner) this.ownerPosition.set(owner.position);
+            this.toCenterPosition.set(c);
         }
-        // const length
-        //     = UVector2D.distanceBetween(this.toCenterPosition, data.position);
-        // const vector = UVector2D.mul(Geometry.directionBetweenPoints(
-        //     data.position, this.toCenterPosition
-        // ), length * 1.1);
-        //
-        // const downer = Numeric.clamp(length, 0, 0.64);
-        //
-        // if (length > 0.1) {
-        //     // this.velocity.push({
-        //     //     vector: Vec2.mul(vector, 1 / this.game.dt * downer),
-        //     //     downing: downer
-        //     // })
-        // }
+        const length
+            = UVector2D.distanceBetween(this.toCenterPosition, c);
+        const vector = Vector.fromPolar(Geometry.angleBetweenPoints(
+            c, this.toCenterPosition
+        ), length * 1.1);
+        const downer = Numeric.clamp(length, 0, 0.17) * Random.float(0.6, 1.2);
+
+        if (length > 0.1) {
+            this.velocity.add(vector.mul(downer));
+        }
 
         if (data.gotDamage) this.getDamageAnimation(true);
 

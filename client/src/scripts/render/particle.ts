@@ -85,7 +85,7 @@ function getMinMax(option: ParticleOption) {
     let start: number;
     let end: number;
     if ("min" in option) {
-        start = end = Random["float"](option.min, option.max);
+        start = end = Random.float(option.min, option.max);
     } else if ("start" in option && "end" in option) {
         start = option.start;
         end = option.end;
@@ -129,7 +129,7 @@ class Particle {
         if (typeof options.lifeTime === "number") {
             this.end = options.lifeTime;
         } else {
-            this.end = Random["float"](options.lifeTime.min, options.lifeTime.max);
+            this.end = Random.float(options.lifeTime.min, options.lifeTime.max);
         }
 
         this.data = {

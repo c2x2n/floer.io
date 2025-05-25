@@ -31,7 +31,6 @@ export function spawnMob(game: ServerGame, definition: MobDefinition, position: 
     return mob;
 }
 
-
 export function spawnSegmentMobs(game: ServerGame, definition: MobDefinition, head_position: VectorAbstract): ServerMob {
     const hitboxRadius = definition.hitboxRadius;
     let direction = Random.float(-P2, P2);

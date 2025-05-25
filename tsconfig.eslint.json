@@ -11,6 +11,7 @@
     "strict": true,
   },
   "include": [
+    "client/env.d.ts",
     "common/src/**/*.ts",
     "client/src/**/*.ts",
     "client/editor/src/**/*.ts",

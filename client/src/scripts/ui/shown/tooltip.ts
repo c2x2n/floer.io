@@ -419,7 +419,7 @@ export function createMobTooltip(gallery: Gallery, definition: MobDefinition): J
         addLine({
             startsWith: `${config.displayName
             }: `,
-            value: (config.startsWith ?? "" ) + value,
+            value: (config.startsWith ?? "") + value,
             endsWith: config.endsWith ?? "",
             color: config.color
         });

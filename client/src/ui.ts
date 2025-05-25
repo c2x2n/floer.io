@@ -494,7 +494,7 @@ export class UI {
 
         // Select a random entity from the appropriate array
         const petalType
-            = this.gallery.petalGallery[Random["int"](0, this.gallery.petalGallery.length - 1)];
+            = this.gallery.petalGallery[Random.int(0, this.gallery.petalGallery.length - 1)];
 
         const entity = $(`<div class="floating-entity
             petal-${petalType}-bkg"></div>`);
@@ -503,7 +503,7 @@ export class UI {
         const topPosition = Math.random() * 90 + 5;
 
         // Set random size (between 50px and 70px) mob is 1.5x
-        const size = Random["int"](25, 50) * 3;
+        const size = Random.int(25, 50) * 3;
 
         // Set random speed in seconds (between 8 and 12 seconds to cross the screen)
         const speed = Math.random() * 4 + 8;

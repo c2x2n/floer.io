@@ -31,4 +31,3 @@ export class PoisonEffect extends Effect {
         if (this.effectedTarget.state.poison === this) { this.effectedTarget.state.poison = undefined; }
     }
 }
-

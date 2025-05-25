@@ -175,6 +175,8 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
             bodyPoison: this.bodyPoison
         });
         this.otherModifiersOnTick = []; // clear all old
+        this.bodyPoison = modifiersNow.bodyPoison;
+
         this.modifiers = modifiersNow;
     }
 
@@ -234,7 +236,7 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
         this.dealCollisionDamage(entity);
 
         if (this.bodyPoison && this.bodyPoison.duration > 0) { // poison
-            entity.receivePoison(this,
+            entity.receivePoison(this.getTopParent(),
                 this.bodyPoison.damagePerSecond,
                 this.bodyPoison.duration
             );

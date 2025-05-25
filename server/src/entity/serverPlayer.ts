@@ -259,6 +259,12 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
             this.dirty.overleveled = true;
             this.overleveledTimeRemains -= this.game.dt;
             this.overleveled = this.overleveledTimeRemains <= 0;
+            if (this.overleveled) {
+                this.petalEntities.forEach(petal => {
+                    petal.banned = true;
+                    petal.bannedOutTime = 0.25;
+                });
+            }
         } else {
             this.overleveled = false;
             if (this.overleveledTimeRemains <= GameConstants.player.overleveledTime) {
@@ -648,8 +654,10 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
         now = { ...now, ...super.calcModifiers(now, extra) }; // use parent's calcModifiers first
 
         now.maxHealth += extra.maxHealth ?? 0;
+        now.maxHealthScale *= extra.maxHealthScale ?? 1;
         now.revolutionSpeed += extra.revolutionSpeed ?? 0;
         now.zoom += extra.zoom ?? 0;
+        now.zoomScale *= extra.zoomScale ?? 1;
         now.damageAvoidanceByDamage = extra.damageAvoidanceByDamage || now.damageAvoidanceByDamage;
         now.yinYangAmount += extra.yinYangAmount ?? 0;
         now.extraDistance += extra.extraDistance ?? 0;
@@ -701,11 +709,13 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
             speed: this.persistentSpeedModifier
         });
 
-        this.maxHealth = modifiersNow.maxHealth;
-        this.zoom = modifiersNow.zoom;
+        this.maxHealth = modifiersNow.maxHealth * modifiersNow.maxHealthScale;
+        this.zoom = modifiersNow.zoom * modifiersNow.zoomScale;
         this.inventory.changeSlotAmountTo(
             GameConstants.player.defaultSlot + this.levelInformation.extraSlot
         );
+
+        this.bodyPoison = modifiersNow.bodyPoison;
 
         this.modifiers = modifiersNow;
     }

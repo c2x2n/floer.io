@@ -8,4 +8,4 @@ export type PoisonDataType = {
 export type EffectsOnHitDataType = {
     modifier: Partial<PlayerModifiers>
     duration: number
-}
+};

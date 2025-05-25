@@ -60,6 +60,7 @@ export class ServerMob extends ServerLivelyEntity<EntityType.Mob> {
     }
 
     canCollideWith(entity: ServerEntity): boolean {
+        if (entity === this.summonr) return false;
         const rarity = Rarity.fromString(this.definition.rarity);
         if (entity instanceof ServerWall) return true;
         if (rarity.notCollideWithOther) return false;
@@ -192,6 +193,7 @@ export class ServerMob extends ServerLivelyEntity<EntityType.Mob> {
     destroy(illegal = false) {
         super.destroy();
 
+        if (this.summonr && this.summonr instanceof ServerPlayer) return;
         if (this.destroyed) return;
 
         if (!illegal) { // Drops
@@ -231,51 +233,5 @@ export class ServerMob extends ServerLivelyEntity<EntityType.Mob> {
 
         highestPlayer[0].collected.push(this.definition);
         highestPlayer[0].dirty.collect = true;
-    }
-}
-
-// Will be replaced soon. RIP.
-export class ServerFriendlyMob extends ServerMob {
-    // 表示是否是被玩家召唤的生物（true）还是自然生成的（false）
-    isSummoned = true;
-
-    canCollideWith(entity: ServerLivelyEntity): boolean {
-        if (entity instanceof ServerFriendlyMob) return true;
-        return this.owner.canReceiveDamageFrom(entity);
-    }
-
-    constructor(game: ServerGame
-        , public owner: ServerPlayer
-        , definition: MobDefinition
-        , isSummoned = true) {
-        super(game
-            , Random.pointInsideCircle(owner.position, 12)
-            , Geometry.radiansToDirection(owner.direction.moveDirection)
-            , definition
-        );
-        this.isSummoned = isSummoned;
-    }
-
-    gettingBackToOwner = false;
-
-    tick() {
-        const distanceToOwner = UVector2D.distanceBetween(this.position, this.owner.position);
-        if (distanceToOwner > Math.max(8 * this.definition.hitboxRadius, 25)) {
-            this.gettingBackToOwner = true;
-        }
-
-        if (this.gettingBackToOwner) {
-            this.direction
-                = Geometry.directionBetweenPoints(this.owner.position, this.position);
-            this.maintainAcceleration(Geometry.directionToRadians(this.direction), this.speed);
-            if (distanceToOwner < 3 * this.definition.hitboxRadius) { this.gettingBackToOwner = false; }
-        }
-
-        super.tick();
-    }
-
-    destroy() {
-        this.destroyed = true;
-        this.game.grid.remove(this);
     }
 }

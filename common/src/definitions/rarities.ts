@@ -13,7 +13,7 @@ export enum RarityName {
     ethereal = "ethereal",
     phantasmagoric = "phantasmagoric",
     arcane = "arcane",
-    empyrean = "Empyrean"
+    empyrean = "empyrean"
 }
 
 type RarityDefinition = ObjectDefinition & {
@@ -91,7 +91,7 @@ export const Rarity = new Definitions<RarityDefinition>(([
     },
     // dev rarities
     {
-        idString: RarityName["super"],
+        idString: RarityName.super,
         displayName: "Super",
         color: "#2bffa3",
         expWhenAbsorb: 25000,
@@ -148,3 +148,10 @@ export const Rarity = new Definitions<RarityDefinition>(([
     ...def,
     border: strokeColor(def.color)
 })) satisfies RarityDefinition[]);
+
+export function compareRarities(a: RarityName, b: RarityName): number {
+    const aLevel = Rarity.fromString(a);
+    const bLevel = Rarity.fromString(b);
+
+    return aLevel.level - bLevel.level;
+}

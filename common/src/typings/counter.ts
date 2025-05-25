@@ -4,4 +4,4 @@ export interface Counter {
 
 export const DefaultCounter: Counter = {
     missileCount: 0
-}
+};

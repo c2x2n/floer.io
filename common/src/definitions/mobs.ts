@@ -327,7 +327,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 2000,
         category: MobCategory.Passive,
         hitboxRadius: 5,
-        speed: 1,
+        speed: 0.7,
         images: {
             mouth: true,
             slotDisplaySize: 90,
@@ -357,7 +357,7 @@ export const Mobs = new Definitions<MobDefinition>([
             damage: 10,
             health: 10,
             despawnTime: 3,
-            speed: 1,
+            speed: 0.7,
             definition: Projectiles.fromString("missile")
         },
         movement: {
@@ -366,7 +366,7 @@ export const Mobs = new Definitions<MobDefinition>([
         shootSpeed: 1.5,
         aggroRadius: 30,
         hitboxRadius: 2,
-        speed: 1.3,
+        speed: 0.6,
         lootTable: {
             dandelion: 0.14,
             bubble: 0.02,
@@ -393,12 +393,12 @@ export const Mobs = new Definitions<MobDefinition>([
             damage: 20,
             health: 100,
             despawnTime: 3,
-            speed: 1.2,
+            speed: 0.9,
             definition: Projectiles.fromString("missile")
         },
         shootSpeed: 1.25,
         hitboxRadius: 5,
-        speed: 1.3,
+        speed: 0.8,
         lootTable: {
             dandelion: 1,
             bubble: 0.2,
@@ -430,7 +430,7 @@ export const Mobs = new Definitions<MobDefinition>([
             damage: 10,
             health: 10,
             despawnTime: 3,
-            speed: 1,
+            speed: 0.7,
             definition: Projectiles.fromString("peas"),
             effectsOnHit: {
                 modifier: {
@@ -466,7 +466,7 @@ export const Mobs = new Definitions<MobDefinition>([
             damage: 15,
             health: 30,
             despawnTime: 3,
-            speed: 2,
+            speed: 1,
             definition: Projectiles.fromString("peas"),
             effectsOnHit: {
                 modifier: {
@@ -477,7 +477,7 @@ export const Mobs = new Definitions<MobDefinition>([
         },
         shootSpeed: 1.3,
         hitboxRadius: 4,
-        speed: 0.9,
+        speed: 0.8,
         lootTable: {
             peas: 1,
             poison_peas: 1,
@@ -495,7 +495,7 @@ export const Mobs = new Definitions<MobDefinition>([
         category: MobCategory.Enemy,
         aggroRadius: 20,
         hitboxRadius: 1,
-        speed: 1,
+        speed: 0.7,
         images: {
             legs: true,
             slotDisplaySize: 50
@@ -518,7 +518,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 1050,
         category: MobCategory.Passive,
         hitboxRadius: 3,
-        speed: 1.2,
+        speed: 0.8,
         images: {
             legs: true,
             slotDisplaySize: 50
@@ -701,7 +701,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 10,
         health: 50,
         category: MobCategory.Unactive,
-        speed: 1.1,
+        speed: 0.9,
         hitboxRadius: 1.5,
         images: {
             slotDisplaySize: 80
@@ -724,7 +724,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 10,
         health: 50,
         category: MobCategory.Unactive,
-        speed: 1.1,
+        speed: 0.9,
         hitboxRadius: 1.5,
         hideInformation: true,
         images: {
@@ -794,7 +794,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 1500,
         category: MobCategory.Enemy,
         aggroRadius: 25,
-        speed: 1,
+        speed: 0.7,
         hitboxRadius: 2.2,
         images: {
             slotDisplaySize: 80
@@ -819,7 +819,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 500,
         category: MobCategory.Enemy,
         aggroRadius: 25,
-        speed: 1,
+        speed: 0.7,
         hitboxRadius: 2.2,
         hideInformation: true,
         images: {

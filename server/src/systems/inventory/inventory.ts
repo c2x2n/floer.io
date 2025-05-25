@@ -5,7 +5,7 @@ import { PetalDefinition, Petals, SavedPetalDefinitionData } from "../../../../c
 import { P2 } from "../../../../common/src/engine/maths/constants";
 import { GameConstants } from "../../../../common/src/constants";
 import { PetalEventManager } from "../petal/petalEvents";
-import { Rarity } from "../../../../common/src/definitions/rarities";
+import { compareRarities, Rarity } from "../../../../common/src/definitions/rarities";
 import { Random } from "../../../../common/src/engine/maths/random";
 import VectorAbstract from "../../../../common/src/engine/physics/vectorAbstract";
 
@@ -243,7 +243,7 @@ export class Inventory {
         }
 
         droppedPetals = droppedPetals.concat(fullDroppable.sort((a, b) => {
-            return Rarity.fromString(b.item.rarity).level - Rarity.fromString(a.item.rarity).level;
+            return compareRarities(b.item.rarity, a.item.rarity);
         }).splice(0, amount));
 
         droppedPetals.forEach(e => {

@@ -100,4 +100,3 @@ export class InputPacket implements Packet {
         });
     }
 }
-

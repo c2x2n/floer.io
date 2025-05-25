@@ -114,6 +114,10 @@ export class ServerPetal extends ServerLivelyEntity<EntityType.Petal> {
         }
     }
 
+    banned = false;
+    bannedOutTime = 0;
+    bannedReload = 0;
+
     join(): void {
         this.game.grid.addEntity(this);
         this.isReloading = true;
@@ -122,10 +126,18 @@ export class ServerPetal extends ServerLivelyEntity<EntityType.Petal> {
     tick(): void {
         super.tick();
 
-        if (this.owner.overleveled || this.owner.spectatorMode) {
+        if (this.banned) {
+            this.reloadTime = 0;
             this.isReloading = true;
             this.isLoadingFirstTime = true;
             this.spawned?.destroy();
+
+            this.bannedReload += this.game.dt;
+            if (this.bannedOutTime > 0 && this.bannedReload >= this.bannedOutTime) {
+                this.banned = false;
+                this.bannedReload = 0;
+                this.bannedOutTime = 0;
+            }
             return;
         }
 
@@ -143,13 +155,8 @@ export class ServerPetal extends ServerLivelyEntity<EntityType.Petal> {
                 if (this.isUsing === PetalUsingAnimations.ABSORB) {
                     this.position = this.owner.position.clone();
                 } else if (this.isUsing === PetalUsingAnimations.HATCH) {
-                    const isSandstorm = this.definition.attributes?.spawner?.idString === "sandstorm";
-
-                    if (isSandstorm) {
-                        this.isUsing = undefined;
-                        this.useReload = 0;
-                        this.hidden = false;
-                    } else if (!this.spawned || this.spawned.destroyed) {
+                    this.hidden = true;
+                    if (!this.spawned || this.spawned.destroyed) {
                         this.isReloading = true;
                         this.isUsing = undefined;
                         this.useReload = 0;
@@ -223,7 +230,7 @@ export class ServerPetal extends ServerLivelyEntity<EntityType.Petal> {
     get data(): Required<EntitiesNetData[EntityType.Petal]> {
         const data = {
             position: UVector2D.mul(UVector2D.sub(this.position, this.owner.position), 100),
-            isReloading: this.isReloading,
+            isReloading: this.isReloading || this.hidden,
             gotDamage: this.gotDamage,
             full: {
                 definition: this.definition,

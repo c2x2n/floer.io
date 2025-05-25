@@ -10,6 +10,7 @@ import AreaPoisonPetal from "../behaviors/petals/areaPoison";
 import DamageHealPetal from "../behaviors/petals/damageHeal";
 import LightningPetal from "../behaviors/petals/lightning";
 import MakeBleedingPetal from "../behaviors/petals/bleeding";
+import BanPetalPetal from "../behaviors/petals/banPetal";
 
 export const petalBehaviorMapped: { [K in keyof PetalBehaviors]: typeof BasicHasBehaviorPetal<K> } = {
     self_damage: SelfDamagePetal,
@@ -21,5 +22,6 @@ export const petalBehaviorMapped: { [K in keyof PetalBehaviors]: typeof BasicHas
     area_poison: AreaPoisonPetal,
     damage_heal: DamageHealPetal,
     lightning: LightningPetal,
-    bleeding: MakeBleedingPetal
+    bleeding: MakeBleedingPetal,
+    ban_petal: BanPetalPetal
 };

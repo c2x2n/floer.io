@@ -3,8 +3,10 @@ import { PoisonDataType } from "./effect";
 export type PlayerModifiers = Modifiers & {
     healing: number
     maxHealth: number
+    maxHealthScale: number
     revolutionSpeed: number
     zoom: number
+    zoomScale: number
     damageAvoidanceByDamage: boolean
     yinYangAmount: number
     revive?: {

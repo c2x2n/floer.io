@@ -79,7 +79,7 @@ export default class MobAI {
                 if (e.team === this.mob.team) return false; // Not in the same team
                 if (e.parent) return false; // Must be not a child
                 if (!this.autoFind) { // Passive mobs.
-                    return (e instanceof ServerPlayer && e.modifiers.cursed) // Only cursed players
+                    return (e instanceof ServerPlayer && e.modifiers.cursed); // Only cursed players
                 }
                 return true;
             }) as ServerLivelyEntity[];
@@ -222,6 +222,23 @@ export default class MobAI {
 
         if (this.state === AIState.Backing) {
             this.targeted = null;
+            if (!this.mob.summonr || this.mob.summonr.destroyed) {
+                this.state = AIState.Idle;
+                this.mob.summonr = undefined;
+                return;
+            }
+
+            this.mob.direction
+                = Geometry.directionBetweenPoints(this.mob.summonr.position, this.mob.position);
+            this.move();
+
+            const distance = UVector2D.distanceBetween(
+                this.mob.position,
+                this.mob.summonr.position
+            );
+
+            if (distance < 3 * this.definition.hitboxRadius) this.state = AIState.Idle;
+
             return;
         }
 
@@ -244,6 +261,17 @@ export default class MobAI {
                     this.walkingReload = 0;
                     this.walkingTime = 0;
                 }
+            }
+        }
+
+        if (this.mob.summonr) {
+            const distance = UVector2D.distanceBetween(
+                this.mob.position,
+                this.mob.summonr.position
+            );
+
+            if (distance > Math.max(8 * this.definition.hitboxRadius, 25)) {
+                this.mob.ai.state = AIState.Backing;
             }
         }
     }

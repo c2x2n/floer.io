@@ -5,7 +5,7 @@ import { AttributeNames, AttributeParameters } from "../../../../common/src/defi
 import { EventInitializer } from "./petalEvents";
 import { EntityType } from "../../../../common/src/constants";
 import { ServerPlayer } from "../../entity/serverPlayer";
-import { ServerFriendlyMob, ServerMob } from "../../entity/serverMob";
+import { ServerMob } from "../../entity/serverMob";
 import { ServerProjectile } from "../../entity/serverProjectile";
 import { Geometry } from "../../../../common/src/engine/maths/geometry";
 import { Effect } from "../effect/effect";
@@ -158,23 +158,13 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
             on(AttributeEvents.USABLE, () => {
                 if (!data) return;
 
-                const isSandstorm = data.idString === "sandstorm";
+                petal.spawned = new ServerMob(petal.game,
+                    petal.position,
+                    Geometry.radiansToDirection(petal.owner.direction.moveDirection),
+                    data
+                );
 
-                let spawnedMob: ServerFriendlyMob;
-
-                if (isSandstorm) {
-                    spawnedMob = new ServerFriendlyMob(petal.game, petal.owner, data, true);
-                    if (data.despawnTime) {
-                        const despawnTime = data.despawnTime * 1000;
-                        setTimeout(() => {
-                            if (!spawnedMob.destroyed) {
-                                spawnedMob.destroy();
-                            }
-                        }, despawnTime);
-                    }
-                } else {
-                    petal.spawned = new ServerFriendlyMob(petal.game, petal.owner, data, true);
-                }
+                petal.spawned.setSummonr(petal.owner);
             }, PetalUsingAnimations.HATCH);
         }
     }

@@ -200,19 +200,19 @@ export class Leaderboard {
         this.positionY = positionY;
 
         this.buttonHbx = new RectHitbox(
-            UVector2D["new"](
+            UVector2D.new(
                 this.game.screenWidth - 60, 10
             ),
-            UVector2D["new"](
+            UVector2D.new(
                 this.game.screenWidth - 20, 30
             )
         );
 
         this.leaderboardHbx = new RectHitbox(
-            UVector2D["new"](
+            UVector2D.new(
                 this.positionX, this.positionY
             ),
-            UVector2D["new"](
+            UVector2D.new(
                 this.positionX + this.width, this.positionY + this.height
             )
         );

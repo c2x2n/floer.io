@@ -2,7 +2,7 @@ import { PetalDefinition, type PetalBehaviors } from "../../../../../common/src/
 import { ServerPetal } from "../../serverPetal";
 import { PetalBunch } from "../../../systems/inventory/petalBunch";
 
-export default class BasicHasBehaviorPetal<K extends keyof PetalBehaviors> extends ServerPetal{
+export default class BasicHasBehaviorPetal<K extends keyof PetalBehaviors> extends ServerPetal {
     protected behaviorData: PetalBehaviors[K];
 
     constructor(petalBunch: PetalBunch, definition: PetalDefinition) {
