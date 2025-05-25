@@ -26,7 +26,7 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
     public destroyed = false;
 
     public readonly abstract hitbox: Hitbox;
-    public readonly effects = new EffectManager(this);
+    public readonly effects: EffectManager = new EffectManager(this);
 
     public partialStream!: GameBitStream;
     public fullStream!: GameBitStream;
