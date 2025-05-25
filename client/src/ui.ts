@@ -11,7 +11,7 @@ import { Gallery } from "./scripts/gallery";
 import { Config } from "./config";
 import { Numeric } from "../../common/src/engine/maths/numeric";
 
-const version = "0.3.0";
+const version = "0.3.1 TEST";
 
 export function getVersion() {
     return `v${version}`;
