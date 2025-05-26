@@ -23,7 +23,7 @@ export class ZonesManager {
     }
 }
 
-const lagDowner = 1;
+const lagDowner = 2;
 
 export class Zone {
     public hitbox: RectHitbox;

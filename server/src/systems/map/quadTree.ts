@@ -1,3 +1,5 @@
+// From diepcustom
+
 /*
     DiepCustom - custom tank game server that shares diep.io's WebSocket protocol
     Copyright (C) 2022 ABCxFF (github.com/ABCxFF)
@@ -15,10 +17,6 @@
     You should have received a copy of the GNU Affero General Public License
     along with this program. If not, see <https://www.gnu.org/licenses/>
 */
-
-/**
- * UNDOCUMENTED FILE
- **/
 
 import { ServerEntity } from "../../entity/serverEntity";
 import { Hitbox, HitboxType } from "../../../../common/src/engine/physics/hitbox";
@@ -168,19 +166,30 @@ class QuadTreeNode<T> {
     }
 }
 
-export default class DiepQuadTree extends QuadTreeNode<ServerEntity> {
+export default class SQuadTree extends QuadTreeNode<ServerEntity> {
     public constructor(radiW: number, radiH: number) {
         super(0, 0, radiW, radiH, 0);
     }
 
     public insertEntity(entity: ServerEntity) {
-        this._insert({
-            content: entity,
-            x: entity.position.x,
-            y: entity.position.y,
-            radiW: entity.hitbox.type === HitboxType.Circle ? entity.hitbox.radius : (entity.hitbox.max.x - entity.hitbox.min.x) / 2,
-            radiH: entity.hitbox.type === HitboxType.Circle ? entity.hitbox.radius : (entity.hitbox.max.y - entity.hitbox.min.y) / 2
-        });
+        const hitbox = entity.hitbox;
+        if (hitbox.type === HitboxType.Circle) {
+            this._insert({
+                content: entity,
+                x: hitbox.position.x,
+                y: hitbox.position.y,
+                radiW: hitbox.radius,
+                radiH: hitbox.radius
+            });
+        } else {
+            this._insert({
+                content: entity,
+                x: hitbox.min.x + (hitbox.max.x - hitbox.min.x) / 2,
+                y: hitbox.min.y + (hitbox.max.y - hitbox.min.y) / 2,
+                radiW: (hitbox.max.x - hitbox.min.x) / 2,
+                radiH: (hitbox.max.y - hitbox.min.y) / 2
+            });
+        }
     }
 
     public retrieve(x: number, y: number, radiW: number, radiH: number): ServerEntity[] {
@@ -195,17 +204,17 @@ export default class DiepQuadTree extends QuadTreeNode<ServerEntity> {
         return entities;
     }
 
-    public retrieveEntitiesByHb(entity: Hitbox): ServerEntity[] {
-        if (entity.type === HitboxType.Circle) {
-            return this.retrieve(entity.position.x,
-                entity.position.y,
-                entity.radius,
-                entity.radius);
+    public retrieveEntitiesByHb(hitbox: Hitbox): ServerEntity[] {
+        if (hitbox.type === HitboxType.Circle) {
+            return this.retrieve(hitbox.position.x,
+                hitbox.position.y,
+                hitbox.radius,
+                hitbox.radius);
         } else {
-            return this.retrieve(entity.min.x + (entity.max.x - entity.min.x) / 2,
-                entity.min.y + (entity.max.y - entity.min.y) / 2,
-                (entity.max.x - entity.min.x) / 2,
-                (entity.max.y - entity.min.y) / 2);
+            return this.retrieve(hitbox.min.x + (hitbox.max.x - hitbox.min.x) / 2,
+                hitbox.min.y + (hitbox.max.y - hitbox.min.y) / 2,
+                (hitbox.max.x - hitbox.min.x) / 2,
+                (hitbox.max.y - hitbox.min.y) / 2);
         }
     }
 

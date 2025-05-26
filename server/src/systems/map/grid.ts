@@ -10,7 +10,7 @@ import { ServerProjectile } from "../../entity/serverProjectile";
 import { ServerWall } from "../../entity/serverWall";
 import VectorAbstract from "../../../../common/src/engine/physics/vectorAbstract";
 import { Numeric } from "../../../../common/src/engine/maths/numeric";
-import DiepQuadTree from "./quadTree";
+import SQuadTree from "./quadTree";
 
 /**
  * A Grid to filter collision detection of game entities
@@ -26,7 +26,7 @@ export class Grid {
     //                      __^__ __^__     ___^__
     // private readonly _grid: Array<Array<Map<number, ServerEntity>>>;
 
-    public quadTree = new DiepQuadTree(0, 0);
+    public quadTree = new SQuadTree(0, 0);
 
     // store the cells each entity is occupying
     // so removing the entity from the grid is faster

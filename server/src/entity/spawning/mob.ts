@@ -45,7 +45,7 @@ export function spawnSegmentMobs(game: ServerGame, definition: MobDefinition, he
     if (!definition.hasSegments) return last;
 
     let segmentCount = definition.segmentAmount;
-    if (Random.float(0, 1) < 0.01) segmentCount = 100;
+    if (Random.float(0, 1) < 0.001) segmentCount = 50;
 
     const head = last;
 
