@@ -20,17 +20,7 @@ import SQuadTree from "./quadTree";
 export class Grid {
     readonly width: number;
     readonly height: number;
-    readonly cellSize = 16;
-
-    //                        X     Y     Entity ID
-    //                      __^__ __^__     ___^__
-    // private readonly _grid: Array<Array<Map<number, ServerEntity>>>;
-
     public quadTree = new SQuadTree(0, 0);
-
-    // store the cells each entity is occupying
-    // so removing the entity from the grid is faster
-    private readonly _entitiesCells = new Map<number, VectorAbstract[]>();
 
     readonly entities = new Map<number, ServerEntity>();
 

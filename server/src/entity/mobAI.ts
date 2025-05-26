@@ -11,8 +11,6 @@ import { ProjectileParameters } from "../../../common/src/definitions/projectile
 import spawnProjectile from "./spawning/projectile";
 import { ServerGame } from "../game";
 import { Numeric } from "../../../common/src/engine/maths/numeric";
-import Vector from "../../../common/src/engine/physics/vector";
-import { ServerPlayer } from "./serverPlayer";
 import { isLively, isPlayer } from "../typings/entity";
 
 export default class MobAI {
@@ -62,7 +60,6 @@ export default class MobAI {
             return this.targeted?.isActive() ? this.targeted : this.targeted = null;
         }
         if (!this.canGetTarget) return null;
-        if (!this.autoFind) return null;
 
         const radius = this.aggroRadius ? this.aggroRadius : 30;
 
@@ -73,18 +70,27 @@ export default class MobAI {
         const entities
             = this.mob.game.grid.intersectsHitbox(aggro);
 
-        const aggroable = Array.from(entities)
+        const aggroableNormalEntity = Array.from(entities)
             .filter(e => {
-                // if (isPlayer(e) && e.modifiers.cursed) return aggroTx.collidesWith(e.hitbox); // Cursed players
+                if (isPlayer(e)) return false;
                 return isLively(e);
             }) as ServerLivelyEntity[];
 
+        const players
+            = this.mob.game.grid.byCategory[EntityType.Player];
+
+        const aggroablePlayerEntity = Array.from(players)
+            .filter(e => {
+                const distance = UVector2D.distanceBetween(this.mob.position, e.position);
+                return distance <= radius * e.modifiers.aggroRange;
+            });
+
+        const aggroableEntities = aggroableNormalEntity.concat(aggroablePlayerEntity);
+
         this.targeted = null;
-        if (aggroable.length) {
-            const chosen = Random.pickRandomInArray(aggroable).getTopParent();
-            if (this.mob.canReceiveDamageFrom(chosen)) {
-                this.targeted = chosen;
-            }
+        if (aggroableEntities.length) {
+            const chosen = Random.pickRandomInArray(aggroableEntities).getTopParent();
+            if (this.mob.canReceiveDamageFrom(chosen)) this.targeted = chosen;
         }
         return this.targeted;
     }
@@ -222,7 +228,7 @@ export default class MobAI {
             return;
         }
 
-        const target = this.targeted;
+        const target = this.getTargetAround();
         if (target) {
             this.state = AIState.GetTarget;
             this.reachTarget();
@@ -241,8 +247,6 @@ export default class MobAI {
                     this.walkingReload = 0;
                     this.walkingTime = 0;
                 }
-
-                if (this.autoFind) this.getTargetAround();
             }
         }
 

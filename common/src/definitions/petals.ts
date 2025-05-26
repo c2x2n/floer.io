@@ -781,7 +781,7 @@ export const PetalDefinitions = [
                 damage: 5,
                 health: 20,
                 despawnTime: 3,
-                speed: 1.1,
+                speed: 0.8,
                 definition: Projectiles.fromString("dandelion"),
                 effectsOnHit: {
                     modifier: {
@@ -823,7 +823,7 @@ export const PetalDefinitions = [
                 damage: 40,
                 health: 10,
                 despawnTime: 3,
-                speed: 1,
+                speed: 0.8,
                 definition: Projectiles.fromString("missile")
             }
         },
@@ -859,7 +859,7 @@ export const PetalDefinitions = [
                 damage: 25,
                 health: 75,
                 despawnTime: 3,
-                speed: 1,
+                speed: 0.8,
                 definition: Projectiles.fromString("missile")
             }
         },
@@ -893,7 +893,7 @@ export const PetalDefinitions = [
                 damage: 50,
                 health: 25,
                 despawnTime: 10,
-                speed: 1.7,
+                speed: 1,
                 definition: Projectiles.fromString("myt_big_missile")
             }
         },
@@ -1222,7 +1222,7 @@ export const PetalDefinitions = [
                 amount: 4,
                 parameters: {
                     definition: Projectiles.fromString("peas"),
-                    speed: 6.25,
+                    speed: 0.5,
                     damage: 8,
                     health: 5,
                     hitboxRadius: 0.35,
@@ -1260,7 +1260,7 @@ export const PetalDefinitions = [
                 amount: 4,
                 parameters: {
                     definition: Projectiles.fromString("poison_peas"),
-                    speed: 6.25,
+                    speed: 0.8,
                     damage: 8,
                     health: 5,
                     hitboxRadius: 0.35,
@@ -1302,7 +1302,7 @@ export const PetalDefinitions = [
                 amount: 4,
                 parameters: {
                     definition: Projectiles.fromString("poison_peas"),
-                    speed: 6.25,
+                    speed: 0.8,
                     damage: 10,
                     health: 5,
                     hitboxRadius: 0.46,

@@ -1,4 +1,4 @@
-// From diepcustom
+// From diepcustom. Thanks to ABCxFF for the original code!
 
 /*
     DiepCustom - custom tank game server that shares diep.io's WebSocket protocol
@@ -20,6 +20,7 @@
 
 import { ServerEntity } from "../../entity/serverEntity";
 import { Hitbox, HitboxType } from "../../../../common/src/engine/physics/hitbox";
+import { ServerPetal } from "../../entity/serverPetal";
 
 interface Range<T> {
     x: number
@@ -198,7 +199,7 @@ export default class SQuadTree extends QuadTreeNode<ServerEntity> {
         const entities: ServerEntity[] = [];
 
         for (let i = 0; i < ranges.length; ++i) {
-            if (ranges[i].content.isActive() && !entities.includes(ranges[i].content)) entities.push(ranges[i].content);
+            if (!entities.includes(ranges[i].content)) entities.push(ranges[i].content);
         }
 
         return entities;

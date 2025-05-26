@@ -150,10 +150,10 @@ export class ServerPetal extends ServerLivelyEntity<EntityType.Petal> {
                     this.isReloading = false;
                 }
                 this.reloadTime += this.game.dt;
-                this.position = this.owner.position.clone();
+                this.position.set(this.owner.position);
             } else if (this.isUsing) {
                 if (this.isUsing === PetalUsingAnimations.ABSORB) {
-                    this.position = this.owner.position.clone();
+                    this.position.set(this.owner.position);
                 } else if (this.isUsing === PetalUsingAnimations.HATCH) {
                     this.hidden = true;
                     if (!this.spawned || this.spawned.destroyed) {
