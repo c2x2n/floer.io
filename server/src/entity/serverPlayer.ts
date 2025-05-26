@@ -653,6 +653,15 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
     protected override calcModifiers(now: PlayerModifiers, extra: Partial<PlayerModifiers>): PlayerModifiers {
         now = { ...now, ...super.calcModifiers(now, extra) }; // use parent's calcModifiers first
 
+        if (extra.bodyPoison && extra.bodyPoison.duration > 0) {
+            if (
+                extra.bodyPoison.duration * extra.bodyPoison.damagePerSecond
+                > now.bodyPoison.duration * now.bodyPoison.damagePerSecond
+            ) {
+                now.bodyPoison = extra.bodyPoison;
+            }
+        }
+
         now.maxHealth += extra.maxHealth ?? 0;
         now.maxHealthScale *= extra.maxHealthScale ?? 1;
         now.revolutionSpeed += extra.revolutionSpeed ?? 0;
@@ -687,9 +696,6 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
         this.otherModifiersOnTick.forEach(effect => {
             modifiersNow = this.calcModifiers(modifiersNow, effect);
         });
-        modifiersNow = this.calcModifiers(modifiersNow, {
-            bodyPoison: this.bodyPoison
-        });
         this.otherModifiersOnTick = []; // clear all old
 
         for (const petal of this.petalEntities) {
@@ -714,7 +720,6 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
         this.inventory.changeSlotAmountTo(
             GameConstants.player.defaultSlot + this.levelInformation.extraSlot
         );
-
         this.bodyPoison = modifiersNow.bodyPoison;
 
         this.modifiers = modifiersNow;

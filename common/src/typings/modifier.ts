@@ -26,6 +26,7 @@ export type PlayerModifiers = Modifiers & {
     cursed: boolean
     petalReloadTime: number
     shocked: boolean
+    bodyPoison: PoisonDataType
 };
 
 export interface Modifiers {
@@ -35,5 +36,4 @@ export interface Modifiers {
     armor: number
     damageReceiveChance: number
     damageReflection: number
-    bodyPoison: PoisonDataType
 }

@@ -151,15 +151,6 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
         now.healing *= extra.healing ?? 1;
         now.armor += extra.armor ?? 0;
 
-        if (extra.bodyPoison && extra.bodyPoison.duration > 0) {
-            if (
-                extra.bodyPoison.duration * extra.bodyPoison.damagePerSecond
-                > now.bodyPoison.duration * now.bodyPoison.damagePerSecond
-            ) {
-                now.bodyPoison = extra.bodyPoison;
-            }
-        }
-
         return now;
     }
 
@@ -172,11 +163,7 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
         this.otherModifiersOnTick.forEach(effect => {
             modifiersNow = this.calcModifiers(modifiersNow, effect);
         });
-        modifiersNow = this.calcModifiers(modifiersNow, {
-            bodyPoison: this.bodyPoison
-        });
         this.otherModifiersOnTick = []; // clear all old
-        this.bodyPoison = modifiersNow.bodyPoison;
 
         this.modifiers = modifiersNow;
     }

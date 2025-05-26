@@ -32,11 +32,7 @@ export const GameConstants = Object.freeze({
         healing: 1,
         damageReceiveChance: 1,
         damageReflection: 0,
-        armor: 0,
-        bodyPoison: {
-            damagePerSecond: 0,
-            duration: 0
-        }
+        armor: 0
     }),
     maxPosition: 4096,
     player: {
@@ -78,7 +74,11 @@ export const GameConstants = Object.freeze({
             aggroRange: 1,
             cursed: false,
             petalReloadTime: 1,
-            shocked: false
+            shocked: false,
+            bodyPoison: {
+                damagePerSecond: 0,
+                duration: 0
+            }
         })
     },
     petal: {
