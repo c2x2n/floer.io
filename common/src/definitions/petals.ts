@@ -220,7 +220,7 @@ export const PetalDefinitions = [
         health: 15,
         swinging: {
             time: 0.5,
-            distance: 2.6
+            distance: 4.8
         },
         images: {
             slotDisplaySize: 60,
@@ -229,7 +229,7 @@ export const PetalDefinitions = [
         extendable: true,
         reloadTime: 1.25,
         usable: false,
-        hitboxRadius: 0.6,
+        hitboxRadius: 0.75,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.rare
@@ -239,11 +239,11 @@ export const PetalDefinitions = [
         fullName: "Dark Wing",
         displayName: "Wing",
         description: "It hurts and curses.",
-        damage: 25,
-        health: 20,
+        damage: 20,
+        health: 15,
         swinging: {
             time: 0.5,
-            distance: 2.6
+            distance: 4.8
         },
         images: {
             slotDisplaySize: 70,
@@ -257,10 +257,9 @@ export const PetalDefinitions = [
             duration: 6.66
         },
         extendable: true,
-        moreExtendDistance: 2,
         reloadTime: 1.25,
         usable: false,
-        hitboxRadius: 0.5,
+        hitboxRadius: 0.75,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.mythic
@@ -307,7 +306,7 @@ export const PetalDefinitions = [
         health: 15,
         swinging: {
             time: 0.25,
-            distance: 2.6
+            distance: 4.8
         },
         extendable: true,
         reloadTime: 1.25,
@@ -319,7 +318,7 @@ export const PetalDefinitions = [
             revolutionSpeed: 1.25
         },
         usable: false,
-        hitboxRadius: 0.6,
+        hitboxRadius: 0.75,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.legendary
@@ -407,7 +406,7 @@ export const PetalDefinitions = [
             selfGameRotation: 18
         },
         wearerAttributes: {
-            petalReloadTime: 0.789
+            petalReloadTime: 0.5
         },
         reloadTime: 1,
         usable: false,
@@ -712,7 +711,8 @@ export const PetalDefinitions = [
     },
     {
         idString: "card",
-        displayName: "Joker",
+        displayName: "Card",
+        fullName: "Joker Card",
         description: "A joker card.",
         damage: 10,
         health: 10,
@@ -781,7 +781,7 @@ export const PetalDefinitions = [
                 damage: 5,
                 health: 20,
                 despawnTime: 3,
-                speed: 0.8,
+                speed: 1.1,
                 definition: Projectiles.fromString("dandelion"),
                 effectsOnHit: {
                     modifier: {
@@ -823,7 +823,7 @@ export const PetalDefinitions = [
                 damage: 40,
                 health: 10,
                 despawnTime: 3,
-                speed: 0.8,
+                speed: 1,
                 definition: Projectiles.fromString("missile")
             }
         },
@@ -859,7 +859,7 @@ export const PetalDefinitions = [
                 damage: 25,
                 health: 75,
                 despawnTime: 3,
-                speed: 0.8,
+                speed: 1,
                 definition: Projectiles.fromString("missile")
             }
         },
@@ -874,6 +874,7 @@ export const PetalDefinitions = [
     {
         idString: "myt_missile",
         displayName: "Missile",
+        fullName: "Mecha Missile",
         description: "You can actually shoot this quickly bigger one",
         damage: 50,
         health: 25,
@@ -933,7 +934,7 @@ export const PetalDefinitions = [
             selfGameRotation: 18
         },
         wearerAttributes: {
-            maxHealth: 30
+            maxHealth: 35
         },
         reloadTime: 1,
         hitboxRadius: 0.7,
@@ -958,7 +959,7 @@ export const PetalDefinitions = [
             duration: 0.6
         },
         wearerAttributes: {
-            maxHealth: 30,
+            maxHealth: 35,
             bodyPoison: {
                 damagePerSecond: 9,
                 duration: 4.5
@@ -983,7 +984,7 @@ export const PetalDefinitions = [
             selfGameRotation: 18
         },
         wearerAttributes: {
-            maxHealth: 27
+            maxHealth: 30
         },
         reloadTime: 1,
         hitboxRadius: 0.7,
@@ -1422,7 +1423,8 @@ export const PetalDefinitions = [
     },
     {
         idString: "myt_dice",
-        displayName: "Omen",
+        displayName: "Dice",
+        fullName: "Ominous Dice",
         description: "Check your destiny. It's not that easy.",
         damage: 14,
         health: 10,
@@ -1813,7 +1815,7 @@ export const PetalDefinitions = [
                 accelerationF: 1,
                 effectsOnHit: {
                     modifier: {
-                        armor: -4
+                        armor: -2.5
                     },
                     duration: 5
                 }
