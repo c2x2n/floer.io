@@ -302,7 +302,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 40,
         health: 60,
         category: MobCategory.Enemy,
-        aggroRadius: 20,
+        aggroRadius: 10,
         hitboxRadius: 2,
         speed: 0.5,
         images: {
@@ -364,7 +364,7 @@ export const Mobs = new Definitions<MobDefinition>([
             reachingAway: true
         },
         shootSpeed: 1.5,
-        aggroRadius: 30,
+        aggroRadius: 15,
         hitboxRadius: 2,
         speed: 0.6,
         lootTable: {
@@ -440,7 +440,7 @@ export const Mobs = new Definitions<MobDefinition>([
             }
         },
         shootSpeed: 1.5,
-        aggroRadius: 30,
+        aggroRadius: 15,
         hitboxRadius: 2,
         speed: 0.5,
         lootTable: {
@@ -493,7 +493,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 20,
         health: 25,
         category: MobCategory.Enemy,
-        aggroRadius: 20,
+        aggroRadius: 10,
         hitboxRadius: 1,
         speed: 0.7,
         images: {
@@ -542,7 +542,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 10,
         health: 40,
         category: MobCategory.Enemy,
-        aggroRadius: 20,
+        aggroRadius: 10,
         hitboxRadius: 0.8,
         speed: 0.5,
         images: {
@@ -587,7 +587,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 20,
         health: 250,
         category: MobCategory.Enemy,
-        aggroRadius: 50,
+        aggroRadius: 25,
         hitboxRadius: 2,
         images: {
             mouth: true,
@@ -746,7 +746,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 10,
         health: 50,
         category: MobCategory.Enemy,
-        aggroRadius: 25,
+        aggroRadius: 12,
         speed: 0.5,
         hitboxRadius: 1.5,
         images: {
@@ -770,7 +770,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 10,
         health: 50,
         category: MobCategory.Enemy,
-        aggroRadius: 25,
+        aggroRadius: 12,
         speed: 0.5,
         hitboxRadius: 1.5,
         hideInformation: true,
@@ -793,7 +793,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 20,
         health: 1500,
         category: MobCategory.Enemy,
-        aggroRadius: 25,
+        aggroRadius: 12,
         speed: 0.7,
         hitboxRadius: 2.2,
         images: {
@@ -818,7 +818,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 20,
         health: 500,
         category: MobCategory.Enemy,
-        aggroRadius: 25,
+        aggroRadius: 12,
         speed: 0.7,
         hitboxRadius: 2.2,
         hideInformation: true,
@@ -858,7 +858,7 @@ export const Mobs = new Definitions<MobDefinition>([
             definition: Projectiles.fromString("peas")
         },
         shootSpeed: 1,
-        aggroRadius: 30,
+        aggroRadius: 15,
         hitboxRadius: 4 * 2 / 0.7,
         speed: 1.2,
         lootTable: {
@@ -893,7 +893,7 @@ export const Mobs = new Definitions<MobDefinition>([
             definition: Projectiles.fromString("peas")
         },
         shootSpeed: 0.5,
-        aggroRadius: 90,
+        aggroRadius: 45,
         hitboxRadius: 21,
         speed: 1.2,
         lootTable: {},
@@ -919,7 +919,7 @@ export const Mobs = new Definitions<MobDefinition>([
             definition: Projectiles.fromString("missile")
         },
         shootSpeed: 0.9,
-        aggroRadius: 60,
+        aggroRadius: 30,
         hitboxRadius: 5 / 0.6,
         speed: 1.2,
         lootTable: {
@@ -943,7 +943,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 90,
         health: 3800,
         category: MobCategory.Enemy,
-        aggroRadius: 40,
+        aggroRadius: 20,
         hitboxRadius: 8,
         images: {
             mouth: true,
@@ -1047,7 +1047,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 65,
         health: 2500,
         category: MobCategory.Enemy,
-        aggroRadius: 100,
+        aggroRadius: 50,
         hitboxRadius: 7,
         shootable: true,
         images: {
@@ -1089,7 +1089,7 @@ export const Mobs = new Definitions<MobDefinition>([
         damage: 130,
         health: 7500,
         category: MobCategory.Enemy,
-        aggroRadius: 35,
+        aggroRadius: 17,
         hitboxRadius: 20,
         shootable: true,
         images: {
@@ -1188,7 +1188,7 @@ export const Mobs = new Definitions<MobDefinition>([
         health: 5000,
         category: MobCategory.Enemy,
         hitboxRadius: 10,
-        aggroRadius: 45,
+        aggroRadius: 22,
         speed: 0.8,
         images: {
             mouth: true,

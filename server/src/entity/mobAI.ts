@@ -61,26 +61,31 @@ export default class MobAI {
         }
         if (!this.canGetTarget) return null;
 
-        const radius = this.aggroRadius ? this.aggroRadius : 30;
+        const radius = this.aggroRadius ? this.aggroRadius : 15;
 
-        const aggro = new CircleHitbox(
-            radius, this.mob.position
-        );
+        let aggroableNormalEntity: ServerLivelyEntity[] = [];
 
-        const entities
-            = this.mob.game.grid.intersectsHitbox(aggro);
+        if (this.autoFind) {
+            const aggro = new CircleHitbox(
+                radius, this.mob.position
+            );
 
-        const aggroableNormalEntity = Array.from(entities)
-            .filter(e => {
-                if (isPlayer(e)) return false;
-                return isLively(e);
-            }) as ServerLivelyEntity[];
+            const entities
+                = this.mob.game.grid.intersectsHitbox(aggro);
+
+            aggroableNormalEntity = Array.from(entities)
+                .filter(e => {
+                    if (isPlayer(e)) return false;
+                    return isLively(e);
+                }) as ServerLivelyEntity[];
+        }
 
         const players
             = this.mob.game.grid.byCategory[EntityType.Player];
 
         const aggroablePlayerEntity = Array.from(players)
             .filter(e => {
+                if (!this.autoFind) return e.modifiers.cursed;
                 const distance = UVector2D.distanceBetween(this.mob.position, e.position);
                 return distance <= radius * e.modifiers.aggroRange;
             });
