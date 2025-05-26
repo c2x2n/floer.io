@@ -781,7 +781,7 @@ export const PetalDefinitions = [
                 damage: 5,
                 health: 20,
                 despawnTime: 3,
-                speed: 1.1,
+                speed: 1.65,
                 definition: Projectiles.fromString("dandelion"),
                 effectsOnHit: {
                     modifier: {
@@ -823,7 +823,7 @@ export const PetalDefinitions = [
                 damage: 40,
                 health: 10,
                 despawnTime: 3,
-                speed: 1,
+                speed: 1.3,
                 definition: Projectiles.fromString("missile")
             }
         },
@@ -859,7 +859,7 @@ export const PetalDefinitions = [
                 damage: 25,
                 health: 75,
                 despawnTime: 3,
-                speed: 1,
+                speed: 1.3,
                 definition: Projectiles.fromString("missile")
             }
         },
@@ -894,7 +894,7 @@ export const PetalDefinitions = [
                 damage: 50,
                 health: 25,
                 despawnTime: 10,
-                speed: 1.7,
+                speed: 2.5,
                 definition: Projectiles.fromString("myt_big_missile")
             }
         },
