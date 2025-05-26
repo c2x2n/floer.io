@@ -85,8 +85,8 @@ export default class MobAI {
 
         const aggroablePlayerEntity = Array.from(players)
             .filter(e => {
-                if (!this.autoFind) return e.modifiers.cursed;
                 const distance = UVector2D.distanceBetween(this.mob.position, e.position);
+                if (!this.autoFind && !e.modifiers.cursed) return false;
                 return distance <= radius * e.modifiers.aggroRange;
             });
 
