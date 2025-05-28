@@ -312,7 +312,7 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
             amount *= (1 - this.modifiers.bodyDamageReduction);
         }
 
-        if (type === DamageType.POISON) {
+        if (type != DamageType.POISON) {
             if (this._shield > 0) {
                 if (this._shield >= amount) {
                     this.shield = this._shield - amount;
@@ -327,7 +327,6 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
         if (amount > 0) this.gotDamage = true;
 
         damage.amount = amount;
-        console.log(amount);
         super.receiveDamage(damage);
     }
 
