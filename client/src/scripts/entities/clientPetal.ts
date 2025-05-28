@@ -99,7 +99,7 @@ export class ClientPetal extends ClientEntity {
         } else {
             this.toCenterPosition.add(this.velocity);
 
-            this.velocity.add(this.velocity.clone().mul(-0.12));
+            this.velocity.add(this.velocity.clone().mul(-0.16));
             if (owner) {
                 this.ownerPosition.set(UVector2D.targetEasing(
                     this.ownerPosition,
