@@ -656,9 +656,9 @@ export const PetalDefinitions = [
             slotDisplaySize: 45
         },
         attributes: {
-            boost: 0.3
+            boost: 0.28
         },
-        reloadTime: 3.5,
+        reloadTime: 3.3,
         hitboxRadius: 0.5,
         isDuplicate: false,
         pieceAmount: 1,
@@ -802,8 +802,8 @@ export const PetalDefinitions = [
         idString: "missile",
         displayName: "Missile",
         description: "You can actually shoot this one",
-        damage: 30,
-        health: 20,
+        damage: 15,
+        health: 10,
         extendable: true,
         petalCounter: {
             missileCount: 1
@@ -820,8 +820,8 @@ export const PetalDefinitions = [
         attributes: {
             shoot: {
                 hitboxRadius: 0.6,
-                damage: 40,
-                health: 10,
+                damage: 30,
+                health: 20,
                 despawnTime: 3,
                 speed: 1,
                 definition: Projectiles.fromString("missile")
@@ -838,8 +838,8 @@ export const PetalDefinitions = [
         idString: "big_missile",
         displayName: "Missile",
         description: "You can actually shoot this bigger one",
-        damage: 25,
-        health: 75,
+        damage: 12,
+        health: 33,
         extendable: true,
         petalCounter: {
             missileCount: 1
@@ -876,8 +876,8 @@ export const PetalDefinitions = [
         displayName: "Missile",
         fullName: "Mecha Missile",
         description: "You can actually shoot this quickly bigger one",
-        damage: 50,
-        health: 25,
+        damage: 25,
+        health: 13,
         extendable: true,
         images: {
             selfGameRotation: 0.02,
@@ -1381,7 +1381,7 @@ export const PetalDefinitions = [
         idString: "corn",
         displayName: "Corn",
         description: "You can actually eat it",
-        damage: 8,
+        damage: 6,
         health: 200,
         extendable: true,
         usable: false,
@@ -1389,7 +1389,7 @@ export const PetalDefinitions = [
             slotDisplaySize: 60,
             selfGameRotation: 18
         },
-        reloadTime: 12,
+        reloadTime: 10,
         hitboxRadius: 0.75,
         isDuplicate: false,
         pieceAmount: 1,
@@ -1426,8 +1426,8 @@ export const PetalDefinitions = [
         displayName: "Dice",
         fullName: "Ominous Dice",
         description: "Check your destiny. It's not that easy.",
-        damage: 14,
-        health: 10,
+        damage: 15,
+        health: 15,
         extendable: true,
         images: {
             slotDisplaySize: 55,
@@ -1799,8 +1799,8 @@ export const PetalDefinitions = [
         fullName: "Allergic Pollen",
         displayName: "Pollen",
         description: "Asthmatics beware. Maybe this time for true.",
-        damage: 13,
-        health: 10,
+        damage: 8,
+        health: 5,
         extendable: false,
         usable: true,
         useTime: 0.2,
@@ -1815,7 +1815,7 @@ export const PetalDefinitions = [
                 accelerationF: 1,
                 effectsOnHit: {
                     modifier: {
-                        armor: -2.5
+                        armor: -4
                     },
                     duration: 5
                 }
@@ -2017,7 +2017,7 @@ export const PetalDefinitions = [
         idString: "heaviest",
         displayName: "Heaviest",
         description: "This thing is so heavy that nothing gets in the way.",
-        damage: 10,
+        damage: 8,
         health: 100,
         extendable: true,
         usable: false,
@@ -2088,7 +2088,7 @@ export const PetalDefinitions = [
         idString: "rock",
         displayName: "Rock",
         description: "Extremely durable, but takes a bit longer to recharge.",
-        damage: 15,
+        damage: 13,
         health: 45,
         extendable: true,
         usable: false,
