@@ -714,6 +714,13 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
             speed: this.persistentSpeedModifier
         });
 
+        if (this.level >= 60) {
+            modifiersNow = this.calcModifiers(modifiersNow, {
+                cursed: true,
+                aggroRange: 2
+            });
+        }
+
         this.maxHealth = modifiersNow.maxHealth * modifiersNow.maxHealthScale;
         this.zoom = modifiersNow.zoom * modifiersNow.zoomScale;
         this.inventory.changeSlotAmountTo(
