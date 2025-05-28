@@ -123,7 +123,7 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
     }
 
     public updatePosition(): void {
-        const position = this.position;
+        const position = this.position.clone();
 
         {
             if (this.hitbox instanceof CircleHitbox) {
@@ -131,6 +131,7 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
                     position, this.hitbox.radius, this.hitbox.radius
                 );
                 this.position.set(this.hitbox.position);
+                if (!this.position.eqW(position)) this.collidedWithMapBorder();
             } else {
                 this.position.set(position);
             }
@@ -144,6 +145,8 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
             // this.game.grid.updateEntity(this);
         }
     }
+
+    protected collidedWithMapBorder(): void {}
 
     public maintainAcceleration(angle: number, maxSpeed: number): void {
         this.addAcceleration(Vector.fromPolar(

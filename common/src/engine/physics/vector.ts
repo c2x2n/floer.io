@@ -11,6 +11,10 @@ export default class Vector implements VectorAbstract {
         this.y = y;
     }
 
+    eqW(vec: VectorAbstract): boolean {
+        return vec.x == this.x && vec.y == this.y;
+    }
+
     add(vec: VectorAbstract): this {
         this.x += vec.x;
         this.y += vec.y;

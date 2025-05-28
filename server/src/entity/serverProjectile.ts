@@ -90,6 +90,10 @@ export class ServerProjectile extends ServerLivelyEntity<EntityType.Projectile> 
         return this.source;
     }
 
+    protected override collidedWithMapBorder() {
+        this.destroy();
+    }
+
     canEffect(to: ServerLivelyEntity): to is ServerPlayer | ServerMob {
         if (!(to instanceof ServerPlayer || to instanceof ServerMob)) return false;
 
