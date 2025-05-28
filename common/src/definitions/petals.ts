@@ -1980,8 +1980,8 @@ export const PetalDefinitions = [
         },
         effectsOnHit: {
             modifier: {
-                speed: 0.05,
-                revolutionSpeed: 0.15
+                speed: 0.95,
+                revolutionSpeed: 0.85
             },
             duration: 8
         },
