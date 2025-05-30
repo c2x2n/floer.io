@@ -22,6 +22,7 @@
     "server/src/**/*.ts",
     "tests/src/**/*.ts",
     "eslint.config.mjs",
-    "jest.config.mjs"
+    "jest.config.mjs",
+    "test/src/**/*.ts"
   ]
 }
