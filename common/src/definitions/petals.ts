@@ -730,7 +730,7 @@ export const PetalDefinitions = [
             slotRotation: 0.2
         },
         reloadTime: 2.5,
-        hitboxRadius: 0.55,
+        hitboxRadius: 0.75,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.mythic
@@ -1497,7 +1497,7 @@ export const PetalDefinitions = [
         },
         reloadTime: 3,
         usable: false,
-        hitboxRadius: 0.5,
+        hitboxRadius: 0.75,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.mythic
