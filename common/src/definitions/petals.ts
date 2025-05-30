@@ -1416,7 +1416,7 @@ export const PetalDefinitions = [
             }
         },
         reloadTime: 3,
-        hitboxRadius: 0.7,
+        hitboxRadius: 0.75,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.epic
@@ -1519,7 +1519,7 @@ export const PetalDefinitions = [
             data: 0.7
         },
         reloadTime: 2.5,
-        hitboxRadius: 0.65,
+        hitboxRadius: 0.75,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.rare
