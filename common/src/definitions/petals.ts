@@ -730,7 +730,7 @@ export const PetalDefinitions = [
             slotRotation: 0.2
         },
         reloadTime: 2.5,
-        hitboxRadius: 0.55,
+        hitboxRadius: 0.75,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.mythic
@@ -1360,7 +1360,7 @@ export const PetalDefinitions = [
                         damage: 5,
                         health: 5,
                         hitboxRadius: 0.35,
-                        despawnTime: 4.5,
+                        despawnTime: 0.5,
                         poison: {
                             damagePerSecond: 10,
                             duration: 1.5
@@ -1416,7 +1416,7 @@ export const PetalDefinitions = [
             }
         },
         reloadTime: 3,
-        hitboxRadius: 0.7,
+        hitboxRadius: 0.75,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.epic
@@ -1497,7 +1497,7 @@ export const PetalDefinitions = [
         },
         reloadTime: 3,
         usable: false,
-        hitboxRadius: 0.5,
+        hitboxRadius: 0.75,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.mythic
@@ -1519,7 +1519,7 @@ export const PetalDefinitions = [
             data: 0.7
         },
         reloadTime: 2.5,
-        hitboxRadius: 0.65,
+        hitboxRadius: 0.75,
         isDuplicate: false,
         pieceAmount: 1,
         rarity: RarityName.rare
