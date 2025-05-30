@@ -12,6 +12,10 @@ export const Random = Object.freeze({
         return (Math.random() * (max - min) + min);
     },
 
+    randomDirection(): VectorAbstract {
+        return Random.vector(-1, 1, -1, 1);
+    },
+
     /**
      * Generate a random integer.
      * @param min The minimum value that can be generated.

@@ -13,6 +13,9 @@ import { ChatData } from "../../../common/src/engine/net/packets/updatePacket";
 import { DamageType } from "../typings/damage";
 import { StTyped } from "../../../common/src/typings/stType";
 import { spawnLoot } from "../entity/spawning/loot";
+import { Geometry } from "../../../common/src/engine/maths/geometry";
+import { Random } from "../../../common/src/engine/maths/random";
+import { P2 } from "../../../common/src/engine/maths/constants";
 
 export type DirectlyChatData = ChatData & ({
     global: false
@@ -193,13 +196,17 @@ const Commands = {
         if (to) {
             resolve.$p(who, player => {
                 resolve.$p(to, target => {
-                    player.position = target.position;
+                    player.position.set(Random.pointInsideCircle(
+                        target.position.clone(), 5
+                    ));
                     resolve.resolve(`Teleported ${player.name} (ID: ${player.id}) to ${target.name} (ID: ${target.id}).`);
                 });
             });
         } else {
             resolve.$p(who, player => {
-                resolve.player.position = player.position;
+                resolve.player.position.set(Random.pointInsideCircle(
+                    player.position.clone(), 5
+                ));
                 resolve.resolve(`Teleported to ${player.name} (ID: ${player.id}).`);
             });
         }

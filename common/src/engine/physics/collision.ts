@@ -2,6 +2,7 @@ import { UVector2D } from "./uvector";
 import VectorAbstract from "./vectorAbstract";
 import { Geometry } from "../maths/geometry";
 import { Numeric } from "../maths/numeric";
+import { Random } from "../maths/random";
 
 export type CollisionT = { dir: VectorAbstract, pen: number };
 export type CollisionResponse = CollisionT | null;
@@ -197,7 +198,7 @@ export const Collision = {
         if (distSqr < r * r) {
             const dist = Math.sqrt(distSqr);
             return {
-                dir: dist > 0.00001 ? UVector2D.div(toP1, dist) : UVector2D.new(1.0, 0.0),
+                dir: dist > 0.00001 ? UVector2D.div(toP1, dist) : Random.randomDirection(),
                 pen: r - dist
             };
         }
