@@ -1360,7 +1360,7 @@ export const PetalDefinitions = [
                         damage: 5,
                         health: 5,
                         hitboxRadius: 0.35,
-                        despawnTime: 4.5,
+                        despawnTime: 0.5,
                         poison: {
                             damagePerSecond: 10,
                             duration: 1.5
