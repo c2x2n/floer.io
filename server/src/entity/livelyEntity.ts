@@ -202,6 +202,7 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
         if (this.modifiers.damageReflection > 0
             && damage.amount > 0
             && damage.type != DamageType.DAMAGE_REFLECTION
+            && !this.destroyed
         ) {
             damage.source.receiveDamage({
                 source: this.getTopParent(),
