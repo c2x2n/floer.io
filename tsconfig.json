@@ -2,7 +2,8 @@
   "extends": [
     "./client/tsconfig.json",
     "./common/tsconfig.json",
-    "./server/tsconfig.json"
+    "./server/tsconfig.json",
+    "./test/tsconfig.json"
   ],
   "include": [
       "package.json"
