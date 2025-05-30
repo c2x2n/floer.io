@@ -5,9 +5,8 @@ import { Config } from "./config";
 // LOAD ENV //
 import { config } from "dotenv";
 import { GameContainer, games } from "./gameContainer";
+import { GameConstants } from "../../common/src/constants";
 config();
-
-const BUILD_VERSION = "0.3.1 TEST";
 
 export interface ProcessMessage {
     req: IncomingMessage
@@ -49,7 +48,7 @@ if (Cluster.isPrimary) {
                 res.setHeader("Content-Type", "application/json").end(
                     JSON.stringify({
                         playerCount: game.data.playerCount,
-                        build: BUILD_VERSION
+                        build: GameConstants.protocolVersion
                     })
                 );
             } else {

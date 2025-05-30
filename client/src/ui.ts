@@ -286,7 +286,7 @@ export class UI {
             serverItem.append(serverPlayerCount);
             serverElement.append(serverItem);
             this.serverList.append(serverElement);
-            if (serverInfo.build != version) {
+            if (serverInfo.build != GameConstants.protocolVersion.toString()) {
                 serverElement.addClass("unavailable");
                 const status = $("<div class='server-item-status'></div>");
                 serverElement.append(status);

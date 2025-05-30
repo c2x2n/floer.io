@@ -26,6 +26,7 @@ export enum PlayerState {
 }
 
 export const GameConstants = Object.freeze({
+    protocolVersion: 1,
     defaultModifiers: (): Modifiers => ({
         healPerSecond: 0,
         speed: 1,
