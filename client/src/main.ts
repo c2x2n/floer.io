@@ -4,9 +4,6 @@ import { UI } from "./ui";
 import { Settings } from "./settings";
 import { Renderer } from "./scripts/render/renderer";
 import { loadStyleSheet } from "./scripts/ui/shown/icons";
-import { createApp } from "vue";
-import App from "./vue/App.vue";
-createApp(App).mount("#app");
 
 void document.fonts.ready.then(() => {
     loadStyleSheet();

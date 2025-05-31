@@ -19,7 +19,7 @@ export default class BleedingEffect extends Effect {
                     this.damageForNow += effected.velocity.magnitude * 4;
                     this.damageForNow = Numeric.clamp(this.damageForNow, 0, 12.5);
                     effected.receiveDamage({
-                        amount: dt * this.damageForNow,
+                        amount: Numeric.clamp(dt * this.damageForNow, 0, effected.health - 1),
                         source: this.source,
                         type: DamageType.PHYSICAL,
                         to: effected
