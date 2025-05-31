@@ -167,14 +167,14 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
         if (!entity.canCollideWith(this) || !this.canCollideWith(entity)) return;
 
         this.position.add(
-            Vector.fromPolar(Geometry.directionToRadians(collision.dir),
+            new Vector().set(collision.dir).mul(
                 collision.pen
                 * entity.weight
                 / (this.weight + entity.weight)
             )
         );
 
-        this.position.add(
+        this.velocity.add(
             entity.velocity.mul(entity.weight / (this.weight + entity.weight))
         );
     }
@@ -206,6 +206,6 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
             }
         }
 
-        return this.cachedCollisions;
+        return this.getCollisions();
     }
 }
