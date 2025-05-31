@@ -186,11 +186,14 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
         this.game.grid.remove(this);
     }
 
+    public isCollisionsCached = false;
     public readonly cachedCollisions = new Set<CollisionInformation>();
 
     public getCollisions(): Set<CollisionInformation> {
-        if (this.cachedCollisions.size > 0) return this.cachedCollisions;
+        if (this.isCollisionsCached) return this.cachedCollisions;
 
+        this.cachedCollisions.clear();
+        this.isCollisionsCached = true;
         const collidedEntities = this.game.grid.intersectsHitbox(this.hitbox);
 
         for (const collidedEntity of collidedEntities) {

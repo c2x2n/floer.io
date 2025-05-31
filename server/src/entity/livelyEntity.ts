@@ -75,6 +75,10 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
         return !this.invincible && !!entity.damage && !(this === entity) && this.team != entity.team;
     }
 
+    public canDealDamage(): boolean {
+        return !!this.damage;
+    }
+
     protected constructor(game: ServerGame, position: VectorAbstract, type: T) {
         super(game, position);
 
@@ -86,11 +90,15 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
     public tick() {
         super.tick();
 
+        this.updateAndApplyModifiers();
+
+        if (!this.canDealDamage()) return;
+
         this.dealtDamageTick.clear();
 
         const collisions = this.getCollisions();
         for (const collision of collisions) {
-            if (!isLively((collision.entity))) continue;
+            if (!isLively((collision.entity)) || !collision.entity.canDealDamage()) continue;
             if (collision.entity.dealtDamageTick.has(this) || this.dealtDamageTick.has(collision.entity)) continue;
 
             if (collision.entity.canReceiveDamageFrom(this)) {
@@ -107,8 +115,6 @@ export default abstract class ServerLivelyEntity<T extends EntityType = EntityTy
                 collision.entity.dealtDamageTick.add(this);
             }
         }
-
-        this.updateAndApplyModifiers();
     }
 
     public receiveKnockback(entity: ServerLivelyEntity): void {

@@ -172,19 +172,22 @@ export class ServerGame {
 
         this.grid.reset();
 
-        const saved = new Set<ServerEntity>(this.grid.entities.values());
+        const active = new Set<ServerEntity>();
 
-        for (const entity of saved) {
+        for (const entity of this.grid.entities.values()) {
             this.grid.updateEntity(entity);
+            if (!entity.isActive()) continue;
+            active.add(entity);
         }
 
-        for (const entity of saved) {
-            if (!entity.isActive()) continue;
-            entity.cachedCollisions.clear();
+        for (const entity of active) {
+            entity.isCollisionsCached = false;
             entity.getCollisions();
-
             entity.tick();
-            entity.applyPhysics(); // important
+        }
+
+        for (const entity of active) {
+            entity.applyPhysics(); // Update hitbox here so its easier to do collision checks
         }
 
         // Cache entity serializations
