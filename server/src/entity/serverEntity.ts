@@ -201,24 +201,11 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
             const collision = collidedEntity.hitbox.getIntersection(this.hitbox);
 
             if (collision) {
-                if (!this.cachedCollided.has(collidedEntity)) {
-                    this.cachedCollisions.add({
-                        entity: collidedEntity,
-                        collision: collision
-                    });
-                    this.cachedCollided.add(collidedEntity);
-                }
-
-                if (!collidedEntity.cachedCollided.has(this)) {
-                    collidedEntity.cachedCollisions.add({
-                        entity: this,
-                        collision: {
-                            dir: collision.dir,
-                            pen: collision.pen * -1
-                        }
-                    });
-                    collidedEntity.cachedCollided.add(this);
-                }
+                this.cachedCollisions.add({
+                    entity: collidedEntity,
+                    collision: collision
+                });
+                this.cachedCollided.add(collidedEntity);
             }
         }
 
