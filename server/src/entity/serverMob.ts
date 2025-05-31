@@ -82,6 +82,10 @@ export class ServerMob extends ServerLivelyEntity<EntityType.Mob> {
     spawnTime: number = Date.now();
     knockback = 1;
 
+    isActive(): boolean {
+        return super.isActive() && this.viewedTime > 0;
+    }
+
     constructor(game: ServerGame
         , position: VectorAbstract
         , direction: VectorAbstract
