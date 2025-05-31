@@ -190,8 +190,8 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
 
     isAdmin = false;
 
-    knockback = 3;
-    absorbKnockback = 2;
+    knockback = 1.5;
+    absorbKnockback = 1.5;
 
     canCollideWith(entity: ServerEntity): boolean {
         if (this.spectatorMode) return false;
