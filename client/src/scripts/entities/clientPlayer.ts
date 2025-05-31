@@ -70,7 +70,7 @@ export class ClientPlayer extends ClientEntity {
                 if (this.game.entityPool) {
                     for (const entity of this.game.entityPool) {
                         if (entity.type === EntityType.Petal
-                            && (entity as any).ownerId === this.id
+                            && (entity).ownerId === this.id
                             && !updatedPetals.has(entity.id)) {
                             entity.container.visible = !newInvisible;
                             updatedPetals.add(entity.id);

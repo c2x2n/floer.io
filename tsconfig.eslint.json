@@ -1,28 +1,29 @@
 {
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "CommonJS",
-    "moduleResolution": "Node",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "sourceMap": true,
-    "strictNullChecks": true,
-    "strict": true,
-  },
-  "include": [
-    "client/env.d.ts",
-    "common/src/**/*.ts",
-    "client/src/**/*.ts",
-    "client/editor/src/**/*.ts",
-    "client/vite/*.ts",
-    "client/vite.config.ts",
-    "client/postcss.config.js",
-    "client/svelte.config.js",
-    "server/src/**/*.ts",
-    "tests/src/**/*.ts",
-    "eslint.config.mjs",
-    "jest.config.mjs",
-    "test/src/**/*.ts"
-  ]
+    "compilerOptions": {
+        "target": "ES2022",
+        "module": "CommonJS",
+        "moduleResolution": "Node",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "resolveJsonModule": true,
+        "sourceMap": true,
+        "strictNullChecks": true,
+        "strict": true
+    },
+    "include": [
+        "client/env.d.ts",
+        "common/src/**/*.ts",
+        "client/src/**/*.ts",
+        "client/wasm/assembly/*.ts",
+        "client/editor/src/**/*.ts",
+        "client/vite/*.ts",
+        "client/vite.config.ts",
+        "client/postcss.config.js",
+        "client/svelte.config.js",
+        "server/src/**/*.ts",
+        "tests/src/**/*.ts",
+        "eslint.config.mjs",
+        "jest.config.mjs",
+        "test/src/**/*.ts"
+    ]
 }

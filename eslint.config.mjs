@@ -95,7 +95,8 @@ export default tseslint.config(
         ignores: [
             "common/dist/**",
             "client/dist/**",
-            "server/dist/**"
+            "server/dist/**",
+            "client/wasm/build/**"
         ]
     }
 );

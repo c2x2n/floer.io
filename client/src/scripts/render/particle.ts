@@ -155,7 +155,7 @@ class Particle {
 
         for (const key in this.data) {
             const data = this.data[key as keyof ParticleInterpData];
-            data!.value = Numeric.lerp(data!.start, data!.end, data!.easing(t));
+            data.value = Numeric.lerp(data.start, data.end, data.easing(t));
         }
 
         this.position = UVector2D.add(
