@@ -714,8 +714,8 @@ export const PetalDefinitions = [
         displayName: "Card",
         fullName: "Joker Card",
         description: "A joker card.",
-        damage: 10,
-        health: 10,
+        damage: 5,
+        health: 75,
         extendable: true,
         usable: false,
         behavior: {
@@ -1346,7 +1346,7 @@ export const PetalDefinitions = [
                 damage: 10,
                 health: 5,
                 hitboxRadius: 0.46,
-                despawnTime: 1.1,
+                despawnTime: 1.25,
                 poison: {
                     damagePerSecond: 10,
                     duration: 2
@@ -1363,7 +1363,7 @@ export const PetalDefinitions = [
                         despawnTime: 0.3,
                         poison: {
                             damagePerSecond: 10,
-                            duration: 1
+                            duration: 1.5
                         }
                     }
                 }
