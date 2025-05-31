@@ -5,6 +5,7 @@ export type PlayerModifiers = Modifiers & {
     maxHealth: number
     maxHealthScale: number
     revolutionSpeed: number
+    revolutionSpeedScale: number
     zoom: number
     zoomScale: number
     damageAvoidanceByDamage: boolean

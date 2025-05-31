@@ -1459,7 +1459,7 @@ export const PetalDefinitions = [
                 effect: {
                     modifier: {
                         yinYangAmount: 1,
-                        revolutionSpeed: 0.5,
+                        revolutionSpeedScale: 0.5,
                         speed: -1
                     },
                     duration: 3
@@ -1981,7 +1981,7 @@ export const PetalDefinitions = [
         effectsOnHit: {
             modifier: {
                 speed: 0.95,
-                revolutionSpeed: 0.85
+                revolutionSpeedScale: 0.85
             },
             duration: 8
         },

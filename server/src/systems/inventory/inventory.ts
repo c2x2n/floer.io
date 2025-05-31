@@ -261,7 +261,7 @@ export class Inventory {
             this.totalDisplayedPetals += petalBunch.displayedPieces;
         });
 
-        let finalRevSpeed = this.player.modifiers.revolutionSpeed;
+        let finalRevSpeed = this.player.modifiers.revolutionSpeed * this.player.modifiers.revolutionSpeedScale;
 
         if (!this.player.modifiers.shocked) {
             if (this.player.modifiers.controlRotation) {

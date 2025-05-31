@@ -665,6 +665,7 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
         now.maxHealth += extra.maxHealth ?? 0;
         now.maxHealthScale *= extra.maxHealthScale ?? 1;
         now.revolutionSpeed += extra.revolutionSpeed ?? 0;
+        now.revolutionSpeedScale *= extra.revolutionSpeedScale ?? 1;
         now.zoom += extra.zoom ?? 0;
         now.zoomScale *= extra.zoomScale ?? 1;
         now.damageAvoidanceByDamage = extra.damageAvoidanceByDamage || now.damageAvoidanceByDamage;
