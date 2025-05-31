@@ -821,7 +821,7 @@ export const PetalDefinitions = [
             shoot: {
                 hitboxRadius: 0.6,
                 damage: 30,
-                health: 20,
+                health: 10,
                 despawnTime: 3,
                 speed: 1,
                 definition: Projectiles.fromString("missile")
@@ -838,8 +838,8 @@ export const PetalDefinitions = [
         idString: "big_missile",
         displayName: "Missile",
         description: "You can actually shoot this bigger one",
-        damage: 12,
-        health: 33,
+        damage: 10,
+        health: 50,
         extendable: true,
         petalCounter: {
             missileCount: 1
@@ -856,7 +856,7 @@ export const PetalDefinitions = [
         attributes: {
             shoot: {
                 hitboxRadius: 1,
-                damage: 25,
+                damage: 20,
                 health: 75,
                 despawnTime: 3,
                 speed: 1,
@@ -1075,7 +1075,7 @@ export const PetalDefinitions = [
         health: 1,
         extendable: false,
         usable: true,
-        useTime: 0,
+        useTime: 0.1,
         images: {
             slotDisplaySize: 45
         },
@@ -1310,7 +1310,7 @@ export const PetalDefinitions = [
                     despawnTime: 4,
                     poison: {
                         damagePerSecond: 10,
-                        duration: 1
+                        duration: 2
                     }
                 }
             }
@@ -1336,19 +1336,19 @@ export const PetalDefinitions = [
             selfGameRotation: 18
         },
         poison: {
-            damagePerSecond: 15,
+            damagePerSecond: 10,
             duration: 2
         },
         attributes: {
             around_circle_shoot: {
                 definition: Projectiles.fromString("poison_peas"),
-                speed: 0.65,
-                damage: 15,
-                health: 10,
+                speed: 1,
+                damage: 10,
+                health: 5,
                 hitboxRadius: 0.46,
-                despawnTime: 1.5,
+                despawnTime: 1.1,
                 poison: {
-                    damagePerSecond: 12,
+                    damagePerSecond: 10,
                     duration: 2
                 },
                 spawner: {
@@ -1357,13 +1357,13 @@ export const PetalDefinitions = [
                     spawn: {
                         definition: Projectiles.fromString("poison_peas"),
                         speed: 1,
-                        damage: 5,
+                        damage: 8,
                         health: 5,
                         hitboxRadius: 0.35,
-                        despawnTime: 0.5,
+                        despawnTime: 0.3,
                         poison: {
                             damagePerSecond: 10,
-                            duration: 1.5
+                            duration: 1
                         }
                     }
                 }
