@@ -27,6 +27,7 @@ export class ServerMob extends ServerLivelyEntity<EntityType.Mob> {
 
     hitbox: CircleHitbox;
     definition: MobDefinition;
+    viewedTime = 0;
 
     get name(): string {
         return this.definition.displayName;
@@ -108,6 +109,10 @@ export class ServerMob extends ServerLivelyEntity<EntityType.Mob> {
 
     tick(): void {
         super.tick();
+
+        if (this.viewedTime >= 0) {
+            this.viewedTime -= this.game.dt;
+        }
 
         if (this.lastSegment) {
             if (!this.lastSegment.destroyed) {

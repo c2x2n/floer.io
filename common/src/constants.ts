@@ -60,6 +60,7 @@ export const GameConstants = Object.freeze({
             maxHealth: 100,
             maxHealthScale: 1,
             revolutionSpeed: 2.4,
+            revolutionSpeedScale: 1,
             zoom: 45,
             zoomScale: 1,
             extraDistance: 0,

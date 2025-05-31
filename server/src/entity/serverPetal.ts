@@ -85,11 +85,12 @@ export class ServerPetal extends ServerLivelyEntity<EntityType.Petal> {
 
     canCollideWith(entity: ServerEntity): boolean {
         if (entity instanceof ServerLivelyEntity) return entity.team != this.team;
-        return !this.definition.equipment && super.canCollideWith(entity);
+        return !this.isReloading && !this.isUsing && !this.destroyed
+            && !this.definition.equipment && super.canCollideWith(entity);
     }
 
-    isActive(): boolean {
-        return !this.isReloading && !this.isUsing && !this.destroyed;
+    canReceiveDamageFrom(entity: ServerLivelyEntity): boolean {
+        return this.canCollideWith(entity);
     }
 
     constructor(petalBunch: PetalBunch, definition: PetalDefinition) {

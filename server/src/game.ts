@@ -179,11 +179,10 @@ export class ServerGame {
         }
 
         for (const entity of saved) {
+            if (!entity.isActive()) continue;
             entity.cachedCollisions.clear();
             entity.getCollisions();
-        }
 
-        for (const entity of saved) {
             entity.tick();
             entity.applyPhysics(); // important
         }

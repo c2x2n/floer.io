@@ -37,6 +37,7 @@ import { Damage, DamageType } from "../typings/damage";
 import { EntitiesNetData } from "../../../common/src/engine/net/entitySerializations";
 import { spawnLoot } from "./spawning/loot";
 import { Counter, DefaultCounter } from "../../../common/src/typings/counter";
+import { isMob } from "../typings/entity";
 
 enum curveType {
     LINEAR,
@@ -233,6 +234,10 @@ export class ServerPlayer extends ServerLivelyEntity<EntityType.Player> {
             this.sendEvent(AttributeEvents.DEFEND, undefined);
             targetRange = GameConstants.player.defaultPetalDefendingDistance;
         }
+        
+        this.visibleEntities.forEach(e => {
+            if (isMob(e)) e.viewedTime = 20;
+        });
 
         if (this.isAttacking) {
             targetRange = GameConstants.player.defaultPetalAttackingDistance;
