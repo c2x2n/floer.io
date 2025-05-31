@@ -206,6 +206,6 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
             }
         }
 
-        return this.getCollisions();
+        return this.cachedCollisions;
     }
 }
