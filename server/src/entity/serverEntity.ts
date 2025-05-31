@@ -187,11 +187,9 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
     }
 
     public readonly cachedCollisions = new Set<CollisionInformation>();
-    private readonly cachedCollided = new Set<ServerEntity>();
 
     public getCollisions(): Set<CollisionInformation> {
         if (this.cachedCollisions.size > 0) return this.cachedCollisions;
-        this.cachedCollided.clear();
 
         const collidedEntities = this.game.grid.intersectsHitbox(this.hitbox);
 
@@ -205,7 +203,6 @@ export abstract class ServerEntity<T extends EntityType = EntityType> implements
                     entity: collidedEntity,
                     collision: collision
                 });
-                this.cachedCollided.add(collidedEntity);
             }
         }
 
