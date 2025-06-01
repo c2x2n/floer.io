@@ -4,6 +4,8 @@ import { Camera } from "./camera";
 import { RenderContainer } from "./misc";
 import { Geometry } from "../../../../common/src/engine/maths/geometry";
 import { PI } from "../../../../common/src/engine/maths/constants";
+import { UVector2D } from "../../../../common/src/engine/physics/uvector";
+import { Numeric } from "../../../../common/src/engine/maths/numeric";
 
 export class Renderer {
     containers = new Set<RenderContainer>();
@@ -56,13 +58,19 @@ export class Renderer {
         const { clientX, clientY } = mousePosition;
         ctx.lineTo(clientX, clientY);
 
-        const angle = Geometry.angleBetweenPoints({
+        const a = {
             x: clientX,
             y: clientY
-        }, {
+        };
+
+        const b = {
             x: canvas.width / 2,
             y: canvas.height / 2
-        });
+        };
+
+        ctx.globalAlpha = Numeric.remap(UVector2D.distanceBetween(a, b), 0, 90, 0, 1);
+
+        const angle = Geometry.angleBetweenPoints(a, b);
 
         const branchAngle = 35 * PI / 180;
         const branchLen = 40;
