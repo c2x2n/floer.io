@@ -6,7 +6,7 @@ import vue from "@vitejs/plugin-vue";
 // https://vitejs.dev/config/
 export default defineConfig({
     define: {
-        __DEV__: process.env.NODE_ENV === 'development'
+        __DEV__: process.env.NODE_ENV === "development"
     },
     server: {
         port: 5173,

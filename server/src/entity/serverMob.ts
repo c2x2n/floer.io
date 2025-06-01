@@ -86,7 +86,7 @@ export class ServerMob extends ServerLivelyEntity<EntityType.Mob> {
         return this.lastSegment?.isActive() || (super.isActive() && this.viewedTime > 0);
     }
 
-    hasDrop: boolean = true;
+    hasDrop = true;
 
     constructor(game: ServerGame
         , position: VectorAbstract
