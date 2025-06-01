@@ -176,6 +176,7 @@ export const PetalAttributeRealizes: { [K in AttributeNames]: AttributeRealize<K
                 );
 
                 petal.spawned.setSummonr(petal.owner);
+                petal.spawned.hasDrop = false;
             }, PetalUsingAnimations.HATCH);
         }
     }

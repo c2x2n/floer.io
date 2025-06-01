@@ -86,6 +86,8 @@ export class ServerMob extends ServerLivelyEntity<EntityType.Mob> {
         return this.lastSegment?.isActive() || (super.isActive() && this.viewedTime > 0);
     }
 
+    hasDrop: boolean = true;
+
     constructor(game: ServerGame
         , position: VectorAbstract
         , direction: VectorAbstract
@@ -204,7 +206,7 @@ export class ServerMob extends ServerLivelyEntity<EntityType.Mob> {
 
         super.destroy();
 
-        if (this.summonr && this.summonr instanceof ServerPlayer) return;
+        if (!this.hasDrop) return;
 
         if (!illegal) { // Drops
             const lootTable = this.definition.lootTable;
