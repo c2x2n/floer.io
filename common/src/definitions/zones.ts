@@ -100,7 +100,7 @@ export const Zones: { readonly [K in ZoneName]: ZoneDefinition } = Object.freeze
         width: 2566 - 2000,
         displayColor: "#a4aaa6",
         backgroundColor: "#4d5e55",
-        density: 0.875,
+        density: 1,
         highestLevel: 999,
         normalSpawning: {
             dark_ladybug: 30,

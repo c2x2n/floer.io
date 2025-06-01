@@ -257,7 +257,9 @@ export const Mobs = new Definitions<MobDefinition>([
         lootTable: {
             fast: 0.05,
             twin: 0.024,
-            rock: 0.005
+            rock: 0.005,
+            stone: 0.1,
+            heavy: 0.25
         },
         rarity: RarityName.common,
         exp: 2
@@ -290,7 +292,9 @@ export const Mobs = new Definitions<MobDefinition>([
             fast: 1,
             uranium: 0.00012,
             rock: 0.09,
-            heaviest: 0.004
+            heaviest: 0.004,
+            stone: 0.5,
+            heavy: 0.9
         },
         rarity: RarityName.unusual,
         exp: 20,
