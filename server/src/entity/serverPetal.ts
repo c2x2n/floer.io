@@ -79,7 +79,9 @@ export class ServerPetal extends ServerLivelyEntity<EntityType.Petal> {
     spawned?: ServerMob;
 
     get canUse(): boolean {
-        if (!this.definition.equipment && this.definition.usable) { return this.useReload >= this.definition.useTime; }
+        if (!this.definition.equipment && this.definition.usable) {
+            return this.useReload >= this.definition.useTime && !this.isUsing;
+        }
         return false;
     }
 

@@ -3,13 +3,8 @@ import { P2 } from "../../../../common/src/engine/maths/constants";
 import { UVector2D } from "../../../../common/src/engine/physics/uvector";
 import { AttributeNames, AttributeParameters } from "../../../../common/src/definitions/petals";
 import { EventInitializer } from "./petalEvents";
-import { EntityType } from "../../../../common/src/constants";
-import { ServerPlayer } from "../../entity/serverPlayer";
 import { ServerMob } from "../../entity/serverMob";
-import { ServerProjectile } from "../../entity/serverProjectile";
 import { Geometry } from "../../../../common/src/engine/maths/geometry";
-import { Effect } from "../effect/effect";
-import { DamageType } from "../../typings/damage";
 import spawnProjectile from "../../entity/spawning/projectile";
 
 export enum AttributeEvents {
