@@ -154,7 +154,7 @@ class Particle {
         const t = this.tick / this.end;
 
         for (const key in this.data) {
-            const data = this.data[key as keyof ParticleInterpData];
+            const data = this.data[key as keyof ParticleInterpData]!;
             data.value = Numeric.lerp(data.start, data.end, data.easing(t));
         }
 

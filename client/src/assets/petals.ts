@@ -2,6 +2,7 @@ import { AssetsBunch } from "./assets";
 import { P2 } from "../../../common/src/engine/maths/constants";
 import { loadPathFromSVG } from "./pathLoader";
 import { strokeColor } from "../../../common/src/misc/colors";
+import { drawPolygon } from "./polygons";
 
 export const petalAssets: AssetsBunch = {
     "basic": containerToDraw => {
@@ -14,6 +15,32 @@ export const petalAssets: AssetsBunch = {
         ctx.strokeStyle = containerToDraw.getRenderColor("#CFCFCF");
 
         ctx.arc(0, 0, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+    },
+    "heavy": containerToDraw => {
+        const { ctx, radius } = containerToDraw;
+
+        ctx.beginPath();
+
+        ctx.fillStyle = containerToDraw.getRenderColor("#bbbbbb");
+        ctx.lineWidth = radius / 4;
+        ctx.strokeStyle = containerToDraw.getRenderColor("#979797");
+
+        ctx.arc(0, 0, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+    },
+    "stone": containerToDraw => {
+        const { ctx, radius } = containerToDraw;
+
+        ctx.beginPath();
+
+        ctx.fillStyle = containerToDraw.getRenderColor("#bbbbbb");
+        ctx.lineWidth = radius / 4;
+        ctx.strokeStyle = containerToDraw.getRenderColor("#979797");
+
+        drawPolygon(ctx, 0, 0, radius, 6);
         ctx.fill();
         ctx.stroke();
     },

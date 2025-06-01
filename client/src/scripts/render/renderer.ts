@@ -2,6 +2,8 @@ import { ClientApplication } from "../../main";
 import { ZoneName, Zones } from "../../../../common/src/definitions/zones";
 import { Camera } from "./camera";
 import { RenderContainer } from "./misc";
+import { Geometry } from "../../../../common/src/engine/maths/geometry";
+import { PI } from "../../../../common/src/engine/maths/constants";
 
 export class Renderer {
     containers = new Set<RenderContainer>();
@@ -32,6 +34,52 @@ export class Renderer {
         this.renderGame();
 
         this.renderOffscreen();
+    }
+
+    renderMouse() {
+        if (!this.app.game.running || this.app.settings.data.keyboardMovement) return;
+
+        const ctx = this.ctx;
+        const canvas = this.canvas;
+
+        ctx.save();
+
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+        ctx.beginPath();
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.1)";
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+        ctx.lineWidth = 13;
+        ctx.moveTo(canvas.width / 2, canvas.height / 2);
+        const mousePosition = this.app.game.input.clientPosition;
+        const { clientX, clientY } = mousePosition;
+        ctx.lineTo(clientX, clientY);
+
+        const angle = Geometry.angleBetweenPoints({
+            x: clientX,
+            y: clientY
+        }, {
+            x: canvas.width / 2,
+            y: canvas.height / 2
+        });
+
+        const branchAngle = 35 * PI / 180;
+        const branchLen = 40;
+
+        ctx.lineTo(
+            clientX - Math.cos(angle - branchAngle) * branchLen,
+            clientY - Math.sin(angle - branchAngle) * branchLen
+        );
+
+        ctx.moveTo(clientX, clientY);
+        ctx.lineTo(
+            clientX - Math.cos(angle + branchAngle) * branchLen,
+            clientY - Math.sin(angle + branchAngle) * branchLen
+        );
+        ctx.stroke();
+
+        ctx.restore();
     }
 
     renderOffscreen() {
@@ -71,6 +119,8 @@ export class Renderer {
         ctx.scale(scale, scale);
 
         this.drawWorldMap();
+
+        this.renderMouse();
 
         this.app.game.particles.render(dt);
 

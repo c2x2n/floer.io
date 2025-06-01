@@ -83,7 +83,7 @@ export class ServerMob extends ServerLivelyEntity<EntityType.Mob> {
     knockback = 1;
 
     isActive(): boolean {
-        return this.lastSegment?.isActive() || super.isActive() && this.viewedTime > 0;
+        return this.lastSegment?.isActive() || (super.isActive() && this.viewedTime > 0);
     }
 
     constructor(game: ServerGame

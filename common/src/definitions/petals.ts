@@ -173,6 +173,37 @@ export const PetalDefinitions = [
         wearerAttributes: {
             speed: 1.006
         }
+    }, {
+        idString: "heavy",
+        displayName: "Heavy",
+        description: "Very resilient and deals more damage, but recharges very slowly",
+        damage: 20,
+        health: 20,
+        extendable: true,
+        images: {
+            slotDisplaySize: 50
+        },
+        reloadTime: 5.5,
+        usable: false,
+        hitboxRadius: 0.645,
+        isDuplicate: false,
+        pieceAmount: 1,
+        rarity: RarityName.common
+    },
+    {
+        idString: "stone",
+        displayName: "Stone",
+        description: "Split into 2",
+        damage: 16,
+        health: 16,
+        extendable: true,
+        reloadTime: 3.5,
+        usable: false,
+        hitboxRadius: 0.445,
+        isDuplicate: true,
+        pieceAmount: 2,
+        isShowedInOne: false,
+        rarity: RarityName.unusual
     },
     {
         idString: "twin",
@@ -676,7 +707,7 @@ export const PetalDefinitions = [
         usable: true,
         useTime: 0,
         attributes: {
-            boost: 1
+            moveBoost: 1
         },
         wearerAttributes: {
             maxHealth: 66666,

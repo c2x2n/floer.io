@@ -8,6 +8,7 @@ import VectorAbstract from "../../../../common/src/engine/physics/vectorAbstract
 import { Geometry } from "../../../../common/src/engine/maths/geometry";
 import { Numeric } from "../../../../common/src/engine/maths/numeric";
 import { EntitiesNetData } from "../../../../common/src/engine/net/entitySerializations";
+import { ClientPetal } from "./clientPetal";
 
 export class ClientPlayer extends ClientEntity {
     type = EntityType.Player;
@@ -70,7 +71,7 @@ export class ClientPlayer extends ClientEntity {
                 if (this.game.entityPool) {
                     for (const entity of this.game.entityPool) {
                         if (entity.type === EntityType.Petal
-                            && (entity).ownerId === this.id
+                            && (entity as ClientPetal).ownerId === this.id
                             && !updatedPetals.has(entity.id)) {
                             entity.container.visible = !newInvisible;
                             updatedPetals.add(entity.id);

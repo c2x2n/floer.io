@@ -170,6 +170,7 @@ export class ClientPetal extends ClientEntity {
             if (owner) this.ownerPosition.set(owner.position);
             this.toCenterPosition.set(c);
             this.position = UVector2D.add(this.toCenterPosition, this.ownerPosition);
+            this.container.position = Camera.vecToScreen(this.position);
         }
 
         if (data.gotDamage) this.getDamageAnimation(true);
