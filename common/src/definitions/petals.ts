@@ -794,7 +794,7 @@ export const PetalDefinitions = [
         extendable: true,
         images: {
             selfGameRotation: 0.02,
-            slotDisplaySize: 45,
+            slotDisplaySize: 55,
             slotRotation: 0.8,
             facingOut: true,
             fontSizeMultiplier: 0.8
@@ -1890,7 +1890,7 @@ export const PetalDefinitions = [
         extendable: false,
         usable: true,
         images: {
-            slotDisplaySize: 45
+            slotDisplaySize: 68
         },
         useTime: 1.5,
         attributes: {
@@ -2006,7 +2006,7 @@ export const PetalDefinitions = [
         extendable: true,
         usable: false,
         images: {
-            slotDisplaySize: 65,
+            slotDisplaySize: 60,
             selfGameRotation: 18
         },
         effectsOnHit: {
