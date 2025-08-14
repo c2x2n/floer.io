@@ -74,6 +74,7 @@ export class UI {
     readonly newControl = $<HTMLDivElement>("#new-control");
     readonly blockMytAnn = $<HTMLDivElement>("#block-myt-ann");
     readonly screenShake = $<HTMLDivElement>("#screen-shake");
+    readonly toggleFullscreen = $<HTMLDivElement>("#toggle-fullscreen");
 
     readonly chatInput = $<HTMLInputElement>("#chat-input");
     readonly chatMessagesBox = $<HTMLDivElement>("#chat-messages");
@@ -204,6 +205,15 @@ export class UI {
         this.gameOverScreen.css("display", "none");
 
         this.initSettingsDialog();
+
+        this.toggleFullscreen.on("click", () => {
+            try {
+                document.fullscreenElement
+                ? document.exitFullscreen().then(() => screen.orientation.unlock())
+                // @ts-ignore
+                : document.documentElement.requestFullscreen().then(() => screen.orientation.lock("landscape"));
+            } catch (e) { console.error(e) }
+        });
 
         this.startRandomEntityAnimation();
 
